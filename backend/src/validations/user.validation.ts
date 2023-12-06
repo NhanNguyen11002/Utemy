@@ -18,7 +18,7 @@ export const updateProfileSchema: ObjectSchema<updateProfile> = Joi.object({
         "any.required": constants.ERROR_LAST_NAME_REQUIRED,
         "string.max": constants.ERROR_LAST_NAME_MAX,
     }),
-    description: Joi.string().trim().required().max(200).min(8).messages({
+    description: Joi.string().trim().required().max(2000).min(8).messages({
         "string.base": constants.ERROR_DESCRIPTION_STRING,
         "any.required": constants.ERROR_DESCRIPTION_REQUIRED,
         "string.max": constants.ERROR_DESCRIPTION_TOO_MAX,

@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                             />
                             <div className="drawer-content">
                                 <label htmlFor="my-drawer" className="font-medium hover:opacity-80 drawer-button">
-                                    Categories
+                                    Danh mục
                                 </label>
                             </div>
                             <div className="drawer-side">
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                         <div className="hidden relative laptop:block flex-1">
                             <input
                                 type="text"
-                                placeholder="Search for anything"
+                                placeholder="Điền từ khóa vào đây..."
                                 className="rounded-full py-4 px-10 w-[70%] max-w-[700px] border-[1px] border-black"
                                 value={keyword}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
@@ -99,19 +99,19 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                                     to={"/all-courses"}
                                     className="hidden tablet:block min-w-fit mr-5 font-medium hover:opacity-80 cursor-pointer"
                                 >
-                                    All Courses
+                                    Tất cả khóa học
                                 </Link>
                                 <Link
                                     to={"/my-enrolled-courses"}
                                     className="hidden tablet:block min-w-fit mr-5 font-medium hover:opacity-80 cursor-pointer"
                                 >
-                                    Enroll Course
+                                    Khóa học đã đăng ký
                                 </Link>
                                 <Link
                                     to={"/my-courses"}
                                     className="hidden tablet:block min-w-fit mr-5 font-medium hover:opacity-80 cursor-pointer"
                                 >
-                                    My Courses
+                                    Khóa học của tôi
                                 </Link>
                                 {/* DRAWER AVATAR */}
                                 <div className="drawer drawer-end">
@@ -152,14 +152,14 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                         <div className="flex-2 flex justify-end items-center gap-3">
                             <Link to={"/all-courses"}>
                                 <span className="hidden tablet:block min-w-fit font-medium hover:opacity-80 cursor-pointer">
-                                    All Courses
+                                    Tất cả khóa học
                                 </span>
                             </Link>
                             <Link to="/login">
-                                <button className="text-white btn btn-info hover:bg-btn text-lg">Login</button>
+                                <button className="text-white btn btn-info hover:bg-btn text-lg">Đăng nhập</button>
                             </Link>
                             <Link to="/signup">
-                                <button className="btn btn-outline text-lg">Signup</button>
+                                <button className="btn btn-outline text-lg">Đăng ký</button>
                             </Link>
                         </div>
                     )}

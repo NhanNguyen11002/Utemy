@@ -37,9 +37,9 @@ const GuestButton: React.FC<GuestButtonProps> = ({ isLogin, course_id }) => {
             <Link to={`${isLogin ? (isCourseInCart ? "/cart" : "") : "/signup"}`}>
                 <button
                     onClick={handleGetItClick}
-                    className="btn btn-primary bg-backgroundHover border-backgroundHover hover:bg-backgroundHover hover:border-backgroundHover text-black text-lg"
+                    className="btn btn-primary btn-sm bg-backgroundHover border-backgroundHover hover:bg-backgroundHover hover:border-backgroundHover text-black "
                 >
-                    <span>{isGetLoading ? "Loading..." : isCourseInCart ? "Go to cart" : "Get it"}</span>
+                    <span>{isGetLoading ? "Loading..." : isCourseInCart ? "Tới giỏ hàng" : "Thêm vào giỏ hàng"}</span>
                 </button>
             </Link>
         </>

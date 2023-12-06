@@ -45,21 +45,19 @@ const VnPayReturn = () => {
                 <h1 className="text-3xl text-lightblue font-bold mb-4">
                     {success ? "Payment Successful" : "Payment Failed"}
                 </h1>
-                <h2 className="text-2xl font-bold mb-4">Order Info</h2>
-                <p>Invoice ID: {invoiceId}</p>
-                <p>Total money: đ{(vnp_Amount / 100).toLocaleString()}</p>
-                <p>Pay date: {vnp_PayDate}</p>
+                <h2 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h2>
+                <p>Mã hóa đơn: {invoiceId}</p>
+                <p>Tổng số tiền: đ{(vnp_Amount / 100).toLocaleString()}</p>
+                <p>Mã ngày thanh toán: {vnp_PayDate}</p>
                 {success ? (
-                    <p className="text-gray-600 mb-6">Thank you for your payment. Your transaction was successful.</p>
+                    <p className="text-gray-600 mb-6">Cảm ơn vi đã tin tưởng Utemy, giao dịch của bạn đã thành công</p>
                 ) : (
-                    <p className="text-gray-600 mb-6">
-                        Oops! Something went wrong with your payment. Please try again later.
-                    </p>
+                    <p className="text-gray-600 mb-6">Có vẻ đã có vấn đề với giao dịch của bạn. Vui lòng thử lại sau</p>
                 )}
 
                 <Link to="/history-transaction" className="flex flex-col items-center justify-center">
                     <button className="text-white btn-info btn hover:bg-lightblue/60 focus:outline-none">
-                        Back to History
+                        Trở về trang lịch sử giao dịch
                     </button>
                 </Link>
             </div>

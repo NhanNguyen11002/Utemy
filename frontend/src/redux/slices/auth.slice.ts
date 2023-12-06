@@ -102,6 +102,28 @@ export const verifyEmail = createAsyncThunk<Response<null>, string, { rejectValu
         }
     },
 );
+export const resendVerifyEmail = createAsyncThunk<Response<null>, string, { rejectValue: Response<null> }>(
+    "auth/mail/verify",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.authApis.resendVerifyEmail(body);
+            return response.data as Response<null>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const resendForgotPasswordEmail = createAsyncThunk<Response<null>, string, { rejectValue: Response<null> }>(
+    "auth/mail/forgot",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.authApis.resendForgotPasswordEmail(body);
+            return response.data as Response<null>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 export const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -120,6 +142,9 @@ export const authSlice = createSlice({
             Cookies.remove("accessToken");
             Cookies.remove("refreshToken");
             state.isLogin = false;
+        },
+        setEmail: (state, action) => {
+            state.user.email = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -149,10 +174,28 @@ export const authSlice = createSlice({
             state.error = action.payload?.message as string;
             state.isLoading = false;
         });
+        builder.addCase(resendForgotPasswordEmail.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(resendForgotPasswordEmail.fulfilled, (state, action) => {
+            state.isLoading = false;
+        });
+        builder.addCase(resendForgotPasswordEmail.rejected, (state, action) => {
+            state.isLoading = false;
+        });
+        builder.addCase(resendVerifyEmail.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(resendVerifyEmail.fulfilled, (state, action) => {
+            state.isLoading = false;
+        });
+        builder.addCase(resendVerifyEmail.rejected, (state, action) => {
+            state.isLoading = false;
+        });
     },
 });
 
-export const { setUser, setLogout } = authSlice.actions;
+export const { setUser, setLogout, setEmail } = authSlice.actions;
 
 export default authSlice.reducer;
 

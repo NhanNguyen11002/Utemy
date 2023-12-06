@@ -49,7 +49,7 @@ const MyEnrolledCourse: React.FC = () => {
             <div className="container mx-auto mt-[100px] laptop:mt-0">
                 <div className="px-4 tablet:px-[60px]">
                     <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">
-                        MY ENROLLED COURSE
+                        Khóa học đã đăng ký
                     </h1>
                     <div className="w-full flex flex-col gap-4 justify-between shrink-0 tablet:flex-row">
                         <div className="w-3/4 tablet:w-1/2 mx-auto">
@@ -57,7 +57,7 @@ const MyEnrolledCourse: React.FC = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
-                                    placeholder="Search your enrolled course"
+                                    placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full border-[1px] border-black"
                                     value={userInput}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
@@ -83,9 +83,9 @@ const MyEnrolledCourse: React.FC = () => {
                                         rating={course.average_rating}
                                         summary={course.summary}
                                         author={course.author as User}
-                                        isEditCourse={false}
                                         attendees={course.number_of_enrolled}
                                         numberOfSection={course.number_of_section}
+                                        enrolled={true}
                                     />
                                 </div>
                             );

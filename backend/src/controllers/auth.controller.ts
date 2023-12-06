@@ -90,4 +90,12 @@ export default class AuthController {
         const response: ResponseBase = await services.AuthServices.getMe(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async resendVerifyEmail(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.AuthServices.resendVerifyEmail(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async resendForgotPasswordEmail(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.AuthServices.resendForgotPasswordEmail(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

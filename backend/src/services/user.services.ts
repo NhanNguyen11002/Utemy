@@ -117,6 +117,8 @@ const getAuthorProfile = async (req: Request): Promise<ResponseBase> => {
                 thumbnail: course.thumbnail,
                 title: course.title,
                 slug: course.slug,
+                number_of_enrolled: course.number_of_enrolled,
+                number_of_rating: course.number_of_rating,
                 categories: course.course_categories.map((cate) => (cate as any).Category),
                 author: {
                     first_name: user.first_name,

@@ -23,8 +23,10 @@ export type Course = {
     average_rating: number;
     categories: Category[];
     created_at?: Date | string;
-    updated_at?: Date;
+    updated_at?: Date | string;
     sections?: Section[];
+    requirement?: any;
+    study?: any;
 };
 export type PagingCourse = {
     total_page: number;

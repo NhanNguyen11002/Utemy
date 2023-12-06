@@ -118,7 +118,7 @@ const stopPromotion = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     const file = req.file;
-    const { title, slug, description, summary, categories, status, price } = req.body;
+    const { title, slug, description, summary, categories, status, price, requirement, study } = req.body;
     const user_id = req.user_id;
     try {
         let fullPathConverted = "";
@@ -127,7 +127,6 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             category_id: Number(item),
         }));
         const convertedStatus = status === "true" ? true : false;
-
         const uniqueSlug = generateUniqueSlug(slug);
         if (user_id) {
             const isCreateCourse = await db.course.create({
@@ -144,6 +143,8 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     course_categories: {
                         create: listCategoryId,
                     },
+                    study,
+                    requirement,
                 },
                 include: {
                     user: true, // Liên kết tới bảng User
@@ -162,6 +163,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         }
         return new ResponseError(400, constants.error.ERROR_CREATE_COURSE_FAILED, false);
     } catch (error) {
+        console.log("Lỗi create", error);
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }
@@ -170,8 +172,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     const file = req.file;
-    const { course_id, title, slug, summary, description, categories, status, price } = req.body;
-
+    const { course_id, title, slug, summary, description, categories, status, price, requirement, study } = req.body;
     try {
         const isFoundCourseById = await configs.db.course.findFirst({
             where: {
@@ -199,7 +200,8 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     status: convertedStatus,
                     thumbnail: fullPathConverted,
                     price: Number(price),
-                    sale_price: Number(price),
+                    requirement,
+                    study,
                 },
             });
             if (!updatedCourse) {
@@ -220,6 +222,8 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     description: description,
                     status: convertedStatus,
                     price: Number(price),
+                    requirement,
+                    study,
                 },
             });
             if (!updatedCourse) {
@@ -292,6 +296,7 @@ const getTop10RateCourse = async (req: IRequestWithId): Promise<ResponseBase> =>
             take: 10,
             where: {
                 is_delete: false,
+                status: true,
             },
             orderBy: {
                 average_rating: "desc",
@@ -367,6 +372,7 @@ const getTop10EnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
             take: 10,
             where: {
                 is_delete: false,
+                status: true,
             },
             orderBy: {
                 number_of_enrolled: "desc",
@@ -499,6 +505,7 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             return {
                 course_id: data.id,
                 title: data.title,
+                status: data.status,
                 summary: data.summary,
                 thumbnail: data.thumbnail,
                 average_rating: data.average_rating,
@@ -678,6 +685,7 @@ const getAllCourse = async (req: Request): Promise<ResponseBase> => {
 
         const baseFilter: any = {
             is_delete: false,
+            status: true,
         };
 
         if (searchItem && searchItem !== "undefined") {
@@ -794,6 +802,8 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                                 id: true,
                                 title: true,
                                 url_video: true,
+                                duration: true,
+                                description: true,
                             },
                             orderBy: {
                                 created_at: "asc",
@@ -846,6 +856,9 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     sale_price: course.sale_price,
                     sale_until: course.sale_until,
                     slug: course.slug,
+                    updated_at: course.updated_at.toString(),
+                    requirement: JSON.parse(course.requirement as string),
+                    study: JSON.parse(course.study as string),
                 };
                 return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, courseData);
             }
@@ -888,6 +901,8 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                                 id: true,
                                 title: true,
                                 url_video: true,
+                                duration: true,
+                                description: true,
                             },
                             orderBy: {
                                 created_at: "asc",
@@ -940,7 +955,10 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                     sale_price: course.sale_price,
                     sale_until: course.sale_until,
                     slug: course.slug,
+                    requirement: JSON.parse(course.requirement as string),
+                    study: JSON.parse(course.study as string),
                 };
+
                 return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, courseData);
             }
         }
@@ -959,6 +977,7 @@ const changeThumbnail = async (req: IRequestWithId): Promise<ResponseBase> => {
             const isCourseExist = await configs.db.course.findFirst({
                 where: {
                     id: course_id,
+                    is_delete: false,
                 },
             });
             if (!isCourseExist) {
@@ -993,12 +1012,13 @@ const changeThumbnail = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const getListRatingOfCourse = async (req: Request): Promise<ResponseBase> => {
     try {
-        const { page_index: pageIndex } = req.query;
+        const { page_index: pageIndex, score } = req.query;
         const { slug } = req.params;
-        const pageSize = configs.general.PAGE_SIZE;
-        const isFoundCourse = await configs.db.course.findUnique({
+        const pageSize = 5;
+        const isFoundCourse = await configs.db.course.findFirst({
             where: {
                 slug: slug,
+                is_delete: false,
             },
             select: {
                 id: true,
@@ -1006,12 +1026,19 @@ const getListRatingOfCourse = async (req: Request): Promise<ResponseBase> => {
         });
         if (!isFoundCourse) return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
         else {
+            let baseFilter: any = {
+                course_id: isFoundCourse.id,
+            };
+            if (Number(score) !== 0) {
+                baseFilter = {
+                    ...baseFilter,
+                    score: Number(score),
+                };
+            }
             const ratingList = await configs.db.rating.findMany({
                 skip: pageSize * (Number(pageIndex) - 1),
                 take: pageSize,
-                where: {
-                    course_id: isFoundCourse.id,
-                },
+                where: baseFilter,
                 include: {
                     User: {
                         select: {
@@ -1028,9 +1055,7 @@ const getListRatingOfCourse = async (req: Request): Promise<ResponseBase> => {
             });
 
             const totalRecord = await configs.db.rating.count({
-                where: {
-                    course_id: isFoundCourse.id,
-                },
+                where: baseFilter,
             });
             const ratingListData: Rating[] = [];
             ratingList.map((item) => {
@@ -1062,6 +1087,51 @@ const getListRatingOfCourse = async (req: Request): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getRatingPercentOfCourse = async (req: Request): Promise<ResponseBase> => {
+    try {
+        const { slug } = req.params;
+        const isFoundCourse = await configs.db.course.findFirst({
+            where: {
+                slug: slug,
+                is_delete: false,
+            },
+            select: {
+                id: true,
+                number_of_rating: true,
+            },
+        });
+        if (!isFoundCourse) return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+        else {
+            const ratingCountPerScore: any[] = await configs.db
+                .$queryRaw`select count(id) as rating_count, score from rating where rating.course_id = ${isFoundCourse.id}  group by score  order by score desc;`;
+            const scoreThatHasPercent: Record<number | string, number> = ratingCountPerScore.reduce(
+                (acc: any, rating: any) => {
+                    acc[rating.score] = Number(
+                        (Number(rating.rating_count) / isFoundCourse.number_of_rating) * 100,
+                    ).toFixed(0);
+                    return acc;
+                },
+                {},
+            );
+            const score = [5, 4, 3, 2, 1];
+            const data = score.map((title) => {
+                const temp = {
+                    title: title,
+                    percent: Number(scoreThatHasPercent[title]) || 0,
+                };
+                return temp;
+            });
+
+            return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
+        }
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 
 const CourseServices = {
     getRightOfCourse,
@@ -1080,6 +1150,7 @@ const CourseServices = {
     getCourseDetailById,
     addPromotion,
     stopPromotion,
+    getRatingPercentOfCourse,
 };
 
 export default CourseServices;

@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Rating, RatingCourse, GetRating, ListRating, EditRating } from "../../types/rating";
+import { RatingPercent } from "../../types/statistic";
 import { Response } from "../../types/response";
 import apis from "../../api";
 
 type RatingSliceType = {
     ratings: Rating[];
     rating: Rating;
+    ratingPercent: RatingPercent[];
     totalRecord: number;
     totalPage: number;
     isLoading: boolean;
@@ -14,6 +16,7 @@ type RatingSliceType = {
 
 const initialState: RatingSliceType = {
     ratings: [],
+    ratingPercent: [],
     rating: {
         id: undefined,
         score: undefined,
@@ -85,6 +88,19 @@ export const getListRatingOfCourseBySlug = createAsyncThunk<
         return ThunkAPI.rejectWithValue(error.data as Response<null>);
     }
 });
+
+export const getRatingPercentOfCourse = createAsyncThunk<
+    Response<RatingPercent[]>,
+    string,
+    { rejectValue: Response<null> }
+>("rating/percent", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.ratingApis.getRatingPercentOfCourse(body);
+        return response.data as Response<RatingPercent[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 export const ratingSlice = createSlice({
     name: "rating",
     initialState,
@@ -112,6 +128,16 @@ export const ratingSlice = createSlice({
             state.isGetLoading = false;
         });
         builder.addCase(getListRatingOfCourseBySlug.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRatingPercentOfCourse.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRatingPercentOfCourse.fulfilled, (state, action) => {
+            state.ratingPercent = action.payload.data as RatingPercent[];
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRatingPercentOfCourse.rejected, (state) => {
             state.isGetLoading = false;
         });
         builder.addCase(getUserRating.pending, (state) => {

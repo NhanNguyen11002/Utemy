@@ -170,6 +170,47 @@ const signup = async (req: Request): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const resendVerifyEmail = async (req: Request): Promise<ResponseBase> => {
+    try {
+        console.log("verify");
+        const { email }: any = req.body;
+        const isExistUser = await configs.db.user.findUnique({
+            where: {
+                email,
+            },
+        });
+        if (!isExistUser) {
+            return new ResponseError(400, constants.error.ERROR_USER_NOT_FOUND, false);
+        } else {
+            const payload = {
+                email: isExistUser.email,
+                id: isExistUser.id,
+            };
+            const token = jwt.sign(payload, configs.general.JWT_SECRET_KEY!, {
+                expiresIn: configs.general.TOKEN_ACCESS_EXPIRED_TIME,
+            });
+            const link = `${configs.general.DOMAIN_NAME}/verify-email/${token}`;
+            const html = setSignupEmail(link);
+            const mailOptions: MailOption = {
+                from: "Utemy",
+                to: `${isExistUser.email}`,
+                subject: "Utemy - Verification email",
+                text: "You recieved message from Utemy",
+                html: html,
+            };
+
+            const isSendEmailSuccess = sendMail(mailOptions);
+            if (isSendEmailSuccess) {
+                return new ResponseSuccess(200, constants.success.SUCCESS_CHECK_MAIL, true);
+            } else {
+                return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+            }
+        }
+    } catch (error) {
+        console.log("verify", error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const verifyEmail = async (req: Request): Promise<ResponseBase> => {
     try {
         const { token } = req.params;
@@ -211,6 +252,54 @@ const verifyEmail = async (req: Request): Promise<ResponseBase> => {
     }
 };
 const forgotPassword = async (req: Request): Promise<ResponseBase> => {
+    try {
+        const { email } = req.body;
+        const user = await configs.db.user.findUnique({
+            where: {
+                email,
+            },
+        });
+        if (!user) {
+            return new ResponseError(404, constants.error.ERROR_USER_NOT_FOUND, false);
+        } else {
+            const payload = {
+                email: user.email,
+                id: user.id,
+            };
+
+            const token = jwt.sign(payload, configs.general.JWT_SECRET_KEY!, {
+                expiresIn: configs.general.TOKEN_ACCESS_EXPIRED_TIME,
+            });
+            const link = `${configs.general.DOMAIN_NAME}/reset-password/${token}`;
+            const html = setResetEmail(link);
+            const mailOptions: MailOption = {
+                from: "Utemy",
+                to: `${user.email}`,
+                subject: "Utemy - Reset password email",
+                text: "You recieved message from Utemy",
+                html: html,
+            };
+
+            const isSendEmailSuccess = sendMail(mailOptions);
+            if (isSendEmailSuccess) {
+                const asignToken = await configs.db.user.update({
+                    where: {
+                        email,
+                    },
+                    data: {
+                        token,
+                    },
+                });
+                return new ResponseSuccess(200, constants.success.SUCCESS_FORGOT_PASSWORD, true);
+            } else {
+                return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+            }
+        }
+    } catch (error) {
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const resendForgotPasswordEmail = async (req: Request): Promise<ResponseBase> => {
     try {
         const { email } = req.body;
         const user = await configs.db.user.findUnique({
@@ -374,5 +463,7 @@ const AuthServices = {
     resetPassword,
     changePassword,
     getMe,
+    resendVerifyEmail,
+    resendForgotPasswordEmail,
 };
 export default AuthServices;

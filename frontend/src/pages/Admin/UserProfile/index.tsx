@@ -91,6 +91,7 @@ const UserProfile = () => {
                                             summary={course.summary}
                                             author={course.author as User}
                                             isEditCourse={false}
+                                            enrolled={true}
                                         />
                                     </div>
                                 );

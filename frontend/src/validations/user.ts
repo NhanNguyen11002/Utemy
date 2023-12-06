@@ -28,7 +28,6 @@ export const updateProfileValidationSchema = Yup.object({
     description: Yup.string()
         .trim()
         .min(8, constants.error.ERROR_DESCRIPTION_TOO_SHORT)
-        .max(200, constants.error.ERROR_DESCRIPTION_TOO_MAX)
         .required(constants.error.ERROR_DESCRIPTION_REQUIRED),
 });
 export const editUserValidationSchema = Yup.object({

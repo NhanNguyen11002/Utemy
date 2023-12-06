@@ -17,15 +17,15 @@ const DeleteModal: React.FC<DeleteModalProps> = (props: DeleteModalProps) => {
                         <WarningIcon />
                     </div>
                     <div className="mb-2 text-center">
-                        <p className="text-3xl mb-1 font-medium">ARE YOU SURE?</p>
-                        <span className="text-xl">You won't be able to revert it</span>
+                        <p className="text-3xl mb-1 font-medium">Bạn chắc chắn muốn xóa?</p>
+                        <span className="text-xl">Hành động này không thể hoàn tác</span>
                     </div>
                     <div className="">
                         <button className="text-white btn btn-error text-lg" onClick={props.handleDelete}>
-                            {isLoading ? "Loading..." : " Yes, delete it "}
+                            {isLoading ? "Loading..." : " Có, tôi muốn xóa "}
                         </button>
                         <button className="btn text-lg ml-2" onClick={props.handleCancel}>
-                            Cancel
+                            Hủy
                         </button>
                     </div>
                 </div>

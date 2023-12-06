@@ -7,7 +7,12 @@ const ratingCourse = async (values: RatingCourse) => {
     return reponse;
 };
 const getListRatingOfCourseBySlug = async (values: GetRating) => {
-    const path = `course/${values.slug}/rating?page_index=${values.page_index}`;
+    const path = `course/${values.slug}/rating?page_index=${values.page_index}&score=${values.score}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRatingPercentOfCourse = async (values: string) => {
+    const path = `course/percent/${values}`;
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
@@ -29,10 +34,11 @@ const getUserRating = async (values: number) => {
 
 const ratingApis = {
     ratingCourse,
-    getListRatingOfCourseBySlug,
+    getRatingPercentOfCourse,
     editRating,
     deleteRating,
     getUserRating,
+    getListRatingOfCourseBySlug,
 };
 
 export default ratingApis;

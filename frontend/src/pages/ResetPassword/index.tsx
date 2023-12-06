@@ -55,11 +55,11 @@ const ResetPassword: React.FC<{}> = () => {
                             {(formik) => (
                                 <Form className="p-4" onSubmit={formik.handleSubmit}>
                                     <h1 className="font-bold text-[32px] text-lightblue text-center text-title">
-                                        RESET PASSWORD
+                                        Đặt lại mật khẩu
                                     </h1>
                                     <div className="flex flex-col mb-3">
                                         <label htmlFor="new_password" className="text-sm mb-1 tablet:text-xl">
-                                            New Password
+                                            Mật khẩu mới
                                         </label>
                                         <Field
                                             id="new_password"
@@ -79,7 +79,7 @@ const ResetPassword: React.FC<{}> = () => {
                                     </div>
                                     <div className="flex flex-col mb-3">
                                         <label htmlFor="confirm_password" className="text-sm mb-1 tablet:text-xl">
-                                            Confirm Password
+                                            Xác nhận mật khẩu mới
                                         </label>
                                         <Field
                                             id="confirm_password"
@@ -103,7 +103,7 @@ const ResetPassword: React.FC<{}> = () => {
                                         disabled={isLoading}
                                     >
                                         {isLoading && <span className="loading loading-spinner"></span>}
-                                        {isLoading ? "Loading..." : "Submit"}
+                                        {isLoading ? "Loading..." : "Lưu"}
                                     </button>
                                 </Form>
                             )}

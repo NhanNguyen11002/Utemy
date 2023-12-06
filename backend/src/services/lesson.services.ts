@@ -10,6 +10,8 @@ const createLesson = async (req: IRequestWithId): Promise<ResponseBase> => {
         const user_id = req.user_id;
         const section_id = parseInt(req.body.section_id);
         const title = req.body.title;
+        const duration = req.body.duration;
+        const description = req.body.description;
         const uuid = uuidv4();
         const createFile = await helper.FileHelper.createFileM3U8AndTS(
             videoFile as Express.Multer.File,
@@ -23,6 +25,8 @@ const createLesson = async (req: IRequestWithId): Promise<ResponseBase> => {
                 title,
                 section_id,
                 url_video: fullpathConverted,
+                duration,
+                description,
             },
         });
         if (!createLesson) {
@@ -41,6 +45,8 @@ const updateLesson = async (req: IRequestWithId): Promise<ResponseBase> => {
         const title = req.body.title;
         const videoFile = req.file;
         const user_id = req.user_id;
+        const duration = req.body.duration;
+        const description = req.body.description;
         const isFoundLesson = await configs.db.lesson.findFirst({
             where: {
                 id: lesson_id,
@@ -64,6 +70,8 @@ const updateLesson = async (req: IRequestWithId): Promise<ResponseBase> => {
                 data: {
                     title,
                     url_video: fullPathConverted,
+                    duration,
+                    description,
                 },
             });
             if (updateLesson) {
@@ -80,6 +88,8 @@ const updateLesson = async (req: IRequestWithId): Promise<ResponseBase> => {
                 },
                 data: {
                     title,
+                    duration,
+                    description,
                 },
             });
             if (updateLesson) {
@@ -89,7 +99,6 @@ const updateLesson = async (req: IRequestWithId): Promise<ResponseBase> => {
             }
         }
     } catch (error) {
-        console.log(error);
         return new ResponseError(500, JSON.stringify(error), false);
     }
 };
@@ -105,6 +114,8 @@ const getLessonById = async (req: IRequestWithId): Promise<ResponseBase> => {
             return new ResponseSuccess(200, constants.success.SUCCESS_GET_LESSON, true, {
                 title: isFoundLesson.title,
                 url_video: isFoundLesson.url_video,
+                duration: isFoundLesson.duration,
+                description: isFoundLesson.description,
             });
         } else {
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);

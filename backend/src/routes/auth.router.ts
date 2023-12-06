@@ -5,6 +5,8 @@ import { uploadAvatar } from "../middlewares/multer";
 
 const authRouter: Router = Router();
 
+authRouter.post("/mail/verify", controllers.authController.resendVerifyEmail);
+authRouter.post("/mail/forgot", controllers.authController.resendForgotPasswordEmail);
 authRouter.post("/login", controllers.authController.login); //
 authRouter.post("/signup", controllers.authController.signup); //
 authRouter.get("/refresh", controllers.authController.refreshAccesToken); //

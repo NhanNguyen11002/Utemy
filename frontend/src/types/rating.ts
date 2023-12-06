@@ -26,4 +26,9 @@ export type EditRating = {
 export type GetRating = {
     slug: string;
     page_index: number;
+    score: number;
+};
+export type RatingPercent = {
+    percent: number;
+    score: number;
 };

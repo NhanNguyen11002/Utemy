@@ -163,6 +163,8 @@ const getAllSectionByCourseId = async (req: Request): Promise<ResponseBase> => {
                         id: true,
                         url_video: true,
                         updated_at: true,
+                        duration: true,
+                        description: true,
                     },
                 },
                 Course: true,

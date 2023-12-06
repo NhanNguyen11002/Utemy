@@ -9,6 +9,11 @@ import Accordion from "./Accordion";
 import PopupAddLesson from "./Popup/PopupAddLesson";
 import PopupUpdateLesson from "./Popup/PopupUpdateLesson";
 import VideoPlayer from "./VideoPlayer";
+import RequirementPopup from "./Popup/RequirementPopup";
+import StudyPopup from "./Popup/StudyPopup";
+import TextEditor from "./TextEditor";
+import WatchVideoHeader from "./Header/HeaderWatchVideo";
+import Carousel from "./CarouselUtemy";
 
 export {
     Spin,
@@ -22,4 +27,9 @@ export {
     PopupAddLesson,
     PopupUpdateLesson,
     VideoPlayer,
+    RequirementPopup,
+    StudyPopup,
+    TextEditor,
+    WatchVideoHeader,
+    Carousel,
 };

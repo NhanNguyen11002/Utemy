@@ -46,8 +46,10 @@ function Checkout() {
             <div className="container p-12 mx-auto">
                 <div className="flex flex-col w-3/5 px-0 mx-auto md:flex-row">
                     <div className="flex flex-col w-3/5 border-right border-black">
-                        <h1 className="mb-4 font-bold md:text-5xl font-OpenSans text-black text-heading ">Checkout</h1>
-                        <h2 className="text-xl font-bold font-OpenSans text-black">Billing</h2>
+                        <h1 className="mb-4 font-bold md:text-5xl font-OpenSans text-black text-heading ">
+                            Thanh toán
+                        </h1>
+                        <h2 className="text-xl font-bold font-OpenSans text-black">Hóa đơn</h2>
                         <form className="justify-center w-full mx-auto mb-10">
                             <div className="">
                                 <div className="space-x-0 lg:flex lg:space-x-4">
@@ -56,7 +58,7 @@ function Checkout() {
                                             htmlFor="firstName"
                                             className="block mb-3 text-xl font-semibold text-black"
                                         >
-                                            Payment Method
+                                            Phương pháp thanh toán
                                         </label>
                                         <div className="form-control border border-black px-2 bg-footer">
                                             <label className="label cursor-pointer">
@@ -92,7 +94,7 @@ function Checkout() {
                             </div>
                         </form>
                         <div>
-                            <h2 className="text-xl font-bold font-OpenSans text-black  mb-3">Order detail</h2>
+                            <h2 className="text-xl font-bold font-OpenSans text-black  mb-3">Chi tiết hóa đơn</h2>
                             <div className="flex flex-col space-y-4">
                                 {invoice.invoice_items.map((item) => {
                                     return (
@@ -118,10 +120,10 @@ function Checkout() {
                         <div className="pt-12 md:pt-0 2xl:ps-4">
                             <div className="hidden  w-full h-[48px] bg-background laptop:flex"></div>
                             <div className="border border-black py-4 px-5 ">
-                                <h2 className="text-xl font-OpenSans  text-black font-bold">Order Summary</h2>
+                                <h2 className="text-xl font-OpenSans  text-black font-bold">Tổng kết hóa đơn</h2>
 
                                 <div className="flex items-center w-full py-4  font-semibold border-b text-xl border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
-                                    Total<span className="ml-2">đ{invoice.total_money.toLocaleString()}</span>
+                                    Tổng cộng<span className="ml-2">đ{invoice.total_money.toLocaleString()}</span>
                                 </div>
                                 <button
                                     className="transition-colors text-center text-xl bg-bluelogo hover:bg-background hover:text-bluelogo hover:border-bluelogo hover:border p-2 rounded-sm w-full text-white text-hover shadow-md"
@@ -129,7 +131,7 @@ function Checkout() {
                                     disabled={isGetLoading || error}
                                 >
                                     {" "}
-                                    {isGetLoading ? "LOADING..." : "Complete Checkout"}
+                                    {isGetLoading ? "LOADING..." : "Hoàn tất thanh toán"}
                                 </button>
                             </div>
                         </div>

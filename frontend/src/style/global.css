@@ -3,3 +3,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* styles.css */
+.description-course h2 {
+    @apply text-3xl; /* You can adjust this size as needed */
+}
+.description-course h1 {
+    @apply text-4xl; /* You can adjust this size as needed */
+}
+.description-course h3 {
+    @apply text-2xl; /* You can adjust this size as needed */
+}

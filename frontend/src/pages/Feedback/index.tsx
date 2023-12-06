@@ -62,7 +62,7 @@ const Feedback: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <span className="text-gray-500 text-4xl block">Your Feedback</span>
+                                <span className="text-gray-500 text-4xl block">Phản hồi</span>
                             </div>
                         </div>
 
@@ -70,11 +70,13 @@ const Feedback: React.FC = () => {
                         <div className="mt-6 border-b-2 border-gray-500 pb-4 gap-4">
                             <div>
                                 <span className="text-gray-500 text-xl ">
-                                    We would like your feedback to improve our website!
+                                    Chúng tôi trân trọng mọi phản hồi của bạn
                                 </span>
                             </div>
                             <div>
-                                <span className="text-gray-500 text-xl ">Rating Us here</span>
+                                <span className="text-gray-500 text-xl ">
+                                    Vui lòng cho biết mức độ hài lòng của bạn
+                                </span>
                             </div>
                             <div style={{ fontSize: "40px" /* other styles */ }}>
                                 <RatingInPopup score={ratingValue} handleCheck={handleCheck} />
@@ -90,7 +92,7 @@ const Feedback: React.FC = () => {
                                 cols={60}
                                 value={feedbackContent}
                                 onChange={(e) => setFeedbackContent(e.target.value)}
-                                placeholder="Enter your feedback here..."
+                                placeholder="Nhập nội dung phản hồi tại đây..."
                                 className="border p-2 rounded-md"
                             />
                         </div>
@@ -99,7 +101,7 @@ const Feedback: React.FC = () => {
                                 onClick={handleFeedbackSubmit}
                                 className="btn btn-info text-white p-3 rounded-md hover:bg-blue-700"
                             >
-                                Submit
+                                Gửi
                             </button>
                         </div>
                     </div>
@@ -111,12 +113,12 @@ const Feedback: React.FC = () => {
                     style={{ marginTop: "50px" }}
                 >
                     <div>
-                        <div className="flex justify-between flex items-center flex-row border-b-2 border-gray-500 pb-4">
+                        <div className="flex justify-between items-center flex-row border-b-2 border-gray-500 pb-4">
                             <div>
                                 <img src={images.ContactLogo} alt="Contact" style={{ width: "80px", height: "80px" }} />
                             </div>
                             <div>
-                                <h2 className="text-gray-400 text-4xl block">Contact Information</h2>
+                                <h2 className="text-gray-400 text-4xl block">Thông tin liên lạc</h2>
                             </div>
                         </div>
                         <div
@@ -192,10 +194,10 @@ const Feedback: React.FC = () => {
                             </ul>
                             <h3 className="my-4 flex items-center gap-2" style={{ marginLeft: "50px" }}>
                                 <BuildingOfficeIcon className="h-4 w-4" />
-                                Office Address:
+                                Địa chỉ văn phòng:
                             </h3>
                             <p className="mb-4" style={{ marginLeft: "50px" }}>
-                                So 1 Vo Van Ngan, TP Thu Duc, Ho Chi Minh, Viet Nam
+                                Số 1 Võ Văn Ngân, TP Thủ Đức, TPHCM, Việt Nam
                             </p>
                         </div>
                     </div>

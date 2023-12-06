@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
-import { CourseCard, Pagination } from "../../components";
+import { CourseCard, Pagination, TotalRating } from "../../components";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { Course, SearchAllCourses } from "../../types/course";
 import { Category } from "../../types/category";
@@ -100,7 +100,7 @@ const AllCourses: React.FC = () => {
             category: categoryChecked,
         };
         dispatch(courseActions.getAllCourses(query));
-    }, [dispatch, keyword, pageIndex, sortBy]);
+    }, [dispatch, keyword, pageIndex, sortBy, evaluate]);
 
     return (
         <>
@@ -108,14 +108,14 @@ const AllCourses: React.FC = () => {
             <div className="container mx-auto p-4 mt-[100px] laptop:mt-0">
                 <div className="">
                     <div className="flex flex-col gap-4 laptop:flex-row">
-                        <div className="w-full laptop:w-[250px]">
+                        <div className="w-[30%] laptop:w-[250px]">
                             <div className="">
                                 <button className="btn btn-info btn-outline text-lg mr-1" onClick={handleFilterCourse}>
-                                    Filter
+                                    Lọc
                                 </button>
                                 <div className="dropdown dropdown-bottom mr-1">
                                     <label tabIndex={0} className="btn btn-warning btn-outline text-lg m-1">
-                                        Sort by
+                                        Sắp xếp
                                     </label>
                                     <ul
                                         tabIndex={0}
@@ -135,33 +135,42 @@ const AllCourses: React.FC = () => {
                                     </ul>
                                 </div>
                                 <button className="btn btn-outline text-lg" onClick={handleResetFilter}>
-                                    Reset
+                                    Làm mới
                                 </button>
                             </div>
-                            <div className="mt-3">
-                                <h2 className="text-2xl font-bold mb-2">Evaluate</h2>
+                            <div className="mt-3 w-[70%] ">
+                                <h2 className="text-2xl font-bold mb-2 ">Đánh giá</h2>
                                 {eveluateList.map((evaluateItem, index) => {
                                     return (
-                                        <div className="flex items-center gap-2 mb-1" key={index}>
-                                            <input
-                                                type="radio"
-                                                className="radio radio-info"
-                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    setEvaluate(Number(event.target.value));
-                                                }}
-                                                name="evaluate"
-                                                value={evaluateItem.value}
-                                                id={evaluateItem.title}
-                                                checked={evaluate === evaluateItem.value}
-                                            />
-                                            <span className="text-xl">{evaluateItem.title}</span>
+                                        <div
+                                            className={`flex items-center justify-between mb-1 ${
+                                                evaluate ? (evaluate === 5 - index ? "" : "opacity-30") : ""
+                                            } `}
+                                            key={index}
+                                        >
+                                            <div className="flex  gap-2">
+                                                <input
+                                                    type="radio"
+                                                    className="radio radio-info"
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        setEvaluate(Number(event.target.value));
+                                                    }}
+                                                    name="evaluate"
+                                                    value={evaluateItem.value}
+                                                    id={evaluateItem.title}
+                                                    checked={evaluate === evaluateItem.value}
+                                                />
+                                                <span className="text-xl">{evaluateItem.title}</span>
+                                            </div>
+
+                                            <TotalRating ratingId={index} totalScore={5 - index} isForCourse={false} />
                                         </div>
                                     );
                                 })}
                             </div>
                             <div className="hidden tablet:flex divider my-1"></div>
                             <div className="">
-                                <h2 className="text-2xl font-bold mb-2">Category</h2>
+                                <h2 className="text-2xl font-bold mb-2">Danh mục</h2>
                                 <div className="grid grid-cols-2 laptop:grid-cols-1">
                                     {categoriesList.length > 0 &&
                                         categoriesList.map((category) => {
@@ -187,12 +196,14 @@ const AllCourses: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="border-t-[1px] laptop:border-l-[1px] laptop:border-t-0">
+                        <div className="border-t-[1px] w-[70%] laptop:border-l-[1px] laptop:border-t-0">
                             <div className="w-full flex">
-                                {courseList.length === 0 && <p className="text-error  text-2xl ml-3">Such empty!!!</p>}
+                                {courseList.length === 0 && (
+                                    <p className="text-error  text-2xl ml-3">Không có nội dung gì</p>
+                                )}
                                 {courseList.length >= 1 && (
                                     <p className="text-2xl ml-3 items-center font-medium">
-                                        {courseList.length} result(s) have been found
+                                        Tìm thấy {courseList.length} khóa học
                                     </p>
                                 )}
                             </div>
@@ -218,6 +229,7 @@ const AllCourses: React.FC = () => {
                                                 price={course.price}
                                                 salePrice={course.sale_price}
                                                 saleUntil={course.sale_until?.toString()}
+                                                enrolled={true}
                                             />
                                         </div>
                                     ))}

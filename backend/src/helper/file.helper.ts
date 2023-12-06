@@ -38,7 +38,7 @@ const createFileM3U8AndTS = async (
             .outputOptions([`-s ${resolution}`, "-c:v h264", "-c:a aac", "-f hls", "-hls_time 10", "-hls_list_size 0"])
             .on("progress", (progress) => {
                 // In thông tin tiến trình xử lý video
-                console.log(` Progress ${JSON.stringify(progress)}`);
+                // console.log(` Progress ${JSON.stringify(progress)}`);
             })
             .on("end", () => {
                 console.log(`Conversion to m3u8 completed.`);

@@ -58,13 +58,13 @@ const Signup: FC = () => {
                             {(formik) => (
                                 <Form onSubmit={formik.handleSubmit} className="p-4" onChange={handleDeleteMessage}>
                                     <h1 className="font-bold text-[32px] text-center text-lightblue text-title">
-                                        SIGN UP
+                                        ĐĂNG KÝ
                                     </h1>
 
                                     <div className="flex flex-col gap-3 mb-3 tablet:flex-row">
                                         <div className="flex-1 flex flex-col">
                                             <label htmlFor="first_name" className="text-sm mb-1 tablet:text-xl">
-                                                First Name
+                                                Tên
                                             </label>
                                             <Field
                                                 type="text"
@@ -83,7 +83,7 @@ const Signup: FC = () => {
                                         </div>
                                         <div className="flex-1 flex flex-col">
                                             <label htmlFor="last_name" className="text-sm mb-1 tablet:text-xl">
-                                                Last Name
+                                                Họ
                                             </label>
                                             <Field
                                                 type="text"
@@ -120,7 +120,7 @@ const Signup: FC = () => {
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="password" className="text-sm block mb-1 tablet:text-xl">
-                                            Password
+                                            Mật khẩu
                                         </label>
                                         <Field
                                             type="password"
@@ -137,7 +137,7 @@ const Signup: FC = () => {
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="confirm_password" className="text-sm block mb-1 tablet:text-xl">
-                                            Confirm Password
+                                            Xác nhận mật khẩu
                                         </label>
                                         <Field
                                             type="password"
@@ -169,14 +169,14 @@ const Signup: FC = () => {
                                             className="text-white btn btn-info w-full text-lg"
                                         >
                                             {isLoading && <span className="loading loading-spinner"></span>}
-                                            {isLoading ? "Loading..." : "Create Account"}
+                                            {isLoading ? "Loading..." : "Tạo tài khoản"}
                                         </button>
                                     </div>
                                     <div className="text-center space-y-[8px]">
                                         <p className="block mt-3 mb-2 text-center text-lg">
-                                            Already have an account?
+                                            Bạn đã có tài khoản?
                                             <span className="font-medium hover:opacity-80">
-                                                <Link to={"/login"}> Login</Link>
+                                                <Link to={"/login"}> Quay lại đăng nhập</Link>
                                             </span>
                                         </p>
                                     </div>

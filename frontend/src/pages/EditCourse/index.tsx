@@ -26,7 +26,8 @@ const EditCourse: React.FC = () => {
     const [idItem, setIdItem] = useState<number>(-1);
     const [itemTitle, setItemTitle] = useState<string>("");
     const [itemVideo, setItemVideo] = useState<string>("");
-
+    const [itemDuration, setItemDuration] = useState<string>("");
+    const [itemDescription, setItemDescription] = useState<string>("");
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
 
@@ -147,10 +148,18 @@ const EditCourse: React.FC = () => {
         }
     };
 
-    const handleDisplayEditLesson = (id: number, title: string, video: string) => {
+    const handleDisplayEditLesson = (
+        id: number,
+        title: string,
+        video: string,
+        duration: string,
+        description: string,
+    ) => {
         setIdItem(id);
         setItemTitle(title);
         setItemVideo(video);
+        setItemDuration(duration);
+        setItemDescription(description);
         setIsDisplayEditLessonModal(!isDisplayEditLessonModal);
     };
 
@@ -179,7 +188,7 @@ const EditCourse: React.FC = () => {
                                     type="text"
                                     maxLength={100}
                                     className="px-2 py-2 rounded-lg border-[1px] outline-none flex-1 max-w-2xl"
-                                    placeholder="Name's section"
+                                    placeholder="Tên của chương học..."
                                     value={section}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                         setSection(e.target.value);
@@ -190,17 +199,17 @@ const EditCourse: React.FC = () => {
                                         className="text-white btn btn-info text-lg flex-2 ml-2"
                                         onClick={handleAddSection}
                                     >
-                                        Add section
+                                        Thêm chương học
                                     </button>
                                 </div>
                             </div>
                             {errorSection && (
-                                <p className={`text-error italic font-medium mt-1`}>Section title is required</p>
+                                <p className={`text-error italic font-medium mt-1`}>Tên chương là bắt buộc</p>
                             )}
                             {/* handle list lesson */}
                             <div className="mt-2">
                                 {sectionOfCourse.length <= 0 ? (
-                                    <h1 className="text-center text-2xl text-error">There are no sections yet!</h1>
+                                    <h1 className="text-center text-2xl text-error">Khóa học chưa có chương học nào</h1>
                                 ) : (
                                     sectionOfCourse.map((section, index) => (
                                         <Accordion
@@ -233,11 +242,11 @@ const EditCourse: React.FC = () => {
                         <div className="fixed z-50 w-full h-full top-0 bottom-0 bg-black/50 flex justify-center items-center shadow-lg">
                             <div className="bg-background p-4 w-[400px] flex flex-col items-center justify-center rounded-lg ">
                                 <h1 className="text-3xl mb-1 text-lightblue font-bold text-center text-title">
-                                    EDIT SECTION
+                                    Sửa chương học
                                 </h1>
 
                                 <form className="flex flex-col gap-1 w-full">
-                                    <div className="text-sm mb-1 tablet:text-xl font-medium">Section title</div>
+                                    <div className="text-sm mb-1 tablet:text-xl font-medium">Tên chương</div>
                                     <input
                                         maxLength={100}
                                         type="text"
@@ -247,7 +256,7 @@ const EditCourse: React.FC = () => {
                                     />
                                 </form>
                                 {errorEditSection && (
-                                    <p className={`text-error italic font-medium mt-1`}>Section title is required</p>
+                                    <p className={`text-error italic font-medium mt-1`}>Tên chương là bắt buộc</p>
                                 )}
                                 <div className="mt-2 flex justify-end w-full">
                                     <button
@@ -256,13 +265,13 @@ const EditCourse: React.FC = () => {
                                         }`}
                                         onClick={() => handleEditSection(idItem, itemTitle)}
                                     >
-                                        {isLoading ? "Loading..." : "Save"}
+                                        {isLoading ? "Loading..." : "Lưu"}
                                     </button>
                                     <button
                                         className="btn text-lg ml-2"
                                         onClick={() => setIsDisplayEditModal(!isDisplayEditModal)}
                                     >
-                                        Cancel
+                                        Hủy
                                     </button>
                                 </div>
                             </div>
@@ -284,6 +293,8 @@ const EditCourse: React.FC = () => {
                             handleCancel={handleCancelModalUpdateLesson}
                             id={idItem}
                             title={itemTitle}
+                            duration={itemDuration}
+                            description={itemDescription}
                         />
                     )}
                 </>

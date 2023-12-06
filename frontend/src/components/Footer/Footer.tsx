@@ -51,9 +51,9 @@ const Footer: React.FC = () => {
                     </div>
                     <div className="grid grid-flow-row gap-4">
                         <a href="https://www.facebook.com/profile.php?id=100040927081687">
-                            <span className="link text-lg no-underline hover:opacity-80">About us</span>
+                            <span className="link text-lg no-underline hover:opacity-80">Về chúng tôi</span>
                         </a>
-                        <span className="link text-lg no-underline hover:opacity-80">Contact</span>
+                        <span className="link text-lg no-underline hover:opacity-80">Liên hệ</span>
                     </div>
                 </div>
 

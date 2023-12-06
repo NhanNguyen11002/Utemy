@@ -9,6 +9,6 @@ const lessonRouter: Router = Router();
 lessonRouter.post("/", isLogin, uploadVideo, controllers.lessonController.createLesson); //
 lessonRouter.patch("/", isLogin, uploadVideo, isAuthor, controllers.lessonController.updateLesson);
 lessonRouter.delete("/", isLogin, isAuthor, controllers.lessonController.deleteLesson);
-lessonRouter.get("/", isLogin, controllers.lessonController.getLessonById);
+lessonRouter.get("/:lesson_id", isLogin, controllers.lessonController.getLessonById);
 
 export default lessonRouter;

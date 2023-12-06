@@ -84,14 +84,16 @@ const MyCourses: React.FC = () => {
             )}
             <div className="container mx-auto mt-[100px] laptop:mt-0">
                 <div className="px-4 tablet:px-[60px]">
-                    <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">MY COURSE</h1>
+                    <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">
+                        Khóa học của tôi
+                    </h1>
                     <div className="w-full flex flex-col gap-4 justify-between shrink-0 tablet:flex-row">
                         <div className="flex-1">
                             <div className="relative">
                                 <input
                                     ref={inputRef}
                                     type="text"
-                                    placeholder="Search for anything"
+                                    placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full tablet:w-[70%] border-[1px] border-black"
                                     value={userInput}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
@@ -107,7 +109,7 @@ const MyCourses: React.FC = () => {
                         <Link to={"/create-course"}>
                             <div className="text-white flex-3 flex btn hover:opacity-80 btn-info text-lg">
                                 <CreateIcon />
-                                Create New
+                                Tạo khóa học mới
                             </div>
                         </Link>
                     </div>
@@ -118,6 +120,7 @@ const MyCourses: React.FC = () => {
                                     <CourseCard
                                         id={course.course_id}
                                         thumbnail={course.thumbnail}
+                                        status={course.status}
                                         slug={course.slug}
                                         title={course.title}
                                         summary={course.summary}
@@ -129,6 +132,7 @@ const MyCourses: React.FC = () => {
                                         isEditCourse={true}
                                         handleDisplayDeleteModal={handleDisplayDeleteModal}
                                         handleEditCourse={handleEditCourse}
+                                        enrolled={false}
                                         // createdAt={course.created_at?.toString()}
                                     />
                                 </div>

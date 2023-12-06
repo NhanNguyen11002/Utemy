@@ -9,7 +9,7 @@ import { updateProfileValidationSchema } from "../../validations/user";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 // import PopUpChangeAvatar from "./PopUpChangeAvatar";
-import { Navbar } from "../../components";
+import { Navbar, TextEditor } from "../../components";
 import { DefaultAvatar } from "../../assets/images";
 
 const MyProfile: React.FC = () => {
@@ -41,7 +41,9 @@ const MyProfile: React.FC = () => {
             // Kiểm tra kích thước tối đa (ví dụ: 5MB)
             const maxSize = 4 * 1024 * 1024; // 5MB
             if (selectedFile.size > maxSize) {
-                toast.error("File size exceeds the maximum limit (4MB). Please choose a smaller file.");
+                toast.error(
+                    "Hình ảnh có kích thước quá lớn, vui lòng chọn hình ảnh có kích thước nhỏ hơn hoặc bằng 4MB",
+                );
                 event.target.value = ""; // Reset input field
                 return;
             }
@@ -49,7 +51,7 @@ const MyProfile: React.FC = () => {
             // Kiểm tra loại file (chỉ chấp nhận các loại ảnh)
             const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
             if (!allowedTypes.includes(selectedFile.type)) {
-                toast.error("Invalid file type. Please choose a valid image file (JPEG, PNG, GIF).");
+                toast.error("Sai loại file, vui lòng chọn file hợp lệ (JPEG, PNG, GIF).");
                 event.target.value = ""; // Reset input field
                 return;
             }
@@ -58,6 +60,7 @@ const MyProfile: React.FC = () => {
             setSelectedFile(selectedFile);
         }
     };
+
     const handleOnSubmit = async (values: UserType) => {
         // Tải lên avatar nếu có file được chọn
         if (selectedFile) {
@@ -93,7 +96,9 @@ const MyProfile: React.FC = () => {
             }
         });
     };
-
+    const handleDescriptionChange = (description: string, formik: any) => {
+        formik.setFieldValue("description", description);
+    };
     const handleLogout = () => {
         // @ts-ignore
         dispatch(authActions.logout());
@@ -105,9 +110,8 @@ const MyProfile: React.FC = () => {
             <Navbar />
             <div className="container mx-auto mt-[100px] laptop:mt-0">
                 <div className="px-4 tablet:px-[60px]">
-                    <h1 className="text-center text-[32px] py-4 font-bold text-title text-lightblue">MY PROFILE</h1>
+                    <h1 className="text-center text-[32px] py-4 font-bold text-title text-lightblue">TRANG CỦA TÔI</h1>
                     <div className="flex justify-center items-center">
-                        <div className="hidden laptop:block">{/* <img src={Logo} alt="Utemy" /> */}</div>
                         <div className="flex flex-col items-center justify-center">
                             {/* <div className="w-32 h-32 rounded-full border">
                                 <PopUpChangeAvatar urlAvatar={user.url_avatar || DefaultAvatar} userId={user.user_id} />
@@ -132,8 +136,8 @@ const MyProfile: React.FC = () => {
                                                         selectedFile
                                                             ? URL.createObjectURL(selectedFile)
                                                             : user.url_avatar
-                                                              ? user.url_avatar
-                                                              : DefaultAvatar
+                                                            ? user.url_avatar
+                                                            : DefaultAvatar
                                                     }
                                                     alt="Avatar"
                                                     className="max-w-xs max-h-80 min-h-full min-w-full border-4 rounded-lg"
@@ -151,7 +155,7 @@ const MyProfile: React.FC = () => {
                                                 htmlFor="avatar"
                                                 className="block text-sm mb-1 tablet:text-xl text-center"
                                             >
-                                                Choose Avatar
+                                                Chọn ảnh đại diện
                                             </label>
                                             <input
                                                 id="avatar"
@@ -163,11 +167,11 @@ const MyProfile: React.FC = () => {
                                             />
                                         </div>
 
-                                        <div className="bg-white m-4 rounded-xl shadow-lg p-4">
+                                        <div className="bg-white m-4 rounded-xl shadow-lg p-4 max-w-[440px]">
                                             <div className="flex flex-col mobile:flex-row gap-2">
                                                 <div className="flex flex-col mb-3">
                                                     <label htmlFor="first_name" className="text-sm mb-1 tablet:text-xl">
-                                                        First name
+                                                        Tên
                                                     </label>
                                                     <Field
                                                         name="first_name"
@@ -186,7 +190,7 @@ const MyProfile: React.FC = () => {
                                                 </div>
                                                 <div className="flex flex-col mb-3">
                                                     <label htmlFor="last_name" className="text-sm mb-1 tablet:text-xl">
-                                                        Last name
+                                                        Họ
                                                     </label>
                                                     <Field
                                                         name="last_name"
@@ -224,38 +228,42 @@ const MyProfile: React.FC = () => {
                                                     className="text-[14px] text-error font-medium"
                                                 />
                                             </div>
-                                            <div className="">
+                                            <div className="h-[300px]">
                                                 <label htmlFor="description" className="text-sm mb-1 tablet:text-xl">
-                                                    About me
+                                                    Mô tả về bạn
                                                 </label>
+                                                <ErrorMessage
+                                                    name="description"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
                                                 <Field
                                                     as="textarea"
                                                     name="description"
-                                                    placeholder="Description about your course..."
+                                                    component={TextEditor}
+                                                    description={user.description}
+                                                    handleChangeDescription={(description: string) =>
+                                                        handleDescriptionChange(description, formik)
+                                                    }
                                                     className={`${
                                                         formik.errors.description && formik.touched.description
                                                             ? "border-error"
                                                             : ""
                                                     } flex-1 w-full rounded-md border border-[#e0e0e0] py-4 px-4  outline-none focus:shadow-md1`}
                                                 />
-                                                <ErrorMessage
-                                                    name="description"
-                                                    component="span"
-                                                    className="text-[14px] text-error font-medium"
-                                                />
                                             </div>
-                                            <div className="flex justify-end">
+                                            <div className="flex justify-end mt-15">
                                                 <button
                                                     className="text-white btn btn-info text-lg hover:bg-lightblue/80"
                                                     type="submit"
                                                 >
-                                                    Save
+                                                    Lưu
                                                 </button>
                                                 <button
                                                     className="btn ml-2 btn-error text-white text-lg hover:bg-red-500"
                                                     onClick={handleLogout}
                                                 >
-                                                    Logout
+                                                    Đăng xuất
                                                 </button>
                                             </div>
                                         </div>

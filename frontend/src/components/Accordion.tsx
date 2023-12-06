@@ -6,9 +6,10 @@ import EditSectionIcon from "../assets/icons/EditSectionIcon";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { PlayIcon, BookOpenIcon } from "@heroicons/react/24/outline";
-
+import { secondsToMinutesAndSeconds } from "../utils/helper";
 import { Course } from "../types/course";
 import { lessonActions } from "../redux/slices";
+import { Lesson } from "../types/lesson";
 // import { orderLesson } from "../types/lesson";
 type AccordionType = {
     section: Section;
@@ -17,8 +18,8 @@ type AccordionType = {
     handleDeleteSection?: (id: number) => void;
     handleDisplayDeleteModal?: (id: number, isDeleteSection: boolean) => void;
     handleDisplayEditModal?: (id: number, title: string) => void;
-    handleDisplayEditLesson?: (id: number, title: string, video: string) => void;
-    handleChangeSourceVideo?: (source: string) => void;
+    handleDisplayEditLesson?: (id: number, title: string, video: string, duration: string, description: string) => void;
+    handleChangeLesson?: (lesson: Lesson) => void;
     redirectToWatchVideo?: boolean;
     source?: string;
     disable: boolean;
@@ -102,32 +103,42 @@ const Accordion: React.FC<AccordionType> = (props) => {
                 props.section.Lesson &&
                 props.section.Lesson.map((lesson, index) => (
                     <div
-                        className={`py-4 pl-8 pr-4 border border-black/25 rounded-lg my-2 hover:cursor-pointer flex justify-between  ${
+                        className={`py-4 pl-8 pr-4 border border-black/25 rounded-lg my-2 hover:cursor-pointer hover:bg-footer flex justify-between  ${
                             lesson.url_video === props.source ? "bg-footer" : ""
                         }`}
                         onClick={() => {
-                            if (props.handleChangeSourceVideo) {
-                                console.log("url video", lesson.url_video);
-                                props.handleChangeSourceVideo(lesson.url_video);
+                            if (props.handleChangeLesson) {
+                                props.handleChangeLesson(lesson);
                             }
                             if (props.redirectToWatchVideo) {
-                                dispatch(lessonActions.setNowUrlVideo(lesson.url_video));
+                                dispatch(lessonActions.setLesson(lesson));
                                 navigate(`/course-detail/${courseDetail.slug}/watch`);
                             }
                         }}
                         key={`${lesson.id}`}
                     >
                         {" "}
-                        <p className="flex items-center gap-2">
-                            <PlayIcon className="w-4 h-4" /> {lesson.title}
-                        </p>
+                        <div className="flex items-center justify-between w-full mr-2">
+                            <div className="flex items-center gap-2">
+                                <PlayIcon className="w-4 h-4 shrink-0" /> <p>{lesson.title}</p>
+                            </div>
+                            <div>
+                                <p>{secondsToMinutesAndSeconds(Number(lesson.duration))}</p>
+                            </div>
+                        </div>
                         {props.isDisplayBtn && (
                             <div className="flex gap-2">
                                 <div
                                     className="cursor-pointer"
                                     onClick={() => {
                                         if (props.handleDisplayEditLesson) {
-                                            props.handleDisplayEditLesson(lesson.id, lesson.title, lesson.url_video);
+                                            props.handleDisplayEditLesson(
+                                                lesson.id,
+                                                lesson.title,
+                                                lesson.url_video,
+                                                lesson.duration,
+                                                lesson.description,
+                                            );
                                         }
                                     }}
                                 >

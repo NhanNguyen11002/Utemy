@@ -40,7 +40,7 @@ const ChangePassword: React.FC = () => {
         <div className="container mx-auto">
             <div className="flex items-center justify-center mt-[100px] py-10">
                 <div className="bg-footer m-4 rounded-xl shadow-lg p-4">
-                    <h1 className="font-bold text-[32px] text-center text-title">CHANGE PASSWORD</h1>
+                    <h1 className="font-bold text-[32px] text-center text-title">ĐỔI MẬT KHẨU</h1>
                     <Formik
                         initialValues={initialValue}
                         validationSchema={changePasswordValidationSchema}
@@ -51,7 +51,7 @@ const ChangePassword: React.FC = () => {
                             <form onSubmit={formik.handleSubmit}>
                                 <div className="flex flex-col mb-3">
                                     <label htmlFor="current_password" className="text-sm mb-1 tablet:text-xl">
-                                        Current Password
+                                        Mật khẩu hiện tại
                                     </label>
                                     <Field
                                         type="password"
@@ -70,7 +70,7 @@ const ChangePassword: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col mb-3">
                                     <label htmlFor="new_password" className="text-sm mb-1 tablet:text-xl">
-                                        New Password
+                                        Mật khẩu mới
                                     </label>
                                     <Field
                                         type="password"
@@ -87,7 +87,7 @@ const ChangePassword: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col mb-3">
                                     <label htmlFor="confirm_password" className="text-sm mb-1 tablet:text-xl">
-                                        Confirm Password
+                                        Nhập lại mật khẩu mới
                                     </label>
                                     <Field
                                         type="password"
@@ -112,11 +112,11 @@ const ChangePassword: React.FC = () => {
                                         disabled={isLoading}
                                     >
                                         {isLoading && <span className="loading loading-spinner"></span>}
-                                        {isLoading ? "Loading..." : "Save"}
+                                        {isLoading ? "Loading..." : "Lưu"}
                                     </button>
                                     <Link to={"/"}>
                                         <button type="submit" className="btn text-lg ml-2" disabled={isLoading}>
-                                            Cancel
+                                            Hủy
                                         </button>
                                     </Link>
                                 </div>

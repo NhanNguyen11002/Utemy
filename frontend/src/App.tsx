@@ -40,6 +40,7 @@ import AuthorProfile from "./pages/AuthorProfile";
 import AdminLayout from "./layout/adminAppLayout";
 import Feedback from "./pages/Feedback";
 import HistoryTransaction from "./pages/HistoryTransaction";
+import UserWatchVideoLayout from "./layout/userWatchVideoLayout";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -94,6 +95,9 @@ function App() {
                                 <Route path="history-transaction" element={<HistoryTransaction />}></Route>
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
+                        </Route>
+                        <Route path="course-detail/:slug/watch" element={<UserWatchVideoLayout />}>
+                            <Route index element={<WatchVideo />}></Route>
                         </Route>
                     </Routes>
                 </div>

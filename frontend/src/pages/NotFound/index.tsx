@@ -4,11 +4,6 @@ import { Link } from "react-router-dom";
 const NotFound: React.FC = () => {
     return (
         <>
-            {/* <div className="h-[calc(100vh-100px)] flex items-center flex-col space-y-[10px] justify-center">
-                <h1 className="text-4xl text-error">404 NOT FOUND</h1>
-                Back to Home
-            </div> */}
-
             <div className="bg-gray-100 h-[calc(80vh-100px)] flex items-center flex-col mt-[100px] space-y-[10px] ">
                 <center className="mt-24 m-auto">
                     <svg
@@ -98,14 +93,16 @@ const NotFound: React.FC = () => {
                         <span className="text-gray-500 text-6xl block">
                             <span>4 0 4</span>
                         </span>
-                        <span className="text-gray-500 text-xl">Sorry, We couldn't find what you are looking for!</span>
+                        <span className="text-gray-500 text-xl">
+                            Xin lỗi. Nội dung bạn đang tìm có thể không tồn tại
+                        </span>
                     </div>
                     <div className="mt-6">
                         <Link
                             to={"/"}
-                            className="text-gray-500 font-mono text-xl bg-gray-200 p-3 rounded-md hover:shadow-md"
+                            className="text-gray-500 font-mono text-xl bg-gray-200 p-3 rounded-md hover:cursor-pointer hover:underline hover:shadow-md"
                         >
-                            Homepage
+                            Trở về trang chủ
                         </Link>
                     </div>
                 </center>

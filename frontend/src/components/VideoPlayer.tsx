@@ -64,7 +64,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     }, [props.sourse]);
 
     return (
-        <div className="max-w-[900px] flex-1 shrink-0">
+        <div className="w-full flex-1 shrink-0">
             <video className="w-full h-[480px]" ref={videoRef} controls={true}></video>
         </div>
     );

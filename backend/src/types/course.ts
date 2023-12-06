@@ -1,5 +1,6 @@
 import { Author } from "./user";
 import { Section } from "./section";
+import { Prisma } from "@prisma/client";
 export type CourseDetail = {
     course_id: number;
     title: string;
@@ -21,6 +22,9 @@ export type CourseDetail = {
     price: number;
     sale_price: number | null;
     sale_until: Date | null;
+    updated_at?: Date | string | null;
+    requirement?: Prisma.JsonValue;
+    study?: Prisma.JsonValue;
 };
 
 export type CourseInfo = {
@@ -67,6 +71,8 @@ export type OutstandingCourse = {
     updated_at: Date;
     status: boolean;
     average_rating: number;
+    number_of_enrolled?: number;
+    number_of_rating?: number;
 };
 
 export type CourseCard = {

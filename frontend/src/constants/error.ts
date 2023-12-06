@@ -116,6 +116,7 @@ const error = {
     ERROR_CATEGORY_IMAGE_REQUIRED: "Category image is required",
     ERROR_TITLE_STRING: "Title must be string",
     ERROR_TITLE_REQUIRED: "Title is required",
+    ERROR_DURATION_REQUIRED: "Duration is required",
     ERROR_TITLE_MAX: "Title must be under 50 chars",
     ERROR_CATEGORY_ALREADY_EXISTS: "Category is already existed",
 

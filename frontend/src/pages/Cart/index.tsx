@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
 import { cartActions, invoiceActions } from "../../redux/slices";
 import { toast } from "react-hot-toast";
+import { AcademicCapIcon } from "@heroicons/react/24/outline";
 
 const getPercentDiscount = (subTotal: number, subTotalRetail: number) => {
     return Math.ceil((subTotal / subTotalRetail) * 100);
@@ -56,15 +57,17 @@ const Cart: React.FC = () => {
         dispatch(cartActions.getAllCart());
         // dispatch(cartAction.getAllCoupon());
     }, [dispatch]);
+    let count = 0;
     return (
         <>
             <div className="hidden  w-full h-[80px] bg-background mt-[100px] laptop:flex"></div>
             <div className=" flex flex-col laptop:flex-row ">
                 <div className="w-full flex flex-col  h-fit gap-4 ">
                     <div className="w-full flex flex-col  h-fit gap-4 p-4 ">
-                        <p className="text-black font-OpenSans text-2xl">My cart</p>
+                        <p className="text-black font-OpenSans text-2xl">Giỏ hàng của tôi</p>
                         {carts.cart_items.map((cartItem) => {
-                            if (!cartItem.saved_for_later)
+                            if (!cartItem.saved_for_later) {
+                                count += 1;
                                 return (
                                     <InCartCourse
                                         cartItem={cartItem}
@@ -72,18 +75,26 @@ const Cart: React.FC = () => {
                                         handleRemoveFromCart={handleRemoveFromCart}
                                     />
                                 );
+                            }
                         })}
                         {carts.cart_items.length === 0 && (
-                            <p className="text-black font-OpenSans text-2xl">
-                                So empty, let's add some course into your cart
-                            </p>
+                            <div className="gap-2 flex items-center">
+                                <AcademicCapIcon className="w-6 h-6" />
+                                <p className="text-black font-OpenSans font-bold text-2xl">
+                                    <a href="/all-courses" className="hover:cursor-pointer underline text-lightblue">
+                                        Thêm một vài khóa học
+                                    </a>{" "}
+                                    vào giỏ hàng và bắt đầu hành trình chinh phục tri thức
+                                </p>
+                                <AcademicCapIcon className="w-6 h-6" />
+                            </div>
                         )}
                     </div>
 
                     <div className="w-full flex flex-col h-fit gap-4 p-4">
                         {carts.cart_items.some((cartItem) => cartItem.saved_for_later) && (
                             <>
-                                <p className="text-black font-OpenSans text-2xl">Saved for later</p>
+                                <p className="text-black font-OpenSans text-2xl">Để dành sau</p>
                                 {carts.cart_items.map((cartItem) => {
                                     if (cartItem.saved_for_later) {
                                         return (
@@ -102,10 +113,10 @@ const Cart: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col w-full md:w-2/3 h-fit gap-4 p-4">
-                    <p className="text-black font-OpenSans text-2xl">Purchase Resume</p>
+                    <p className="text-black font-OpenSans text-2xl">Tổng kết đơn hàng</p>
                     <div className="flex flex-col p-4 gap-4 text-lg font-semibold shadow-md border rounded-sm">
                         <div className="flex flex-row justify-between">
-                            <p className="text-gray-600">Subtotal (2 Items)</p>
+                            <p className="text-gray-600">Tạm tính ({count} khóa học)</p>
                             {subTotal < subTotalRetail ? (
                                 <div>
                                     <p className="text-end text-lightblue text-2xl font-bold">
@@ -115,7 +126,7 @@ const Cart: React.FC = () => {
                                         </span>
                                     </p>
                                     <p className="text-gray-600 text-sm font-normal text-end">
-                                        {getPercentDiscount(subTotal, subTotalRetail)}% off
+                                        {getPercentDiscount(subTotal, subTotalRetail)}% giảm
                                     </p>
                                 </div>
                             ) : (
@@ -128,18 +139,18 @@ const Cart: React.FC = () => {
                         </div>
 
                         <div className="flex flex-row items-center justify-between">
-                            <p className="text-gray-600">Discount Coupon</p>
+                            <p className="text-gray-600">Mã giảm giá</p>
                             <input
                                 type="text"
                                 onChange={(e) => {
                                     getDiscount(e.target.value);
                                 }}
-                                placeholder="Optional..."
+                                placeholder="Tùy chọn..."
                                 className="input input-bordered input-info input-md w-full max-w-xs"
                             />
                         </div>
                         <div className="flex flex-row justify-between">
-                            <p className="text-gray-600 text-3xl font-bold">Total</p>
+                            <p className="text-gray-600 text-3xl font-bold">Tổng cộng</p>
                             <div>
                                 <p className="text-end text-lightblue text-3xl font-bold">
                                     đ
@@ -155,14 +166,14 @@ const Cart: React.FC = () => {
                                 onClick={handleCheckout}
                                 aria-disabled={isGetLoading}
                             >
-                                <span>{isGetLoading ? "LOADING..." : "CHECKOUT"}</span>
+                                <span>{isGetLoading ? "LOADING..." : "THANH TOÁN"}</span>
                             </button>
                             <Link
                                 className="transition-colors text-center text-sm bg-white border hover:text-white hover:bg-gray-600 border-gray-600  p-2 rounded-sm w-full text-gray-700 text-hover shadow-md"
-                                to="/"
+                                to="/all-courses"
                                 aria-disabled={isGetLoading}
                             >
-                                <span>ADD MORE PRODUCTS</span>
+                                <span>QUAY LẠI DANH SÁCH KHÓA HỌC</span>
                             </Link>
                         </div>
                     </div>

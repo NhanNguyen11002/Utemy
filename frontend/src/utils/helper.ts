@@ -1,3 +1,5 @@
+import { Course } from "../types/course";
+
 export const previewImage = (image: File | null, imageRef: React.RefObject<HTMLImageElement>, imageSource?: string) => {
     if (image && image.type.includes("image/")) {
         var reader = new FileReader();
@@ -26,6 +28,11 @@ export const convertDateFormat = (inputDate: string) => {
     const formattedDate = `${day}/${month}/${year}`;
 
     return formattedDate;
+};
+
+export const convertStringDate = (date: string) => {
+    const array = date.split(" ");
+    return array[1] + " " + array[2] + " " + array[3];
 };
 
 export const eveluateList = [
@@ -70,4 +77,41 @@ export const calDayRemains = (date: string) => {
     const gap = target - now;
     const dayRemains = Math.floor(gap / (1000 * 60 * 60 * 24));
     return dayRemains;
+};
+
+const convertSecondToHour = (duration: number) => {
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const remainingSeconds = duration % 60;
+
+    const formattedHours = hours.toString().padStart(2, "0");
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+};
+export const getCourseIncludes = (course: Course) => {
+    let durationRaw = 0;
+    let lessonCount = 0;
+    course.sections?.forEach((section) => {
+        section.Lesson?.forEach((lesson) => {
+            lessonCount += 1;
+            durationRaw += Number(lesson.duration);
+        });
+    });
+    const temp = {
+        duration: convertSecondToHour(durationRaw),
+        lessonCount,
+    };
+    return temp;
+};
+
+export const secondsToMinutesAndSeconds = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+
+    return `${formattedMinutes}:${formattedSeconds}`;
 };

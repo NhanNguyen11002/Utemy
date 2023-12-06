@@ -29,6 +29,7 @@ module.exports = {
             },
             backgroundImage: {
                 utemy: "url('/src/assets/images/utemy_logo_notext.png')",
+                elearn: "url('/src/assets/images/free1.jpg')",
             },
         },
     },

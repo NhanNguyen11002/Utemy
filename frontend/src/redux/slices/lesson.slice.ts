@@ -3,7 +3,6 @@ import { Lesson } from "../../types/lesson";
 import { Response } from "../../types/response";
 import apis from "../../api";
 type LessonSliceType = {
-    nowUrlVideo: string;
     isLoading: boolean;
     lesson: Lesson;
 };
@@ -53,12 +52,14 @@ export const deleteLesson = createAsyncThunk<Response<null>, number, { rejectVal
     },
 );
 const initialState: LessonSliceType = {
-    nowUrlVideo: "",
+    // nowUrlVideo: "",
     isLoading: false,
     lesson: {
         id: 0,
         title: "",
         url_video: "",
+        duration: "",
+        description: "",
     },
 };
 
@@ -66,9 +67,8 @@ export const lessonSlice = createSlice({
     name: "lesson",
     initialState,
     reducers: {
-        setNowUrlVideo: (state, action) => {
-            console.log("trong slice", action.payload);
-            state.nowUrlVideo = action.payload as string;
+        setLesson: (state, action) => {
+            state.lesson = action.payload as Lesson;
         },
     },
     extraReducers: (builder) => {
@@ -77,7 +77,6 @@ export const lessonSlice = createSlice({
         });
         builder.addCase(getLessonById.fulfilled, (state, action) => {
             state.lesson = action.payload.data as Lesson;
-            state.nowUrlVideo = action.payload.data?.url_video as string;
             state.isLoading = false;
         });
         builder.addCase(getLessonById.rejected, (state) => {
@@ -86,6 +85,6 @@ export const lessonSlice = createSlice({
     },
 });
 
-export const { setNowUrlVideo } = lessonSlice.actions;
+export const { setLesson } = lessonSlice.actions;
 
 export default lessonSlice.reducer;

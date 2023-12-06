@@ -27,13 +27,13 @@ const InCartCourse: React.FC<CartCourseProps> = (props) => {
                         <div className="flex flex-col gap-1">
                             <p className="text-2xl text-lightblue font-bold">{course.title}</p>
                             <p className="text-xs text-gray-600 font-semibold">
-                                Author:{" "}
+                                Tác giả:{" "}
                                 <span className="font-normal">
                                     {course.author?.first_name} {course.author?.last_name}
                                 </span>
                             </p>
                             <p className="text-xs text-gray-600 font-semibold">
-                                Rating: <span className="font-normal">{course.average_rating} </span>
+                                Đánh giá: <span className="font-normal">{course.average_rating} </span>
                                 <TotalRating
                                     ratingId={course.course_id}
                                     totalScore={course.average_rating}
@@ -49,13 +49,13 @@ const InCartCourse: React.FC<CartCourseProps> = (props) => {
                                 className="w-full hover:underline hover:cursor-pointer hover:opacity-75"
                                 onClick={() => props.handleRemoveFromCart(cartDetailId)}
                             >
-                                Remove
+                                Xóa
                             </span>
                             <span
                                 onClick={() => props.handleChangeSaveForLater(cartDetailId)}
                                 className="w-full hover:underline hover:cursor-pointer hover:opacity-75"
                             >
-                                Save for later
+                                Để dành sau
                             </span>
                             <span></span>
                         </div>

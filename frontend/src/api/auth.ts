@@ -69,7 +69,22 @@ const verifyEmail = async (token: string) => {
     const path = `auth/verify/${token}`;
 
     const response = await apiCaller("GET", path);
-    console.log(response);
+    return response;
+};
+const resendForgotPasswordEmail = async (email: string) => {
+    const path = `auth/mail/forgot`;
+    const data = {
+        email,
+    };
+    const response = await apiCaller("POST", path, data);
+    return response;
+};
+const resendVerifyEmail = async (email: string) => {
+    const path = `auth/mail/verify`;
+    const data = {
+        email,
+    };
+    const response = await apiCaller("POST", path, data);
     return response;
 };
 const authApis = {
@@ -81,6 +96,8 @@ const authApis = {
     resetPassword,
     changePassword,
     verifyEmail,
+    resendForgotPasswordEmail,
+    resendVerifyEmail,
 };
 
 export default authApis;

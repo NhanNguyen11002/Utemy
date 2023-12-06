@@ -7,9 +7,9 @@ type TotalRatingProps = {
 const TotalRating: React.FC<TotalRatingProps> = (props) => {
     const score = props.totalScore;
     const isForCourse = props.isForCourse;
-    const ratingName = isForCourse ? "rating-total" : `rating-comment-${props.ratingId}`;
+    const ratingName = isForCourse ? `rating-total-${props.ratingId}` : `rating-comment-${props.ratingId}`;
     return (
-        <div className={`  rating ${isForCourse ? "rating-lg" : "rating-xs"} rating-half hover:cursor-default  `}>
+        <div className={`  rating ${isForCourse ? "rating-m" : "rating-xs"} rating-half hover:cursor-default  `}>
             <input
                 id="0"
                 readOnly

@@ -30,6 +30,7 @@ const Login: FC = () => {
     };
 
     const handleOnSubmit: (values: LoginType) => void = (values: LoginType) => {
+        dispatch(authActions.setEmail(values.email));
         dispatch(authActions.login(values)).then((response: any) => {
             if (response.payload.status_code === 200) {
                 if (response.payload.message === constants.success.SUCCESS_CHECK_MAIL) {
@@ -60,7 +61,7 @@ const Login: FC = () => {
                             {(formik) => (
                                 <Form className="p-4 " onSubmit={formik.handleSubmit}>
                                     <h1 className="font-bold text-[32px] text-lightblue font-Roboto text-center text-title">
-                                        LOGIN TO UTEMY
+                                        Đăng nhập
                                     </h1>
                                     <form className="">
                                         <div className="flex flex-col mb-3">
@@ -83,7 +84,7 @@ const Login: FC = () => {
                                         </div>
                                         <div className="flex flex-col mb-3">
                                             <label htmlFor="password" className="text-sm mb-1 tablet:text-xl">
-                                                Password
+                                                Mật khẩu
                                             </label>
                                             <Field
                                                 id="password"
@@ -108,16 +109,16 @@ const Login: FC = () => {
                                         disabled={isLoading}
                                     >
                                         {isLoading && <span className="loading loading-spinner"></span>}
-                                        {isLoading ? "Loading..." : "LOGIN"}
+                                        {isLoading ? "Loading..." : "Đăng nhập"}
                                     </button>
                                     <p className="block mt-3 mb-2 text-center text-lg">
-                                        Don't have an account?{" "}
+                                        Bạn chưa có tài khoản?{" "}
                                         <span className="font-medium hover:opacity-80">
-                                            <Link to={"/signup"}>Signup</Link>
+                                            <Link to={"/signup"}>Đăng ký</Link>
                                         </span>
                                     </p>
                                     <span className="block mt-3 mb-2 text-center font-medium text-lg hover:opacity-80">
-                                        <Link to={"/forgot-password"}>Forgot Password?</Link>
+                                        <Link to={"/forgot-password"}>Quên mật khẩu?</Link>
                                     </span>
                                 </Form>
                             )}

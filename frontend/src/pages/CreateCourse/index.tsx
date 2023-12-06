@@ -9,7 +9,7 @@ import slugify from "slugify";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Navbar, CustomeSelect } from "../../components";
+import { Navbar, CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
 import { previewImage } from "../../utils/helper";
 
 type CategoriesOptions = {
@@ -39,6 +39,8 @@ const customStyles = {
 const CreateCourse: FC = () => {
     const dispatch = useAppDispatch();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
+    const [study, setStudy] = useState([]);
+    const [requirement, setRequirement] = useState([]);
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const categories: Category[] = useAppSelector((state) => state.categorySlice.categories) ?? [];
     const formikRef = useRef(null);
@@ -48,11 +50,11 @@ const CreateCourse: FC = () => {
     const statusOptions = [
         {
             value: true,
-            label: "Completed",
+            label: "Hoàn thành",
         },
         {
             value: false,
-            label: "Incompleted",
+            label: "Đang cập nhật",
         },
     ];
     useEffect(() => {
@@ -94,12 +96,14 @@ const CreateCourse: FC = () => {
         const formData = new FormData();
         formData.append("title", values.title);
         formData.append("slug", slug);
-        formData.append("description", values.description);
         formData.append("summary", values.summary);
         formData.append("status", values.status.toString());
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
+        formData.append("description", values.description);
+        formData.append("study", JSON.stringify(study));
+        formData.append("requirement", JSON.stringify(requirement));
         dispatch(courseActions.createCourses(formData)).then((createCourseResponse: any) => {
             if (createCourseResponse.payload && createCourseResponse.payload.status_code === 201) {
                 toast.success(createCourseResponse.payload.message);
@@ -128,12 +132,20 @@ const CreateCourse: FC = () => {
         const thumbnail = event.currentTarget.files![0];
         previewImage(thumbnail, imageRef);
     };
-
+    const handleDescriptionChange = (description: string, formik: any) => {
+        formik.setFieldValue("description", description);
+    };
+    const handleSubmitStudy = (study: any) => {
+        setStudy(study);
+    };
+    const handleSubmitRequirement = (requirement: any) => {
+        setRequirement(requirement);
+    };
     return (
         <>
             <Navbar />
             <div className="min-h-screen h-full px-4 tablet:px-[60px] mt-[100px] laptop:mt-0">
-                <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">CREATE COURSE</h1>
+                <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">Tạo khóa học mới</h1>
                 <div className="w-full flex justify-center items-center shrink-0">
                     <div className="m-4 rounded-xl border border-black w-full max-w-[982px] bg-background">
                         <Formik
@@ -153,8 +165,8 @@ const CreateCourse: FC = () => {
                                             />
                                             <div className="flex flex-col gap-3">
                                                 <div className="">
-                                                    <p className="text-lg font-medium">Upload thumbnail</p>
-                                                    <p className="italic">Size of the image is less than 4MB</p>
+                                                    <p className="text-lg font-medium">Chọn ảnh bìa</p>
+                                                    <p className="italic">Kích thước ảnh nhỏ hơn hoặc bằng 4mb</p>
                                                 </div>
                                                 <Field
                                                     name="thumbnail"
@@ -179,132 +191,131 @@ const CreateCourse: FC = () => {
                                         </div>
                                     </div>
                                     <div className="flex flex-row gap-4 my-3">
-                                        <div className="flex-1 flex flex-col gap-3">
-                                            <div className="flex flex-col">
-                                                <label
-                                                    htmlFor="title"
-                                                    className="text-sm mb-1 font-medium tablet:text-xl"
-                                                >
-                                                    Title
-                                                </label>
-                                                <Field
-                                                    type="text"
-                                                    name="title"
-                                                    className={`${
-                                                        formik.errors.title && formik.touched.title
-                                                            ? "border-error"
-                                                            : ""
-                                                    } px-2 py-4 rounded-lg border-[1px] outline-none max-w-lg`}
-                                                />
-                                                <ErrorMessage
-                                                    name="title"
-                                                    component="span"
-                                                    className="text-[14px] text-error font-medium"
-                                                />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <label
-                                                    htmlFor="price"
-                                                    className="text-sm mb-1 font-medium tablet:text-xl"
-                                                >
-                                                    Price
-                                                </label>
-                                                <Field
-                                                    type="text"
-                                                    name="price"
-                                                    className={`${
-                                                        formik.errors.price && formik.touched.price
-                                                            ? "border-error"
-                                                            : ""
-                                                    } px-2 py-4 rounded-lg border-[1px] outline-none max-w-lg`}
-                                                />
-                                                <ErrorMessage
-                                                    name="price"
-                                                    component="span"
-                                                    className="text-[14px] text-error font-medium"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label
-                                                    htmlFor="title"
-                                                    className="text-sm mb-1 font-medium tablet:text-xl"
-                                                >
-                                                    Categories
-                                                </label>
-                                                <div
-                                                    className={`${
-                                                        formik.errors.categories && formik.touched.categories
-                                                            ? "border-error"
-                                                            : ""
-                                                    } border-[1px] rounded-md`}
-                                                >
+                                        <div className="flex-1 flex gap-3 items-center">
+                                            <div className="flex flex-col w-1/2">
+                                                <div className="flex flex-col">
+                                                    <label
+                                                        htmlFor="title"
+                                                        className="text-sm mb-1 font-medium tablet:text-xl"
+                                                    >
+                                                        Tên khóa học
+                                                    </label>
                                                     <Field
-                                                        name="categories"
-                                                        component={CustomeSelect}
-                                                        handleOnchange={(e: any) => handleChangeCategories(e, formik)}
-                                                        options={categoriesOptions}
-                                                        isMulti={true}
-                                                        defautlValues={""}
-                                                        styles={customStyles}
+                                                        type="text"
+                                                        name="title"
+                                                        className={`${
+                                                            formik.errors.title && formik.touched.title
+                                                                ? "border-error"
+                                                                : ""
+                                                        } px-2 py-4 rounded-lg border-[1px] outline-none max-w-lg`}
+                                                    />
+                                                    <ErrorMessage
+                                                        name="title"
+                                                        component="span"
+                                                        className="text-[14px] text-error font-medium"
                                                     />
                                                 </div>
-                                                <ErrorMessage
-                                                    name="categories"
-                                                    component="span"
-                                                    className="text-[14px] text-error font-medium"
-                                                />
+                                                <div className="flex flex-col">
+                                                    <label
+                                                        htmlFor="price"
+                                                        className="text-sm mb-1 font-medium tablet:text-xl"
+                                                    >
+                                                        Giá
+                                                    </label>
+                                                    <Field
+                                                        type="text"
+                                                        name="price"
+                                                        className={`${
+                                                            formik.errors.price && formik.touched.price
+                                                                ? "border-error"
+                                                                : ""
+                                                        } px-2 py-4 rounded-lg border-[1px] outline-none max-w-lg`}
+                                                    />
+                                                    <ErrorMessage
+                                                        name="price"
+                                                        component="span"
+                                                        className="text-[14px] text-error font-medium"
+                                                    />
+                                                </div>
+                                                <div className="w-full flex justify-between mt-3 items-center">
+                                                    <label className="text-sm mb-1 font-medium tablet:text-xl">
+                                                        Tổng quan khóa học
+                                                    </label>
+                                                    <StudyPopup study={study} handleSubmit={handleSubmitStudy} />
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label
-                                                    htmlFor="title"
-                                                    className="text-sm mb-1 font-medium tablet:text-xl"
-                                                >
-                                                    Status
-                                                </label>
-                                                <Field
-                                                    className="custom-select"
-                                                    name="status"
-                                                    component={CustomeSelect}
-                                                    handleOnchange={(e: any) => handleChangeStatus(e, formik)}
-                                                    options={statusOptions}
-                                                    isMulti={false}
-                                                    placeholder="Incompleted"
-                                                    styles={customStyles}
-                                                />
-                                                <ErrorMessage
-                                                    name="status"
-                                                    component="span"
-                                                    className="text-[14px] text-error font-medium"
-                                                />
+                                            <div className="flex flex-col w-1/2">
+                                                <div>
+                                                    <label
+                                                        htmlFor="category"
+                                                        className="text-sm mb-1 font-medium tablet:text-xl"
+                                                    >
+                                                        Danh mục
+                                                    </label>
+                                                    <div
+                                                        className={`${
+                                                            formik.errors.categories && formik.touched.categories
+                                                                ? "border-error"
+                                                                : ""
+                                                        } border-[1px] rounded-md`}
+                                                    >
+                                                        <Field
+                                                            name="categories"
+                                                            component={CustomeSelect}
+                                                            handleOnchange={(e: any) =>
+                                                                handleChangeCategories(e, formik)
+                                                            }
+                                                            placeholder={"Chọn danh mục"}
+                                                            options={categoriesOptions}
+                                                            isMulti={true}
+                                                            defautlValues={""}
+                                                            styles={customStyles}
+                                                        />
+                                                    </div>
+                                                    <ErrorMessage
+                                                        name="categories"
+                                                        component="span"
+                                                        className="text-[14px] text-error font-medium"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        htmlFor="title"
+                                                        className="text-sm mb-1 font-medium tablet:text-xl"
+                                                    >
+                                                        Trạng thái
+                                                    </label>
+                                                    <Field
+                                                        className="custom-select"
+                                                        name="status"
+                                                        component={CustomeSelect}
+                                                        handleOnchange={(e: any) => handleChangeStatus(e, formik)}
+                                                        options={statusOptions}
+                                                        isMulti={false}
+                                                        placeholder="Đang cập nhật"
+                                                        styles={customStyles}
+                                                    />
+                                                    <ErrorMessage
+                                                        name="status"
+                                                        component="span"
+                                                        className="text-[14px] text-error font-medium"
+                                                    />
+                                                </div>
+                                                <div className="w-full flex justify-between mt-3 items-center">
+                                                    <label className="text-sm mb-1 font-medium tablet:text-xl">
+                                                        Yêu cầu khóa học
+                                                    </label>
+                                                    <RequirementPopup
+                                                        requirement={requirement}
+                                                        handleSubmit={handleSubmitRequirement}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="flex-1 flex flex-col">
-                                            <label
-                                                htmlFor="description"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
-                                            >
-                                                Description
-                                            </label>
-                                            <Field
-                                                as="textarea"
-                                                name="description"
-                                                placeholder="Description about your course..."
-                                                className={`${
-                                                    formik.errors.description && formik.touched.description
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
-                                            />
-                                            <ErrorMessage
-                                                name="description"
-                                                component="span"
-                                                className="text-[14px] text-error font-medium"
-                                            />
                                         </div>
                                     </div>
-                                    <div className="sumary mt-4">
+                                    <div className="sumary mt-4 w-full">
                                         <label htmlFor="summary" className="text-sm mb-1 font-medium tablet:text-xl">
-                                            Summary
+                                            Tóm tắt
                                         </label>
                                         <Field
                                             type="text"
@@ -319,6 +330,32 @@ const CreateCourse: FC = () => {
                                             className="text-[14px] text-error font-medium"
                                         />
                                     </div>
+                                    <div className="flex-1 flex flex-col w-full h-[300px]">
+                                        <label
+                                            htmlFor="description"
+                                            className="text-sm mb-1 font-medium tablet:text-xl"
+                                        >
+                                            Mô tả
+                                        </label>
+                                        <ErrorMessage
+                                            name="description"
+                                            component="span"
+                                            className="text-[14px] text-error font-medium"
+                                        />
+                                        <Field
+                                            as="textarea"
+                                            name="description"
+                                            component={TextEditor}
+                                            handleChangeDescription={(description: string) =>
+                                                handleDescriptionChange(description, formik)
+                                            }
+                                            className={`${
+                                                formik.errors.description && formik.touched.description
+                                                    ? "border-error"
+                                                    : ""
+                                            } flex-1 w-full  resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                        />
+                                    </div>
 
                                     <div className="py-[12px] flex justify-end">
                                         <button
@@ -327,7 +364,7 @@ const CreateCourse: FC = () => {
                                             className="text-white btn btn-info text-lg"
                                         >
                                             {isLoading ? <span className="loading loading-spinner"></span> : ""}
-                                            {isLoading ? "Loading..." : "Save"}
+                                            {isLoading ? "Loading..." : "Lưu"}
                                         </button>
                                         <button
                                             type="button"
@@ -337,7 +374,7 @@ const CreateCourse: FC = () => {
                                                 formik.resetForm(initialValues);
                                             }}
                                         >
-                                            <Link to={`/my-courses`}>Cancel</Link>
+                                            <Link to={`/my-courses`}>Hủy</Link>
                                         </button>
                                     </div>
                                 </form>

@@ -44,7 +44,7 @@ model Category {
 
 model Course {
   id                 Int       @id @default(autoincrement())
-  title              String    @unique @db.VarChar(100)
+  title              String    @db.VarChar(100)
   slug               String    @unique @db.VarChar(150)
   status             Boolean   @default(false)
   description        String    @db.Text
@@ -60,6 +60,8 @@ model Course {
   price              Float     @db.Float
   sale_price         Float?    @db.Float
   sale_until         DateTime?
+  study              Json?
+  requirement        Json?
 
   user User @relation(fields: [author_id], references: [id])
 
@@ -102,14 +104,16 @@ model Section {
 }
 
 model Lesson {
-  id         Int      @id @default(autoincrement())
-  title      String   @db.VarChar(100)
-  is_delete  Boolean  @default(false)
-  url_video  String   @db.Text
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  section_id Int
-  section    Section  @relation(fields: [section_id], references: [id], onDelete: Cascade)
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(100)
+  is_delete   Boolean  @default(false)
+  url_video   String   @db.Text
+  duration    String   @db.VarChar(45)
+  description String   @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  section_id  Int
+  section     Section  @relation(fields: [section_id], references: [id], onDelete: Cascade)
 }
 
 model Rating {
