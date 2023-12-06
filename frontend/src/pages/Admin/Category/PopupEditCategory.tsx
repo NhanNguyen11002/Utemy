@@ -78,7 +78,9 @@ const PopupEditCategory: React.FC<PopupEditCategoryProps> = (props) => {
                 <Toaster />
                 <div className="  max-w-[360px] tablet:max-w-[600px] max-h-[630px] tablet:max-h-[1000px] rounded-[12px] bg-background mx-auto tablet:mx-0 flex-1">
                     <div className="w-full p-[12px]">
-                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">EDIT CATEGORY</h1>
+                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">
+                            CHỈNH SỬA DANH MỤC
+                        </h1>
                         <Formik
                             initialValues={initialValues}
                             enableReinitialize //!@$@$$#^%
@@ -102,7 +104,7 @@ const PopupEditCategory: React.FC<PopupEditCategoryProps> = (props) => {
                                                         htmlFor="title"
                                                         className="text-sm mb-1 font-medium tablet:text-xl"
                                                     >
-                                                        Title
+                                                        Tiêu đề
                                                     </label>
                                                     <Field
                                                         type="text"
@@ -123,8 +125,8 @@ const PopupEditCategory: React.FC<PopupEditCategoryProps> = (props) => {
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="">
-                                                        <p className="text-lg font-medium">Upload Image</p>
-                                                        <p className="italic">Size of the image is less than 4MB</p>
+                                                        <p className="text-lg font-medium">Chọn hình ảnh</p>
+                                                        <p className="italic">Kích thước hình ảnh nhỏ hơn 4MB</p>
                                                     </div>
                                                     <Field
                                                         name="categoryImage"
@@ -153,7 +155,7 @@ const PopupEditCategory: React.FC<PopupEditCategoryProps> = (props) => {
                                                 htmlFor="description"
                                                 className="text-sm mb-1 font-medium tablet:text-xl"
                                             >
-                                                Description
+                                                Mô tả
                                             </label>
                                             <Field
                                                 as="textarea"
@@ -182,7 +184,7 @@ const PopupEditCategory: React.FC<PopupEditCategoryProps> = (props) => {
                                             className="text-white btn btn-info text-lg"
                                         >
                                             {isLoading ? <span className="loading loading-spinner"></span> : ""}
-                                            {isLoading || isGetLoading ? "Loading..." : "Save"}
+                                            {isLoading || isGetLoading ? "Loading..." : "Lưu"}
                                         </button>
                                         <button
                                             type="button"
@@ -193,7 +195,7 @@ const PopupEditCategory: React.FC<PopupEditCategoryProps> = (props) => {
                                                 // formik.resetForm(initialValues);
                                             }}
                                         >
-                                            Cancel
+                                            Hủy
                                         </button>
                                     </div>
                                 </form>

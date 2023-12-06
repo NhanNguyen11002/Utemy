@@ -1,6 +1,6 @@
 import React from "react";
 type TotalRatingProps = {
-    ratingId: number;
+    ratingId: number | string;
     totalScore: number;
     isForCourse: boolean;
 };

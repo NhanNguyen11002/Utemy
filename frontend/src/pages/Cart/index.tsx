@@ -120,9 +120,9 @@ const Cart: React.FC = () => {
                             {subTotal < subTotalRetail ? (
                                 <div>
                                     <p className="text-end text-lightblue text-2xl font-bold">
-                                        đ{subTotal.toLocaleString()}{" "}
+                                        {subTotal.toLocaleString()}đ{" "}
                                         <span className="text-gray-600 font-normal text-sm line-through">
-                                            đ{subTotalRetail.toLocaleString()}
+                                            {subTotalRetail.toLocaleString()}đ
                                         </span>
                                     </p>
                                     <p className="text-gray-600 text-sm font-normal text-end">
@@ -132,7 +132,7 @@ const Cart: React.FC = () => {
                             ) : (
                                 <div>
                                     <p className="text-end text-gray-600 text-2xl font-bold">
-                                        đ{subTotalRetail.toLocaleString()}
+                                        {subTotalRetail.toLocaleString()}đ
                                     </p>
                                 </div>
                             )}

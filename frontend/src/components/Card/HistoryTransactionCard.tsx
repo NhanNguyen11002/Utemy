@@ -92,7 +92,7 @@ const TransactionCard: React.FC<TransactionCardProps> = ({ historyTran }) => {
                                                         </td>
 
                                                         <td className="py-2 whitespace-nowrap">
-                                                            đ{item.paid_price.toLocaleString()}
+                                                            {item.paid_price.toLocaleString()}đ
                                                         </td>
                                                     </tr>
                                                 ))}

@@ -111,7 +111,7 @@ const CategoryAdmin = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
-                                    placeholder="Search category..."
+                                    placeholder="Từ khóa..."
                                     className="rounded-full py-4 px-10 w-full border-[1px] border-black"
                                     value={userInput}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
@@ -125,20 +125,20 @@ const CategoryAdmin = () => {
                             </div>
                         </div>
                         <button onClick={() => handleReset()} className="text-xl btn btn-outline font-w ">
-                            Reset
+                            Làm mới
                         </button>{" "}
                     </div>
                     <button
                         onClick={() => setIsOpenAddCategory(!isOpenAddCategory)}
                         className="relative btn-info btn btn-outline  text-xl font-w hover:text-white text-white"
                     >
-                        <span className="left-1/2 top-1/2 ">Add</span>{" "}
+                        <span className="left-1/2 top-1/2 ">Thêm</span>{" "}
                     </button>{" "}
                 </div>
                 {categories.length === 0 ? (
-                    <p className="mt-4 text-2xl text-error text-center font-bold">Such empty!!!</p>
+                    <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy danh mục</p>
                 ) : (
-                    <p className="mt-4 text-2xl text-center font-bold">There are {totalRecord} category(ies) </p>
+                    <p className="mt-4 text-2xl text-center font-bold">Có {totalRecord} danh mục được tìm thấy </p>
                 )}
                 <div className="flex-1  my-1  w-3/4 px-10 justify-start">
                     {categories.map((category, index) => {

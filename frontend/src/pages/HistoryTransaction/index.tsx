@@ -11,7 +11,6 @@ const HistoryTransaction = () => {
     const [searchMode, setSearchMode] = useState(false);
     const [searchResult, setSearchResult] = useState<any[]>([]); // Dữ liệu kết quả tìm kiếm
     const historyTrans = useAppSelector((state) => state.invoiceSlice.invoices);
-    console.log("data:", historyTrans);
     useEffect(() => {
         if (!searchMode) {
             // Gọi API với trang hiện tại khi không ở chế độ tìm kiếm

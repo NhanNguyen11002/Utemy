@@ -141,7 +141,7 @@ const UserAdmin = () => {
                                         className="text-black hover:bg-gray-400"
                                         onClick={() => setRole("All")}
                                     >
-                                        All
+                                        Tất cả
                                     </MenuItem>
                                     <MenuItem
                                         id="Admin"
@@ -184,10 +184,10 @@ const UserAdmin = () => {
                                     onClick={() => handleKeyWordSearch()}
                                     className="text-xl btn btn-info text-white hover:bg-lightblue/80 font-w "
                                 >
-                                    Search
+                                    Tìm kiếm
                                 </button>{" "}
                                 <button onClick={() => handleReset()} className="text-xl btn btn-outline font-w ">
-                                    Reset
+                                    Làm mới
                                 </button>{" "}
                             </div>
                         </div>
@@ -197,16 +197,21 @@ const UserAdmin = () => {
                         <table className="w-full min-w-[640px] table-auto">
                             <thead>
                                 <tr>
-                                    {["User", "Role", "Status", "Created at", "Actions"].map((el) => (
-                                        <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
-                                            <Typography
-                                                variant="small"
-                                                className="text-[11px] font-bold uppercase text-blue-gray-400"
+                                    {["Người dùng", "Loại tài khoản", "Trạng thái", "Ngày tạo", "Hành động"].map(
+                                        (header) => (
+                                            <th
+                                                key={header}
+                                                className="border-b border-blue-gray-50 py-3 px-5 text-left"
                                             >
-                                                {el}
-                                            </Typography>
-                                        </th>
-                                    ))}
+                                                <Typography
+                                                    variant="small"
+                                                    className="text-[11px] font-bold uppercase text-blue-gray-400"
+                                                >
+                                                    {header}
+                                                </Typography>
+                                            </th>
+                                        ),
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -263,7 +268,7 @@ const UserAdmin = () => {
                                                         user.is_delete ? "text-red-700" : "text-green-700"
                                                     }`}
                                                 >
-                                                    {user.is_delete ? "Deleted" : "Active"}
+                                                    {user.is_delete ? "Xóa" : "Hoạt động"}
                                                 </Typography>
                                             </td>
                                             <td className={className}>
@@ -290,7 +295,7 @@ const UserAdmin = () => {
                                                         onClick={() => handleOpenEditUserPopup(user)}
                                                         className="text-xs font-semibold hover:underline hover:cursor-pointer text-blue-gray-600"
                                                     >
-                                                        Edit
+                                                        Chỉnh sửa
                                                     </Typography>
                                                     {user.is_delete ? (
                                                         <Typography
@@ -298,7 +303,7 @@ const UserAdmin = () => {
                                                             onClick={() => handleOpenActiveModal(id)}
                                                             className="text-xs text-green-700 font-semibold hover:underline hover:cursor-pointer "
                                                         >
-                                                            Active
+                                                            Khôi phục
                                                         </Typography>
                                                     ) : (
                                                         <Typography
@@ -306,7 +311,7 @@ const UserAdmin = () => {
                                                             onClick={() => handleOpenDeleteModal(id)}
                                                             className="text-xs text-red-700 font-semibold hover:underline hover:cursor-pointer "
                                                         >
-                                                            Delete
+                                                            Xóa
                                                         </Typography>
                                                     )}
                                                 </td>

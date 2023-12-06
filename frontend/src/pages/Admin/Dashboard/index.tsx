@@ -39,8 +39,8 @@ export function Home() {
         {
             color: "gray",
             icon: BanknotesIcon,
-            title: "Total Money",
-            value: `đ${totalMoney?.toLocaleString() || 0}`,
+            title: "Tổng tiền",
+            value: `${totalMoney?.toLocaleString() || 0}đ`,
             footer: {
                 color: "text-green-500",
                 value: "+55%",
@@ -50,7 +50,7 @@ export function Home() {
         {
             color: "green",
             icon: UsersIcon,
-            title: "Total Users",
+            title: "Người dùng",
             value: totalUser || 0,
             footer: {
                 color: "text-green-500",
@@ -61,7 +61,7 @@ export function Home() {
         {
             color: "red",
             icon: BookOpenIcon,
-            title: "Total course",
+            title: "Khóa học",
             value: totalCourse || 0,
             footer: {
                 color: "text-green-500",
@@ -72,7 +72,7 @@ export function Home() {
         {
             color: "blue-gray",
             icon: DocumentCheckIcon,
-            title: "Total order",
+            title: "Giao dịch",
             value: totalInvoice || 0,
             footer: {
                 color: "text-green-500",
@@ -84,53 +84,53 @@ export function Home() {
 
     const statisticDonutData = {
         color: "white",
-        title: "Course count in each level of rating",
-        description: "Describe how many % of course on Utemy achieve this rating",
-        name: "Rating",
+        title: "Phần trăm khóa học đạt được mức đánh giá từ 1-5",
+        description: "Mô tả phần trăm số khóa học đạt được mức đánh giá từ 1-5 trên nền tảng",
+        name: "Điểm",
         data: ratingPercent.map((rating) => rating.percent),
         categories: ratingPercent.map((rating) => `${rating.title} star`),
-        footer: "Update by now",
+        footer: "Cập nhật ngay bây giờ",
     };
     const statisticLineData = {
         color: "white",
         colors: ["#775DD0"],
-        title: "Total money each month",
-        description: "Describe how much each month Utemy earns",
+        title: "Tổng doanh thu theo tháng",
+        description: "Mô tả doanh thu của nền tảng theo 12 tháng trong năm",
         name: "VNĐ",
         data: moneyByMonth.map((month) => month.total_money_month),
         categories: moneyByMonth.map((month) => month.month_label),
-        footer: "Update by now",
+        footer: "Cập nhật ngay bây giờ",
     };
     const statisticsChartsData = [
         {
             color: "white",
             colors: "#388e3c",
-            title: "Course count in category",
-            description: "Describe how many course exist in each category",
-            name: "Course",
+            title: "Mỗi danh mục có bao nhiêu khóa học",
+            description: "Mô tả số khóa học được tạo ra trên mỗi danh mục",
+            name: "Khóa học",
             data: categoryCourse.map((category) => category.course_count),
             categories: categoryCourse.map((category) => category.title),
-            footer: "Update by now",
+            footer: "Cập nhật ngay bây giờ",
         },
         {
             color: "white",
             colors: "#0288d1",
-            title: "Enrolls count in category",
-            description: "Describe number of enrolls in each category",
-            name: "Number of enrolled",
+            title: "Mỗi danh mục có bao nhiêu khóa học được đăng ký",
+            description: "Mô tả số khóa học được tạo ra trên mỗi danh mục và được đăng ký bởi học viên",
+            name: "Khóa học",
             data: categoryEnrolled.map((category) => category.total_enrolled),
             categories: categoryEnrolled.map((category) => category.title),
-            footer: "Update by now",
+            footer: "Cập nhật ngay bây giờ",
         },
         {
             color: "white",
             colors: "#FF6347",
-            title: "Total money count in category",
-            description: "Describe total money in each category",
+            title: "Tổng doanh thu chia theo danh mục",
+            description: "Mô tả tổng doanh thu từ các khóa học tạo ra trên mỗi danh mục",
             name: "VNĐ",
             data: categoryMoney.map((category) => category.total_money_from_category),
             categories: categoryMoney.map((category) => category.category_title),
-            footer: "Update by now",
+            footer: "Cập nhật ngay bây giờ",
         },
     ];
 
@@ -196,7 +196,7 @@ export function Home() {
                                     variant="small"
                                     className="flex items-center font-normal text-blue-gray-600"
                                 >
-                                    Choose year
+                                    Năm
                                 </Typography>
                                 <MenuCustomAnimation />
                             </div>

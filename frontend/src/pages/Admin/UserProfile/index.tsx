@@ -46,7 +46,7 @@ const UserProfile = () => {
                         </div>
                         <div className=" flex flex-col justify-start">
                             <h1 className="text-3xl font-bold mb-2">
-                                Hello from {((user.first_name as string) + " " + user.last_name) as string}
+                                {((user.first_name as string) + " " + user.last_name) as string}
                                 <div
                                     className={`${
                                         user.is_admin ? "badge badge-info badge-outline" : "badge badge-outline"
@@ -62,7 +62,7 @@ const UserProfile = () => {
                             </h1>
 
                             <p className="text-lg">
-                                <span className="font-bold">About me: </span>
+                                <span className="font-bold">Mô tả về tôi: </span>
                                 {user.description}
                             </p>
                         </div>

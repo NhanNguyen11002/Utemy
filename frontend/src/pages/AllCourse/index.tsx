@@ -163,7 +163,11 @@ const AllCourses: React.FC = () => {
                                                 <span className="text-xl">{evaluateItem.title}</span>
                                             </div>
 
-                                            <TotalRating ratingId={index} totalScore={5 - index} isForCourse={false} />
+                                            <TotalRating
+                                                ratingId={`evaluate-${index}`}
+                                                totalScore={5 - index}
+                                                isForCourse={false}
+                                            />
                                         </div>
                                     );
                                 })}

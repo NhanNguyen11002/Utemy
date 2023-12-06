@@ -64,7 +64,7 @@ const ProfileAdmin = () => {
                             </div>
                             <div className=" flex flex-col text-left w-1/2 m-auto gap-4">
                                 <h1 className=" text-xl">
-                                    Hello,{" "}
+                                    Xin chào,{" "}
                                     <span className="text-xl font-bold text-lightblue">
                                         {user.first_name}
                                         {user.last_name}
@@ -101,7 +101,7 @@ const ProfileAdmin = () => {
                                         <div className="flex flex-col mobile:flex-row gap-2 w-full justify-between ">
                                             <div className="flex flex-col mb-3 w-1/2 ">
                                                 <label htmlFor="first_name" className="text-sm mb-1 tablet:text-xl">
-                                                    First name
+                                                    Tên
                                                 </label>
                                                 <Field
                                                     name="first_name"
@@ -120,7 +120,7 @@ const ProfileAdmin = () => {
                                             </div>
                                             <div className="flex flex-col mb-3 w-1/2">
                                                 <label htmlFor="last_name" className="text-sm mb-1 tablet:text-xl">
-                                                    Last name
+                                                    Họ
                                                 </label>
                                                 <Field
                                                     name="last_name"
@@ -158,12 +158,12 @@ const ProfileAdmin = () => {
                                         </div>
                                         <div className="flex flex-col w-full">
                                             <label htmlFor="description" className="text-sm mb-1 tablet:text-xl">
-                                                About me
+                                                Mô tả về tôi
                                             </label>
                                             <Field
                                                 as="textarea"
                                                 name="description"
-                                                placeholder="Description about you..."
+                                                placeholder="Mô tả về tôi..."
                                                 className={`${
                                                     formik.errors.description && formik.touched.description
                                                         ? "border-error"
@@ -179,7 +179,7 @@ const ProfileAdmin = () => {
 
                                         <div className="flex justify-end mt-4">
                                             <button className="text-white btn btn-info text-lg" type="submit">
-                                                Save
+                                                Lưu
                                             </button>
                                         </div>
                                     </div>
@@ -199,11 +199,11 @@ const ProfileAdmin = () => {
                                     <div className="flex flex-col justify-start">
                                         <div className="flex flex-col mb-3">
                                             <label htmlFor="current_password" className="text-sm mb-1 tablet:text-xl">
-                                                Current Password
+                                                Mật khẩu hiện tại
                                             </label>
                                             <Field
                                                 type="password"
-                                                placeholder="Current password..."
+                                                placeholder="Mật khẩu hiện tại..."
                                                 className="px-2 py-4 w-full rounded-lg border-[1px] outline-none"
                                                 id="current_password"
                                                 name="current_password"
@@ -216,11 +216,11 @@ const ProfileAdmin = () => {
                                         </div>
                                         <div className="flex flex-col mb-3">
                                             <label htmlFor="new_password" className="text-sm mb-1 tablet:text-xl">
-                                                New Password
+                                                Mật khẩu mới
                                             </label>
                                             <Field
                                                 type="password"
-                                                placeholder="New password..."
+                                                placeholder="Mật khẩu mới..."
                                                 className="px-2 py-4 w-full rounded-lg border-[1px] outline-none"
                                                 id="new_password"
                                                 name="new_password"
@@ -233,11 +233,11 @@ const ProfileAdmin = () => {
                                         </div>
                                         <div className="flex flex-col mb-3">
                                             <label htmlFor="confirm" className="text-sm mb-1 tablet:text-xl">
-                                                Confirm Password
+                                                Xác nhận mật khẩu mới
                                             </label>
                                             <Field
                                                 type="password"
-                                                placeholder="Confirm password..."
+                                                placeholder="Xác nhận mật khẩu..."
                                                 className="px-2 py-4 w-full rounded-lg border-[1px] outline-none"
                                                 id="confirm_password"
                                                 name="confirm_password"
@@ -254,7 +254,7 @@ const ProfileAdmin = () => {
                                             type="submit"
                                             className="btn-info btn text-white text-lg hover:bg-lightblue/80"
                                         >
-                                            Change password
+                                            Đổi mật khẩu
                                         </button>
                                     </div>
                                 </Form>

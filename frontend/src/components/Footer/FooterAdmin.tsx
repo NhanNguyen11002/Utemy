@@ -23,7 +23,7 @@ export function FooterAdmin() {
                             variant="small"
                             className="py-0.5 px-1 font-normal text-inherit transition-colors hover:text-blue-500"
                         >
-                            About us
+                            Về chúng tôi
                         </Typography>
                     </li>
                 </ul>

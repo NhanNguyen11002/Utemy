@@ -42,17 +42,17 @@ const AuthorProfile: React.FC = () => {
         <>
             <Navbar />
             <div className="container h-full mx-auto px-4 mt-[150px] laptop:mt-0 flex w-1/2">
-                <div className="w-2/3 h-full flex flex-col items-center justify-center gap-2 mt-[50px]">
-                    <div className="">
+                <div className="w-2/3 h-full flex flex-col items-starts justify-center gap-2 mt-[50px] p-4">
+                    <div className="w-full">
                         <h1 className="text-2xl mb-2 mt-30">
                             {((user.first_name as string) + " " + user.last_name) as string}
                         </h1>
                         <div className="flex gap-4">
-                            <div className="flex flex-col items-start gap 2">
+                            <div className="flex flex-col items-start gap-2">
                                 <p className="text-md opacity-80">Tổng học viên</p>
                                 <p className="text-2xl text-black font-bold">{totalEnrolled}</p>
                             </div>
-                            <div className="flex flex-col items-start gap 2">
+                            <div className="flex flex-col items-start gap-2">
                                 <p className="text-md opacity-80">Đánh giá</p>
                                 <p className="text-2xl text-black font-bold">{totalRating}</p>
                             </div>
@@ -65,9 +65,8 @@ const AuthorProfile: React.FC = () => {
                             ></div>
                         </div>
                     </div>
-
                     <h1 className="text-2xl text-black self-start">Các khóa học của tôi ({courseList.length})</h1>
-                    <div className="grid grid-cols-2 gap-3  place-self-start my-3">
+                    <div className="grid grid-cols-2 gap-7  place-self-start my-3 w-2/3">
                         {courseList.length > 0 &&
                             courseList.map((course: Course, index) => {
                                 return (
@@ -94,7 +93,7 @@ const AuthorProfile: React.FC = () => {
                             })}
                     </div>
                 </div>
-                <div className="px-4 tablet:px-[60px] flex flex-col items-center gap-4  mt-4 p-4 rounded-lg w-1/3 mt-[50px]">
+                <div className="px-4 tablet:px-[60px] flex flex-col items-center gap-4  p-4 rounded-lg w-1/3 mt-[50px]">
                     <div className="w-50 h-50 rounded-full border">
                         <img
                             src={user.url_avatar || DefaultAvatar}

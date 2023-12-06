@@ -62,15 +62,15 @@ const InCartCourse: React.FC<CartCourseProps> = (props) => {
                         {isCourseSale ? (
                             <div className="ml-[25px] w-2/4">
                                 <p className="text-lightblue font-bold text-2xl">
-                                    đ{course.sale_price?.toLocaleString()}
+                                    {course.sale_price?.toLocaleString()}đ
                                 </p>
                                 <p className="text-gray-600 font-normal text-sm line-through">
-                                    đ{course.price?.toLocaleString()}
+                                    {course.price?.toLocaleString()}đ
                                 </p>
                             </div>
                         ) : (
                             <div className="ml-[25px] w-2/4">
-                                <p className="text-gray-600 font-bold text-2xl ">đ{course.price?.toLocaleString()}</p>
+                                <p className="text-gray-600 font-bold text-2xl ">{course.price?.toLocaleString()}đ</p>
                                 <p className="text-white font-bold text-sm"> ZZZ</p>
                             </div>
                         )}

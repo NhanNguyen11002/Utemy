@@ -28,7 +28,7 @@ const CategoryCard: React.FC<CategoryCardProps> = (props) => {
                                 <h1 className="text-gray-900 text-2xl font-semibold ">{props.category.title}</h1>
                             </div>
                             <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
-                                <h1 className="text-black font-bold text-lg"> Decription:</h1>
+                                <h1 className="text-black font-bold text-lg"> Mô tả:</h1>
 
                                 <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
                                     {props.category.description}
@@ -42,13 +42,13 @@ const CategoryCard: React.FC<CategoryCardProps> = (props) => {
                             className="w-full px-5 py-2 mt-2 text-white  btn btn-info hover:bg-info/70 hover:cursor-pointer rounded-2xl "
                             onClick={() => props.handleOpenPopupEdit(props.category.category_id)}
                         >
-                            Edit
+                            Chỉnh sửa
                         </button>
                         <button
                             className="w-full px-5 py-2 mt-2 text-white  btn btn-error hover:bg-error/70 hover:cursor-pointer rounded-2xl"
                             onClick={() => props.handleOpenDeleteModel(props.category.category_id)}
                         >
-                            Delete
+                            Xóa
                         </button>
                     </div>
                 </div>

@@ -93,13 +93,13 @@ const CreateUser = () => {
                                 className="p-4 border bg-background rounded-2xl border-gray-400 shadow-lg"
                             >
                                 <h1 className="text-2xl my-5 font-bold text-center text-lightblue text-title">
-                                    CREATE USER
+                                    THÊM NGƯỜI DÙNG
                                 </h1>
                                 <div className="flex flex-col items-center">
                                     <div className="flex flex-col mobile:flex-row gap-2 w-full justify-between ">
                                         <div className="flex flex-col mb-3 w-1/2 ">
                                             <label htmlFor="first_name" className="text-sm mb-1 tablet:text-xl">
-                                                First name
+                                                Tên
                                             </label>
                                             <Field
                                                 name="first_name"
@@ -118,7 +118,7 @@ const CreateUser = () => {
                                         </div>
                                         <div className="flex flex-col mb-3 w-1/2">
                                             <label htmlFor="last_name" className="text-sm mb-1 tablet:text-xl">
-                                                Last name
+                                                Họ
                                             </label>
                                             <Field
                                                 name="last_name"
@@ -155,7 +155,7 @@ const CreateUser = () => {
                                     </div>
                                     <div className="flex flex-col mb-3 w-full">
                                         <label htmlFor="password" className="text-sm mb-1 tablet:text-xl">
-                                            Password
+                                            Mật khẩu
                                         </label>
                                         <Field
                                             name="password"
@@ -172,7 +172,7 @@ const CreateUser = () => {
                                     </div>
                                     <div className="flex flex-col mb-3 w-full">
                                         <label htmlFor="confirm_password" className="text-sm mb-1 tablet:text-xl">
-                                            Confirm password
+                                            Nhập lại mật khẩu
                                         </label>
                                         <Field
                                             name="confirm_password"
@@ -194,7 +194,7 @@ const CreateUser = () => {
                                             htmlFor="status"
                                             className="text-sm mb-1 w-1/2 font-medium tablet:text-xl"
                                         >
-                                            Role
+                                            Loại tài khoản
                                         </label>
                                         <Field
                                             className="w-full"
@@ -221,7 +221,7 @@ const CreateUser = () => {
                                         className="text-white  w-full btn btn-info text-lg"
                                     >
                                         {isLoading ? <span className="loading loading-spinner"></span> : ""}
-                                        {isLoading ? "Loading..." : "Save"}
+                                        {isLoading ? "Loading..." : "Lưu"}
                                     </button>
                                 </div>
                             </Form>

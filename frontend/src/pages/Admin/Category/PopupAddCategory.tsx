@@ -77,9 +77,7 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                 <Toaster />
                 <div className="  max-w-[360px] tablet:max-w-[600px] max-h-[630px] tablet:max-h-[1000px] rounded-[12px] bg-background mx-auto tablet:mx-0 flex-1 ">
                     <div className="w-full p-[12px]">
-                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">
-                            ADD NEW CATEGORY
-                        </h1>
+                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">THÊM DANH MỤC</h1>
                         <Formik
                             initialValues={initialValues}
                             validationSchema={createCategoryValidationSchema}
@@ -102,12 +100,12 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                                         htmlFor="title"
                                                         className="text-sm mb-1 font-medium tablet:text-xl"
                                                     >
-                                                        Title
+                                                        Tiêu đề
                                                     </label>
                                                     <Field
                                                         as="input"
                                                         name="title"
-                                                        placeholder="Title of category..."
+                                                        placeholder="Tiêu đề danh mục..."
                                                         className={`${
                                                             formik.errors.title && formik.touched.title
                                                                 ? "border-error"
@@ -122,8 +120,8 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="">
-                                                        <p className="text-lg font-medium">Upload Image</p>
-                                                        <p className="italic">Size of the image is less than 4MB</p>
+                                                        <p className="text-lg font-medium">Chọn hình ảnh</p>
+                                                        <p className="italic">Kích thước ảnh nhỏ hơn 4MB</p>
                                                     </div>
                                                     <Field
                                                         name="categoryImage"
@@ -153,12 +151,12 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                                 htmlFor="description"
                                                 className="text-sm mb-1 font-medium tablet:text-xl"
                                             >
-                                                Description
+                                                Mô tả
                                             </label>
                                             <Field
                                                 as="textarea"
                                                 name="description"
-                                                placeholder="Description about your category..."
+                                                placeholder="Mô tả danh mục..."
                                                 className={`${
                                                     formik.errors.description && formik.touched.description
                                                         ? "border-error"
@@ -180,7 +178,7 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                             className="text-white btn btn-info text-lg"
                                         >
                                             {isLoading ? <span className="loading loading-spinner"></span> : ""}
-                                            {isLoading ? "Loading..." : "Create"}
+                                            {isLoading ? "Loading..." : "Tạo"}
                                         </button>
                                         <button
                                             type="button"
@@ -191,7 +189,7 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                                 // formik.resetForm(initialValues);
                                             }}
                                         >
-                                            Cancel
+                                            Hủy
                                         </button>
                                     </div>
                                 </form>

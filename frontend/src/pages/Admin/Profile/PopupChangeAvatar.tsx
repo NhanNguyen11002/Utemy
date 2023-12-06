@@ -9,7 +9,7 @@ type props = {
 const FILE_TOO_BIG = 1;
 const FILE_IS_NOT_SUPPORT = 2;
 const FILE_IS_EMPTY = 3;
-const FILE_SUPPORT = ["image/jpeg", "image/png"];
+const FILE_SUPPORT = ["image/jpeg", "image/png", "image/jpg"];
 const PopUpChangeAvatar: React.FC<props> = (props) => {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const avatarRef = useRef<HTMLImageElement>(null);
@@ -100,31 +100,36 @@ const PopUpChangeAvatar: React.FC<props> = (props) => {
                         onChange={handleFileInputChange}
                     />
                     {errorImage === FILE_TOO_BIG ? (
-                        <p className={`text-error italic font-medium mt-1`}>Size of the image is less than 4MB</p>
+                        <p className={`text-error italic font-medium mt-1`}>Kích thước hình nhỏ hơn 4MB</p>
                     ) : (
                         <></>
                     )}
                     {errorImage === FILE_IS_NOT_SUPPORT ? (
-                        <p className={`text-error italic font-medium mt-1`}>File is not support</p>
+                        <p className={`text-error italic font-medium mt-1`}>
+                            Loại tệp không hỗ trợ, vui lòng chọn JPG, JPEG, PNG
+                        </p>
                     ) : (
                         <></>
                     )}
                     {errorImage === FILE_IS_EMPTY ? (
-                        <p className={`text-error italic font-medium mt-1`}>File is Empty</p>
+                        <p className={`text-error italic font-medium mt-1`}>Hình trống</p>
                     ) : (
                         <></>
                     )}
                     <div className="modal-action flex justify-center">
-                        <button className={`btn btn-info text-lg ${isLoading ? "btn-disabled" : ""}`} type="submit">
+                        <button
+                            className={`btn btn-info text-white text-lg ${isLoading ? "btn-disabled" : ""}`}
+                            type="submit"
+                        >
                             {isLoading && <span className="loading loading-spinner"></span>}
-                            {isLoading ? "Loading..." : "Save"}
+                            {isLoading ? "Loading..." : "Lưu"}
                         </button>
                         <button
                             className={`btn text-lg ${isLoading ? "btn-disabled" : ""}`}
                             type="button"
                             onClick={closeModal}
                         >
-                            Close
+                            Hủy
                         </button>
                     </div>
                 </form>

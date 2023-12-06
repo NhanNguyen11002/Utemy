@@ -10,12 +10,12 @@ import { authActions } from "../../redux/slices";
 // profile menu component
 const profileMenuItems = [
     {
-        label: "My Profile",
+        label: "Trang cá nhân",
         link: "/admin/profile",
         icon: UserCircleIcon,
     },
     {
-        label: "Log Out",
+        label: "Đăng xuất",
         icon: PowerIcon,
     },
 ];

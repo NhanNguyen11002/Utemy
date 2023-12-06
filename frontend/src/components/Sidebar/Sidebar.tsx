@@ -54,7 +54,7 @@ export function Sidebar() {
                             >
                                 <HomeIcon className="w-6 h-6" />
                                 <Typography color="inherit" className="font-medium capitalize">
-                                    {"Dashboard"}
+                                    {"Thống kê"}
                                 </Typography>
                             </Button>
                         </Link>
@@ -70,7 +70,7 @@ export function Sidebar() {
                             >
                                 <ServerStackIcon className="h-6 w-6" />
                                 <Typography color="inherit" className="font-medium capitalize">
-                                    {"Category"}
+                                    {"Danh mục"}
                                 </Typography>
                             </Button>
                         </Link>
@@ -86,7 +86,7 @@ export function Sidebar() {
                             >
                                 <UserCircleIcon className="h-6 w-6" />
                                 <Typography color="inherit" className="font-medium capitalize">
-                                    {"User"}
+                                    {"Người dùng"}
                                 </Typography>
                             </Button>
                         </NavLink>
@@ -104,7 +104,7 @@ export function Sidebar() {
                             >
                                 <PlusCircleIcon className="h-6 w-6" />
                                 <Typography color="inherit" className="font-medium capitalize">
-                                    {"Create User"}
+                                    {"Thêm người dùng"}
                                 </Typography>
                             </Button>
                         </NavLink>
@@ -121,7 +121,7 @@ export function Sidebar() {
                             >
                                 <ClipboardDocumentListIcon className="h-6 w-6" />
                                 <Typography color="inherit" className="font-medium capitalize">
-                                    Feedback
+                                    Phản hồi
                                 </Typography>
                             </Button>
                         </NavLink>
@@ -137,7 +137,7 @@ export function Sidebar() {
                             >
                                 <HeartIcon className="h-6 w-6" />
                                 <Typography color="inherit" className="font-medium capitalize">
-                                    Profile
+                                    Trang cá nhân
                                 </Typography>
                             </Button>
                         </NavLink>
@@ -152,7 +152,7 @@ export function Sidebar() {
                             {/* <LogoutIcon /> */}
                             <XMarkIcon className="h-6 w-6" />
                             <Typography color="white" className="font-medium capitalize">
-                                Logout
+                                Đăng xuất
                             </Typography>
                         </Button>
                     </div>

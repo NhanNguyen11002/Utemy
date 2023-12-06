@@ -89,6 +89,7 @@ const getAuthorProfile = async (req: Request): Promise<ResponseBase> => {
                 courses: {
                     where: {
                         is_delete: false,
+                        status: true,
                     },
                     include: {
                         course_categories: {

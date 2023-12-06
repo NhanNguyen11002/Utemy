@@ -774,7 +774,7 @@ const getAllCourse = async (req: Request): Promise<ResponseBase> => {
 const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { slug } = req.params;
-        const course = await db.course.findUnique({
+        const course = await db.course.findFirst({
             where: {
                 slug: slug,
             },

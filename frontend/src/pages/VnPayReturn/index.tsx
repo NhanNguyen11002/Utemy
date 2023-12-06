@@ -47,7 +47,7 @@ const VnPayReturn = () => {
                 </h1>
                 <h2 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h2>
                 <p>Mã hóa đơn: {invoiceId}</p>
-                <p>Tổng số tiền: đ{(vnp_Amount / 100).toLocaleString()}</p>
+                <p>Tổng số tiền: {(vnp_Amount / 100).toLocaleString()}đ</p>
                 <p>Mã ngày thanh toán: {vnp_PayDate}</p>
                 {success ? (
                     <p className="text-gray-600 mb-6">Cảm ơn vi đã tin tưởng Utemy, giao dịch của bạn đã thành công</p>

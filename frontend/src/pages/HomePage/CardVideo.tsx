@@ -62,11 +62,11 @@ const CardVideo: React.FC<CardVideoProps> = (props) => {
                                     Giá:
                                     <span className=" font-extrabold font-OpenSans text-lightblue ">
                                         {" "}
-                                        đ{props.salePrice?.toLocaleString()}{" "}
+                                        {props.salePrice?.toLocaleString()}đ{" "}
                                     </span>{" "}
                                     <span className="font-normal italic text-xs line-through">
                                         {" "}
-                                        đ{props.price?.toLocaleString()}{" "}
+                                        {props.price?.toLocaleString()}đ{" "}
                                     </span>{" "}
                                 </p>
                             ) : (
@@ -74,7 +74,7 @@ const CardVideo: React.FC<CardVideoProps> = (props) => {
                                     Giá:
                                     <span className="font-extrabold font-OpenSans">
                                         {" "}
-                                        đ{props.price?.toLocaleString()}{" "}
+                                        {props.price?.toLocaleString()}đ{" "}
                                     </span>{" "}
                                 </p>
                             ))}
