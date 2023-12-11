@@ -21,13 +21,16 @@ app.use("/api/auth", routes.authRouter);
 app.use("/api/user", routes.userRouter);
 app.use("/api/section", routes.sectionRouter);
 app.use("/api/course", routes.courseRouter);
-app.use("/api/lesson", routes.lessonRouter);
 app.use("/api/category", routes.categoryRouter);
 app.use("/api/feedback", routes.feedbackRouter);
 app.use("/api/rating", routes.ratingRouter);
 app.use("/api/cart", routes.cartRouter);
 app.use("/api/invoice", routes.invoiceRouter);
 app.use("/api/stat", routes.statRouter);
+app.use("/api/quiz", routes.quizRouter);
+app.use("/api/lecture", routes.lectureRouter);
+app.use("/api/test", routes.testRouter);
+app.use("/api/coupon", routes.couponRouter);
 app.use("/IPN", routes.vnpayRouter);
 
 app.listen(port, () => {

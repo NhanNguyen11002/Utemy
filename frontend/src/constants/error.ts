@@ -117,6 +117,9 @@ const error = {
     ERROR_TITLE_STRING: "Title must be string",
     ERROR_TITLE_REQUIRED: "Title is required",
     ERROR_DURATION_REQUIRED: "Duration is required",
+    ERROR_PASS_PERCENT_REQUIRED: "Pass percent required",
+    ERROR_IS_TIME_LIMIT_REQUIRED: "Time limit option required",
+    ERROR_QUIZ_GROUP_ID_REQUIRED: "Quiz is required",
     ERROR_TITLE_MAX: "Title must be under 50 chars",
     ERROR_CATEGORY_ALREADY_EXISTS: "Category is already existed",
 
@@ -131,5 +134,6 @@ const error = {
     ERROR_VALIDATION_FAILED: "Validation failed",
 
     ERROR_GET_COURSE_FAILED: "Get course failed",
+    ERROR_TYPE_REQUIRED: "Type is required",
 };
 export default error;

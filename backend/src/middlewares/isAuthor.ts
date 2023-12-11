@@ -9,7 +9,7 @@ import helper from "../helper";
 type GroupId = {
     course_id?: number | string;
     section_id?: number | string;
-    lesson_id?: number | string;
+    lecture_id?: number | string;
 };
 const isObjectEmpty = (object: Record<any, any>): boolean => {
     for (const key in object) {
@@ -23,7 +23,7 @@ export const isAuthor = async (req: IRequestWithId, res: Response, next: NextFun
     try {
         const file = req.file;
         const user_id = req.user_id;
-        let groupId: GroupId = { course_id: "", section_id: "", lesson_id: "" };
+        let groupId: GroupId = { course_id: "", section_id: "", lecture_id: "" };
         if (isObjectEmpty(req.body)) groupId = req.params;
         else if (isObjectEmpty(req.params)) groupId = req.body;
         if (groupId.course_id) {
@@ -71,10 +71,10 @@ export const isAuthor = async (req: IRequestWithId, res: Response, next: NextFun
                     next();
                 }
             }
-        } else if (groupId.lesson_id) {
-            const isCourseExist = await configs.db.lesson.findFirst({
+        } else if (groupId.lecture_id) {
+            const isCourseExist = await configs.db.lecture.findFirst({
                 where: {
-                    id: Number(groupId.lesson_id),
+                    id: Number(groupId.lecture_id),
                 },
                 include: {
                     section: {
@@ -102,7 +102,6 @@ export const isAuthor = async (req: IRequestWithId, res: Response, next: NextFun
         } else {
             if (file) await helper.FileHelper.destroyedFileIfFailed(file.path);
             res.status(401).json({ message: "Unauthorized" });
-
             return;
         }
     } catch (error: any) {

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { WatchVideoIcon } from "../../assets/icons";
 import { Course as CourseDetailType } from "../../types/course";
 import { useAppDispatch } from "../../hooks/hooks";
-import { lessonActions } from "../../redux/slices";
+import { lectureActions } from "../../redux/slices";
 type AuthorButtonProps = {
     handleTogglePromotion(): void;
     handleDelete(): void;
@@ -13,7 +13,7 @@ type AuthorButtonProps = {
 const AuthorButton: React.FC<AuthorButtonProps> = (props) => {
     const dispatch = useAppDispatch();
     const clearUrlVideo = () => {
-        dispatch(lessonActions.setLesson({}));
+        dispatch(lectureActions.setLecture({}));
     };
     return (
         <>

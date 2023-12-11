@@ -111,6 +111,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
             score: 0,
         };
         dispatch(ratingActions.getListRatingOfCourseBySlug(values));
+        dispatch(ratingActions.getRatingPercentOfCourse(slug as string));
     };
     const handleAfterPromotion = () => {
         dispatch(courseActions.getCourseDetail(slug as string));
@@ -224,7 +225,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             totalScore={Number(courseDetail.average_rating)}
                                             isForCourse={true}
                                         />
-                                        <p
+                                        <a
+                                            href="#Rating"
                                             className="text-m  ml-2 hover:cursor-pointer underline text-lightblue"
                                             onClick={() => {
                                                 const button = document.getElementById("Rating");
@@ -232,7 +234,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             }}
                                         >
                                             ({courseDetail.number_of_rating} xếp hạng)
-                                        </p>
+                                        </a>
                                         <p className="text-m  ml-2 ">{courseDetail.number_of_enrolled} học viên</p>
                                     </div>
                                     <div className="flex items-center text-xl font-medium mb-3">
@@ -435,7 +437,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         </div>
                                     </TabPanel>
                                     <TabPanel key="Rating" value="Rating">
-                                        <div>
+                                        <div id="#Rating">
                                             {isGetLoadingCourse ? (
                                                 <p className="mt-4 text-2x text-center font-bold">Loading</p>
                                             ) : (

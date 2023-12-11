@@ -1,5 +1,6 @@
 const error = {
     //etc
+    ERROR_COUPON_USED: "Coupon is already used",
     ERROR_INTERNAL_SERVER: "Internal server",
     ERROR_BAD_REQUEST: " Bad request",
     ERROR_UNAUTHORIZED: "Unauthorized",

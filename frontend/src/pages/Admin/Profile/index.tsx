@@ -9,6 +9,7 @@ import { ChangePassword } from "../../../types/auth";
 import { UpdateInformation } from "../../../types/user";
 import toast, { Toaster } from "react-hot-toast";
 import { changePasswordValidationSchema, updateProfileValidationSchema } from "../../../validations/user";
+import { TextEditor } from "../../../components";
 
 const ProfileAdmin = () => {
     const user = useAppSelector((state) => state.authSlice.user);
@@ -49,6 +50,9 @@ const ProfileAdmin = () => {
             } else if (response.payload) toast.error(response.payload.message);
         });
     };
+    const handleDescriptionChange = (description: string, formik: any) => {
+        formik.setFieldValue("description", description);
+    };
     return (
         <>
             <div className="mt-12 mb-8 flex flex-col gap-12 bg-background_2 min-h-screen">
@@ -66,8 +70,7 @@ const ProfileAdmin = () => {
                                 <h1 className=" text-xl">
                                     Xin chào,{" "}
                                     <span className="text-xl font-bold text-lightblue">
-                                        {user.first_name}
-                                        {user.last_name}
+                                        {user.first_name} {user.last_name}
                                     </span>
                                 </h1>
                                 <div
@@ -156,24 +159,28 @@ const ProfileAdmin = () => {
                                                 className="text-[14px] text-error font-medium"
                                             />
                                         </div>
-                                        <div className="flex flex-col w-full">
+                                        <div className="h-[300px]">
                                             <label htmlFor="description" className="text-sm mb-1 tablet:text-xl">
-                                                Mô tả về tôi
+                                                Mô tả về bạn
                                             </label>
-                                            <Field
-                                                as="textarea"
-                                                name="description"
-                                                placeholder="Mô tả về tôi..."
-                                                className={`${
-                                                    formik.errors.description && formik.touched.description
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full rounded-md  py-4 px-4 text-area  outline-none shadow-md1 border border-[#e0e0e0]`}
-                                            />
                                             <ErrorMessage
                                                 name="description"
                                                 component="span"
                                                 className="text-[14px] text-error font-medium"
+                                            />
+                                            <Field
+                                                as="textarea"
+                                                name="description"
+                                                component={TextEditor}
+                                                description={user.description}
+                                                handleChangeDescription={(description: string) =>
+                                                    handleDescriptionChange(description, formik)
+                                                }
+                                                className={`${
+                                                    formik.errors.description && formik.touched.description
+                                                        ? "border-error"
+                                                        : ""
+                                                } flex-1 w-full rounded-md border border-[#e0e0e0] py-4 px-4  outline-none focus:shadow-md1`}
                                             />
                                         </div>
 
@@ -193,7 +200,7 @@ const ProfileAdmin = () => {
                         >
                             {(formik) => (
                                 <Form
-                                    className="bg-background m-4 rounded-xl shadow-lg p-4 w-1/2 flex flex-col justify-between border-gray-400 border "
+                                    className="bg-background m-4 rounded-xl shadow-lg p-4 w-1/2 h-fit flex flex-col justify-between border-gray-400 border "
                                     onSubmit={formik.handleSubmit}
                                 >
                                     <div className="flex flex-col justify-start">

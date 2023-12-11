@@ -1,4 +1,5 @@
 import { Lesson } from "./lesson";
+import { Lecture } from "./lecture";
 export type SectionRender = {
     title: string;
     updated_at: string;
@@ -7,7 +8,7 @@ export type SectionRender = {
 export type Section = {
     id: number;
     title: string;
-    Lesson?: Lesson[];
+    lecture?: Lecture[];
 };
 export type AddSection = {
     course_id: number;

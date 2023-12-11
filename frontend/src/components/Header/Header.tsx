@@ -20,7 +20,6 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const categories: Category[] = useAppSelector((state) => state.categorySlice.categories) ?? [];
-
     const handleKeyWordSearch = () => {
         navigate(`/all-courses?keyword=${keyword}`);
         setKeyword("");
@@ -112,6 +111,12 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                                     className="hidden tablet:block min-w-fit mr-5 font-medium hover:opacity-80 cursor-pointer"
                                 >
                                     Khóa học của tôi
+                                </Link>
+                                <Link
+                                    to={"/cart"}
+                                    className="hidden tablet:block min-w-fit mr-5 font-medium hover:opacity-80 cursor-pointer"
+                                >
+                                    Giỏ hàng
                                 </Link>
                                 {/* DRAWER AVATAR */}
                                 <div className="drawer drawer-end">

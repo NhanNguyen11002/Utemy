@@ -140,7 +140,7 @@ const MyCourses: React.FC = () => {
                         })}
                     </div>
                     {totalRecord === 0 && (
-                        <p className="mt-4 text-2xl text-error text-center font-bold">Such empty!!!</p>
+                        <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy khóa học</p>
                     )}
                     {totalPage > 1 && (
                         <div className="flex justify-end my-4">

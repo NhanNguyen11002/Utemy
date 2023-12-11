@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Formik, Field, ErrorMessage } from "formik";
 import { AddLesson as AddLessonType } from "../../types/lesson";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { lessonActions } from "../../redux/slices";
+import { lectureActions } from "../../redux/slices";
 import { addLessonValidationSchema } from "../../validations/lesson";
 import toast, { Toaster } from "react-hot-toast";
 // import { errorMessages, fileType } from "../utils/contants";
@@ -10,14 +10,15 @@ import constants from "../../constants";
 import TextEditor from "../TextEditor";
 
 type AddLessonModalProps = {
-    handleDelete: () => void;
     handleCancel: () => void;
     handleRerender: () => void;
-    id: number;
+    handleCancelChangeType(): void;
+    sectionId: number;
+    changeType?: boolean;
 };
 
 const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
-    const isLoading = useAppSelector((state) => state.lessonSlice.isLoading) ?? false;
+    const isLoading = useAppSelector((state) => state.lectureSlice.isLoading) ?? false;
     const [error, setError] = useState("");
     const [video, setVideo] = useState<File | null>(null);
     const dispatch = useAppDispatch();
@@ -55,11 +56,12 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
         if (video) {
             let formData = new FormData();
             formData.append("title", values.title);
-            formData.append("section_id", props.id.toString());
+            formData.append(props.changeType ? "lecture_id" : "section_id", props.sectionId.toString());
             formData.append("video", video as File);
             formData.append("duration", values.duration);
             formData.append("description", values.description);
-            dispatch(lessonActions.createLesson(formData))
+            formData.append("type", "Lesson");
+            dispatch(props.changeType ? lectureActions.updateLecture(formData) : lectureActions.createLecture(formData))
                 .then((response) => {
                     if (response.payload) {
                         if (response.payload.status_code !== 200) {
@@ -67,6 +69,7 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
                         } else {
                             toast.success(response.payload.message);
                             props.handleRerender();
+                            props.handleCancelChangeType();
                             props.handleCancel();
                         }
                     }
@@ -184,8 +187,16 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
                                     >
                                         {isLoading ? "Loading..." : "Lưu"}
                                     </button>
-                                    <button onClick={props.handleCancel} type="button" className="btn text-lg ml-2">
-                                        Hủy
+                                    <button
+                                        onClick={() => {
+                                            props.handleCancelChangeType();
+                                            props.handleCancel();
+                                        }}
+                                        type="button"
+                                        className="btn text-lg ml-2"
+                                        disabled={error !== "" || isLoading}
+                                    >
+                                        {isLoading ? "Loading..." : "Hủy"}
                                     </button>
                                 </div>
                             </form>

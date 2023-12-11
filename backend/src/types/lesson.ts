@@ -8,7 +8,9 @@ export type orderLesson = {
     new_order: number;
 };
 
-export type LessonUpdateManyMutationInput = {
-    order: number;
-    // Các thuộc tính khác mà bạn muốn cập nhật
+export type CreateLessonType = {
+    videoFile?: Express.Multer.File;
+    title: string;
+    duration: string;
+    description: string;
 };

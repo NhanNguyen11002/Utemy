@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { lessonActions, sectionActions, courseActions } from "../../redux/slices";
+import { sectionActions, courseActions, lectureActions } from "../../redux/slices";
 import { useParams } from "react-router-dom";
-import { Accordion, DeleteModal, PopupAddLesson, PopupUpdateLesson, Navbar, Spin } from "../../components";
+import {
+    Accordion,
+    DeleteModal,
+    PopupAddLesson,
+    PopupUpdateLesson,
+    Navbar,
+    Spin,
+    PopupChoseLectureType,
+    PopupAddTest,
+} from "../../components";
 import { AddSection as AddSectionType, Section as SectionType } from "../../types/section";
 // import { deteleLessonType } from "../../types/lesson";
 
@@ -10,24 +19,28 @@ import toast from "react-hot-toast";
 import EditForm from "./EditForm";
 import NotFound from "../NotFound";
 import constants from "../../constants";
+import PopupUpdateTest from "../../components/Popup/PopupUpdateTest";
 
 const EditCourse: React.FC = () => {
     const [isDisplayDeleteModal, setIsDisplayDeleteModal] = useState<boolean>(false);
     const [isDisplayEditModal, setIsDisplayEditModal] = useState<boolean>(false);
     const [isDeleteSection, setIsDeleteSection] = useState<boolean>(false);
     const [isDisplayAddLessonModal, setIsDisplayAddLessonModal] = useState<boolean>(false);
-    const [isDisplayEditLessonModal, setIsDisplayEditLessonModal] = useState<boolean>(false);
+    const [isDisplayAddTestModal, setIsDisplayAddTestModal] = useState<boolean>(false);
+    const [isChangeType, setIsChangeType] = useState<boolean>(false);
+
+    //
+    const [isDisplayAddLectureModal, setIsDisplayAddLectureModal] = useState<boolean>(false);
+    const [isDisplayEditLectureModal, setIsDisplayEditLectureModal] = useState<boolean>(false);
 
     const sectionOfCourse: SectionType[] = useAppSelector((state) => state.sectionSlice.sections);
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const [section, setSection] = useState<string>("");
     const [errorSection, setErrorSection] = useState<boolean>(false);
     const [errorEditSection, setErrorEditSection] = useState<boolean>(false);
-    const [idItem, setIdItem] = useState<number>(-1);
+    const [sectionId, setSectionId] = useState<number>(-1);
+    const [type, setType] = useState<string>("");
     const [itemTitle, setItemTitle] = useState<string>("");
-    const [itemVideo, setItemVideo] = useState<string>("");
-    const [itemDuration, setItemDuration] = useState<string>("");
-    const [itemDescription, setItemDescription] = useState<string>("");
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
 
@@ -51,6 +64,7 @@ const EditCourse: React.FC = () => {
     const handleRerender = () => {
         dispatch(sectionActions.getAllSectionByCourseId(course_id as string));
     };
+    // add section
     const handleAddSection = () => {
         if (section !== "") {
             setErrorSection(false);
@@ -74,9 +88,9 @@ const EditCourse: React.FC = () => {
             }, 3000);
         }
     };
-
+    // delete section, lecture
     const handleDisplayDeleteModal = (id: number, isDeleteSection: boolean) => {
-        setIdItem(id);
+        setSectionId(id);
         setIsDisplayDeleteModal(!isDisplayDeleteModal);
         if (isDeleteSection) {
             setIsDeleteSection(true);
@@ -85,29 +99,43 @@ const EditCourse: React.FC = () => {
         }
     };
 
-    const handleDisplayAddSectionModal = (id: number) => {
-        setIdItem(id);
-        setIsDisplayAddLessonModal(!isDisplayAddLessonModal);
+    //lecture
+    const handleDisplayAddLectureModal = (sectionId: number) => {
+        setSectionId(sectionId);
+        setIsChangeType(false);
+        setIsDisplayAddLectureModal(!isDisplayAddLectureModal);
+    };
+    const handleCancelAddLectureModal = () => {
+        setIsDisplayAddLectureModal(!isDisplayAddLectureModal);
+    };
+    const handleCancelModalEditLecture = () => {
+        setIsDisplayEditLectureModal(!isDisplayEditLectureModal);
+        dispatch(sectionActions.getAllSectionByCourseId(course_id as string));
+    };
+    const handleChangeType = () => {
+        setIsChangeType(true);
+        setIsDisplayEditLectureModal(false);
+        setIsDisplayAddLectureModal(true);
     };
 
+    //delete modal
     const handleCancelModal = () => {
         setIsDisplayDeleteModal(!isDisplayDeleteModal);
     };
-
-    const handleCancelModalAddLesson = () => {
+    //lesson
+    const handleToggleModalAddLesson = () => {
         setIsDisplayAddLessonModal(!isDisplayAddLessonModal);
     };
-
-    const handleCancelModalUpdateLesson = () => {
-        setIsDisplayEditLessonModal(!isDisplayEditLessonModal);
-        dispatch(sectionActions.getAllSectionByCourseId(course_id as string));
+    //test
+    const handleToggleModalAddTest = () => {
+        setIsDisplayAddTestModal(!isDisplayAddTestModal);
     };
 
     const handleDeleteSection = () => {
-        dispatch(sectionActions.deleteSection(idItem)).then((response) => {
+        dispatch(sectionActions.deleteSection(sectionId)).then((response) => {
             if (response.payload?.status_code === 200) {
                 toast.success(response.payload.message);
-                dispatch(sectionActions.setDeleteSection(idItem));
+                dispatch(sectionActions.setDeleteSection(sectionId));
                 dispatch(sectionActions.getAllSectionByCourseId(course_id as string));
             } else {
                 if (response.payload) toast.error(response.payload.message);
@@ -116,8 +144,8 @@ const EditCourse: React.FC = () => {
         setIsDisplayDeleteModal(!isDisplayDeleteModal);
     };
 
-    const handleDeleteLesson = () => {
-        dispatch(lessonActions.deleteLesson(idItem)).then((response) => {
+    const handleDeleteLecture = () => {
+        dispatch(lectureActions.deleteLecture(sectionId)).then((response) => {
             if (response.payload?.status_code === 200) {
                 toast.success(response.payload.message);
                 dispatch(sectionActions.getAllSectionByCourseId(course_id as string));
@@ -147,24 +175,15 @@ const EditCourse: React.FC = () => {
             setIsDisplayEditModal(!isDisplayEditModal);
         }
     };
-
-    const handleDisplayEditLesson = (
-        id: number,
-        title: string,
-        video: string,
-        duration: string,
-        description: string,
-    ) => {
-        setIdItem(id);
-        setItemTitle(title);
-        setItemVideo(video);
-        setItemDuration(duration);
-        setItemDescription(description);
-        setIsDisplayEditLessonModal(!isDisplayEditLessonModal);
+    //lecture
+    const handleDisplayEditLecture = (lectureId: number, type: string) => {
+        setSectionId(lectureId);
+        setType(type);
+        setIsDisplayEditLectureModal(!isDisplayEditLectureModal);
     };
-
+    //section
     const handleDisplayEditModal = (id: number, title: string) => {
-        setIdItem(id);
+        setSectionId(id);
         setItemTitle(title);
         setIsDisplayEditModal(!isDisplayEditModal);
     };
@@ -219,8 +238,8 @@ const EditCourse: React.FC = () => {
                                             handleDeleteSection={handleDeleteSection}
                                             handleDisplayEditModal={handleDisplayEditModal}
                                             handleDisplayDeleteModal={handleDisplayDeleteModal}
-                                            handleDisplayAddSectionModal={handleDisplayAddSectionModal}
-                                            handleDisplayEditLesson={handleDisplayEditLesson}
+                                            handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
+                                            handleDisplayEditLecture={handleDisplayEditLecture}
                                             isDisplayBtn={true}
                                         />
                                     ))
@@ -229,13 +248,12 @@ const EditCourse: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* POPUP DELETE SECTION*/}
-                    {isDisplayDeleteModal && isDeleteSection && (
-                        <DeleteModal handleDelete={handleDeleteSection} handleCancel={handleCancelModal} />
-                    )}
-                    {/* POPUP DELETE LESSON*/}
-                    {isDisplayDeleteModal && !isDeleteSection && (
-                        <DeleteModal handleDelete={handleDeleteLesson} handleCancel={handleCancelModal} />
+                    {/* POPUP DELETE LECTURE AND SECTION*/}
+                    {isDisplayDeleteModal && (
+                        <DeleteModal
+                            handleDelete={isDeleteSection ? handleDeleteSection : handleDeleteLecture}
+                            handleCancel={handleCancelModal}
+                        />
                     )}
                     {/* POPUP EDIT SECTION */}
                     {isDisplayEditModal && (
@@ -263,7 +281,7 @@ const EditCourse: React.FC = () => {
                                         className={`text-white btn btn-info hover:opacity-75 text-lg ${
                                             isLoading ? "disabled" : ""
                                         }`}
-                                        onClick={() => handleEditSection(idItem, itemTitle)}
+                                        onClick={() => handleEditSection(sectionId, itemTitle)}
                                     >
                                         {isLoading ? "Loading..." : "Lưu"}
                                     </button>
@@ -280,22 +298,52 @@ const EditCourse: React.FC = () => {
                     {/* POPUP ADD LESSON */}
                     {isDisplayAddLessonModal && (
                         <PopupAddLesson
-                            handleDelete={handleDeleteSection}
-                            handleCancel={handleCancelModalAddLesson}
+                            handleCancel={handleToggleModalAddLesson}
                             handleRerender={handleRerender}
-                            id={idItem}
+                            handleCancelChangeType={() => setIsChangeType(false)}
+                            sectionId={sectionId}
+                            changeType={isChangeType}
+                        />
+                    )}
+                    {/* POPUP ADD TEST */}
+                    {isDisplayAddTestModal && (
+                        <PopupAddTest
+                            handleCancel={handleToggleModalAddTest}
+                            handleRerender={handleRerender}
+                            handleCancelChangeType={() => setIsChangeType(false)}
+                            sectionId={sectionId}
+                            changeType={isChangeType}
+                        />
+                    )}
+                    {/* POPUP CHOSE LECTURE TYPE */}
+                    {isDisplayAddLectureModal && (
+                        <PopupChoseLectureType
+                            handleCancel={handleCancelAddLectureModal}
+                            handleOpenAddLesson={handleToggleModalAddLesson}
+                            handleOpenAddTest={handleToggleModalAddTest}
                         />
                     )}
                     {/* POPUP EDIT LESSON */}
-                    {isDisplayEditLessonModal && itemVideo !== "" && (
-                        <PopupUpdateLesson
-                            handleDelete={handleDeleteSection}
-                            handleCancel={handleCancelModalUpdateLesson}
-                            id={idItem}
-                            title={itemTitle}
-                            duration={itemDuration}
-                            description={itemDescription}
-                        />
+                    {isDisplayEditLectureModal ? (
+                        type === "Lesson" ? (
+                            <PopupUpdateLesson
+                                handleRerender={handleRerender}
+                                handleCancel={handleCancelModalEditLecture}
+                                lectureId={sectionId}
+                                handleChangeType={handleChangeType}
+                            />
+                        ) : (
+                            <>
+                                <PopupUpdateTest
+                                    handleRerender={handleRerender}
+                                    handleCancel={handleCancelModalEditLecture}
+                                    lectureId={sectionId}
+                                    handleChangeType={handleChangeType}
+                                />
+                            </>
+                        )
+                    ) : (
+                        <></>
                     )}
                 </>
             ) : (

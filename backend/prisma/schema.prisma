@@ -11,25 +11,28 @@ datasource db {
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  first_name  String     @db.VarChar(30)
-  last_name   String     @db.VarChar(30)
-  email       String     @unique @db.VarChar(50)
-  password    String     @db.Text
-  description String?    @db.Text
-  url_avatar  String?    @db.Text
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-  is_verify   Boolean    @default(false)
-  token       String?    @db.Text
-  is_admin    Boolean    @default(false)
-  is_deleted  Boolean    @default(false)
-  courses     Course[]
-  enrolleds   Enrolled[]
-  ratings     Rating[]
-  carts       Cart[]
-  feedbacks   Feedback[]
-  invoices    Invoice[]
+  id             Int             @id @default(autoincrement())
+  first_name     String          @db.VarChar(30)
+  last_name      String          @db.VarChar(30)
+  email          String          @unique @db.VarChar(50)
+  password       String          @db.Text
+  description    String?         @db.Text
+  url_avatar     String?         @db.Text
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  is_verify      Boolean         @default(false)
+  token          String?         @db.Text
+  is_admin       Boolean         @default(false)
+  is_deleted     Boolean         @default(false)
+  courses        Course[]
+  enrolleds      Enrolled[]
+  ratings        Rating[]
+  carts          Cart[]
+  feedbacks      Feedback[]
+  invoices       Invoice[]
+  test_history   TestHistory[]
+  quiz_group     QuizGroup[]
+  coupon_history CouponHistory[]
 
   @@index([email], name: "idx_email")
 }
@@ -93,14 +96,14 @@ model CourseCategory {
 }
 
 model Section {
-  id         Int      @id @default(autoincrement())
-  title      String   @db.VarChar(100)
-  is_delete  Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         Int       @id @default(autoincrement())
+  title      String    @db.VarChar(100)
+  is_delete  Boolean   @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   course_id  Int
-  Course     Course?  @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  Lesson     Lesson[]
+  Course     Course?   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  Lecture    Lecture[]
 }
 
 model Lesson {
@@ -112,8 +115,126 @@ model Lesson {
   description String   @db.Text
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  section_id  Int
-  section     Section  @relation(fields: [section_id], references: [id], onDelete: Cascade)
+  lecture_id  Int?     @unique
+  lecture     Lecture? @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+}
+
+model Lecture {
+  id         Int      @id @default(autoincrement())
+  is_delete  Boolean  @default(false)
+  type       String   @db.VarChar(50)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  section_id Int
+  section    Section  @relation(fields: [section_id], references: [id], onDelete: Cascade)
+  // Union of Lesson and Test
+  // lesson_id  Int?
+  lesson     Lesson?
+  // test_id    Int?
+  test       Test?
+}
+
+model Test {
+  id                 Int           @id @default(autoincrement())
+  title              String        @db.VarChar(100)
+  is_delete          Boolean       @default(false)
+  is_time_limit      Boolean       @default(false)
+  duration           String        @db.VarChar(45)
+  pass_percent       Float         @default(0.5) @db.Float
+  number_of_question Int? //thêm test detail vào rồi thêm vô sau
+  quiz_group_id      Int
+  description        String        @db.Text
+  created_at         DateTime      @default(now())
+  updated_at         DateTime      @updatedAt
+  lecture_id         Int?          @unique
+  lecture            Lecture?      @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  quiz_group         QuizGroup     @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade)
+  test_detail        TestDetail[]
+  test_history       TestHistory[]
+}
+
+model TestDetail {
+  id      Int  @id @default(autoincrement())
+  test_id Int
+  quiz_id Int
+  test    Test @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  quiz    Quiz @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+
+  @@map(name: "test_detail")
+}
+
+model TestHistory {
+  id            Int      @id @default(autoincrement())
+  test_id       Int //id bài test
+  user_id       Int // user
+  total_score   Int //tổng điểm
+  total_percent Float    @db.Float //phần trăm
+  is_pass       Boolean  @default(false)
+  created_at    DateTime @default(now())
+
+  test Test @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  test_history_detail TestHistoryDetail[]
+
+  @@map(name: "test_history")
+}
+
+model TestHistoryDetail {
+  id              Int     @id @default(autoincrement())
+  test_history_id Int
+  quiz_id         Int // id câu hỏi
+  quiz_answer_id  Int? //đáp án đã chọn
+  is_correct      Boolean //sai hay đúng
+
+  test_history TestHistory @relation(fields: [test_history_id], references: [id], onDelete: Cascade)
+  quiz         Quiz        @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  quiz_answer  QuizAnswer? @relation(fields: [quiz_answer_id], references: [id], onDelete: SetNull)
+
+  @@map(name: "test_history_detail")
+}
+
+model QuizGroup {
+  id             Int      @id @default(autoincrement())
+  title          String   @db.VarChar(100)
+  description    String   @db.Text
+  user_id        Int
+  number_of_quiz Int?     @default(0)
+  is_delete      Boolean  @default(false)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  quiz           Quiz[]
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  test           Test[]
+
+  @@map(name: "quiz_group")
+}
+
+model Quiz {
+  id                  Int                 @id @default(autoincrement())
+  question            String              @db.VarChar(200)
+  type                Int // trắc nghiệm, điền khuyết... hiện tại dùng int, sau này sửa thành string
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  quiz_group_id       Int
+  is_delete           Boolean             @default(false)
+  quiz_group          QuizGroup           @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade)
+  test_detail         TestDetail[]
+  quiz_answer         QuizAnswer[]
+  test_history_detail TestHistoryDetail[]
+}
+
+model QuizAnswer {
+  id                  Int                 @id @default(autoincrement())
+  quiz_id             Int
+  answer              String
+  is_correct          Boolean
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  quiz                Quiz                @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  test_history_detail TestHistoryDetail[]
+
+  @@map(name: "quiz_answer")
 }
 
 model Rating {
@@ -207,4 +328,24 @@ model Feedback {
   score      Int
   created_at DateTime @default(now())
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Coupon {
+  id             Int             @id @default(autoincrement())
+  code           String          @db.VarChar(30)
+  discount       Float
+  is_delete      Boolean         @default(false)
+  valid_start    DateTime        @default(now())
+  valid_until    DateTime
+  coupon_history CouponHistory[]
+}
+
+model CouponHistory {
+  id        Int    @id @default(autoincrement())
+  coupon_id Int
+  coupon    Coupon @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map(name: "coupon_history")
 }

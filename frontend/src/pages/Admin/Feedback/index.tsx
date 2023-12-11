@@ -51,20 +51,34 @@ export function FeedbackAdmin() {
                                 <h2 className="text-2xl font-bold mb-2">Lọc theo điểm số</h2>
                                 {eveluateList.map((evaluateItem, index) => {
                                     return (
-                                        <div className="flex items-center gap-2 mb-1" key={index}>
-                                            <input
-                                                type="radio"
-                                                className="radio radio-info"
-                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    setEvaluate(Number(event.target.value));
-                                                }}
-                                                name="evaluate"
-                                                value={evaluateItem.value}
-                                                id={evaluateItem.title}
-                                                checked={evaluate === evaluateItem.value}
+                                        <label
+                                            htmlFor={evaluateItem.title}
+                                            className={`flex items-center justify-between mb-1 hover:cursor-pointer ${
+                                                evaluate ? (evaluate === 5 - index ? "" : "opacity-30") : ""
+                                            } `}
+                                            key={index}
+                                        >
+                                            <div className="flex  gap-2">
+                                                <input
+                                                    type="radio"
+                                                    className="radio radio-info"
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        setEvaluate(Number(event.target.value));
+                                                    }}
+                                                    name="evaluate"
+                                                    value={evaluateItem.value}
+                                                    id={evaluateItem.title}
+                                                    checked={evaluate === evaluateItem.value}
+                                                />
+                                                <span className="text-xl">{evaluateItem.title}</span>
+                                            </div>
+
+                                            <TotalRating
+                                                ratingId={`evaluate-${index}`}
+                                                totalScore={5 - index}
+                                                isForCourse={false}
                                             />
-                                            <span className="text-xl">{evaluateItem.title}</span>
-                                        </div>
+                                        </label>
                                     );
                                 })}
                             </div>

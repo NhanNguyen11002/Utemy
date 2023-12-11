@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navbar } from "../../components";
+import { Navbar, CardVideo } from "../../components";
 import { DefaultAvatar } from "../../assets";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { userActions } from "../../redux/slices";
@@ -8,7 +8,6 @@ import { useParams } from "react-router-dom";
 import { Course } from "../../types/course";
 import NotFound from "../NotFound";
 import { useNavigate } from "react-router-dom";
-import CardVideo from "./CardVideo";
 
 const AuthorProfile: React.FC = () => {
     const [isNotFound, setIsNotFound] = useState<boolean>(false);

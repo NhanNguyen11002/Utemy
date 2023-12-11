@@ -14,3 +14,10 @@
 .description-course h3 {
     @apply text-2xl; /* You can adjust this size as needed */
 }
+
+/* * {
+    @apply text-black;
+} */
+/* * {
+    @apply text-black;
+} */

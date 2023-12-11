@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useQueryParams from "../../hooks/useQueryParams";
 import { useAppDispatch } from "../../hooks/hooks";
 import { vnpayActions, cartActions } from "../../redux/slices";
+import { FaceSmileIcon, FaceFrownIcon } from "@heroicons/react/24/outline";
 
 const VnPayReturn = () => {
     const dispatch = useAppDispatch();
@@ -42,17 +43,29 @@ const VnPayReturn = () => {
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
             <div className="bg-white p-8 rounded shadow-md max-w-[500px] w-full">
-                <h1 className="text-3xl text-lightblue font-bold mb-4">
-                    {success ? "Payment Successful" : "Payment Failed"}
-                </h1>
-                <h2 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h2>
-                <p>Mã hóa đơn: {invoiceId}</p>
-                <p>Tổng số tiền: {(vnp_Amount / 100).toLocaleString()}đ</p>
-                <p>Mã ngày thanh toán: {vnp_PayDate}</p>
+                <div className="flex gap-2 ">
+                    <h1 className={`text-3xl ${success ? "text-lightblue" : "text-error"} font-bold mb-4`}>
+                        {success ? "Payment Successful" : "Payment Failed"}
+                    </h1>
+                    {success ? (
+                        <FaceSmileIcon className="w-8 h-8 text-lightblue" />
+                    ) : (
+                        <FaceFrownIcon className="w-8 h-8 text-error " />
+                    )}
+                </div>
+
+                <h2 className="text-2xl font-bold mb-4 text-black">Thông tin đơn hàng</h2>
+                <p className="text-black">Mã hóa đơn: {invoiceId}</p>
+                <p className="text-black">Tổng số tiền: {(vnp_Amount / 100).toLocaleString()}đ</p>
+                <p className="text-black">Mã ngày thanh toán: {vnp_PayDate}</p>
                 {success ? (
-                    <p className="text-gray-600 mb-6">Cảm ơn vi đã tin tưởng Utemy, giao dịch của bạn đã thành công</p>
+                    <p className="text-black mb-6">
+                        Cảm ơn vì đã tin tưởng Utemy, giao dịch của bạn đã thành công, chúc bạn học tập vui vẻ
+                    </p>
                 ) : (
-                    <p className="text-gray-600 mb-6">Có vẻ đã có vấn đề với giao dịch của bạn. Vui lòng thử lại sau</p>
+                    <p className="text-black mb-6">
+                        Có vẻ đã có vấn đề với giao dịch của bạn. Vui lòng liên hệ với ngân hàng và thử lại sau
+                    </p>
                 )}
 
                 <Link to="/history-transaction" className="flex flex-col items-center justify-center">

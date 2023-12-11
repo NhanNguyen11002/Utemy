@@ -1,26 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { courseActions, lessonActions } from "../../redux/slices";
+import { courseActions, lectureActions, testActions } from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
 import { VideoPlayer, Accordion, Spin, WatchVideoHeader } from "../../components";
 import { Section } from "../../types/section";
 import constants from "../../constants";
-import { Lesson } from "../../types/lesson";
-
-// import { orderLesson } from "../../types/lesson";
+import { Lecture } from "../../types/lecture";
+import TestGround from "./TestGround";
+import AfterTestGround from "./AfterTestGround";
+import BeforeTestGround from "./BeforeTestGround";
+import HistoryTest from "./HistoryTest";
 const WatchVideo: React.FC = () => {
-    const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
+    const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
+    const [getLecture, setGetLecture] = useState(false);
     const courseDetail: Course = useAppSelector((state) => state.courseSlice.courseDetail);
-    const lesson = useAppSelector((state) => state.lessonSlice.lesson);
-    console.log("lesson", lesson);
-    const [isNotFound, setIsNotFound] = useState<boolean>(false);
+    const testState: number = useAppSelector((state) => state.testSlice.testState);
+    const lecture = useAppSelector((state) => state.lectureSlice.lecture) ?? {
+        lecture_id: 0,
+        content: {
+            description: "",
+        },
+    };
 
-    // const orderLesson: orderLesson[] = useAppSelector((state) => state.courseSlice.orderLesson);
+    const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const [isDisplayBtn] = useState<boolean>(false);
-    const handleChangeLesson = (lesson: Lesson) => {
-        dispatch(lessonActions.setLesson(lesson));
+    const handleChangeLesson = (lecture: Lecture) => {
+        dispatch(lectureActions.setLecture(lecture));
     };
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "";
 
@@ -33,35 +40,62 @@ const WatchVideo: React.FC = () => {
                 setIsNotFound(true);
             } else {
                 dispatch(courseActions.getRightOfCourse(response.payload?.data.course_id));
-            }
-            const lessonList = response.payload?.data?.sections![0].Lesson;
-            console.log("first", lessonList);
-            if (lessonList && lessonList.length > 0) {
-                console.log("sau first");
-                dispatch(lessonActions.setLesson(lessonList[0] as Lesson));
+                if (response.payload.data.sections && response.payload.data.sections.length > 0) {
+                    const sections = response.payload.data.sections;
+                    for (const section of sections) {
+                        if (section.lecture) {
+                            if (section.lecture.length > 0) {
+                                dispatch(lectureActions.setLecture(section.lecture[0] as Lecture));
+                                setGetLecture(true);
+                                setIsNotFound(false);
+                                break;
+                            } else {
+                                setIsNotFound(true);
+                            }
+                        }
+                    }
+                } else {
+                    setIsNotFound(true);
+                }
             }
         });
     }, [dispatch, slug]);
+    useEffect(() => {
+        if (lecture.type === "Test") {
+            dispatch(testActions.getTestByTestId(lecture.content.id));
+        } else return;
+    }, [dispatch, lecture.lecture_id]);
     if (role === constants.util.ROLE_USER) return <NotFound />;
     if (isNotFound) return <NotFound />;
 
     return (
         <>
-            {isLoading && <Spin />}
+            {isGetLoading && <Spin />}
             <WatchVideoHeader course={courseDetail} role={role} />
 
             <div className=" w-full  mt-[66px] mb-[100px] justify-center  flex flex-col">
                 <div className="flex flex-col laptop:flex-row justify-center w-full">
                     <div className="w-3/4 shrink-0 mt-1 bg-[#2D2F31] ">
-                        <VideoPlayer sourse={lesson.url_video ? lesson.url_video : ""} />
+                        {lecture.type === "Lesson" ? (
+                            <>
+                                <VideoPlayer sourse={lecture.content.url_video ? lecture.content.url_video : ""} />
+                            </>
+                        ) : (
+                            <div className="w-full flex-1 shrink-0">
+                                {testState === 0 && <BeforeTestGround />}
+                                {testState === 1 && <TestGround />}
+                                {testState === 2 && <AfterTestGround />}
+                                {testState === 3 && <HistoryTest />}
+                            </div>
+                        )}
                     </div>
-                    <div className="flex-2   laptop:max-h-[480px]  laptop:overflow-y-auto shrink-0 w-1/4">
+                    <div className="flex-2 laptop:max-h-[480px]  laptop:overflow-y-auto shrink-0 w-1/4">
                         {courseDetail.sections?.map((section: Section, index) => {
                             return (
                                 <Accordion
                                     disable={true}
                                     key={index}
-                                    source={lesson.url_video}
+                                    lectureId={lecture.lecture_id}
                                     handleChangeLesson={handleChangeLesson}
                                     isDisplayBtn={isDisplayBtn}
                                     section={section}
@@ -73,7 +107,14 @@ const WatchVideo: React.FC = () => {
 
                 <div className="my-4 ml-10 w-1/2 description-course ">
                     <h2 className=" tablet:text-2xl font-bold mb-3">Mô tả bài học</h2>
-                    <div className="" dangerouslySetInnerHTML={{ __html: lesson.description }}></div>
+                    {getLecture && lecture.content.description && (
+                        <div
+                            className=""
+                            dangerouslySetInnerHTML={{
+                                __html: lecture.lecture_id !== 0 ? lecture.content.description : "",
+                            }}
+                        ></div>
+                    )}
                 </div>
             </div>
         </>

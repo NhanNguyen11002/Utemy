@@ -222,11 +222,9 @@ const getCategories = async (req: Request): Promise<ResponseBase> => {
 };
 const get5Categories = async (req: Request): Promise<ResponseBase> => {
     try {
-        const getListCategories = await configs.db.category.findMany({
-            orderBy: {
-                title: "asc",
-            },
-        });
+        const getListCategories: any[] = await configs.db
+            .$queryRaw`select category.id, title, description, url_image, count(course_id) as course_count from category left join
+ courses_categories on category.id = courses_categories.category_id group by category.id order by course_count desc limit 8;`;
         if (!getListCategories) return new ResponseError(404, constants.error.ERROR_CATEGORY_NOT_FOUND, false);
 
         const categories: CategoryResponse[] = [];

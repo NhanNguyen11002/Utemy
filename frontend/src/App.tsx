@@ -30,6 +30,7 @@ import ProfileAdmin from "./pages/Admin/Profile";
 import MyProfile from "./pages/MyProfile";
 import CreateUser from "./pages/Admin/CreateUser";
 import UserProfile from "./pages/Admin/UserProfile";
+import Quiz from "./pages/Quiz";
 
 // import Header from "./components/Header";
 // import Footer from "./components/Footer";
@@ -93,6 +94,7 @@ function App() {
                                 <Route path="my-profile" element={<MyProfile />}></Route>
                                 <Route path="my-feedback" element={<Feedback />}></Route>
                                 <Route path="history-transaction" element={<HistoryTransaction />}></Route>
+                                <Route path="quiz" element={<Quiz />}></Route>
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
                         </Route>

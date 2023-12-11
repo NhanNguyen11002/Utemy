@@ -2,23 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { Formik, Field, ErrorMessage } from "formik";
 import { UpdateLesson as UpdateLessonType } from "../../types/lesson";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { lessonActions } from "../../redux/slices";
+import { lectureActions } from "../../redux/slices";
 import { addLessonValidationSchema } from "../../validations/lesson";
 import TextEditor from "../TextEditor";
 import toast, { Toaster } from "react-hot-toast";
 import constants from "../../constants";
 
 type UpdateLessonModalProps = {
-    handleDelete: () => void;
     handleCancel: () => void;
-    id: number;
-    title: string;
-    duration: string;
-    description: string;
+    handleRerender: () => void;
+    handleChangeType: () => void;
+    lectureId: number;
 };
 
 const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
-    const isLoading = useAppSelector((state) => state.lessonSlice.isLoading) ?? false;
+    const isLoading = useAppSelector((state) => state.lectureSlice.isLoading) ?? false;
+    const lecture = useAppSelector((state) => state.lectureSlice.lecture) ?? {};
     const [error, setError] = useState("");
     const [video, setVideo] = useState<File | null>(null);
 
@@ -26,11 +25,11 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
     const formikRef = useRef(null);
 
     const initialValue: UpdateLessonType = {
-        title: props.title,
+        title: lecture.content.title,
         video: null,
-        id: props.id,
-        duration: props.duration,
-        description: props.description,
+        id: lecture.lecture_id,
+        duration: lecture.content.duration,
+        description: lecture.content.description,
     };
 
     const handleChangeVideo = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,17 +57,19 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
         let formData = new FormData();
         formData.append("title", values.title);
         formData.append("video", video as File);
-        formData.append("lesson_id", values.id.toString());
+        formData.append("lecture_id", values.id.toString());
         formData.append("duration", values.duration);
         formData.append("description", values.description);
-
-        dispatch(lessonActions.updateLesson(formData))
+        formData.append("type", "Lesson");
+        dispatch(lectureActions.updateLecture(formData))
             .then((response) => {
                 if (response.payload) {
                     if (response.payload.status_code !== 200) {
                         toast.error(response.payload.message);
                     } else {
                         toast.success(response.payload.message);
+                        dispatch(lectureActions.getLectureById(props.lectureId));
+                        props.handleRerender();
                         props.handleCancel();
                     }
                 }
@@ -81,8 +82,8 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
         formik.setFieldValue("description", description);
     };
     useEffect(() => {
-        dispatch(lessonActions.getLessonById(props.id));
-    }, [dispatch]);
+        dispatch(lectureActions.getLectureById(props.lectureId));
+    }, [dispatch, props.lectureId]);
 
     return (
         <div className="fixed z-50 top-0 left-0 right-0 bottom-0 bg-black/50 flex items-center justify-center">
@@ -171,7 +172,7 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
                                         as="textarea"
                                         name="description"
                                         component={TextEditor}
-                                        description={props.description}
+                                        description={lecture.content.description}
                                         handleChangeDescription={(description: string) =>
                                             handleDescriptionChange(description, formik)
                                         }
@@ -180,18 +181,34 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
                                         } `}
                                     />
                                 </div>
-                                <div className="flex justify-end px-4 mt-11">
+                                <div className="flex justify-between px-4 mt-11">
                                     <button
-                                        type="submit"
-                                        name="save_button"
-                                        className="text-white btn btn-info text-lg"
+                                        type="button"
+                                        name="type_button"
+                                        onClick={props.handleChangeType}
+                                        className="text-black btn text-lg border-2 border-black"
                                         disabled={error !== "" || isLoading}
                                     >
-                                        {isLoading ? "Loading..." : "Lưu"}
+                                        {isLoading ? "Loading..." : "Chọn dạng bài giảng"}
                                     </button>
-                                    <button onClick={props.handleCancel} type="button" className="btn text-lg ml-2">
-                                        Hủy
-                                    </button>
+                                    <div className="flex justify-end ">
+                                        <button
+                                            type="submit"
+                                            name="save_button"
+                                            className="text-white btn btn-info text-lg"
+                                            disabled={error !== "" || isLoading}
+                                        >
+                                            {isLoading ? "Loading..." : "Lưu"}
+                                        </button>
+                                        <button
+                                            onClick={props.handleCancel}
+                                            type="button"
+                                            className="btn text-lg ml-2 text-black border-2 border-black"
+                                            disabled={error !== "" || isLoading}
+                                        >
+                                            {isLoading ? "Loading..." : "Hủy"}
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         )}

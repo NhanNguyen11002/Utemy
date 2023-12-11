@@ -38,6 +38,8 @@ const Feedback: React.FC = () => {
 
             // Sau khi gửi feedback, bạn có thể chuyển người dùng đến trang chính hoặc hiển thị một thông báo thành công.
             console.log("Feedback submitted successfully");
+            setFeedbackContent("");
+            setRatingValue(5);
             toast.success("Submit successfully!");
         } catch (error) {
             // Xử lý lỗi nếu có

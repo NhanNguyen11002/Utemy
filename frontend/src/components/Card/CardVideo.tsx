@@ -2,7 +2,7 @@ import React from "react";
 // import { Category } from "../../types/course";
 import { useNavigate } from "react-router";
 import { User } from "../../types/user";
-import { TotalRating } from "../../components";
+import { TotalRating } from "..";
 import { Category } from "../../types/category";
 
 interface CardVideoProps {

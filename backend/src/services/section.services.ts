@@ -8,6 +8,9 @@ import constants from "../constants";
 import { TokenExpiredError, JsonWebTokenError, NotBeforeError } from "jsonwebtoken";
 import lessonRouter from "~/routes/lesson.router";
 import helper from "../helper";
+import LessonServices from "./lesson.services";
+import { Section } from "../types/section";
+import { Lecture } from "../types/lecture";
 
 const addSection = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
@@ -112,7 +115,7 @@ const deleteSection = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
         });
         if (isDelete) {
-            const isDeleteLesson = await configs.db.lesson.updateMany({
+            const isDeleteLecture = await configs.db.lecture.updateMany({
                 where: {
                     section_id: Number(section_id),
                 },
@@ -120,16 +123,18 @@ const deleteSection = async (req: IRequestWithId): Promise<ResponseBase> => {
                     is_delete: true,
                 },
             });
-            if (isDeleteLesson) {
-                const deletedLesson = await configs.db.lesson.findMany({
+            if (isDeleteLecture) {
+                const deletedLecture = await configs.db.lecture.findMany({
                     where: {
                         section_id: Number(section_id),
                         is_delete: true,
                     },
                 });
-                deletedLesson.forEach(async (lesson) => {
-                    const fullPathDeConverted = await helper.ConvertHelper.deConvertFilePath(lesson.url_video);
-                    await helper.FileHelper.destroyedVideoIfFailed(fullPathDeConverted);
+                deletedLecture.forEach(async (lecture) => {
+                    if (lecture.type === "Lesson") LessonServices.deleteLesson(lecture.id);
+                    else console.log("delete test");
+                    // const fullPathDeConverted = await helper.ConvertHelper.deConvertFilePath(lesson.url_video);
+                    // await helper.FileHelper.destroyedVideoIfFailed(fullPathDeConverted);
                 });
                 return new ResponseSuccess(200, constants.success.SUCCESS_REQUEST, true);
             }
@@ -154,23 +159,50 @@ const getAllSectionByCourseId = async (req: Request): Promise<ResponseBase> => {
                 },
             },
             include: {
-                Lesson: {
+                Lecture: {
                     where: {
                         is_delete: false,
                     },
                     select: {
-                        title: true,
                         id: true,
-                        url_video: true,
-                        updated_at: true,
-                        duration: true,
-                        description: true,
+                        type: true,
+                        lesson: true,
+                        test: true,
+                    },
+                    orderBy: {
+                        created_at: "asc",
                     },
                 },
-                Course: true,
+                Course: {
+                    select: {
+                        is_delete: true,
+                    },
+                },
             },
         });
-        if (isFoundSection) return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isFoundSection);
+        if (isFoundSection) {
+            const sections: Section[] = isFoundSection.map((section) => {
+                const lecture = section.Lecture.map((lecture) => {
+                    let content;
+                    if (lecture.type === "Lesson") content = lecture.lesson;
+                    else content = lecture.test;
+                    const tempLecture: Lecture = {
+                        lecture_id: lecture.id,
+                        type: lecture.type,
+                        content,
+                    };
+                    return tempLecture;
+                });
+                const temp: Section = {
+                    title: section.title,
+                    updated_at: section.updated_at,
+                    id: section.id,
+                    lecture,
+                };
+                return temp;
+            });
+            return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, sections);
+        }
         return new ResponseError(400, constants.error.ERROR_VALIDATION_FAILED, false);
     } catch (error: any) {
         if (error instanceof PrismaClientKnownRequestError) {

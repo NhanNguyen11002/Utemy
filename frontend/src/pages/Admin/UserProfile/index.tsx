@@ -6,7 +6,7 @@ import { User } from "../../../types/user";
 import { useParams } from "react-router-dom";
 import { Course } from "../../../types/course";
 import NotFound from "../../NotFound";
-import { CourseCard } from "../../../components";
+import { CardVideo } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { StarIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
@@ -14,60 +14,66 @@ const UserProfile = () => {
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const navigate = useNavigate();
     const user: User = useAppSelector((state) => state.userSlice.user);
+    const loginId = useAppSelector((state) => state.authSlice.user.user_id);
     let courseList: Course[] = useAppSelector((state) => state.userSlice.courses) ?? [];
+    let totalEnrolled = 0;
+    let totalRating = 0;
+    if (courseList.length > 0) {
+        courseList.forEach((course) => {
+            totalEnrolled += course.number_of_enrolled;
+            totalRating += course.number_of_rating;
+        });
+    }
     const dispatch = useAppDispatch();
     const { id } = useParams();
-    const loginId = useAppSelector((state) => state.authSlice.user.user_id);
-
     useEffect(() => {
         dispatch(userActions.getAuthorProfile(Number(id))).then((response) => {
-            if (response.payload && response.payload.status_code === 200) {
-                setIsNotFound(false);
-            } else {
-                // Handle the case where response.payload is undefined
+            if (response.payload && response.payload.status_code !== 200) {
                 setIsNotFound(true);
+            } else {
+                setIsNotFound(false);
             }
         });
     }, [dispatch, id]);
-    if (Number(id) === Number(loginId)) navigate("/admin/profile");
+    if (Number(id) === Number(loginId)) navigate("/my-profile");
     if (isNotFound) return <NotFound />;
 
     return (
         <>
-            <div className="mt-12 mb-8 flex flex-col gap-12 bg-background_2 min-h-screen">
-                <div className="container mx-auto px-4 mt-[100px] laptop:mt-0">
-                    <div className="px-4 tablet:px-[60px] flex gap-4 bg-lightblue/30 mt-4 p-4 rounded-lg">
-                        <div className="w-32 h-32 rounded-full border">
-                            <img
-                                src={user.url_avatar || DefaultAvatar}
-                                alt="Avatar"
-                                className="w-full h-full object-cover rounded-full"
-                            />
-                        </div>
-                        <div className=" flex flex-col justify-start">
-                            <h1 className="text-3xl font-bold mb-2">
-                                {((user.first_name as string) + " " + user.last_name) as string}
-                                <div
-                                    className={`${
-                                        user.is_admin ? "badge badge-info badge-outline" : "badge badge-outline"
-                                    } text-xl ml-4 badge-lg`}
-                                >
-                                    {user.is_admin ? (
-                                        <StarIcon className="w-4 h-4 " />
-                                    ) : (
-                                        <UserCircleIcon className="w-4 h-4 mr-1" />
-                                    )}
-                                    {user.is_admin ? "Admin" : "User"}
-                                </div>
+            <div className="container h-full mx-auto px-4 mt-[150px] laptop:mt-0 flex w-2/3">
+                <div className="w-2/3 h-full flex flex-col items-starts justify-center gap-2 mt-[50px] p-4">
+                    <div className="w-full">
+                        <div className="flex gap-2">
+                            <h1 className="text-2xl mb-2 mt-30">
+                                {((user.first_name as string) + " " + user.last_name) as string}{" "}
                             </h1>
+                            {user.is_admin ? (
+                                <StarIcon className="w-8 h-8 text-lightblue" />
+                            ) : (
+                                <UserCircleIcon className="w-8 h-8" />
+                            )}
+                        </div>
 
-                            <p className="text-lg">
-                                <span className="font-bold">Mô tả về tôi: </span>
-                                {user.description}
-                            </p>
+                        <div className="flex gap-4">
+                            <div className="flex flex-col items-start gap-2">
+                                <p className="text-md opacity-80">Tổng học viên</p>
+                                <p className="text-2xl text-black font-bold">{totalEnrolled}</p>
+                            </div>
+                            <div className="flex flex-col items-start gap-2">
+                                <p className="text-md opacity-80">Đánh giá</p>
+                                <p className="text-2xl text-black font-bold">{totalRating}</p>
+                            </div>
+                        </div>
+                        <div className="gap-5">
+                            <span className=" text-2xl text-black mb-5">Giới thiệu về tôi: </span>
+                            <div
+                                className="description-course"
+                                dangerouslySetInnerHTML={{ __html: user.description }}
+                            ></div>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-3 place-self-center my-3">
+                    <h1 className="text-2xl text-black self-start">Các khóa học của tôi ({courseList.length})</h1>
+                    <div className="grid grid-cols-2 gap-10  place-self-start my-3 w-2/3">
                         {courseList.length > 0 &&
                             courseList.map((course: Course, index) => {
                                 return (
@@ -75,27 +81,32 @@ const UserProfile = () => {
                                         className="laptop:w-3/4 max-w-xs tablet:max-w-full place-self-center"
                                         key={index}
                                     >
-                                        <CourseCard
-                                            key={course.course_id}
-                                            id={course.course_id}
-                                            title={course.title}
+                                        <CardVideo
+                                            key={index}
+                                            for={"rate"}
+                                            courseId={course.course_id}
                                             thumbnail={course.thumbnail}
-                                            rating={course.average_rating}
-                                            price={course.price}
-                                            salePrice={course.sale_price}
-                                            saleUntil={course.sale_until}
-                                            status={course.status}
-                                            attendees={course.number_of_enrolled}
-                                            numberOfSection={course.number_of_section}
-                                            slug={course.slug}
-                                            summary={course.summary}
+                                            title={course.title}
                                             author={course.author as User}
-                                            isEditCourse={false}
-                                            enrolled={true}
+                                            rating={course.average_rating}
+                                            categories={course.categories}
+                                            slug={course.slug}
+                                            price={Number(course.price)}
+                                            salePrice={Number(course.sale_price)}
+                                            saleUntil={course.sale_until?.toString()}
                                         />
                                     </div>
                                 );
                             })}
+                    </div>
+                </div>
+                <div className="px-4 tablet:px-[60px] flex flex-col items-center gap-4  p-4 rounded-lg w-1/3 mt-[50px]">
+                    <div className="w-50 h-50 rounded-full border">
+                        <img
+                            src={user.url_avatar || DefaultAvatar}
+                            alt="Avatar"
+                            className="w-full h-full object-cover rounded-full"
+                        />
                     </div>
                 </div>
             </div>

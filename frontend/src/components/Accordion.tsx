@@ -5,23 +5,22 @@ import DeleteIcon from "../assets/icons/DeleteIcon";
 import EditSectionIcon from "../assets/icons/EditSectionIcon";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { PlayIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { PlayIcon, BookOpenIcon, DocumentIcon } from "@heroicons/react/24/outline";
 import { secondsToMinutesAndSeconds } from "../utils/helper";
 import { Course } from "../types/course";
-import { lessonActions } from "../redux/slices";
-import { Lesson } from "../types/lesson";
-// import { orderLesson } from "../types/lesson";
+import { lectureActions } from "../redux/slices";
+import { Lecture } from "../types/lecture";
 type AccordionType = {
     section: Section;
-    handleDisplayAddSectionModal?: (id: number) => void;
+    handleDisplayAddLectureModal?: (id: number) => void;
     isDisplayBtn: boolean;
     handleDeleteSection?: (id: number) => void;
     handleDisplayDeleteModal?: (id: number, isDeleteSection: boolean) => void;
     handleDisplayEditModal?: (id: number, title: string) => void;
-    handleDisplayEditLesson?: (id: number, title: string, video: string, duration: string, description: string) => void;
-    handleChangeLesson?: (lesson: Lesson) => void;
+    handleDisplayEditLecture?: (lectureId: number, type: string) => void;
+    handleChangeLesson?: (lecture: Lecture) => void;
     redirectToWatchVideo?: boolean;
-    source?: string;
+    lectureId?: number;
     disable: boolean;
     // orderLesson: any;
 };
@@ -67,8 +66,8 @@ const Accordion: React.FC<AccordionType> = (props) => {
                                 <div
                                     className="cursor-pointer"
                                     onClick={() => {
-                                        if (props.handleDisplayAddSectionModal) {
-                                            props.handleDisplayAddSectionModal(props.section.id);
+                                        if (props.handleDisplayAddLectureModal) {
+                                            props.handleDisplayAddLectureModal(props.section.id);
                                         }
                                     }}
                                 >
@@ -100,30 +99,38 @@ const Accordion: React.FC<AccordionType> = (props) => {
                 </h2>
             </div>
             {show &&
-                props.section.Lesson &&
-                props.section.Lesson.map((lesson, index) => (
+                props.section.lecture &&
+                props.section.lecture.map((lecture, index) => (
                     <div
                         className={`py-4 pl-8 pr-4 border border-black/25 rounded-lg my-2 hover:cursor-pointer hover:bg-footer flex justify-between  ${
-                            lesson.url_video === props.source ? "bg-footer" : ""
+                            lecture.lecture_id === props.lectureId ? "bg-footer" : ""
                         }`}
                         onClick={() => {
                             if (props.handleChangeLesson) {
-                                props.handleChangeLesson(lesson);
+                                props.handleChangeLesson(lecture);
                             }
                             if (props.redirectToWatchVideo) {
-                                dispatch(lessonActions.setLesson(lesson));
+                                dispatch(lectureActions.setLecture(lecture));
                                 navigate(`/course-detail/${courseDetail.slug}/watch`);
                             }
                         }}
-                        key={`${lesson.id}`}
+                        key={`${lecture.lecture_id}`}
                     >
                         {" "}
                         <div className="flex items-center justify-between w-full mr-2">
                             <div className="flex items-center gap-2">
-                                <PlayIcon className="w-4 h-4 shrink-0" /> <p>{lesson.title}</p>
+                                {lecture.type === "Lesson" ? (
+                                    <>
+                                        <PlayIcon className="w-4 h-4 shrink-0" /> <p>{lecture.content.title}</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DocumentIcon className="w-4 h-4 shrink-0" /> <p>{lecture.content.title}</p>
+                                    </>
+                                )}
                             </div>
                             <div>
-                                <p>{secondsToMinutesAndSeconds(Number(lesson.duration))}</p>
+                                <p>{secondsToMinutesAndSeconds(Number(lecture.content.duration))}</p>
                             </div>
                         </div>
                         {props.isDisplayBtn && (
@@ -131,14 +138,8 @@ const Accordion: React.FC<AccordionType> = (props) => {
                                 <div
                                     className="cursor-pointer"
                                     onClick={() => {
-                                        if (props.handleDisplayEditLesson) {
-                                            props.handleDisplayEditLesson(
-                                                lesson.id,
-                                                lesson.title,
-                                                lesson.url_video,
-                                                lesson.duration,
-                                                lesson.description,
-                                            );
+                                        if (props.handleDisplayEditLecture) {
+                                            props.handleDisplayEditLecture(lecture.lecture_id, lecture.type);
                                         }
                                     }}
                                 >
@@ -148,7 +149,7 @@ const Accordion: React.FC<AccordionType> = (props) => {
                                     className="cursor-pointer"
                                     onClick={() => {
                                         if (props.handleDisplayDeleteModal) {
-                                            props.handleDisplayDeleteModal(lesson.id, false);
+                                            props.handleDisplayDeleteModal(lecture.lecture_id, false); // lecture.id
                                         }
                                     }}
                                 >

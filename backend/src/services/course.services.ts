@@ -19,9 +19,8 @@ import {
     CourseOrderByWithRelationInput,
 } from "../types/course";
 import { PagingResponse } from "../types/response";
-import { title } from "process";
 import { Section } from "../types/section";
-import { create } from "domain";
+import { Lecture } from "../types/lecture";
 const getRightOfCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const user_id = req.user_id;
@@ -152,7 +151,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     ratings: true, // Liên kết tới bảng Rating
                     sections: {
                         include: {
-                            Lesson: true, // Liên kết tới bảng Lesson bên trong bảng Section
+                            Lecture: true, // Liên kết tới bảng Lesson bên trong bảng Section
                         },
                     },
                 },
@@ -794,16 +793,15 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                         title: true,
                         updated_at: true,
                         id: true,
-                        Lesson: {
+                        Lecture: {
                             where: {
                                 is_delete: false,
                             },
                             select: {
                                 id: true,
-                                title: true,
-                                url_video: true,
-                                duration: true,
-                                description: true,
+                                type: true,
+                                lesson: true,
+                                test: true,
                             },
                             orderBy: {
                                 created_at: "asc",
@@ -833,7 +831,26 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     categories.push(category.Category as any);
                 });
                 const author = { ...course.user, user_id: course.user.id };
-                const sections: Section[] = course.sections;
+                const sections: Section[] = course.sections.map((section) => {
+                    const lecture = section.Lecture.map((lecture) => {
+                        let content;
+                        if (lecture.type === "Lesson") content = lecture.lesson;
+                        else content = lecture.test;
+                        const tempLecture: Lecture = {
+                            lecture_id: lecture.id,
+                            type: lecture.type,
+                            content,
+                        };
+                        return tempLecture;
+                    });
+                    const temp: Section = {
+                        title: section.title,
+                        updated_at: section.updated_at,
+                        id: section.id,
+                        lecture,
+                    };
+                    return temp;
+                });
                 let number_of_section = 0;
                 sections.forEach((section, index) => {
                     number_of_section += 1;
@@ -893,16 +910,15 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                         title: true,
                         updated_at: true,
                         id: true,
-                        Lesson: {
+                        Lecture: {
                             where: {
                                 is_delete: false,
                             },
                             select: {
                                 id: true,
-                                title: true,
-                                url_video: true,
-                                duration: true,
-                                description: true,
+                                lesson: true,
+                                test: true,
+                                type: true,
                             },
                             orderBy: {
                                 created_at: "asc",
@@ -937,7 +953,26 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                     categories.push(temp);
                 });
                 const author = { ...course.user, user_id: course.user.id };
-                const sections: Section[] = course.sections;
+                const sections: Section[] = course.sections.map((section) => {
+                    const lecture = section.Lecture.map((lecture) => {
+                        let content;
+                        if (lecture.type === "Lesson") content = lecture.lesson;
+                        else content = lecture.test;
+                        const tempLecture: Lecture = {
+                            lecture_id: lecture.id,
+                            type: lecture.type,
+                            content,
+                        };
+                        return tempLecture;
+                    });
+                    const temp: Section = {
+                        title: section.title,
+                        updated_at: section.updated_at,
+                        id: section.id,
+                        lecture,
+                    };
+                    return temp;
+                });
                 const courseData: CourseDetail = {
                     course_id: course.id,
                     title: course.title,
