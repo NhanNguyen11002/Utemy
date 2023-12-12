@@ -8,7 +8,6 @@ import crypto from "crypto";
 import moment from "moment";
 import qs from "qs";
 import sortObject from "sort-object";
-import { create } from "domain";
 
 const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {

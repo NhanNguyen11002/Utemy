@@ -16,6 +16,6 @@
     "ts-node": {
         "require": ["tsconfig-paths/register"]
     },
-    "files": ["src/types/request.ts"], // Các file dùng để defined global type cho dự án
+    "files": ["src/types/request.ts", "src/types/type.d.ts"], // Các file dùng để defined global type cho dự án
     "include": ["src/**/*", "index.ts"] // Đường dẫn include cho các file cần build
 }

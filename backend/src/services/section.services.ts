@@ -6,7 +6,6 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { ResponseBase, ResponseError, ResponseSuccess } from "../common/response";
 import constants from "../constants";
 import { TokenExpiredError, JsonWebTokenError, NotBeforeError } from "jsonwebtoken";
-// import lessonRouter from "../routes/lesson.router";
 import helper from "../helper";
 import LessonServices from "./lesson.services";
 import { Section } from "../types/section";
