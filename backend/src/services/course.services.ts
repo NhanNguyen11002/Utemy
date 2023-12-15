@@ -479,7 +479,11 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                         User: true,
                     },
                 },
-                sections: true,
+                sections: {
+                    where: {
+                        is_delete: false,
+                    },
+                },
                 enrolleds: {
                     include: {
                         user: true,
@@ -578,7 +582,11 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                                 Category: true,
                             },
                         },
-                        sections: true,
+                        sections: {
+                            where: {
+                                is_delete: false,
+                            },
+                        },
                         enrolleds: true,
                     },
                 },

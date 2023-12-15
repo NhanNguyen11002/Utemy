@@ -273,13 +273,13 @@ const deleteQuiz = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
             where: { id: isExistQuiz.quiz_group_id },
         });
-        const clearAnswer = await configs.db.quizAnswer.deleteMany({
-            where: {
-                quiz_id: isExistQuiz.id,
-            },
-        });
+        // const clearAnswer = await configs.db.quizAnswer.deleteMany({
+        //     where: {
+        //         quiz_id: isExistQuiz.id,
+        //     },
+        // });
 
-        if (clearAnswer) return new ResponseSuccess(200, constants.success.SUCCESS_DELETE_DATA, true); //
+        if (deleteQuiz) return new ResponseSuccess(200, constants.success.SUCCESS_DELETE_DATA, true); //
         else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {

@@ -46,7 +46,6 @@ const createTest = async (content: CreateTestType, lectureId: number): Promise<R
             return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
         }
     } catch (error) {
-        console.log("error chỗ này", error);
         return new ResponseError(500, JSON.stringify(error), false);
     }
 };
@@ -109,7 +108,6 @@ const updateTest = async (content: CreateTestType, lectureId: number): Promise<R
         }
         return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
     } catch (error) {
-        console.log(error);
         return new ResponseError(500, JSON.stringify(error), false);
     }
 };
@@ -142,7 +140,6 @@ const deleteTest = async (lectureId: number): Promise<ResponseBase> => {
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         }
     } catch (error) {
-        console.log(error);
         return new ResponseError(500, JSON.stringify(error), false);
     }
 };
@@ -261,7 +258,7 @@ const createTestHistory = async (req: IRequestWithId): Promise<ResponseBase> => 
                 user_id,
                 total_score: countRightAnswer(test_progress),
                 total_percent: total_percent * 100,
-                is_pass: total_percent > isExistTest.pass_percent,
+                is_pass: total_percent >= isExistTest.pass_percent,
             },
         });
         const createTestHistoryDetailData = test_progress.map((progress) => {

@@ -96,6 +96,7 @@ const PopupRating: React.FC<RatingCourseProps> = (props) => {
                             initialValues={initialValue}
                             onSubmit={handleOnSubmit}
                             innerRef={formikRef}
+                            enableReinitialize={true}
                         >
                             {(formik) => (
                                 <form

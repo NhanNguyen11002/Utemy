@@ -228,11 +228,11 @@ const CreateUser = () => {
                         )}
                     </Formik>
                 </div>
-                <div className="w-2/3">
+                <div className="w-2/3 h-fit flex justify-end 2xl:justify-start">
                     <img
                         src={images.CreateUser}
                         alt="panel"
-                        className=" rounded-3xl w-1/4 hidden laptop:block laptop:w-full"
+                        className=" rounded-3xl hidden laptop:block laptop:w-3/4"
                     />
                 </div>
             </div>

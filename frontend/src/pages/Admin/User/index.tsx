@@ -179,10 +179,10 @@ const UserAdmin = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="gap-2">
+                            <div className="ml-2 gap-2">
                                 <button
                                     onClick={() => handleKeyWordSearch()}
-                                    className="text-xl btn btn-info text-white hover:bg-lightblue/80 font-w "
+                                    className="text-xl btn btn-info text-white hover:bg-lightblue/80 font-w mb-1"
                                 >
                                     Tìm kiếm
                                 </button>{" "}
