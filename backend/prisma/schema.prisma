@@ -11,52 +11,60 @@ datasource db {
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  first_name  String     @db.VarChar(30)
-  last_name   String     @db.VarChar(30)
-  email       String     @unique @db.VarChar(50)
-  passsword   String     @db.VarChar(25)
-  description String     @db.Text
-  url_avatar  String     @db.Text
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-  is_verify   Boolean    @default(false)
-  courses     Course[]
-  enrolleds   Enrolled[]
-  ratings     Rating[]
-  carts       Cart[]
-  feedbacks   Feedback[]
-  invoices    Invoice[]
+  id             Int             @id @default(autoincrement())
+  first_name     String          @db.VarChar(30)
+  last_name      String          @db.VarChar(30)
+  email          String          @unique @db.VarChar(50)
+  password       String          @db.Text
+  description    String?         @db.Text
+  url_avatar     String?         @db.Text
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  is_verify      Boolean         @default(false)
+  token          String?         @db.Text
+  is_admin       Boolean         @default(false)
+  is_deleted     Boolean         @default(false)
+  courses        Course[]
+  enrolleds      Enrolled[]
+  ratings        Rating[]
+  carts          Cart[]
+  feedbacks      Feedback[]
+  invoices       Invoice[]
+  test_history   TestHistory[]
+  quiz_group     QuizGroup[]
+  coupon_history CouponHistory[]
 
   @@index([email], name: "idx_email")
 }
 
 model Category {
   id                Int              @id @default(autoincrement())
-  title             String           @unique
+  title             String           @unique @db.VarChar(50)
   url_image         String           @db.Text
   description       String           @db.Text
   course_categories CourseCategory[]
 }
 
 model Course {
-  id                 Int      @id @default(autoincrement())
-  title              String   @unique @db.VarChar(100)
-  slug               String   @unique @db.VarChar(150)
-  status             Boolean  @default(false)
-  description        String   @db.Text
-  thumbnail          String   @db.Text
-  summary            String   @db.Text
-  is_delete          Boolean  @default(false)
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
-  total_rating       Float
-  number_of_rating   Int
-  number_of_enrolled Int
+  id                 Int       @id @default(autoincrement())
+  title              String    @db.VarChar(100)
+  slug               String    @unique @db.VarChar(150)
+  status             Boolean   @default(false)
+  description        String    @db.Text
+  thumbnail          String    @db.Text
+  summary            String    @db.Text
+  is_delete          Boolean   @default(false)
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  average_rating     Float     @default(0) @db.Float
+  number_of_rating   Int       @default(0) @db.Int
+  number_of_enrolled Int       @default(0) @db.Int
   author_id          Int
-  price              Float
-  sale_price         Float
-  sale_until         DateTime
+  price              Float     @db.Float
+  sale_price         Float?    @db.Float
+  sale_until         DateTime?
+  study              Json?
+  requirement        Json?
 
   user User @relation(fields: [author_id], references: [id])
 
@@ -68,7 +76,7 @@ model Course {
 
   course_categories CourseCategory[]
 
-  carts Cart[]
+  carts CartDetail[]
 
   invoice_detail InvoiceDetail[]
 
@@ -77,49 +85,169 @@ model Course {
 }
 
 model CourseCategory {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   course_id   Int
   category_id Int
-  created_at  DateTime  @default(now())
-  Course      Course?   @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  Category    Category? @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+  Course      Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  Category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
 
   @@map(name: "courses_categories")
 }
 
 model Section {
-  id         Int      @id @default(autoincrement())
-  title      String   @db.VarChar(100)
-  is_delete  Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         Int       @id @default(autoincrement())
+  title      String    @db.VarChar(100)
+  is_delete  Boolean   @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   course_id  Int
-  Course     Course?  @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  Lesson     Lesson[]
+  Course     Course?   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  Lecture    Lecture[]
 }
 
 model Lesson {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(100)
+  is_delete   Boolean  @default(false)
+  url_video   String   @db.Text
+  duration    String   @db.VarChar(45)
+  description String   @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  lecture_id  Int?     @unique
+  lecture     Lecture? @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+}
+
+model Lecture {
   id         Int      @id @default(autoincrement())
-  title      String   @db.VarChar(100)
   is_delete  Boolean  @default(false)
-  url_video  String   @db.Text
+  type       String   @db.VarChar(50)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   section_id Int
   section    Section  @relation(fields: [section_id], references: [id], onDelete: Cascade)
+  // Union of Lesson and Test
+  // lesson_id  Int?
+  lesson     Lesson?
+  // test_id    Int?
+  test       Test?
+}
+
+model Test {
+  id                 Int           @id @default(autoincrement())
+  title              String        @db.VarChar(100)
+  is_delete          Boolean       @default(false)
+  is_time_limit      Boolean       @default(false)
+  duration           String        @db.VarChar(45)
+  pass_percent       Float         @default(0.5) @db.Float
+  number_of_question Int? //thêm test detail vào rồi thêm vô sau
+  quiz_group_id      Int
+  description        String        @db.Text
+  created_at         DateTime      @default(now())
+  updated_at         DateTime      @updatedAt
+  lecture_id         Int?          @unique
+  lecture            Lecture?      @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  quiz_group         QuizGroup     @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade)
+  test_detail        TestDetail[]
+  test_history       TestHistory[]
+}
+
+model TestDetail {
+  id      Int  @id @default(autoincrement())
+  test_id Int
+  quiz_id Int
+  test    Test @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  quiz    Quiz @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+
+  @@map(name: "test_detail")
+}
+
+model TestHistory {
+  id            Int      @id @default(autoincrement())
+  test_id       Int //id bài test
+  user_id       Int // user
+  total_score   Int //tổng điểm
+  total_percent Float    @db.Float //phần trăm
+  is_pass       Boolean  @default(false)
+  created_at    DateTime @default(now())
+
+  test Test @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  test_history_detail TestHistoryDetail[]
+
+  @@map(name: "test_history")
+}
+
+model TestHistoryDetail {
+  id              Int     @id @default(autoincrement())
+  test_history_id Int
+  quiz_id         Int // id câu hỏi
+  quiz_answer_id  Int? //đáp án đã chọn
+  is_correct      Boolean //sai hay đúng
+
+  test_history TestHistory @relation(fields: [test_history_id], references: [id], onDelete: Cascade)
+  quiz         Quiz        @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  quiz_answer  QuizAnswer? @relation(fields: [quiz_answer_id], references: [id], onDelete: SetNull)
+
+  @@map(name: "test_history_detail")
+}
+
+model QuizGroup {
+  id             Int      @id @default(autoincrement())
+  title          String   @db.VarChar(100)
+  description    String   @db.Text
+  user_id        Int
+  number_of_quiz Int?     @default(0)
+  is_delete      Boolean  @default(false)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  quiz           Quiz[]
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  test           Test[]
+
+  @@map(name: "quiz_group")
+}
+
+model Quiz {
+  id                  Int                 @id @default(autoincrement())
+  question            String              @db.VarChar(200)
+  type                Int // trắc nghiệm, điền khuyết... hiện tại dùng int, sau này sửa thành string
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  quiz_group_id       Int
+  is_delete           Boolean             @default(false)
+  quiz_group          QuizGroup           @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade)
+  test_detail         TestDetail[]
+  quiz_answer         QuizAnswer[]
+  test_history_detail TestHistoryDetail[]
+}
+
+model QuizAnswer {
+  id                  Int                 @id @default(autoincrement())
+  quiz_id             Int
+  answer              String
+  is_correct          Boolean
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  quiz                Quiz                @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  test_history_detail TestHistoryDetail[]
+
+  @@map(name: "quiz_answer")
 }
 
 model Rating {
   id         Int      @id @default(autoincrement())
-  score      Float
+  score      Int      @db.Int
   content    String   @db.Text
   created_at DateTime @default(now())
-  updated_at DateTime
+  updated_at DateTime @updatedAt
   user_id    Int
   course_id  Int
-  Course     Course?  @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  Course     Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
 
-  User User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  User User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Enrolled {
@@ -127,38 +255,68 @@ model Enrolled {
   created_at DateTime @default(now())
   user_id    Int
   course_id  Int
-  Course     Course?  @relation(fields: [course_id], references: [id], onDelete: Cascade)
-
-  User User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course     Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Cart {
-  id              Int     @id @default(autoincrement())
-  user_id         Int
+  id          Int          @id @default(autoincrement())
+  user_id     Int
+  user        User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cart_detail CartDetail[]
+}
+
+model CartDetail {
+  id              Int      @id @default(autoincrement())
+  cart_id         Int
   course_id       Int
-  saved_for_later Boolean @default(false)
-  Course          Course? @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  User            User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  saved_for_later Boolean  @default(false)
+  course          Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  cart            Cart     @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+
+  @@unique([cart_id, course_id])
+  @@map(name: "cart_detail")
+}
+
+model Transaction {
+  id                 Int     @id @default(autoincrement())
+  invoice_id         Int
+  vnp_amount         Int
+  vnp_bank_code      String  @db.Text
+  vnp_bank_tran_no   String  @db.Text
+  vnp_card_type      String  @db.Text
+  vnp_order_info     String  @db.Text
+  vnp_pay_date       String  @db.Text
+  vnp_response_code  String  @db.Text
+  vnp_tmn_code       String  @db.Text
+  vnp_transaction_no String  @db.Text
+  vnp_txn_ref        String  @db.Text
+  invoice            Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
 }
 
 model Invoice {
   id             Int             @id @default(autoincrement())
   user_id        Int
-  create_at      DateTime        @default(now())
-  total_money    Float
-  User           User?           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  total_money    Float           @default(0) @db.Float
+  is_success     Boolean         @default(false)
+  created_at     DateTime        @default(now())
+  user           User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
   invoice_detail InvoiceDetail[]
+  Transaction    Transaction[]
 }
 
 model InvoiceDetail {
-  id           Int      @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   invoice_id   Int
   course_id    Int
-  retail_price Float
-  paid_price   Float
-  Course       Course?  @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  Invoice      Invoice? @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+  retail_price Float   @db.Float
+  paid_price   Float   @db.Float
+  course       Course  @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  invoice      Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
 
+  @@unique([invoice_id, course_id])
   @@index([invoice_id, course_id], name: "idx_invoice_course")
   @@map(name: "invoice_detail")
 }
@@ -167,6 +325,27 @@ model Feedback {
   id         Int      @id @default(autoincrement())
   content    String   @db.Text
   user_id    Int
+  score      Int
   created_at DateTime @default(now())
-  User       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Coupon {
+  id             Int             @id @default(autoincrement())
+  code           String          @db.VarChar(30)
+  discount       Float
+  is_delete      Boolean         @default(false)
+  valid_start    DateTime        @default(now())
+  valid_until    DateTime
+  coupon_history CouponHistory[]
+}
+
+model CouponHistory {
+  id        Int    @id @default(autoincrement())
+  coupon_id Int
+  coupon    Coupon @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map(name: "coupon_history")
 }
