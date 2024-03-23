@@ -194,11 +194,17 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
                                                         <div className="w-[10%] flex gap-1 items-center justify-end shrink-0">
                                                             {answer.is_correct ? (
                                                                 <div className="flex gap-1 items-center">
-                                                                    <HandThumbUpIcon className="text-success w-4 h-4" />
+                                                                    <HandThumbUpIcon
+                                                                        fill="#28a745"
+                                                                        className=" w-4 h-4"
+                                                                    />
                                                                 </div>
                                                             ) : (
                                                                 <div className="flex gap-1 items-center">
-                                                                    <HandThumbDownIcon className="text-error w-4 h-4" />
+                                                                    <HandThumbDownIcon
+                                                                        fill="#FF0000"
+                                                                        className="text-error w-4 h-4"
+                                                                    />
                                                                 </div>
                                                             )}
                                                             <TrashIcon

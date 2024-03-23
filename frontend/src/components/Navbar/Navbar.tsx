@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
 
     return (
         <>
-            <div className="hidden w-full h-[80px] bg-navy mt-[100px] laptop:flex">
+            <div className="hidden w-full fixed h-[80px] bg-navy top-[100px] laptop:flex z-[5]">
                 <ul className="min-w-fit px-20 flex justify-center mx-auto">
                     {categoriesList.length > 0 &&
                         categoriesList.map((category, index) => {

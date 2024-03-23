@@ -38,12 +38,6 @@ export const createCourseSchema: ObjectSchema<CreateCourse> = Joi.object({
             "string.regex": constants.error.ERROR_COURSE_SLUG_MALFORMED,
         }),
 
-    status: Joi.required().messages({
-        "any.required": constants.error.ERROR_COURSE_STATUS_REQUIRED,
-
-        "bool.base": constants.error.ERROR_COURSE_STATUS_BOOLEAN,
-    }),
-
     description: Joi.string().trim().required().messages({
         "any.required": constants.error.ERROR_COURSE_DESCRIPTION_REQUIRED,
         "string.base": constants.error.ERROR_COURSE_DESCRIPTION_STRING,
@@ -93,10 +87,6 @@ const updateCourseSchema: ObjectSchema<UpdateCourse> = Joi.object({
         "any.required": constants.error.ERROR_COURSE_SLUG_REQUIRED,
         "string.base": constants.error.ERROR_COURSE_SLUG_STRING,
         "string.regex": constants.error.ERROR_COURSE_SLUG_MALFORMED,
-    }),
-
-    status: Joi.required().messages({
-        "any.required": constants.error.ERROR_COURSE_STATUS_REQUIRED,
     }),
 
     description: Joi.string().trim().required().messages({

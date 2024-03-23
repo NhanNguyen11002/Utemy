@@ -25,7 +25,8 @@ module.exports = {
                 navyhover: "#7e8fa6",
                 darkgray: "#5C5C5C", // xám đen
                 error: "#FF0000", // đỏ
-                success: "#28a745", // xanh lá
+                success: "#28a745", // xanh lá\
+                DEFAULT: "#000000",
             },
             backgroundImage: {
                 utemy: "url('/src/assets/images/utemy_logo_notext.png')",

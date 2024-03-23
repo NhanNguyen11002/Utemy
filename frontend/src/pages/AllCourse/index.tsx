@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar/Navbar";
+// import Navbar from "../../components/Navbar/Navbar";
 import { CourseCard, Pagination, TotalRating } from "../../components";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { Course, SearchAllCourses } from "../../types/course";
@@ -104,11 +104,10 @@ const AllCourses: React.FC = () => {
 
     return (
         <>
-            <Navbar />
             <div className="container mx-auto p-4 mt-[100px] laptop:mt-0">
                 <div className="">
                     <div className="flex flex-col gap-4 laptop:flex-row">
-                        <div className="w-[30%] laptop:w-[250px]">
+                        <div className="w-[30%] laptop:w-[250px] ml-16">
                             <div className="">
                                 <button className="btn btn-info btn-outline text-lg mr-1" onClick={handleFilterCourse}>
                                     Lọc

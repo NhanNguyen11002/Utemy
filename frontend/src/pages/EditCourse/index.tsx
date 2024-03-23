@@ -7,7 +7,6 @@ import {
     DeleteModal,
     PopupAddLesson,
     PopupUpdateLesson,
-    Navbar,
     Spin,
     PopupChoseLectureType,
     PopupAddTest,
@@ -197,7 +196,6 @@ const EditCourse: React.FC = () => {
         <>
             {isGetLoading !== true ? (
                 <>
-                    <Navbar />
                     <div className="min-h-screen h-full px-4 tablet:px-[60px]">
                         <EditForm course_id={Number(course_id)} />
 

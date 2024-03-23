@@ -98,7 +98,7 @@ const PopupPromotion: React.FC<PromotionProps> = (props) => {
                             <form onSubmit={formik.handleSubmit} className="text-sm mb-1 tablet:text-xl font-medium">
                                 <div className="px-5 py-3">
                                     <label htmlFor="sale_price" className="text-sm mb-1 tablet:text-xl font-medium">
-                                        Sale price (VNĐ):
+                                        Giá sau giảm (VNĐ):
                                     </label>
                                     <br />
                                     <Field
@@ -118,7 +118,7 @@ const PopupPromotion: React.FC<PromotionProps> = (props) => {
                                 </div>
                                 <div className="px-5 py-3">
                                     <label htmlFor="sale_until" className="text-sm mb-1 tablet:text-xl font-medium">
-                                        Sale until:
+                                        Giảm giá đến:
                                     </label>
                                     <br />
                                     <Field
@@ -146,7 +146,7 @@ const PopupPromotion: React.FC<PromotionProps> = (props) => {
                                         name="save_button"
                                         className="btn btn-info text-white text-lg"
                                     >
-                                        {isLoading ? "Loading..." : "Save"}
+                                        {isLoading ? "Loading..." : "Lưu"}
                                     </button>
                                     <button
                                         type="button"
@@ -154,10 +154,10 @@ const PopupPromotion: React.FC<PromotionProps> = (props) => {
                                         className="btn btn-error ml-2 text-white text-lg"
                                         onClick={handleOnStop}
                                     >
-                                        {isLoading ? "Loading..." : "Stop"}
+                                        {isLoading ? "Loading..." : "Dừng giảm"}
                                     </button>
                                     <button onClick={props.handleCancel} type="button" className="btn text-lg ml-2">
-                                        Cancel
+                                        Huỷ
                                     </button>
                                 </div>
                             </form>

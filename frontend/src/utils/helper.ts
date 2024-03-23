@@ -76,8 +76,11 @@ export const calDayRemains = (date: string) => {
     const target = +new Date(date);
     const now = +new Date();
     const gap = target - now;
-    const dayRemains = Math.floor(gap / (1000 * 60 * 60 * 24));
-    return dayRemains;
+
+    const days = Math.floor(gap / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    return `${days} ngày ${hours} giờ`;
 };
 
 const convertSecondToHour = (duration: number) => {

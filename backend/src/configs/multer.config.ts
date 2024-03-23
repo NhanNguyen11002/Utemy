@@ -5,7 +5,7 @@ import path from "path";
 //image
 const storageAvatar = multer.diskStorage({
     destination: (req, res, cb) => {
-        cb(null, `${configs.general.PATH_TO_IMAGES}\\avatar`);
+        cb(null, `${configs.general.PATH_TO_IMAGES}/avatar`); //mac thì để /, còn windows chắc phải \\
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
@@ -13,7 +13,7 @@ const storageAvatar = multer.diskStorage({
 });
 const storageThumbnail = multer.diskStorage({
     destination: (req, res, cb) => {
-        cb(null, `${configs.general.PATH_TO_IMAGES}\\thumbnail`);
+        cb(null, `${configs.general.PATH_TO_IMAGES}/thumbnail`);
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
@@ -21,7 +21,7 @@ const storageThumbnail = multer.diskStorage({
 });
 const storageCategory = multer.diskStorage({
     destination: (req, res, cb) => {
-        cb(null, `${configs.general.PATH_TO_IMAGES}\\category`);
+        cb(null, `${configs.general.PATH_TO_IMAGES}/category`);
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));

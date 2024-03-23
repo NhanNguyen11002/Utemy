@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Accordion, DeleteModal, Spin, TotalRating, Pagination } from "../../components";
+import { Accordion, DeleteModal, Spin, TotalRating, Pagination } from "../../components";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { Section } from "../../types/section";
@@ -15,7 +15,6 @@ import toast from "react-hot-toast";
 import AuthorButton from "./AuthorButton";
 import GuestButton from "./GuestButton";
 import SubscribeUserButton from "./SubscribeUserButton";
-import UnsubscribeModal from "./UnsubcribeModal";
 import PopupPromotion from "./PopupPromotion";
 import CommentSection from "./CommentSection";
 import constants from "../../constants";
@@ -43,7 +42,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const dispatch = useAppDispatch();
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState<boolean>(false);
     const [isOpenPopupRating, setIsOpenPopupRating] = useState<boolean>(false);
-    const [isOpenUnsubscribeModal, setIsOpenUnsubscribeModal] = useState<boolean>(false);
     const [isOpenPromotionPopup, setIsOpenPromotionPopup] = useState<boolean>(false);
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const [idItem, setIdItem] = useState<number>(-1);
@@ -54,7 +52,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const totalRatingPage: number = useAppSelector((state) => state.ratingSlice.totalPage) ?? Number(1);
     const [activeTab, setActiveTab] = useState("Description");
     const { duration, lessonCount } = getCourseIncludes(courseDetail);
-    // const orderLesson: orderLesson[] = useAppSelector((state) => state.courseSlice.orderLesson);
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "Unenrolled";
     const isGetLoadingCourse: boolean = useAppSelector((state) => state.courseSlice.isGetLoading) ?? false;
     const ratingPercent = useAppSelector((state) => state.ratingSlice.ratingPercent) ?? [];
@@ -96,9 +93,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     };
     const handleTogglePopupRating = () => {
         setIsOpenPopupRating(!isOpenPopupRating);
-    };
-    const handleToggleUnsubcribeCourse = () => {
-        setIsOpenUnsubscribeModal(!isOpenUnsubscribeModal);
     };
     const handleTogglePromotion = () => {
         setIsOpenPromotionPopup(!isOpenPromotionPopup);
@@ -163,9 +157,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                 />
             )}
             {isOpenDeleteModal && <DeleteModal handleDelete={handleDeleteCourse} handleCancel={handleCancelModal} />}
-            {isOpenUnsubscribeModal && (
-                <UnsubscribeModal handleCancel={handleToggleUnsubcribeCourse} course_id={courseDetail.course_id} />
-            )}
+
             {isOpenPromotionPopup && (
                 <PopupPromotion
                     handleAfterPromotion={handleAfterPromotion}
@@ -173,7 +165,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                     course={courseDetail}
                 />
             )}
-            <Navbar />
+
             {isGetLoadingCourse && <Spin />}
             <div className="container mx-auto mt-[100px] laptop:mt-0">
                 <div className="min-h-screen h-full px-4 tablet:px-[60px]">
@@ -209,7 +201,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     <div className=" mb-3">
                                         <span className="text-xl laptop:text-l font-bold">Tác giả: </span>
                                         <Link
-                                            to={`/profile/${courseDetail.author?.user_id}`}
+                                            to={
+                                                role === constants.util.ROLE_AUTHOR
+                                                    ? "/my-profile"
+                                                    : `/profile/${courseDetail.author?.user_id}`
+                                            }
                                             className="text-xl laptop:text-l underline font-medium text-blue-600"
                                         >
                                             {courseDetail.author?.first_name}
@@ -259,7 +255,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             </span>{" "}
                                             <span className=" font-extrabold font-OpenSans ml-2 text-lightblue ">
                                                 {" "}
-                                                {dayRemains} days left
+                                                Trong vòng {dayRemains}
                                             </span>{" "}
                                         </div>
                                     ) : (
@@ -284,10 +280,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         />
                                     )}
                                     {isLogin && role === constants.util.ROLE_ENROLLED && (
-                                        <SubscribeUserButton
-                                            handleToggleUnsubscribeCourse={handleToggleUnsubcribeCourse}
-                                            courseDetail={courseDetail}
-                                        />
+                                        <SubscribeUserButton courseDetail={courseDetail} />
                                     )}
                                     {(!isLogin || role === constants.util.ROLE_USER) && (
                                         <GuestButton isLogin={isLogin} course_id={courseDetail.course_id} />

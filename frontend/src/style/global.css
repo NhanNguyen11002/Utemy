@@ -17,6 +17,14 @@
 
 /* * {
     @apply text-black;
+}
+.plyr__controls__item {
+    color: #ffffff !;
+    fill: white !important;
+}
+.plyr__control {
+    color: #ffffff;
+    fill: white;
 } */
 /* * {
     @apply text-black;

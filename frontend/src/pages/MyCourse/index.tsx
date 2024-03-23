@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { courseActions } from "../../redux/slices";
 import { Course } from "../../types/course";
-import { Spin, Navbar, Pagination, CourseCard, DeleteModal } from "../../components";
+import { Spin, Pagination, CourseCard, DeleteModal } from "../../components";
 import { User } from "../../types/user";
 import toast from "react-hot-toast";
 
@@ -77,7 +77,6 @@ const MyCourses: React.FC = () => {
     return (
         <>
             {isGetLoading && <Spin />}
-            <Navbar />
 
             {isOpenDeleteModal && (
                 <DeleteModal handleDelete={handleDeleteCourse} handleCancel={handleCancelDeleteModal} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Navbar, Spin, Carousel } from "../../components";
+import { Spin, Carousel } from "../../components";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
 import { courseActions } from "../../redux/slices";
 import { Course as CourseType } from "../../types/course";
@@ -20,7 +20,6 @@ const Home: React.FC = () => {
     }, [dispatch]);
     return (
         <>
-            <Navbar />
             {isGetLoading && <Spin />}
             {/* <div className="h-[200px] tablet:h-[300px] flex  items-center border-footer border-2 shadow-lg bg-gradient-to-r from-gray-600 to-gray-800 mt-[100px] laptop:mt-0">
                 <div className="px-24">

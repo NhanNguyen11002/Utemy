@@ -117,7 +117,7 @@ const stopPromotion = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     const file = req.file;
-    const { title, slug, description, summary, categories, status, price, requirement, study } = req.body;
+    const { title, slug, description, summary, categories, price, requirement, study } = req.body;
     const user_id = req.user_id;
     try {
         let fullPathConverted = "";
@@ -125,7 +125,6 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         const listCategoryId = categories.split(",").map((item: number) => ({
             category_id: Number(item),
         }));
-        const convertedStatus = status === "true" ? true : false;
         const uniqueSlug = generateUniqueSlug(slug);
         if (user_id) {
             const isCreateCourse = await db.course.create({
@@ -136,7 +135,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     summary: summary,
                     thumbnail: fullPathConverted,
                     author_id: user_id,
-                    status: convertedStatus,
+                    status: false,
                     price: Number(price),
                     sale_price: Number(price),
                     course_categories: {
@@ -171,7 +170,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     const file = req.file;
-    const { course_id, title, slug, summary, description, categories, status, price, requirement, study } = req.body;
+    const { course_id, title, slug, summary, description, categories, price, requirement, study } = req.body;
     try {
         const isFoundCourseById = await configs.db.course.findFirst({
             where: {
@@ -179,7 +178,6 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 is_delete: false,
             },
         });
-        const convertedStatus = status === "true" ? true : false;
         if (!isFoundCourseById) {
             return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
         }
@@ -196,7 +194,6 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     slug: slug,
                     summary: summary,
                     description: description,
-                    status: convertedStatus,
                     thumbnail: fullPathConverted,
                     price: Number(price),
                     requirement,
@@ -219,7 +216,6 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     slug: slug,
                     summary: summary,
                     description: description,
-                    status: convertedStatus,
                     price: Number(price),
                     requirement,
                     study,

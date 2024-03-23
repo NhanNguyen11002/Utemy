@@ -3,7 +3,7 @@ import SearchIcon from "../../assets/icons/SearchIcon";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { courseActions } from "../../redux/slices";
 import { Course } from "../../types/course";
-import { Spin, Navbar, Pagination, CourseCard } from "../../components";
+import { Spin, Pagination, CourseCard } from "../../components";
 import { User } from "../../types/user";
 
 const MyEnrolledCourse: React.FC = () => {
@@ -45,7 +45,6 @@ const MyEnrolledCourse: React.FC = () => {
     return (
         <>
             {isGetLoading && <Spin />}
-            <Navbar />
             <div className="container mx-auto mt-[100px] laptop:mt-0">
                 <div className="px-4 tablet:px-[60px]">
                     <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">

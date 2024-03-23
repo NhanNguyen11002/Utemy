@@ -81,16 +81,6 @@ const EditForm: React.FC<props> = (props) => {
         thumbnail: null,
     };
     const dispatch = useAppDispatch();
-    const statusOptions = [
-        {
-            value: true,
-            label: "Hoàn thành",
-        },
-        {
-            value: false,
-            label: "Đang cập nhật",
-        },
-    ];
 
     useEffect(() => {
         dispatch(categoryActions.getCategories());
@@ -149,10 +139,6 @@ const EditForm: React.FC<props> = (props) => {
         }
     };
 
-    const handleChangeStatus = (event: any, formik: any) => {
-        formik.setFieldValue("status", event.value as boolean);
-    };
-
     const handleOnSubmit = (values: EditCourse) => {
         const categories = values.categories.map((item: any) => item.value);
         const slug = slugify(values.title.toLowerCase());
@@ -162,7 +148,6 @@ const EditForm: React.FC<props> = (props) => {
         formData.append("slug", slug);
         formData.append("description", values.description);
         formData.append("summary", values.summary);
-        formData.append("status", values.status.toString());
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
@@ -232,7 +217,7 @@ const EditForm: React.FC<props> = (props) => {
                                         className="mt-4 laptop:mt-0 flex-1 flex flex-col border border-dashed border-black rounded-lg p-4 bg-background shadow-lg"
                                     >
                                         <div className="flex flex-col gap-2 shrink-0 mb-2 tablet:flex-row tablet:gap-0">
-                                            <div className="flex-1 flex flex-col tablet:mr-8">
+                                            <div className="flex-1 flex flex-col ">
                                                 <label
                                                     htmlFor="title"
                                                     className="text-sm mb-1 font-medium tablet:text-xl"
@@ -255,7 +240,39 @@ const EditForm: React.FC<props> = (props) => {
                                                     className="text-[14px] text-error font-medium"
                                                 />
                                             </div>
-
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-10 shrink-0 mb-2">
+                                            <div>
+                                                <label
+                                                    htmlFor="title"
+                                                    className="text-sm mb-1 font-medium tablet:text-xl"
+                                                >
+                                                    Danh mục
+                                                </label>
+                                                <div
+                                                    className={`${
+                                                        formik.errors.categories && formik.touched.categories
+                                                            ? "border-error"
+                                                            : ""
+                                                    } rounded-md mt-1`}
+                                                >
+                                                    <Field
+                                                        name="categories"
+                                                        component={CustomeSelect}
+                                                        handleOnchange={(e: any) => handleChangeCategories(e, formik)}
+                                                        options={categoriesOptions}
+                                                        placeholder={"Chọn danh mục"}
+                                                        isMulti={true}
+                                                        defautlValues={chosenOptionsCategories}
+                                                        styles={customStyles}
+                                                    />
+                                                </div>
+                                                <ErrorMessage
+                                                    name="categories"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
+                                            </div>
                                             <div className="flex-1 flex flex-col">
                                                 <label
                                                     htmlFor="price"
@@ -275,62 +292,6 @@ const EditForm: React.FC<props> = (props) => {
                                                 />
                                                 <ErrorMessage
                                                     name="price"
-                                                    component="span"
-                                                    className="text-[14px] text-error font-medium"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-10 shrink-0 mb-2">
-                                            <div>
-                                                <label
-                                                    htmlFor="title"
-                                                    className="text-sm mb-1 font-medium tablet:text-xl"
-                                                >
-                                                    Danh mục
-                                                </label>
-                                                <div
-                                                    className={`${
-                                                        formik.errors.categories && formik.touched.categories
-                                                            ? "border-error"
-                                                            : ""
-                                                    } border-[1px] rounded-md`}
-                                                >
-                                                    <Field
-                                                        name="categories"
-                                                        component={CustomeSelect}
-                                                        handleOnchange={(e: any) => handleChangeCategories(e, formik)}
-                                                        options={categoriesOptions}
-                                                        placeholder={"Chọn danh mục"}
-                                                        isMulti={true}
-                                                        defautlValues={chosenOptionsCategories}
-                                                        styles={customStyles}
-                                                    />
-                                                </div>
-                                                <ErrorMessage
-                                                    name="categories"
-                                                    component="span"
-                                                    className="text-[14px] text-error font-medium"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label
-                                                    htmlFor="status"
-                                                    className="text-sm mb-1 font-medium tablet:text-xl"
-                                                >
-                                                    Trạng thái
-                                                </label>
-                                                <Field
-                                                    className="w-full"
-                                                    name="status"
-                                                    component={CustomeSelect}
-                                                    handleOnchange={(e: any) => handleChangeStatus(e, formik)}
-                                                    options={statusOptions}
-                                                    isMulti={false}
-                                                    placeholder={courseDetail.status ? "Hoàn thành" : "Đang cập nhật"}
-                                                    styles={customStyles}
-                                                />
-                                                <ErrorMessage
-                                                    name="status"
                                                     component="span"
                                                     className="text-[14px] text-error font-medium"
                                                 />

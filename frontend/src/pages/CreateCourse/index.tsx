@@ -9,7 +9,7 @@ import slugify from "slugify";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Navbar, CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
+import { CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
 import { previewImage } from "../../utils/helper";
 
 type CategoriesOptions = {
@@ -47,16 +47,7 @@ const CreateCourse: FC = () => {
     const imageRef = useRef<HTMLImageElement>(null);
     const navigate = useNavigate();
     const categoriesOptions: CategoriesOptions[] = [];
-    const statusOptions = [
-        {
-            value: true,
-            label: "Hoàn thành",
-        },
-        {
-            value: false,
-            label: "Đang cập nhật",
-        },
-    ];
+
     useEffect(() => {
         categories.forEach((category: Category) => {
             const temp: CategoriesOptions = {
@@ -68,8 +59,6 @@ const CreateCourse: FC = () => {
     }, [categories, categoriesOptions]);
     useEffect(() => {
         dispatch(categoryActions.getCategories());
-        // dispatch(courseActions.reset());
-
         setThumbnail(null);
     }, [dispatch]);
 
@@ -87,17 +76,10 @@ const CreateCourse: FC = () => {
     const handleOnSubmit = async (values: CreateCourseType) => {
         const slug = slugify(values.title.toLowerCase());
         const categories = values.categories.map((item: any) => item.value);
-        // const data = {
-        //     ...values,
-        //     slug: slug,
-        //     categories: categories,
-        //     thumbnail: thumbnail,
-        // };
         const formData = new FormData();
         formData.append("title", values.title);
         formData.append("slug", slug);
         formData.append("summary", values.summary);
-        formData.append("status", values.status.toString());
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
@@ -119,14 +101,6 @@ const CreateCourse: FC = () => {
         console.log(formik.values);
     };
 
-    const handleChangeStatus = (event: any, formik: any) => {
-        if (event.value === 0) {
-            formik.setFieldValue("status", false);
-        } else {
-            formik.setFieldValue("status", true);
-        }
-    };
-
     const onChangeInputFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         setThumbnail(event.currentTarget.files![0]);
         const thumbnail = event.currentTarget.files![0];
@@ -143,7 +117,6 @@ const CreateCourse: FC = () => {
     };
     return (
         <>
-            <Navbar />
             <div className="min-h-screen h-full px-4 tablet:px-[60px] mt-[100px] laptop:mt-0">
                 <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">Tạo khóa học mới</h1>
                 <div className="w-full flex justify-center items-center shrink-0">
@@ -190,31 +163,27 @@ const CreateCourse: FC = () => {
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div className="flex flex-col w-full">
+                                        <label htmlFor="title" className="text-sm mb-1 font-medium tablet:text-xl">
+                                            Tên khóa học
+                                        </label>
+                                        <Field
+                                            type="text"
+                                            name="title"
+                                            className={`${
+                                                formik.errors.title && formik.touched.title ? "border-error" : ""
+                                            } px-2 py-4 rounded-lg border-[1px] outline-none w-full`}
+                                        />
+                                        <ErrorMessage
+                                            name="title"
+                                            component="span"
+                                            className="text-[14px] text-error font-medium"
+                                        />
+                                    </div>
                                     <div className="flex flex-row gap-4 my-3">
                                         <div className="flex-1 flex gap-3 items-center">
-                                            <div className="flex flex-col w-1/2">
-                                                <div className="flex flex-col">
-                                                    <label
-                                                        htmlFor="title"
-                                                        className="text-sm mb-1 font-medium tablet:text-xl"
-                                                    >
-                                                        Tên khóa học
-                                                    </label>
-                                                    <Field
-                                                        type="text"
-                                                        name="title"
-                                                        className={`${
-                                                            formik.errors.title && formik.touched.title
-                                                                ? "border-error"
-                                                                : ""
-                                                        } px-2 py-4 rounded-lg border-[1px] outline-none max-w-lg`}
-                                                    />
-                                                    <ErrorMessage
-                                                        name="title"
-                                                        component="span"
-                                                        className="text-[14px] text-error font-medium"
-                                                    />
-                                                </div>
+                                            <div className="flex flex-col w-1/2 gap-4">
                                                 <div className="flex flex-col">
                                                     <label
                                                         htmlFor="price"
@@ -244,7 +213,7 @@ const CreateCourse: FC = () => {
                                                     <StudyPopup study={study} handleSubmit={handleSubmitStudy} />
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col w-1/2">
+                                            <div className="flex flex-col w-1/2 gap-4">
                                                 <div>
                                                     <label
                                                         htmlFor="category"
@@ -278,29 +247,7 @@ const CreateCourse: FC = () => {
                                                         className="text-[14px] text-error font-medium"
                                                     />
                                                 </div>
-                                                <div>
-                                                    <label
-                                                        htmlFor="title"
-                                                        className="text-sm mb-1 font-medium tablet:text-xl"
-                                                    >
-                                                        Trạng thái
-                                                    </label>
-                                                    <Field
-                                                        className="custom-select"
-                                                        name="status"
-                                                        component={CustomeSelect}
-                                                        handleOnchange={(e: any) => handleChangeStatus(e, formik)}
-                                                        options={statusOptions}
-                                                        isMulti={false}
-                                                        placeholder="Đang cập nhật"
-                                                        styles={customStyles}
-                                                    />
-                                                    <ErrorMessage
-                                                        name="status"
-                                                        component="span"
-                                                        className="text-[14px] text-error font-medium"
-                                                    />
-                                                </div>
+
                                                 <div className="w-full flex justify-between mt-3 items-center">
                                                     <label className="text-sm mb-1 font-medium tablet:text-xl">
                                                         Yêu cầu khóa học
@@ -356,7 +303,6 @@ const CreateCourse: FC = () => {
                                             } flex-1 w-full  resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
                                         />
                                     </div>
-
                                     <div className="py-[12px] flex justify-end">
                                         <button
                                             disabled={isLoading}

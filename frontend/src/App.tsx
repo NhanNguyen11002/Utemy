@@ -42,6 +42,7 @@ import AdminLayout from "./layout/adminAppLayout";
 import Feedback from "./pages/Feedback";
 import HistoryTransaction from "./pages/HistoryTransaction";
 import UserWatchVideoLayout from "./layout/userWatchVideoLayout";
+import UserAppLayoutWithNav from "./layout/userAppLayoutWithNav";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -70,21 +71,17 @@ function App() {
                                 <Route path="*" element={<NotFound />}></Route>
                             </Route>
                         </Route>
-                        <Route path="/*" element={<UserAppLayout isLogin={isLogin} />}>
-                            <Route index element={<HomePage />}></Route>
+                        <Route element={<UserAppLayout isLogin={isLogin} />}>
                             <Route path="login" element={<Login />}></Route>
-                            <Route path="all-courses" element={<AllCourses />}></Route>
                             <Route path="signup" element={<Signup />}></Route>
                             <Route path="forgot-password" element={<ForgotPassword />}></Route>
                             <Route path="reset-password/:token" element={<ResetPassword />}></Route>
-                            <Route path="profile/:id" element={<AuthorProfile />}></Route>
                             <Route path="verify-email/:token" element={<Verify />}></Route>
                             <Route path="check-mail" element={<CheckMail />}></Route>
-                            <Route path="course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
+
                             <Route element={<PrivateRoute />}>
                                 <Route path="change-password" element={<ChangePassword />}></Route>
                                 <Route path="my-courses" element={<MyCourses />}></Route>
-                                <Route path="my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
                                 <Route path="create-course" element={<CreateCourse />}></Route>
                                 <Route path="cart" element={<Cart />}></Route>
                                 <Route path="my-courses/edit/:course_id" element={<EditCourse />}></Route>
@@ -98,6 +95,13 @@ function App() {
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
                         </Route>
+                        <Route path="/*" element={<UserAppLayoutWithNav isLogin={isLogin} />}>
+                            <Route path="all-courses" element={<AllCourses />}></Route>
+                            <Route path="profile/:id" element={<AuthorProfile />}></Route>
+                            <Route path="course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
+                            <Route path="my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
+                            <Route index element={<HomePage />}></Route>
+                        </Route>
                         <Route path="course-detail/:slug/watch" element={<UserWatchVideoLayout />}>
                             <Route index element={<WatchVideo />}></Route>
                         </Route>
@@ -107,46 +111,5 @@ function App() {
         </div>
     );
 }
-
-/* <Routes>
-                        <Route path="/admin/*" element={<AdminRoute />}>
-                            <Route element={<AdminLayout />}>
-                                <Route index element={<Dashboard />} />
-                                <Route path="profile" element={<ProfileAdmin />} />
-                                <Route path="category" element={<CategoryAdmin />} />
-                                <Route path="user" element={<UserAdmin />} />
-                                <Route path="user-profile/:id" element={<UserProfile />} />
-                                <Route path="user/create" element={<CreateUser />} />
-                                <Route path="feedback" element={<FeedbackAdmin />} />
-                                <Route path="*" element={<NotFound />}></Route>
-                            </Route>
-                        </Route>
-                        <Route element={<UserAppLayout isLogin={isLogin} />}>
-                            <Route element={<PrivateRoute />}>
-                                <Route path="/change-password" element={<ChangePassword />}></Route>
-                                <Route path="/my-courses" element={<MyCourses />}></Route>
-                                <Route path="/my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
-                                <Route path="/create-course" element={<CreateCourse />}></Route>
-                                <Route path="/cart" element={<Cart />}></Route>
-                                <Route path="/my-courses/edit/:course_id" element={<EditCourse />}></Route>
-                                <Route path="/course-detail/:slug/watch" element={<WatchVideo />}></Route>
-                                <Route path="/checkout" element={<Checkout />}></Route>
-                                <Route path="/checkout/vnpay_return" element={<VnPayReturn />}></Route>
-                                <Route path="/my-profile" element={<MyProfile />}></Route>
-                                <Route path="/my-feedback" element={<Feedback />}></Route>
-                            </Route>
-                            <Route path="/" element={<HomePage />}></Route>
-                            <Route path="/login" element={<Login />}></Route>
-                            <Route path="/all-courses" element={<AllCourses />}></Route>
-                            <Route path="/signup" element={<Signup />}></Route>
-                            <Route path="/forgot-password" element={<ForgotPassword />}></Route>
-                            <Route path="/reset-password/:token" element={<ResetPassword />}></Route>
-                            <Route path="/profile/:id" element={<AuthorProfile />}></Route>
-                            <Route path="/verify-email/:token" element={<Verify />}></Route>
-                            <Route path="/check-mail" element={<CheckMail />}></Route>
-                            <Route path="/course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
-                            <Route path="/*" element={<NotFound />}></Route>
-                        </Route>
-                    </Routes> */
 
 export default App;

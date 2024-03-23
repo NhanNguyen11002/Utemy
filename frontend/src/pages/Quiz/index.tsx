@@ -24,6 +24,7 @@ const QuizHome: React.FC = () => {
     const [searchItem, setSearchItem] = useState<string>("");
     const inputRef = useRef<HTMLInputElement>(null);
     const [groupId, setGroupId] = useState(0);
+    const [groupName, setGroupName] = useState("");
     const quizGroupList = useAppSelector((state) => state.quizSlice.quizGroupList);
     const quizList = useAppSelector((state) => state.quizSlice.quizList);
     const [editQuiz, setEditQuiz] = useState<QuizType>(quizList[0]);
@@ -127,7 +128,10 @@ const QuizHome: React.FC = () => {
                             quizGroupList.map((group, index) => {
                                 return (
                                     <QuizGroupCard
-                                        handleOpenGroup={() => setGroupId(group.quiz_group_id)}
+                                        handleOpenGroup={() => {
+                                            setGroupId(group.quiz_group_id);
+                                            setGroupName(group.title);
+                                        }}
                                         key={index}
                                         group={group}
                                         handleOpenDelete={handleOpenDeleteGroup}
@@ -175,7 +179,12 @@ const QuizHome: React.FC = () => {
                         </div>
                     </div>
                     <div className="h-[90%] flex flex-col  overflow-auto">
-                        {quizList.length > 0 &&
+                        {groupId === 0 && (
+                            <div className="text-center">
+                                <p>Vui lòng chọn bộ câu hỏi bên trái để hiển thị câu hỏi</p>
+                            </div>
+                        )}
+                        {quizList.length > 0 ? (
                             quizList.map((data, index) => {
                                 return (
                                     <QuizCard
@@ -185,7 +194,12 @@ const QuizHome: React.FC = () => {
                                         handleOpenDelete={handleOpenDeleteQuiz}
                                     />
                                 );
-                            })}
+                            })
+                        ) : (
+                            <div className="text-center">
+                                <p>Có vẻ {groupName} chưa có câu hỏi nào, tạo mới ngay bây giờ</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
