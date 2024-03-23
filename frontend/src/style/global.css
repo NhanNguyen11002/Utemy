@@ -14,18 +14,3 @@
 .description-course h3 {
     @apply text-2xl; /* You can adjust this size as needed */
 }
-
-/* * {
-    @apply text-black;
-}
-.plyr__controls__item {
-    color: #ffffff !;
-    fill: white !important;
-}
-.plyr__control {
-    color: #ffffff;
-    fill: white;
-} */
-/* * {
-    @apply text-black;
-} */
