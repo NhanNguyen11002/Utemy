@@ -7,7 +7,7 @@ import { CustomeSelect } from "../../../components";
 import { images } from "../../../assets";
 import { CreateNewUser } from "../../../types/user";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 // import { useNavigate } from "react-router-dom";
 
 const CreateUser = () => {
@@ -79,7 +79,6 @@ const CreateUser = () => {
     return (
         <>
             <div className="mt-12 mb-8 flex flex-row items-start justify-between bg-background_2 min-h-screen">
-                <Toaster />
                 <div className="w-1/3 flex ">
                     <Formik
                         initialValues={initialValue}

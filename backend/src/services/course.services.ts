@@ -539,7 +539,6 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
     } catch (error) {
-        console.error("Lỗi xảy ra:", error);
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }
@@ -602,6 +601,7 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                     title: {
                         contains: parsedSearchItem,
                     },
+                    is_delete: false,
                 },
                 user_id: userId,
             },
@@ -643,7 +643,6 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
     } catch (error) {
-        console.error("Lỗi xảy ra:", error);
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }

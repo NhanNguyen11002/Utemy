@@ -100,7 +100,7 @@ const PopupUpdateTest: React.FC<UpdateTestPopupProps> = (props) => {
               })
             : [];
     useEffect(() => {
-        dispatch(quizActions.getAllQuizGroup());
+        dispatch(quizActions.getAllQuizGroupHasQuiz());
         dispatch(lectureActions.getLectureById(props.lectureId));
     }, [dispatch, props.lectureId]);
     const initialValue = {

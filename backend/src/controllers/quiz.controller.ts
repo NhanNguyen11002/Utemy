@@ -20,6 +20,10 @@ export default class QuizController {
         const response: ResponseBase = await services.QuizServices.getAllQuizGroup(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getAllQuizGroupHasQuiz(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.QuizServices.getAllQuizGroupHasQuiz(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
     async createQuiz(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.QuizServices.createQuiz(req);
         return res.status(response.getStatusCode()).json(response);

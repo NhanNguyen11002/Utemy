@@ -27,13 +27,13 @@ const error = {
     ERROR_CURRENT_PASSWORD_STRING: "Current password must be string",
     ERROR_CURRENT_PASSWORD_REQUIRED: "Current password is required",
     ERROR_CURRENT_PASSWORD_MAX: "Current password must be under 20 chars",
-    ERROR_CURRENT_PASSWORD_MIN: "Current password must be more than 20 chars",
+    ERROR_CURRENT_PASSWORD_MIN: "Current password must be more than 8 chars",
     ERROR_WRONG_CURRENT_PASSWORD: "Wrong current password",
     //new password
     ERROR_NEW_PASSWORD_STRING: "New password must be string",
     ERROR_NEW_PASSWORD_REQUIRED: "New password is required",
     ERROR_NEW_PASSWORD_MAX: "New password must be under 20 chars",
-    ERROR_NEW_PASSWORD_MIN: "New password must be more than 20 chars",
+    ERROR_NEW_PASSWORD_MIN: "New password must be more than 8 chars",
     //token
     ERROR_BAD_TOKEN: "Bad token",
     ERROR_TOKEN_STRING: "Token must be a string",

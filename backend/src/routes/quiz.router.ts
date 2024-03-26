@@ -11,6 +11,7 @@ quizRouter.patch("/group/:quiz_group_id", isLogin, controllers.quizController.up
 quizRouter.delete("/:quiz_id", isLogin, controllers.quizController.deleteQuiz); //
 quizRouter.delete("/group/:quiz_group_id", isLogin, controllers.quizController.deleteQuizGroup);
 quizRouter.get("/group", isLogin, controllers.quizController.getAllQuizGroup);
+quizRouter.get("/group-test", isLogin, controllers.quizController.getAllQuizGroupHasQuiz);
 quizRouter.get("/:quiz_group_id", isLogin, controllers.quizController.getAllQuizByGroupId); //
 
 export default quizRouter;

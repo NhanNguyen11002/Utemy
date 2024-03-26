@@ -19,7 +19,7 @@ import { userActions } from "../../../redux/slices";
 import DeleteUserModal from "./DeleteUserModal";
 import ActiveUserModal from "./ActiveUserModal";
 import { User } from "../../../types/user";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import PopupEditUser from "./PopupEditUser";
 import { Link } from "react-router-dom";
 
@@ -123,7 +123,6 @@ const UserAdmin = () => {
                 <PopupEditUser handleCancelEditUser={handleCancelEditUserPopup} editUser={editUser} />
             )}
             <div className="mt-12 mb-8 flex flex-col gap-12 bg-background_2 min-h-screen">
-                <Toaster />
                 <Card>
                     <CardHeader
                         variant="gradient"

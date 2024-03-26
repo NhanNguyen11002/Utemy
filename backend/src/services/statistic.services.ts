@@ -15,7 +15,11 @@ const courseCount = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
         });
         if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
-        const courseCount = await configs.db.course.count();
+        const courseCount = await configs.db.course.count({
+            where: {
+                is_delete: false,
+            },
+        });
         const data = {
             course_count: courseCount,
         };
@@ -67,7 +71,11 @@ const userCount = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
         });
         if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
-        const userCount = await configs.db.user.count();
+        const userCount = await configs.db.user.count({
+            where: {
+                is_deleted: false,
+            },
+        });
         const data = {
             total_user: userCount,
         };
@@ -91,7 +99,7 @@ const invoiceCount = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
         });
         if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
-        const invoiceCount = await configs.db.user.count();
+        const invoiceCount = await configs.db.transaction.count();
         const data = {
             total_invoice: invoiceCount,
         };

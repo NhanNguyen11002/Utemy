@@ -122,6 +122,7 @@ export const testSlice = createSlice({
             state.nowQuestion = { quiz_id: 0, question: "", type: 0, quiz_answer: [] };
             state.questionIndex = 0;
             state.testResult.test_progress = [];
+            state.duration = Number(state.test.duration);
             state.afterTest = {
                 totalPercent: 0,
                 totalQuestionRight: 0,

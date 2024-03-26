@@ -7,7 +7,7 @@ import { StarIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import PopUpChangeAvatar from "./PopupChangeAvatar";
 import { ChangePassword } from "../../../types/auth";
 import { UpdateInformation } from "../../../types/user";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { changePasswordValidationSchema, updateProfileValidationSchema } from "../../../validations/user";
 import { TextEditor } from "../../../components";
 
@@ -56,7 +56,6 @@ const ProfileAdmin = () => {
     return (
         <>
             <div className="mt-12 mb-8 flex flex-col gap-12 bg-background_2 min-h-screen">
-                <Toaster />
                 <div className="flex bg-background flex-col items-center">
                     <div className="flex flex-row w-3/4 h-1/4 bg-background m-auto rounded-xl shadow-lg p-6 ">
                         <div className="w-2/4 px-5 m-auto p-auto flex ">

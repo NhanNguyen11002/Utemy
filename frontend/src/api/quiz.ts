@@ -50,6 +50,11 @@ const getAllQuizGroup = async () => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getAllQuizGroupHasQuiz = async () => {
+    const path = `quiz/group-test`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const quizApis = {
     createQuizGroup,
     updateQuizGroup,
@@ -59,6 +64,7 @@ const quizApis = {
     deleteQuiz,
     getAllQuizByGroupId,
     getAllQuizGroup,
+    getAllQuizGroupHasQuiz,
 };
 
 export default quizApis;

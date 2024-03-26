@@ -87,6 +87,18 @@ export const getAllQuizGroup = createAsyncThunk<Response<QuizGroupType[]>, void,
         }
     },
 );
+export const getAllQuizGroupHasQuiz = createAsyncThunk<
+    Response<QuizGroupType[]>,
+    void,
+    { rejectValue: Response<null> }
+>("quiz/group-test/get", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.quizApis.getAllQuizGroupHasQuiz();
+        return response.data as Response<QuizGroupType[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 export const getAllQuizByGroupId = createAsyncThunk<
     Response<GetAllQuizInGroupResponse>,
     GetAllQuizInGroup,
@@ -142,6 +154,16 @@ export const quizSlice = createSlice({
             state.isGetLoading = false;
         });
         builder.addCase(getAllQuizGroup.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(getAllQuizGroupHasQuiz.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getAllQuizGroupHasQuiz.fulfilled, (state, action) => {
+            state.quizGroupList = action.payload?.data as QuizGroupType[];
+            state.isGetLoading = false;
+        });
+        builder.addCase(getAllQuizGroupHasQuiz.rejected, (state) => {
             state.isGetLoading = false;
         });
         builder.addCase(getAllQuizByGroupId.pending, (state) => {

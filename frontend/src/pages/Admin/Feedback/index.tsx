@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import { feedbackActions } from "../../../redux/slices";
 import { Pagination } from "../../../components";
@@ -40,7 +39,7 @@ export function FeedbackAdmin() {
     return (
         <>
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2 ">
-                <Toaster />
+                {/* <Toaster /> */}
                 <div className="flex flex-row w-full items-start justify-center gap-10">
                     <div className="mt-3 flex flex-col justify-center items-center w-1/4">
                         <TotalRating ratingId={Number(5)} totalScore={Number(averageRating)} isForCourse={true} />

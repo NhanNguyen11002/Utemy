@@ -62,6 +62,7 @@ const WatchVideo: React.FC = () => {
     }, [dispatch, slug]);
     useEffect(() => {
         if (lecture.type === "Test") {
+            dispatch(testActions.setBeforeTest());
             dispatch(testActions.getTestByTestId(lecture.content.id));
         } else return;
     }, [dispatch, lecture.lecture_id]);

@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { useNavigate } from "react-router-dom";
 import { CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
 import { categoryActions, courseActions } from "../../redux/slices";
-import { EditCourse, Course, StatusOption } from "../../types/course";
+import { EditCourse, Course } from "../../types/course";
 import { Category as CategoryType } from "../../types/category";
 import slugify from "slugify";
 import toast from "react-hot-toast";
@@ -69,22 +69,17 @@ const EditForm: React.FC<props> = (props) => {
 
         chosenOptionsCategories.push(temp);
     });
-    const initialStatus: StatusOption = {
-        value: courseDetail.status,
-        label: courseDetail.status ? "Hoàn thành" : "Đang cập nhật",
-    };
     const initialValue: EditCourse = {
         title: courseDetail.title,
         summary: courseDetail.summary,
         categories: chosenOptionsCategories,
-        status: initialStatus,
+        status: courseDetail.status,
         description: courseDetail.description,
         course_id: Number(props.course_id),
         slug: courseDetail.slug,
         price: Number(courseDetail.price),
         thumbnail: null,
     };
-    const courseStatus: string = courseDetail.status ? "Hoàn thành" : "Đang cập nhật";
     const dispatch = useAppDispatch();
     const statusOptions = [
         {
@@ -331,7 +326,7 @@ const EditForm: React.FC<props> = (props) => {
                                                     handleOnchange={(e: any) => handleChangeStatus(e, formik)}
                                                     options={statusOptions}
                                                     isMulti={false}
-                                                    placeholder={`${courseStatus}`}
+                                                    placeholder={courseDetail.status ? "Hoàn thành" : "Đang cập nhật"}
                                                     styles={customStyles}
                                                 />
                                                 <ErrorMessage

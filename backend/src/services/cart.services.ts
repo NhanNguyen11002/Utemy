@@ -183,6 +183,9 @@ const getAllCart = async (req: IRequestWithId): Promise<ResponseBase> => {
         const getAllCart = await configs.db.cartDetail.findMany({
             where: {
                 cart_id: cartId,
+                course: {
+                    is_delete: false,
+                },
             },
             include: {
                 course: {

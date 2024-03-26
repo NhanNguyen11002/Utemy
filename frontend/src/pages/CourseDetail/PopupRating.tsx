@@ -30,7 +30,12 @@ const PopupRating: React.FC<RatingCourseProps> = (props) => {
         setChecked(Number(rating));
     };
     useEffect(() => {
-        dispatch(ratingActions.getUserRating(course_id as number));
+        dispatch(ratingActions.getUserRating(course_id as number)).then((response) => {
+            if (response.payload?.status_code === 404) {
+                dispatch(ratingActions.setDeleteRating());
+                setChecked(5);
+            }
+        });
     }, [course_id]);
     const handleOnSubmit = (values: any) => {
         if (rating.id) {

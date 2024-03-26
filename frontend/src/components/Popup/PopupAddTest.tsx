@@ -103,7 +103,7 @@ const PopupAddTest: React.FC<AddTestPopupProps> = (props) => {
               })
             : [];
     useEffect(() => {
-        dispatch(quizActions.getAllQuizGroup());
+        dispatch(quizActions.getAllQuizGroupHasQuiz());
     }, [dispatch]);
 
     return (

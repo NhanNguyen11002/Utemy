@@ -39,8 +39,8 @@ const ChangePassword: React.FC = () => {
     return (
         <div className="container mx-auto">
             <div className="flex items-center justify-center mt-[100px] py-10">
-                <div className="bg-footer m-4 rounded-xl shadow-lg p-4">
-                    <h1 className="font-bold text-[32px] text-center text-title">ĐỔI MẬT KHẨU</h1>
+                <div className="bg-footer m-4 rounded-xl shadow-lg p-4 w-[350px]">
+                    <h1 className="font-bold text-[32px] text-center text-title text-lightblue">ĐỔI MẬT KHẨU</h1>
                     <Formik
                         initialValues={initialValue}
                         validationSchema={changePasswordValidationSchema}
@@ -56,6 +56,7 @@ const ChangePassword: React.FC = () => {
                                     <Field
                                         type="password"
                                         name="current_password"
+                                        placeholder="Mật khẩu hiện tại..."
                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                             formik.errors.current_password &&
                                             formik.touched.current_password &&
@@ -74,6 +75,7 @@ const ChangePassword: React.FC = () => {
                                     </label>
                                     <Field
                                         type="password"
+                                        placeholder="Mật khẩu mới..."
                                         name="new_password"
                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                             formik.errors.new_password && formik.touched.new_password && "border-error"
@@ -87,11 +89,12 @@ const ChangePassword: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col mb-3">
                                     <label htmlFor="confirm_password" className="text-sm mb-1 tablet:text-xl">
-                                        Nhập lại mật khẩu mới
+                                        Xác nhận mật khẩu mới
                                     </label>
                                     <Field
                                         type="password"
                                         name="confirm_password"
+                                        placeholder="Xác nhận mật khẩu..."
                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                             formik.errors.confirm_password &&
                                             formik.touched.confirm_password &&

@@ -28,8 +28,8 @@ const AllCourses: React.FC = () => {
     const navigate = useNavigate();
 
     let courseList: Course[] = useAppSelector((state) => state.courseSlice.courses) ?? [];
-    console.log(courseList);
     let totalPage: number = useAppSelector((state) => state.courseSlice.totalPage) ?? 1;
+    const totalRecord = useAppSelector((state) => state.courseSlice.totalRecord);
     const categoriesList: Category[] = useAppSelector((state) => state.categorySlice.categories) ?? [];
 
     const handleSingleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>, categoryId: number) => {
@@ -203,12 +203,10 @@ const AllCourses: React.FC = () => {
                         </div>
                         <div className="border-t-[1px] w-[70%] laptop:border-l-[1px] laptop:border-t-0">
                             <div className="w-full flex">
-                                {courseList.length === 0 && (
-                                    <p className="text-error  text-2xl ml-3">Không có nội dung gì</p>
-                                )}
-                                {courseList.length >= 1 && (
+                                {totalRecord === 0 && <p className="text-error  text-2xl ml-3">Không có nội dung gì</p>}
+                                {totalRecord >= 1 && (
                                     <p className="text-2xl ml-3 items-center font-medium">
-                                        Tìm thấy {courseList.length} khóa học
+                                        Tìm thấy {totalRecord} khóa học
                                     </p>
                                 )}
                             </div>

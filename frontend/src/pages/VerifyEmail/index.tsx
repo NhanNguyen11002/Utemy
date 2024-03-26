@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { authActions } from "../../redux/slices";
-import { Link } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { HandThumbDownIcon, ClockIcon, HandThumbUpIcon } from "@heroicons/react/24/outline";
 
 const Verify: React.FC = () => {
@@ -19,7 +19,7 @@ const Verify: React.FC = () => {
     const errorMessage = useAppSelector((state) => state.authSlice.error) ?? "";
     const successMessage = useAppSelector((state) => state.authSlice.success) ?? "";
 
-    if (isLogin) return <Navigate to={"/"} />;
+    if (isLogin && successMessage === "") return <Navigate to={"/"} />;
 
     return (
         <>

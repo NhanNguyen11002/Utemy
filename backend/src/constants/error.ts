@@ -61,6 +61,22 @@ const error = {
     ERROR_DESCRIPTION_TOO_MAX: "Description is too long",
     ERROR_DESCRIPTION_TOO_SHORT: "Description is too short",
 
+    // lecture
+    ERROR_LECTURE_TYPE_REQUIRED: "Type is required",
+    ERROR_LECTURE_TYPE_STRING: " Type must be string",
+    ERROR_LECTURE_TYPE_TOO_LONG: "Type is too long",
+    ERROR_LECTURE_DURATION_REQUIRED: "Duration is required",
+    ERROR_LECTURE_DURATION_NUMBER: " Duration must be number",
+    ERROR_LECTURE_DURATION_POSITIVE: " Duration must be positive",
+    ERROR_LECTURE_PASS_PERCENT_POSITIVE: " Pass percent must be positive",
+    ERROR_LECTURE_TIME_LIMIT_BOOLEAN: " Time limit must be a boolean",
+    ERROR_QUIZ_GROUP_ID: "Quiz group id must be a number",
+    ERROR_QUIZ_GROUP_ID_INT: "Quiz group id must be an int",
+    ERROR_LECTURE_NOT_FOUND: "Lecture not found",
+    ERROR_LECTURE_ID_REQUIRED: "Lecture's ID is required",
+    ERROR_LECTURE_ID_NUMBER: "Lecture's ID must be a number",
+    ERROR_LECTURE_ID_INTEGER: "Lecture's ID must be integer",
+
     //course
     ERROR_COURSE_NOT_FOUND: "Course not found",
     ERROR_COURSE_TITLE_REQUIRED: "Course's title is required",
@@ -82,6 +98,7 @@ const error = {
     ERROR_COURSE_THUMBNAIL_REQUIRED: "Course's thumbnail is required",
     ERROR_COURSE_PRICE_REQUIRED: "Price is required",
     ERROR_COURSE_PRICE_NUMBER: "Price must be number",
+    ERROR_COURSE_PRICE_POSITIVE: "Price must be positive number",
     ERROR_CREATE_COURSE_FAILED: "Create course failed",
     ERROR_GET_COURSE_FAILED: "Get course failed",
 

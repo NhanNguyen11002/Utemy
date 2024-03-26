@@ -64,9 +64,10 @@ export const createCourseSchema: ObjectSchema<CreateCourse> = Joi.object({
     //     "any.required": constants.error.ERROR_COURSE_THUMBNAIL_REQUIRED,
     // }),
 
-    price: Joi.number().required().messages({
+    price: Joi.number().required().positive().messages({
         "any.required": constants.error.ERROR_COURSE_PRICE_REQUIRED,
         "number.base": constants.error.ERROR_COURSE_PRICE_NUMBER,
+        "number.positive": constants.error.ERROR_COURSE_PRICE_POSITIVE,
     }),
 });
 
@@ -115,9 +116,10 @@ const updateCourseSchema: ObjectSchema<UpdateCourse> = Joi.object({
     study: Joi.string(),
 
     thumbnail: Joi.string(),
-    price: Joi.required().messages({
+    price: Joi.number().required().positive().messages({
         "any.required": constants.error.ERROR_COURSE_PRICE_REQUIRED,
         "number.base": constants.error.ERROR_COURSE_PRICE_NUMBER,
+        "number.positive": constants.error.ERROR_COURSE_PRICE_POSITIVE,
     }),
 });
 
@@ -183,9 +185,10 @@ const addPromotionSchema: ObjectSchema<addPromotion> = Joi.object({
         "number.base": constants.error.ERROR_COURSE_ID_NUMBER,
         "any.required": constants.error.ERROR_COURSE_ID_REQUIRED,
     }),
-    sale_price: Joi.number().required().messages({
+    sale_price: Joi.number().required().positive().messages({
         "number.base": constants.error.ERROR_SALE_PRICE_NUMBER,
         "any.required": constants.error.ERROR_SALE_PRICE_REQUIRED,
+        "number.positive": constants.error.ERROR_COURSE_PRICE_POSITIVE,
     }),
     sale_until: Joi.date().required().min("now").messages({
         "date.base": constants.error.ERROR_SALE_UNTIL_DATE,

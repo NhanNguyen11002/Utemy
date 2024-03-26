@@ -42,7 +42,7 @@ const Accordion: React.FC<AccordionType> = (props) => {
                     >
                         <div className="flex gap-2 items-center cursor-pointer" onClick={() => setShow(!show)}>
                             <svg
-                                className={`w-3 h-3 ${show ? "rotate-180" : ""} shrink-0`}
+                                className={`w-3 h-3 transition duration-300 ${show ? "rotate-180" : ""} shrink-0`}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -98,67 +98,75 @@ const Accordion: React.FC<AccordionType> = (props) => {
                     </div>
                 </h2>
             </div>
-            {show &&
-                props.section.lecture &&
-                props.section.lecture.map((lecture, index) => (
-                    <div
-                        className={`py-4 pl-8 pr-4 border border-black/25 rounded-lg my-2 hover:cursor-pointer hover:bg-footer flex justify-between  ${
-                            lecture.lecture_id === props.lectureId ? "bg-footer" : ""
-                        }`}
-                        onClick={() => {
-                            if (props.handleChangeLesson) {
-                                props.handleChangeLesson(lecture);
-                            }
-                            if (props.redirectToWatchVideo) {
-                                dispatch(lectureActions.setLecture(lecture));
-                                navigate(`/course-detail/${courseDetail.slug}/watch`);
-                            }
-                        }}
-                        key={`${lecture.lecture_id}`}
-                    >
-                        {" "}
-                        <div className="flex items-center justify-between w-full mr-2">
-                            <div className="flex items-center gap-2">
-                                {lecture.type === "Lesson" ? (
-                                    <>
-                                        <PlayIcon className="w-4 h-4 shrink-0" /> <p>{lecture.content.title}</p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <DocumentIcon className="w-4 h-4 shrink-0" /> <p>{lecture.content.title}</p>
-                                    </>
-                                )}
+            {/* {show && ( */}
+            <div
+                className={`overflow-hidden transition-all duration-[500ms] ease-in ${
+                    show ? "max-h-[1000px] opacity-100 " : "h-0 opacity-0"
+                }`}
+            >
+                {props.section.lecture &&
+                    props.section.lecture.map((lecture, index) => (
+                        <div
+                            className={`py-4 pl-8 pr-4 border border-black/25 rounded-lg my-2 hover:cursor-pointer hover:bg-footer flex justify-between  ${
+                                lecture.lecture_id === props.lectureId ? "bg-footer" : ""
+                            }`}
+                            onClick={() => {
+                                if (props.handleChangeLesson) {
+                                    props.handleChangeLesson(lecture);
+                                }
+                                if (props.redirectToWatchVideo) {
+                                    dispatch(lectureActions.setLecture(lecture));
+                                    navigate(`/course-detail/${courseDetail.slug}/watch`);
+                                }
+                            }}
+                            key={`${lecture.lecture_id}`}
+                        >
+                            {" "}
+                            <div className="flex items-center justify-between w-full mr-2">
+                                <div className="flex items-center gap-2">
+                                    {lecture.type === "Lesson" ? (
+                                        <>
+                                            <PlayIcon className="w-4 h-4 shrink-0" /> <p>{lecture.content.title}</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <DocumentIcon className="w-4 h-4 shrink-0" /> <p>{lecture.content.title}</p>
+                                        </>
+                                    )}
+                                </div>
+                                <div>
+                                    <p>{secondsToMinutesAndSeconds(Number(lecture.content.duration))}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p>{secondsToMinutesAndSeconds(Number(lecture.content.duration))}</p>
-                            </div>
+                            {props.isDisplayBtn && (
+                                <div className="flex gap-2">
+                                    <div
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            if (props.handleDisplayEditLecture) {
+                                                props.handleDisplayEditLecture(lecture.lecture_id, lecture.type);
+                                            }
+                                        }}
+                                    >
+                                        <EditSectionIcon />
+                                    </div>
+                                    <div
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            if (props.handleDisplayDeleteModal) {
+                                                props.handleDisplayDeleteModal(lecture.lecture_id, false); // lecture.id
+                                            }
+                                        }}
+                                    >
+                                        <DeleteIcon />
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        {props.isDisplayBtn && (
-                            <div className="flex gap-2">
-                                <div
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        if (props.handleDisplayEditLecture) {
-                                            props.handleDisplayEditLecture(lecture.lecture_id, lecture.type);
-                                        }
-                                    }}
-                                >
-                                    <EditSectionIcon />
-                                </div>
-                                <div
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        if (props.handleDisplayDeleteModal) {
-                                            props.handleDisplayDeleteModal(lecture.lecture_id, false); // lecture.id
-                                        }
-                                    }}
-                                >
-                                    <DeleteIcon />
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
+                    ))}
+            </div>
+            {/* ) */}
+            {/* } */}
         </>
     );
 };

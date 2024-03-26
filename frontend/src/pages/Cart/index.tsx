@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
 
 const getPercentDiscount = (subTotal: number, subTotalRetail: number) => {
-    return Math.ceil((subTotal / subTotalRetail) * 100);
+    return 100 - Math.ceil((subTotal / subTotalRetail) * 100);
 };
 const Cart: React.FC = () => {
     const navigate = useNavigate();
