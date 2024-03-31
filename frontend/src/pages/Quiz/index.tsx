@@ -9,7 +9,7 @@ import DeleteQuizModal from "./DeleteQuizModal";
 import QuizGroupAddPopup from "./QuizGroupAddPopup";
 import QuizGroupEditPopup from "./QuizGroupEditPopup";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { quizActions } from "../../redux/slices";
+import { quizActions, componentActions } from "../../redux/slices";
 import { SearchIcon } from "../../assets/icons";
 
 const QuizHome: React.FC = () => {
@@ -31,6 +31,7 @@ const QuizHome: React.FC = () => {
     const [editGroup, setEditGroup] = useState<QuizGroupType>(quizGroupList[0]);
 
     useEffect(() => {
+        dispatch(componentActions.setLecturerNavPlace("quiz"));
         dispatch(quizActions.getAllQuizGroup()).then((response) => {
             if (response.payload?.status_code === 200) {
                 if (quizGroupList.length > 0) setGroupId(quizGroupList[0].quiz_group_id);
@@ -108,7 +109,7 @@ const QuizHome: React.FC = () => {
             {openDeleteGroupModal && <DeleteGroupModal group={editGroup} handleCancel={handleToggleDeleteGroup} />}
             {openEditGroupPopup && <QuizGroupEditPopup group={editGroup} handleCancelEdit={handleCancelEditGroup} />}
             {openAddGroupPopup && <QuizGroupAddPopup handleCancelAdd={handleToggleAddGroup} />}
-            <div className=" w-full h-[100vh] mx-auto mt-[100px]  justify-center flex  ">
+            <div className=" w-full h-[100vh] mx-auto mt-[10px]  justify-center flex  ">
                 <div className="w-1/4 bg-white  shadow-lg pt-[20px]">
                     <div className="h-[10%] flex items-center justify-between text-black border-b mx-3">
                         <div>

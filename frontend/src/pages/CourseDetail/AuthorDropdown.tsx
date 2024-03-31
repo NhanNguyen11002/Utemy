@@ -18,7 +18,7 @@ const AuthorDropdown: React.FC<AuthorDropdownProps> = (props) => {
                 </div>
                 <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li>
-                        <Link to={`/my-courses/edit/${props.courseDetail.course_id}`}>
+                        <Link to={`/lecturer/courses/edit/${props.courseDetail.course_id}`}>
                             <span className="flex text-black text-xl items-center gap-2">
                                 <EditIcon color="#000000" />
 

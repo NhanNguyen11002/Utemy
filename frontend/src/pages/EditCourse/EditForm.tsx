@@ -377,10 +377,10 @@ const EditForm: React.FC<props> = (props) => {
                                             <button
                                                 className="btn text-lg ml-2 "
                                                 type="submit"
-                                                onClick={() => navigate(`/course-detail/${courseDetail.slug}`)}
+                                                onClick={() => navigate(`/lecturer/course-detail/${courseDetail.slug}`)}
                                                 disabled={isLoading}
                                             >
-                                                Hủy
+                                                Quay trở lại khoá học
                                             </button>
                                         </div>
                                     </form>

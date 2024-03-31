@@ -1,19 +1,24 @@
-import React, { useEffect, useRef } from "react";
-import { Spin, Carousel } from "../../components";
+import React, { useEffect } from "react";
+import { Spin, Carousel as CarouselUtemy } from "../../components";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
 import { courseActions } from "../../redux/slices";
 import { Course as CourseType } from "../../types/course";
-import CardVideo from "./CardVideo";
-import { User } from "../../types/user";
+import CategoryCard from "./CategoryCard";
+import { Learning } from "../../assets/images";
+import LecturerCard from "./LecturerCard";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../../components/ui/carousel";
+import CarouselCourse from "./CarouselCourse";
+import CompanyCard from "../../components/Card/CompanyCard";
 
 const Home: React.FC = () => {
-    // const slideRef = useRef(null);
-    console.log(useRef);
+    const isLogin = useAppSelector((state) => state.authSlice.isLogin);
+    const user = useAppSelector((state) => state.authSlice.user);
     const dispatch = useAppDispatch();
     const top10Enrolled: CourseType[] = useAppSelector((state) => state.courseSlice.top10Enrolled) ?? [];
     const top10Rate: CourseType[] = useAppSelector((state) => state.courseSlice.top10Rate) ?? [];
+    const top8Category = useAppSelector((state) => state.categorySlice.top5categories) ?? [];
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
-
+    const dummyData = [user, user];
     useEffect(() => {
         dispatch(courseActions.getTop10Rate());
         dispatch(courseActions.getTop10Enrolled());
@@ -21,41 +26,48 @@ const Home: React.FC = () => {
     return (
         <>
             {isGetLoading && <Spin />}
-            {/* <div className="h-[200px] tablet:h-[300px] flex  items-center border-footer border-2 shadow-lg bg-gradient-to-r from-gray-600 to-gray-800 mt-[100px] laptop:mt-0">
-                <div className="px-24">
-                    <h1 className="text-title text-2xl text-white font-sans tablet:text-[40px] font-bold min-w-fit">
-                        Học những kiến thức mới
-                    </h1>
-                    <p className="text-xl text-white font-sans font-medium">
-                        Cùng với nền tảng của chúng tôi chia sẻ và lan rộng kiến thức
-                    </p>
-                </div>
-            </div> */}
-            <div className="flex justify-center my-2 rounded-md">
-                <Carousel />
-            </div>
 
+            <div className="flex justify-center my-2 rounded-md">
+                <CarouselUtemy />
+            </div>
+            <div className="w-full h-fill bg-background_2 ">
+                <div className="container mx-auto">
+                    <CompanyCard />
+                </div>
+            </div>
             <div className="container mx-auto">
                 <div className="my-4 px-4">
-                    <h2 className="text-xl tablet:text-3xl font-bold mb-3">Khóa học nổi tiếng</h2>
+                    <h2 className="text-xl tablet:text-4xl font-bold mb-3">
+                        Khóa học <span className="text-lightblue"> nổi tiếng </span>
+                    </h2>
                     <span className="w-[60px] h-1 bg-black block"></span>
-                    <div className="w-full flex overflow-x-scroll">
-                        <div className="mt-3 flex shrink-0 gap-3 py-2">
-                            {top10Enrolled.map((course: CourseType, index) => {
+                    <div className="mt-3 flex shrink-0 gap-3 py-2">
+                        <CarouselCourse courses={top10Enrolled} type="enrolled" />
+                    </div>
+                </div>
+                <div className="my-4 px-4">
+                    <h2 className="text-xl tablet:text-4xl font-bold mb-3">
+                        Được <span className="text-lightblue">đánh giá cao</span>{" "}
+                    </h2>
+                    <span className="w-[60px] h-1 bg-black block"></span>
+                    <div className="mt-3 flex shrink-0 gap-3 py-2">
+                        <CarouselCourse courses={top10Rate} type="rate" />
+                    </div>
+                </div>
+                <div className="my-4 px-4">
+                    <h2 className="text-xl tablet:text-4xl font-bold mb-3">
+                        Danh mục <span className="text-lightblue">hàng đầu</span>{" "}
+                    </h2>
+                    <span className="w-[60px] h-1 bg-black block"></span>
+                    <div className="w-full mt-8">
+                        <div className="w-full grid grid-cols-4">
+                            {top8Category.map((category, index) => {
                                 return (
-                                    <CardVideo
+                                    <CategoryCard
                                         key={index}
-                                        for={"enrolled"}
-                                        courseId={course.course_id}
-                                        thumbnail={course.thumbnail}
-                                        title={course.title}
-                                        author={course.author as User}
-                                        rating={course.average_rating}
-                                        categories={course.categories}
-                                        slug={course.slug}
-                                        price={Number(course.price)}
-                                        salePrice={Number(course.sale_price)}
-                                        saleUntil={course.sale_until?.toString()}
+                                        thumbnail={category.url_image}
+                                        title={category.title}
+                                        id={category.category_id}
                                     />
                                 );
                             })}
@@ -63,35 +75,47 @@ const Home: React.FC = () => {
                     </div>
                 </div>
                 <div className="my-4 px-4">
-                    <h2 className="text-xl tablet:text-3xl font-bold mb-3">Được đánh giá cao</h2>
+                    <h2 className="text-xl tablet:text-4xl font-bold mb-3">
+                        Những giảng viên <span className="text-lightblue">hàng đầu</span> của nền tảng
+                    </h2>
                     <span className="w-[60px] h-1 bg-black block"></span>
-                    <div className="w-full flex overflow-x-scroll">
-                        <div className="mt-3 flex shrink-0 gap-3 py-2">
-                            {top10Rate.map((course: CourseType, index) => {
-                                return (
-                                    <CardVideo
-                                        key={index}
-                                        for={"rate"}
-                                        courseId={course.course_id}
-                                        thumbnail={course.thumbnail}
-                                        title={course.title}
-                                        author={course.author as User}
-                                        rating={course.average_rating}
-                                        categories={course.categories}
-                                        slug={course.slug}
-                                        price={Number(course.price)}
-                                        salePrice={Number(course.sale_price)}
-                                        saleUntil={course.sale_until?.toString()}
-                                    />
-                                );
-                            })}
-                        </div>
+                    <div className="w-full mt-8">
+                        <Carousel>
+                            <CarouselContent>
+                                {dummyData.map((user, index) => {
+                                    return (
+                                        <CarouselItem>
+                                            <LecturerCard key={index} lecturer={user} />
+                                        </CarouselItem>
+                                    );
+                                })}
+                            </CarouselContent>
+                            <CarouselPrevious />
+                            <CarouselNext />
+                        </Carousel>
                     </div>
                 </div>
             </div>
-            <div className="w-full h-[120px] bg-backgroundHover flex flex-col justify-center items-center mt-4">
-                <p className="text-xl mb-2 font-bold">Tin tưởng bởi hơn 100000 học viên trên toàn thế giới</p>
-                <p className="text-lg">Chinh phục tri thức ngay hôm nay</p>
+            <div className="w-full h-fill bg-background_2 flex gap-10 justify-center items-center">
+                <Learning />
+                <div className="flex flex-col gap-2">
+                    <p className="text-xl font-bold text-gray-500">
+                        Tin tưởng bởi hơn hàng triệu học viên trên toàn thế giới
+                    </p>
+                    <p className="text-lg text-gray-500">Chinh phục tri thức ngay hôm nay</p>
+                    {isLogin ? (
+                        <a
+                            href="/my-enrolled-courses"
+                            className="hover:underline hover:cursor-pointer text-sm text-lightblue"
+                        >
+                            Tiếp tục học
+                        </a>
+                    ) : (
+                        <a href="/sign-up" className="hover:underline hover:cursor-pointer text-sm text-lightblue">
+                            Đăng ký miễn phí ngay hôm nay
+                        </a>
+                    )}
+                </div>
             </div>
         </>
     );

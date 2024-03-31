@@ -4,7 +4,8 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { courseActions, lectureActions, testActions } from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
-import { VideoPlayer, Accordion, Spin, WatchVideoHeader } from "../../components";
+import { VideoPlayer, Spin, WatchVideoHeader } from "../../components";
+import AccordionSection from "../../components/Accordion/AccordionSection";
 import { Section } from "../../types/section";
 import constants from "../../constants";
 import { Lecture } from "../../types/lecture";
@@ -25,7 +26,6 @@ const WatchVideo: React.FC = () => {
     };
 
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
-    const [isDisplayBtn] = useState<boolean>(false);
     const handleChangeLesson = (lecture: Lecture) => {
         dispatch(lectureActions.setLecture(lecture));
     };
@@ -90,16 +90,16 @@ const WatchVideo: React.FC = () => {
                             </div>
                         )}
                     </div>
-                    <div className="flex-2 laptop:max-h-[480px]  laptop:overflow-y-auto shrink-0 w-1/4">
+                    <div className="flex-2 max-h-[700px]  laptop:overflow-y-auto shrink-0 w-1/4">
                         {courseDetail.sections?.map((section: Section, index) => {
                             return (
-                                <Accordion
-                                    disable={true}
+                                <AccordionSection
                                     key={index}
                                     lectureId={lecture.lecture_id}
                                     handleChangeLesson={handleChangeLesson}
-                                    isDisplayBtn={isDisplayBtn}
                                     section={section}
+                                    isDisplayEdit={false}
+                                    isDisplayProgress={true}
                                 />
                             );
                         })}

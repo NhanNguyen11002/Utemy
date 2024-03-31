@@ -89,7 +89,7 @@ const CreateCourse: FC = () => {
         dispatch(courseActions.createCourses(formData)).then((createCourseResponse: any) => {
             if (createCourseResponse.payload && createCourseResponse.payload.status_code === 201) {
                 toast.success(createCourseResponse.payload.message);
-                navigate("/my-courses");
+                navigate("/lecturer");
             } else {
                 toast.error(createCourseResponse.payload?.message as string);
             }

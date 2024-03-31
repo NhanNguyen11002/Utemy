@@ -11,8 +11,9 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { authActions } from "../../redux/slices";
-import { FaHistory, FaRegQuestionCircle } from "react-icons/fa";
+import { FaHistory } from "react-icons/fa";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { Badge } from "../ui/badge";
 
 const UserDropDown: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -29,9 +30,12 @@ const UserDropDown: React.FC = () => {
             <Link to={"/cart"} className="w-full rounded-lg ">
                 <div className="w-full hover:bg-footer">
                     <div className="flex justify-start indicator items-center px-4 py-4">
-                        <span className="indicator-item badge badge-info text-white">{totalCourseInCart}</span>
                         <CartIcon />
                         <span className="ml-3 font-medium text-lg">Giỏ hàng</span>
+                        <Badge className="bg-lightblue text-xs relative bottom-3 right-2 rounded-full">
+                            {" "}
+                            {totalCourseInCart}{" "}
+                        </Badge>
                     </div>
                 </div>
             </Link>
@@ -45,12 +49,6 @@ const UserDropDown: React.FC = () => {
                 <div className="flex justify-start items-center hover:bg-footer px-4 py-4">
                     <UserIcon />
                     <span className="ml-3 font-medium text-lg">Trang cá nhân</span>
-                </div>
-            </Link>
-            <Link to={"/quiz"} className="w-full rounded-lg ">
-                <div className="flex justify-start items-center hover:bg-footer px-4 py-4">
-                    <FaRegQuestionCircle size={16} style={{ margin: "5px" }} />
-                    <span className="ml-3 font-medium text-lg">Quản lý câu hỏi</span>
                 </div>
             </Link>
             <Link to={"/change-password"} className="w-full rounded-lg ">

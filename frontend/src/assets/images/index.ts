@@ -9,6 +9,8 @@ import WatchVideoLogo from "./logo_watchvideo.png";
 import Slide1 from "./free1.jpg";
 import Slide2 from "./free2.jpg";
 import Slide3 from "./free3.jpg";
+import Learning from "./learning";
+import ImgLearn from "./img-e-learning-design-lab-2022.jpeg";
 
 export {
     DefaultAvatar,
@@ -22,4 +24,6 @@ export {
     Slide1,
     Slide2,
     Slide3,
+    Learning,
+    ImgLearn,
 };

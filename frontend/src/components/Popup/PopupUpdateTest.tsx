@@ -154,7 +154,7 @@ const PopupUpdateTest: React.FC<UpdateTestPopupProps> = (props) => {
                                 <div className="flex gap-2 w-full">
                                     <div className="px-5 py-3 w-1/2">
                                         <label htmlFor="duration" className="text-sm mb-1 tablet:text-xl font-medium">
-                                            Thời lượng (giây)
+                                            Thời lượng (phút)
                                         </label>{" "}
                                         <br />
                                         <Field

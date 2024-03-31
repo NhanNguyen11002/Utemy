@@ -16,7 +16,7 @@ const UserAppLayoutWithNav: React.FC<HeaderProps> = ({ isLogin }) => {
         <div className="flex flex-col min-h-scråeen">
             <Header isLogin={isLogin} />
             <Navbar />
-            <div className=" h-[200px] w-full"></div>
+            <div className=" h-[150px] w-full"></div>
             <Outlet />
             <Footer />
         </div>

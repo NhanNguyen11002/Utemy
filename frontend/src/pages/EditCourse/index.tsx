@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { sectionActions, courseActions, lectureActions } from "../../redux/slices";
 import { useParams } from "react-router-dom";
 import {
-    Accordion,
     DeleteModal,
     PopupAddLesson,
     PopupUpdateLesson,
@@ -11,6 +10,7 @@ import {
     PopupChoseLectureType,
     PopupAddTest,
 } from "../../components";
+import AccordionSection from "../../components/Accordion/AccordionSection";
 import { AddSection as AddSectionType, Section as SectionType } from "../../types/section";
 // import { deteleLessonType } from "../../types/lesson";
 
@@ -229,8 +229,7 @@ const EditCourse: React.FC = () => {
                                     <h1 className="text-center text-2xl text-error">Khóa học chưa có chương học nào</h1>
                                 ) : (
                                     sectionOfCourse.map((section, index) => (
-                                        <Accordion
-                                            disable={true}
+                                        <AccordionSection
                                             key={index}
                                             section={section}
                                             handleDeleteSection={handleDeleteSection}
@@ -238,7 +237,8 @@ const EditCourse: React.FC = () => {
                                             handleDisplayDeleteModal={handleDisplayDeleteModal}
                                             handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
                                             handleDisplayEditLecture={handleDisplayEditLecture}
-                                            isDisplayBtn={true}
+                                            isDisplayEdit={true}
+                                            isDisplayProgress={false}
                                         />
                                     ))
                                 )}

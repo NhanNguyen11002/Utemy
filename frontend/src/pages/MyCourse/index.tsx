@@ -3,7 +3,7 @@ import SearchIcon from "../../assets/icons/SearchIcon";
 import CreateIcon from "../../assets/icons/CreateIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { courseActions } from "../../redux/slices";
+import { componentActions, courseActions } from "../../redux/slices";
 import { Course } from "../../types/course";
 import { Spin, Pagination, CourseCard, DeleteModal } from "../../components";
 import { User } from "../../types/user";
@@ -26,6 +26,7 @@ const MyCourses: React.FC = () => {
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
 
     useEffect(() => {
+        dispatch(componentActions.setLecturerNavPlace("courses"));
         dispatch(courseActions.getMyCourses({ pageIndex, keyword }));
     }, [dispatch, keyword, pageIndex]);
 
@@ -50,7 +51,7 @@ const MyCourses: React.FC = () => {
     };
 
     const handleEditCourse = (id: number) => {
-        navigate(`/my-courses/edit/${id}`);
+        navigate(`/lecturer/courses/edit/${id}`);
     };
 
     const handleDeleteCourse = () => {

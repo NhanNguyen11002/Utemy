@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, DeleteModal, Spin, TotalRating, Pagination } from "../../components";
+import { DeleteModal, Spin, TotalRating, Pagination } from "../../components";
+import AccordionSection from "../../components/Accordion/AccordionSection";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { Section } from "../../types/section";
 import { Course as CourseDetailType } from "../../types/course";
 import { GetRating, Rating as RatingType } from "../../types/rating";
-// import { Section as SectionType } from "../../types/section";
 import { Link } from "react-router-dom";
 import NotFound from "../NotFound";
 import { courseActions, ratingActions } from "../../redux/slices";
 import PopupRating from "./PopupRating";
-
 import toast from "react-hot-toast";
 import AuthorButton from "./AuthorButton";
 import GuestButton from "./GuestButton";
@@ -170,7 +169,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
             <div className="container mx-auto mt-[100px] laptop:mt-0">
                 <div className="min-h-screen h-full px-4 tablet:px-[60px]">
                     <div className="mt-4 container mx-auto p-4">
-                        <div className="flex flex-col gap-4 laptop:flex-row shadow-xl bg-lightblue/10 rounded-lg">
+                        <div className="flex flex-col gap-4 laptop:flex-row items-center rounded-lg">
                             <div className=" flex-1 w-full laptop:max-w-[600px] max-h-[400px] bg-gray-600 rounded-lg">
                                 <img
                                     src={courseDetail.thumbnail}
@@ -181,7 +180,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                             <div className=" flex-1 object-right flex flex-col gap-4 px-3 pb-3 laptop:pt-3">
                                 <div className="flex-1">
                                     <div className="flex justify-between">
-                                        <h2 className="text-2xl laptop:text-3xl font-bold text-title mb-3 tablet:w-[300px] xl:w-[600px] truncate ...">
+                                        <h2 className="text-2xl laptop:text-3xl font-bold text-title mb-3 tablet:w-[300px] xl:w-[600px] title-card-content ">
                                             {courseDetail.title}
                                         </h2>
                                         {isLogin && role === constants.util.ROLE_AUTHOR && (
@@ -195,25 +194,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             />
                                         )}
                                     </div>
-                                    <p className="text-xl laptop:text-2xl font-medium italic mb-3">
-                                        {courseDetail.summary}
-                                    </p>
-                                    <div className=" mb-3">
-                                        <span className="text-xl laptop:text-l font-bold">Tác giả: </span>
-                                        <Link
-                                            to={
-                                                role === constants.util.ROLE_AUTHOR
-                                                    ? "/my-profile"
-                                                    : `/profile/${courseDetail.author?.user_id}`
-                                            }
-                                            className="text-xl laptop:text-l underline font-medium text-blue-600"
-                                        >
-                                            {courseDetail.author?.first_name}
-                                            <span> {courseDetail.author?.last_name} </span>
-                                        </Link>
+                                    <div className="summary-card-content mb-3">
+                                        <p className="text-xl laptop:text-2xl font-normal ">{courseDetail.summary}</p>
                                     </div>
-                                    <div className="flex items-center l font-medium mb-3">
-                                        <span className="text-xl laptop:text-l font-bold mr-2">Đánh giá:</span>
+
+                                    <div className="flex items-center l font-normal mb-3">
                                         <p className="font-bold text-xl ml-2  text-[#EAB308]">
                                             {courseDetail.average_rating}
                                         </p>
@@ -224,7 +209,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         />
                                         <a
                                             href="#Rating"
-                                            className="text-m  ml-2 hover:cursor-pointer underline text-lightblue"
+                                            className="text-m  ml-2 hover:cursor-pointer hover:text-blue-700 text-blue-500 transition-all duration-300"
                                             onClick={() => {
                                                 const button = document.getElementById("Rating");
                                                 button?.click();
@@ -245,7 +230,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     {hasSalePrice ? (
                                         <div className="text-xl font-bold laptop:text-l mb-3">
                                             Giá:
-                                            <span className=" font-extrabold font-OpenSans text-lightblue ">
+                                            <span className=" font-extrabold font-OpenSans text-blue-500 ">
                                                 {" "}
                                                 {courseDetail.sale_price?.toLocaleString()}đ{" "}
                                             </span>{" "}
@@ -267,6 +252,20 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             </span>{" "}
                                         </div>
                                     )}
+                                    <div className=" mb-3 text-xl laptop:text-base font-n">
+                                        <span className="">Được tạo bởi </span>
+                                        <Link
+                                            to={
+                                                role === constants.util.ROLE_AUTHOR
+                                                    ? "/my-profile"
+                                                    : `/profile/${courseDetail.author?.user_id}`
+                                            }
+                                            className=" text-blue-500 hover:text-blue-700 transition-all duration-300"
+                                        >
+                                            {courseDetail.author?.first_name}
+                                            <span> {courseDetail.author?.last_name} </span>
+                                        </Link>
+                                    </div>
                                 </div>
                                 <div className="flex-1 flex items-end gap-2 flex-wrap">
                                     {isLogin && role === constants.util.ROLE_AUTHOR && (
@@ -371,11 +370,13 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                         ))}
                                                     {courseDetail.sections?.map((section: Section, index: number) => {
                                                         return (
-                                                            <Accordion
+                                                            <AccordionSection
                                                                 // orderLesson={orderLesson}
-                                                                disable={true}
                                                                 key={index}
-                                                                isDisplayBtn={false}
+                                                                isDisplayEdit={false}
+                                                                isDisplayProgress={
+                                                                    role === constants.util.ROLE_ENROLLED
+                                                                }
                                                                 section={section}
                                                                 redirectToWatchVideo={
                                                                     isLogin && !(role === constants.util.ROLE_USER)
