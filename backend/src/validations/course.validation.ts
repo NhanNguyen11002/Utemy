@@ -19,7 +19,6 @@ type CreateCourse = {
     description: string;
     // thumbnail: Express.Multer.File;
     categories: Array<number>;
-    status: boolean;
     price: number;
 };
 
@@ -73,7 +72,6 @@ type UpdateCourse = {
     description: string;
     thumbnail: Express.Multer.File;
     categories: Array<number>;
-    status: boolean;
     price: number;
 };
 
