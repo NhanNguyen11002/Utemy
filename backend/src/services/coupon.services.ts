@@ -168,6 +168,67 @@ const getAllCoupon = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const createCouponHistory = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { coupon_id } = req.params;
+        const user_id = Number(req.user_id);
+        // Kiểm tra xem mã coupon có tồn tại và có thể sử dụng không
+        const coupon = await configs.db.coupon.findUnique({
+            where: {
+                id: Number(coupon_id),
+                is_delete: false,
+                valid_until: {
+                    gt: new Date(),
+                },
+            },
+        });
 
-const couponService = { createCoupon, updateCoupon, deleteCoupon, getCouponByCode, getAllCoupon };
+        if (!coupon) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+
+        // Ghi lại việc sử dụng mã coupon vào bảng coupon_history
+        const record = await configs.db.couponHistory.create({
+            data: {
+                coupon_id: coupon.id,
+                user_id: user_id,
+            },
+        });
+        if (!record) return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const getCouponHistoryByUserId = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const getAllCouponHistory = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const couponService = {
+    createCoupon,
+    updateCoupon,
+    deleteCoupon,
+    getCouponByCode,
+    getAllCoupon,
+    createCouponHistory,
+    getCouponHistoryByUserId,
+    getAllCouponHistory,
+};
 export default couponService;

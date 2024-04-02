@@ -10,4 +10,9 @@ couponRouter.patch("/:coupon_id", isLogin, controllers.couponController.updateCo
 couponRouter.delete("/:coupon_id", isLogin, controllers.couponController.deleteCoupon);
 couponRouter.get("/:code", isLogin, controllers.couponController.getCouponByCode);
 
+// coupon_history
+couponRouter.post("/history/:coupon_id", isLogin, controllers.couponController.createCouponHistory);
+couponRouter.get("/history", isLogin, controllers.couponController.getCouponHistoryByUserId);
+couponRouter.get("/all-history", isLogin, controllers.couponController.getAllCouponHistory);
+
 export default couponRouter;
