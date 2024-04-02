@@ -3,6 +3,7 @@ import Navbar from "./Navbar/Navbar";
 import Pagination from "./Pagination";
 import DeleteModal from "./Popup/DeleteModal";
 import CourseCard from "./Card/CourseCard";
+import MyCourseCard from "./Card/MyCourseCard";
 import CustomeSelect from "./CustomSelect";
 import TotalRating from "./TotalRating";
 import Accordion from "./Accordion";
@@ -44,4 +45,5 @@ export {
     AccordionSection,
     LectureCard,
     Checkbox,
+    MyCourseCard,
 };

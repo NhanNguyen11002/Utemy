@@ -126,3 +126,39 @@ export const checkAnswerArray = (array: QuizAnswerType[]) => {
     });
     return count === 1;
 };
+
+export const courseSetupProgress = (course: Course) => {
+    let numerator = 0;
+    let denominator = 0;
+    if (!course.study || course.study.length === 0) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+
+    if (!course.requirement || course.requirement.length === 0) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+    const strippedText = course.description.replace(/<[^>]*>/g, "");
+    const characterCount = strippedText.length;
+    if (!course.description || characterCount === 0) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+
+    const ob = getCourseIncludes(course);
+    if (ob.lessonCount === 0) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+
+    return (numerator / denominator) * 100;
+};

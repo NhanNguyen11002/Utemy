@@ -3,7 +3,7 @@ import { Formik, ErrorMessage, Field } from "formik";
 import { editCourseValidationSchema } from "../../validations/course";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { useNavigate } from "react-router-dom";
-import { CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
+import { CustomeSelect, TextEditor } from "../../components";
 import { categoryActions, courseActions } from "../../redux/slices";
 import { EditCourse, Course } from "../../types/course";
 import { Category as CategoryType } from "../../types/category";
@@ -59,8 +59,6 @@ const EditForm: React.FC<props> = (props) => {
     const imageRef = useRef<HTMLImageElement>(null);
     const navigate = useNavigate();
     const chosenOptionsCategories: Options[] = [];
-    const [study, setStudy] = useState(courseDetail.study || []);
-    const [requirement, setRequirement] = useState(courseDetail.requirement || []);
     courseCategories.forEach((category: CategoryType) => {
         const temp: Options = {
             value: category.category_id,
@@ -151,8 +149,6 @@ const EditForm: React.FC<props> = (props) => {
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
-        formData.append("study", JSON.stringify(study));
-        formData.append("requirement", JSON.stringify(requirement));
 
         dispatch(courseActions.editCourse(formData)).then((response) => {
             if (response.payload?.status_code === 200) {
@@ -166,20 +162,22 @@ const EditForm: React.FC<props> = (props) => {
     const handleDescriptionChange = (description: string, formik: any) => {
         formik.setFieldValue("description", description);
     };
-    const handleSubmitStudy = (study: any) => {
-        setStudy(study);
-    };
-    const handleSubmitRequirement = (requirement: any) => {
-        setRequirement(requirement);
-    };
 
     return (
         <>
             {isGetLoading !== true && (
                 <>
-                    <div className="px-4 tablet:px-[60px]">
-                        <div className="flex-1 p-4 laptop:flex laptop:gap-4">
-                            <div className="flex flex-col justify-center items-center gap-4 laptop:items-start laptop:justify-start">
+                    <div className="w-full border min-h-[600px] shadow-md">
+                        <div className="border-b border-gray">
+                            <p className="text-2xl font-normal p-6">Tổng quan khoá học</p>
+                        </div>
+                        <div className="flex-1 flex-col p-8 laptop:flex laptop:gap-4">
+                            <p>
+                                Trang tổng quan khóa học của bạn rất quan trọng đối với thành công của bạn trên Utemy.
+                                Khi bạn hoàn thành phần này, hãy nghĩ đến việc tạo Trang tổng quan khóa học hấp dẫn thể
+                                hiện lý do ai đó muốn ghi danh khóa học của bạn.
+                            </p>
+                            <div className="flex justify-center items-center gap-4 laptop:items-start laptop:justify-start my-4">
                                 <div className="">
                                     <img
                                         ref={imageRef}
@@ -190,9 +188,9 @@ const EditForm: React.FC<props> = (props) => {
                                 </div>
                                 <div className="flex flex-col gap-3">
                                     <div className="text-center tablet:text-start">
-                                        <p className="text-lg font-medium">Tải lên hình ảnh bìa</p>
+                                        <p className="text-lg font-medium">Tải lên hình ảnh bìa của khoá học tại đây</p>
                                         <p className={`${errorImage ? "text-red-500" : ""}  italic`}>
-                                            Kích cỡ hình nhỏ hơn 4MB
+                                            Lưu ý: Kích cỡ hình nhỏ hơn 4MB, phải là file .jpg .jpeg .png
                                         </p>
                                     </div>
                                     <input
@@ -206,6 +204,7 @@ const EditForm: React.FC<props> = (props) => {
                                     />
                                 </div>
                             </div>
+                            {/* chừng thêm video quảng cáo ở đây nữa */}
                             <Formik
                                 initialValues={initialValue}
                                 validationSchema={editCourseValidationSchema}
@@ -214,7 +213,7 @@ const EditForm: React.FC<props> = (props) => {
                                 {(formik) => (
                                     <form
                                         onSubmit={formik.handleSubmit}
-                                        className="mt-4 laptop:mt-0 flex-1 flex flex-col border border-dashed border-black rounded-lg p-4 bg-background shadow-lg"
+                                        className="mt-4 laptop:mt-0 flex-1 flex flex-col border-black bg-background"
                                     >
                                         <div className="flex flex-col gap-2 shrink-0 mb-2 tablet:flex-row tablet:gap-0">
                                             <div className="flex-1 flex flex-col ">
@@ -297,23 +296,7 @@ const EditForm: React.FC<props> = (props) => {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-10 shrink-0 mb-2">
-                                            <div className="w-full flex justify-between mt-3 items-center">
-                                                <label className="text-sm mb-1 font-medium tablet:text-xl">
-                                                    Yêu cầu khóa học
-                                                </label>
-                                                <RequirementPopup
-                                                    requirement={requirement}
-                                                    handleSubmit={handleSubmitRequirement}
-                                                />
-                                            </div>
-                                            <div className="w-full flex justify-between mt-3 items-center">
-                                                <label className="text-sm mb-1 font-medium tablet:text-xl">
-                                                    Tổng quan khóa học
-                                                </label>
-                                                <StudyPopup study={study} handleSubmit={handleSubmitStudy} />
-                                            </div>
-                                        </div>
+
                                         <div className="flex-1 flex flex-col">
                                             <label
                                                 htmlFor="summary"

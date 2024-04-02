@@ -170,7 +170,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     const file = req.file;
-    const { course_id, title, slug, summary, description, categories, price, requirement, study } = req.body;
+    const { course_id, title, slug, summary, description, categories, price } = req.body;
     try {
         const isFoundCourseById = await configs.db.course.findFirst({
             where: {
@@ -196,8 +196,6 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     description: description,
                     thumbnail: fullPathConverted,
                     price: Number(price),
-                    requirement,
-                    study,
                 },
             });
             if (!updatedCourse) {
@@ -217,8 +215,6 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     summary: summary,
                     description: description,
                     price: Number(price),
-                    requirement,
-                    study,
                 },
             });
             if (!updatedCourse) {
@@ -235,6 +231,39 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             })),
         });
         if (!isUpdateCategory) return new ResponseError(400, constants.error.ERROR_MISSING_REQUEST_BODY, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const updateTargetCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { course_id, requirement, study } = req.body;
+        // Check if the course existsc
+        const existingCourse = await db.course.findUnique({
+            where: {
+                id: Number(course_id),
+            },
+        });
+
+        if (!existingCourse) {
+            return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+        }
+
+        // Set is_delete field to true to mark the course as deleted
+        await db.course.update({
+            where: {
+                id: Number(course_id),
+            },
+            data: {
+                requirement: JSON.stringify(requirement),
+                study: JSON.stringify(study),
+            },
+        });
         return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
     } catch (error) {
         console.log(error);
@@ -469,11 +498,6 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
             include: {
                 user: true,
-                course_categories: {
-                    include: {
-                        Category: true,
-                    },
-                },
                 ratings: {
                     include: {
                         User: true,
@@ -482,6 +506,9 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 sections: {
                     where: {
                         is_delete: false,
+                    },
+                    include: {
+                        Lecture: true,
                     },
                 },
                 enrolleds: {
@@ -519,16 +546,12 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     first_name: data.user.first_name,
                     last_name: data.user.last_name,
                 },
-                price: data.price,
                 created_at: data.created_at,
                 slug: data.slug,
-                category: (data.course_categories as any).map((cc: any) => {
-                    return {
-                        id: cc.Category?.id,
-                        title: cc.Category?.title,
-                        url_image: cc.Category?.url_image,
-                    };
-                }),
+                study: JSON.stringify(data.study),
+                requirement: JSON.stringify(data.requirement),
+                sections: data.sections,
+                description: data.description,
             };
         });
 
@@ -1193,6 +1216,7 @@ const CourseServices = {
     addPromotion,
     stopPromotion,
     getRatingPercentOfCourse,
+    updateTargetCourse,
 };
 
 export default CourseServices;

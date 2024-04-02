@@ -1,5 +1,5 @@
 import apiCaller from "../api-config/apiCaller";
-import { AddPromotion, SearchMyCourseEnrolledCourse, SearchAllCourses } from "../types/course";
+import { AddPromotion, SearchMyCourseEnrolledCourse, SearchAllCourses, UpdateTargetCourse } from "../types/course";
 
 const createCourse = async (values: FormData) => {
     const path = "course";
@@ -8,6 +8,11 @@ const createCourse = async (values: FormData) => {
 };
 const editCourse = async (values: FormData) => {
     const path = "course";
+    const reponse = await apiCaller("PATCH", path, values);
+    return reponse;
+};
+const updateTargetCourse = async (values: UpdateTargetCourse) => {
+    const path = `course/target`;
     const reponse = await apiCaller("PATCH", path, values);
     return reponse;
 };
@@ -84,6 +89,7 @@ const courseApis = {
     addPromotion,
     stopPromotion,
     getAllCourses,
+    updateTargetCourse,
 };
 
 export default courseApis;

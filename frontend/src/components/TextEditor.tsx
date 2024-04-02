@@ -12,9 +12,7 @@ type TextEditorProps = {
     handleChangeDescription(description: string): void;
 };
 const TextEditor: React.FC<TextEditorProps> = (props) => {
-    console.log("TĐN", props.description, props.description ? "true" : "false");
     const [display, setDisplay] = useState<string>(props.description ? props.description : "");
-    console.log("display", display);
     // Sử dụng TypeScript với react-quill
     // const modules: QuillWithCustomOptions["modules"] = {
     //     toolbar: {

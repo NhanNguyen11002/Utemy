@@ -83,7 +83,6 @@ function App() {
 
                             <Route element={<PrivateRoute />}>
                                 <Route path="change-password" element={<ChangePassword />}></Route>
-                                <Route path="create-course" element={<CreateCourse />}></Route>
                                 <Route path="cart" element={<Cart />}></Route>
                                 <Route path="checkout" element={<Checkout />}></Route>
                                 <Route path="checkout/vnpay_return" element={<VnPayReturn />}></Route>
@@ -103,7 +102,8 @@ function App() {
                             <Route path="/lecturer" element={<LecturerAppLayout isLogin={isLogin} />}>
                                 <Route path="test" element={<ATestingComponent />}></Route>
                                 <Route index element={<MyCourses />}></Route>
-                                <Route path="courses/edit/:course_id" element={<EditCourse />}></Route>
+                                <Route path="create-course" element={<CreateCourse />}></Route>
+                                <Route path="course/edit/:course_id" element={<EditCourse />}></Route>
                                 <Route path="course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
                                 <Route path="quiz" element={<Quiz />}></Route>
                             </Route>

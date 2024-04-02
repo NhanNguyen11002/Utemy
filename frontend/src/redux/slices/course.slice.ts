@@ -8,6 +8,7 @@ import {
     AddPromotion,
     SearchAllCourses,
     SearchAllCoursesResponse,
+    UpdateTargetCourse,
 } from "../../types/course";
 import apis from "../../api";
 
@@ -91,6 +92,17 @@ export const addPromotion = createAsyncThunk<Response<null>, AddPromotion, { rej
     async (body, ThunkAPI) => {
         try {
             const response = await apis.courseApis.addPromotion(body);
+            return response.data as Response<null>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const updateTargetCourse = createAsyncThunk<Response<null>, UpdateTargetCourse, { rejectValue: Response<null> }>(
+    "course/promotion",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.updateTargetCourse(body);
             return response.data as Response<null>;
         } catch (error: any) {
             return ThunkAPI.rejectWithValue(error.data as Response<null>);
@@ -213,7 +225,12 @@ export const getTop10Enrolled = createAsyncThunk<Response<Course[]>, void, { rej
 export const courseSlice = createSlice({
     name: "course",
     initialState,
-    reducers: {},
+    reducers: {
+        setStudyAndRequirement: (state, action) => {
+            state.courseDetail.study = action.payload.study;
+            state.courseDetail.requirement = action.payload.requirement;
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(getMyCourses.pending, (state) => {
             state.isLoading = true;
@@ -340,6 +357,6 @@ export const courseSlice = createSlice({
     },
 });
 
-export const {} = courseSlice.actions;
+export const { setStudyAndRequirement } = courseSlice.actions;
 
 export default courseSlice.reducer;

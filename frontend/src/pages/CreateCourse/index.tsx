@@ -320,7 +320,7 @@ const CreateCourse: FC = () => {
                                                 formik.resetForm(initialValues);
                                             }}
                                         >
-                                            <Link to={`/my-courses`}>Hủy</Link>
+                                            <Link to={`/lecturer`}>Hủy</Link>
                                         </button>
                                     </div>
                                 </form>

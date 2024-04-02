@@ -6,6 +6,10 @@ import UserDropDown from "../Dropdown/UserDropDown";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
 import { categoryActions } from "../../redux/slices";
 import { Course } from "../../types/course";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../../components/ui/hover-card";
+
 interface HeaderProps {
     course: Course;
     role: string;
@@ -39,7 +43,25 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                             <h2 className="text-white text-xl  hover:opacity-70 ">{course.title}</h2>
                         </Link>
                     </div>
-                    <>
+
+                    <div className="flex gap-4 items-center">
+                        <HoverCard>
+                            <HoverCardTrigger className="flex items-center w-fit shrink-0 hover:opacity-85 transition-all duration-300 hover:cursor-pointer">
+                                <CircularProgressbar
+                                    value={66}
+                                    text={``}
+                                    styles={buildStyles({
+                                        pathColor: "#60a5fa",
+                                    })}
+                                    className="w-10 h-10 fill-blue-400"
+                                />
+                                <p className="text-white text-sm ">Tiến độ của bạn</p>
+                            </HoverCardTrigger>
+                            <HoverCardContent>
+                                <div>Cac</div>
+                            </HoverCardContent>
+                        </HoverCard>
+
                         <div className="ml-auto flex shrink-0 items-center">
                             {/* DRAWER AVATAR */}
                             <div className="drawer drawer-end">
@@ -75,7 +97,7 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                                 </div>
                             </div>
                         </div>
-                    </>
+                    </div>
                 </div>
             </header>
         </>
