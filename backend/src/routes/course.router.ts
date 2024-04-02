@@ -20,6 +20,8 @@ courseRouter.post("/", isLogin, uploadThumbnail, controllers.courseController.cr
 //15. Edit course
 courseRouter.patch("/", isLogin, uploadThumbnail, isAuthor, controllers.courseController.editCourse);
 
+courseRouter.patch("/target", isLogin, isAuthor, controllers.courseController.updateTargetCourse);
+
 //16. Delete course
 courseRouter.delete("/:course_id", isLogin, isAuthor, controllers.courseController.deleteCourse);
 

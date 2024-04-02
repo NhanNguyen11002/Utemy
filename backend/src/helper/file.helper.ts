@@ -18,6 +18,19 @@ const bandwidthCalculation = (inputVideo: Express.Multer.File): Promise<number> 
     });
 };
 
+const getDuration = (inputVideo: Express.Multer.File): Promise<number> => {
+    return new Promise((resolve, rejects) => {
+        ffmpeg.ffprobe(inputVideo.path, (error, metadata) => {
+            if (error) {
+                rejects(error);
+            } else {
+                const duration: number = metadata.format.duration as number;
+                resolve(duration);
+            }
+        });
+    });
+};
+
 const createFileM3U8AndTS = async (
     inputFileVideo: Express.Multer.File,
     resolutions: string[],
@@ -31,15 +44,13 @@ const createFileM3U8AndTS = async (
         if (!fs.existsSync(videoFolderPath)) {
             fs.mkdirSync(videoFolderPath, { recursive: true });
         } // nếu folder trên ko tồn tại thì tạo
-        const videoPath = `${videoFolderPath}\\video_${resolution}.m3u8`; // địa chỉ file m3u8 của mỗi resolution, video path = folder path + tên file
+        // const videoPath = `${videoFolderPath}\\video_${resolution}.m3u8`; // địa chỉ file m3u8 của mỗi resolution, video path = folder path + tên file - windows
+        const videoPath = `${videoFolderPath}/video_${resolution}.m3u8`; // địa chỉ file m3u8 của mỗi resolution, video path = folder path + tên file -macos
 
         ffmpeg(inputFileVideo.path)
             .output(videoPath)
             .outputOptions([`-s ${resolution}`, "-c:v h264", "-c:a aac", "-f hls", "-hls_time 10", "-hls_list_size 0"])
-            .on("progress", (progress) => {
-                // In thông tin tiến trình xử lý video
-                // console.log(` Progress ${JSON.stringify(progress)}`);
-            })
+            .on("progress", (progress) => {})
             .on("end", () => {
                 console.log(`Conversion to m3u8 completed.`);
             })
@@ -47,11 +58,11 @@ const createFileM3U8AndTS = async (
                 console.error(`Error: ${err}`);
             })
             .run();
-        //.save(videoPath);
     });
     // thực hiện tạo file main m3u8
-    const urlVideo = createMainM3U8(inputFileVideo, resolutions, outputFolderPath, uuid);
-    return urlVideo;
+    const urlVideo = await createMainM3U8(inputFileVideo, resolutions, outputFolderPath, uuid);
+    const duration = await getDuration(inputFileVideo);
+    return { urlVideo, duration };
 };
 const createMainM3U8 = async (
     inputFileVideo: Express.Multer.File,
@@ -59,9 +70,10 @@ const createMainM3U8 = async (
     outputFolderPath: string,
     uuid: string,
 ) => {
-    const outputMainM3U8 = `${outputFolderPath}\\${uuid}\\main.m3u8`; //tạo output là path dẫn đến file main.m3u8
+    // const outputMainM3U8 = `${outputFolderPath}\\${uuid}\\main.m3u8`; //tạo output là path dẫn đến file main.m3u8 - windows
+    const outputMainM3U8 = `${outputFolderPath}/${uuid}/main.m3u8`; //mac
 
-    const bandwidth = bandwidthCalculation(inputFileVideo);
+    const bandwidth = await bandwidthCalculation(inputFileVideo);
     //với mỗi resolution tạo 1 stream info làm nội dung trong file main.m3u8
     const streamInfoArray = resolutions.map((resolution) => {
         return `#EXT-X-STREAM-INF:BANDWIDTH=${bandwidth},RESOLUTION=${resolution}\nvideo_${resolution}/video_${resolution}.m3u8`;

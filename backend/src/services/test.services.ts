@@ -6,7 +6,7 @@ import { CreateTestType, TestProgressType } from "../types/test";
 const createTest = async (content: CreateTestType, lectureId: number): Promise<ResponseBase> => {
     try {
         const title = content.title;
-        const duration = content.duration;
+        const duration = Number(content.duration) * 60;
         const description = content.description;
         const pass_percent = Number((Number(content.pass_percent) / 100).toFixed(2));
         const quiz_group_id = Number(content.quiz_group_id);
@@ -21,7 +21,7 @@ const createTest = async (content: CreateTestType, lectureId: number): Promise<R
             data: {
                 title,
                 lecture_id: lectureId,
-                duration,
+                duration: duration.toString(),
                 description,
                 pass_percent,
                 quiz_group_id,
@@ -52,7 +52,7 @@ const createTest = async (content: CreateTestType, lectureId: number): Promise<R
 const updateTest = async (content: CreateTestType, lectureId: number): Promise<ResponseBase> => {
     try {
         const title = content.title;
-        const duration = content.duration;
+        const duration = Number(content.duration) * 60;
         const description = content.description;
         const pass_percent = Number((Number(content.pass_percent) / 100).toFixed(2));
         const quiz_group_id = Number(content.quiz_group_id);
@@ -73,7 +73,7 @@ const updateTest = async (content: CreateTestType, lectureId: number): Promise<R
         const updateTest = await configs.db.test.update({
             data: {
                 title,
-                duration,
+                duration: duration.toString(),
                 description,
                 pass_percent,
                 quiz_group_id,

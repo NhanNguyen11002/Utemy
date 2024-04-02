@@ -41,7 +41,8 @@ const StudyPopup: React.FC<props> = (props) => {
             </button>
             <dialog ref={dialogRef} className="w-1/2 max-h-[500px] p-3 rounded-md bg-white text-center">
                 <div className="gap-2 flex flex-col mb-2">
-                    <label className="text-xl mb-2">Bạn hãy thêm tổng quan những gì học viên sẽ học được</label>
+                    <p className="text-xl ">Những gì học viên sẽ học được từ khoá học này</p>
+                    <p className="text-sm font-light italic mb-2">(Bạn luôn có thể chỉnh sửa bổ sung sau)</p>
                     {study.map((study, index) => {
                         return (
                             <div

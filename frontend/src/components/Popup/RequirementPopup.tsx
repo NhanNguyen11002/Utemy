@@ -41,7 +41,8 @@ const RequirementPopup: React.FC<props> = (props) => {
             </button>
             <dialog ref={dialogRef} className="w-1/2 max-h-[500px] p-3 rounded-md bg-white text-center">
                 <div className="gap-2 flex flex-col mb-2">
-                    <label className="text-xl mb-2">Bạn hãy thêm yêu cầu để có thể học được khóa học này</label>
+                    <p className="text-xl ">Những gì yêu cầu cần có để có thể theo học hiệu quả</p>
+                    <p className="text-sm font-light italic mb-2">(Bạn luôn có thể chỉnh sửa bổ sung sau)</p>
                     {requirement.map((requirement, index) => {
                         return (
                             <div

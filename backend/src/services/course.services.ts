@@ -120,7 +120,7 @@ const stopPromotion = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     const file = req.file;
-    const { title, slug, description, summary, categories, status, price, requirement, study } = req.body;
+    const { title, slug, description, summary, categories, price, requirement, study } = req.body;
     const user_id = req.user_id;
     try {
         let fullPathConverted = "";
@@ -128,7 +128,6 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         const listCategoryId = categories.split(",").map((item: number) => ({
             category_id: Number(item),
         }));
-        const convertedStatus = status === "true" ? true : false;
         const uniqueSlug = generateUniqueSlug(slug);
         if (user_id) {
             const isCreateCourse = await db.course.create({
@@ -139,7 +138,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     summary: summary,
                     thumbnail: fullPathConverted,
                     author_id: user_id,
-                    status: convertedStatus,
+                    status: false,
                     price: Number(price),
                     sale_price: Number(price),
                     course_categories: {
@@ -174,7 +173,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
 };
 const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     const file = req.file;
-    const { course_id, title, slug, summary, description, categories, status, price, requirement, study } = req.body;
+    const { course_id, title, slug, summary, description, categories, price } = req.body;
     try {
         const isFoundCourseById = await configs.db.course.findFirst({
             where: {
@@ -182,7 +181,6 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 is_delete: false,
             },
         });
-        const convertedStatus = status === "true" ? true : false;
         if (!isFoundCourseById) {
             return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
         }
@@ -199,11 +197,8 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     slug: slug,
                     summary: summary,
                     description: description,
-                    status: convertedStatus,
                     thumbnail: fullPathConverted,
                     price: Number(price),
-                    requirement,
-                    study,
                 },
             });
             if (!updatedCourse) {
@@ -222,10 +217,7 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     slug: slug,
                     summary: summary,
                     description: description,
-                    status: convertedStatus,
                     price: Number(price),
-                    requirement,
-                    study,
                 },
             });
             if (!updatedCourse) {
@@ -242,6 +234,39 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             })),
         });
         if (!isUpdateCategory) return new ResponseError(400, constants.error.ERROR_MISSING_REQUEST_BODY, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const updateTargetCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { course_id, requirement, study } = req.body;
+        // Check if the course existsc
+        const existingCourse = await db.course.findUnique({
+            where: {
+                id: Number(course_id),
+            },
+        });
+
+        if (!existingCourse) {
+            return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+        }
+
+        // Set is_delete field to true to mark the course as deleted
+        await db.course.update({
+            where: {
+                id: Number(course_id),
+            },
+            data: {
+                requirement: JSON.stringify(requirement),
+                study: JSON.stringify(study),
+            },
+        });
         return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
     } catch (error) {
         console.log(error);
@@ -347,6 +372,8 @@ const getTop10RateCourse = async (req: IRequestWithId): Promise<ResponseBase> =>
                     first_name: course.user.first_name,
                     last_name: course.user.last_name,
                 },
+                study: JSON.parse(course.study as string),
+                updated_at: course.updated_at,
                 slug: course.slug,
                 categories: tempCate,
                 price: course.price,
@@ -423,6 +450,8 @@ const getTop10EnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                     first_name: course.user.first_name,
                     last_name: course.user.last_name,
                 },
+                updated_at: course.updated_at,
+                study: JSON.parse(course.study as string),
                 slug: course.slug,
                 categories: tempCate,
                 price: course.price,
@@ -472,11 +501,6 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
             include: {
                 user: true,
-                course_categories: {
-                    include: {
-                        Category: true,
-                    },
-                },
                 ratings: {
                     include: {
                         User: true,
@@ -485,6 +509,9 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 sections: {
                     where: {
                         is_delete: false,
+                    },
+                    include: {
+                        Lecture: true,
                     },
                 },
                 enrolleds: {
@@ -522,16 +549,12 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     first_name: data.user.first_name,
                     last_name: data.user.last_name,
                 },
-                price: data.price,
                 created_at: data.created_at,
                 slug: data.slug,
-                category: (data.course_categories as any).map((cc: any) => {
-                    return {
-                        id: cc.Category?.id,
-                        title: cc.Category?.title,
-                        url_image: cc.Category?.url_image,
-                    };
-                }),
+                study: JSON.stringify(data.study),
+                requirement: JSON.stringify(data.requirement),
+                sections: data.sections,
+                description: data.description,
             };
         });
 
@@ -1250,7 +1273,7 @@ const getAllSalesCourses = async (req: Request): Promise<ResponseBase> => {
 };
 const getTop10SalesCourses = async (req: Request): Promise<ResponseBase> => {
     try {
-        const top10SalesCourses : any = await configs.db.$queryRaw`
+        const top10SalesCourses: any = await configs.db.$queryRaw`
         SELECT 
                 Course.id AS course_id,
                 Course.title,
@@ -1331,6 +1354,7 @@ const CourseServices = {
     getRatingPercentOfCourse,
     getAllSalesCourses,
     getTop10SalesCourses,
+    updateTargetCourse,
 };
 
 export default CourseServices;

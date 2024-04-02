@@ -86,6 +86,11 @@ export type AddPromotion = {
     sale_until: Date;
     course_id: number;
 };
+export type UpdateTargetCourse = {
+    course_id: number;
+    requirement: string[];
+    study: string[];
+};
 export type SearchAllCourses = {
     pageIndex: number;
     rating?: number | undefined;

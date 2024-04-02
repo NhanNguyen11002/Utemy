@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import ThreeDotIcon from "../../assets/icons/ThreedotIcon";
 import EditIcon from "../../assets/icons/EditIcon";
 import DeleteIcon from "../../assets/icons/DeleteIcon";
+import { CheckBadgeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { User } from "../../types/user";
-import CompleteIcon from "../../assets/icons/CompleteIcon";
 import TotalRating from "../TotalRating";
 import { convertDateFormat, calDayRemains } from "../../utils/helper";
 
@@ -46,7 +46,7 @@ const CourseCard: FC<Course> = (props: Course) => {
         <div className="py-2">
             <div className="flex flex-col gap-2 tablet:gap-4 tablet:flex-row rounded-2xl hover:bg-lightblue/25 transition ease-in-out hover:shadow-lg duration-200 shadow-lg">
                 <div className="h-48 bg-gray-400 rounded-lg tablet:w-64 shrink-0">
-                    <Link to={`/course-detail/${props.slug}`}>
+                    <Link to={`${props.isEditCourse ? "/lecturer" : ""}/course-detail/${props.slug}`}>
                         <img src={props.thumbnail} alt={props.title} className="w-full h-full rounded-lg" />
                     </Link>
                 </div>
@@ -79,11 +79,15 @@ const CourseCard: FC<Course> = (props: Course) => {
                             <p className="text-base font-bold flex gap-1">
                                 Status:{" "}
                                 {props.status ? (
-                                    <span className="font-normal flex gap-1">
-                                        Đã hoàn thành <CompleteIcon />
+                                    <span className="font-normal flex gap-1 items-center">
+                                        Đã được duyệt{" "}
+                                        <CheckBadgeIcon className="w-5 h-5 fill-green-400" strokeWidth={2} />
                                     </span>
                                 ) : (
-                                    <span className="font-normal">Chưa hoàn thành</span>
+                                    <span className="font-normal flex gap-1 items-center">
+                                        Đang chờ duyệt{" "}
+                                        <LockClosedIcon className="w-5 h-5 fill-red-400" strokeWidth={2} />
+                                    </span>
                                 )}
                             </p>
                         )}

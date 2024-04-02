@@ -19,9 +19,9 @@ const AuthorButton: React.FC<AuthorButtonProps> = (props) => {
         <>
             {props.courseDetail.number_of_section > 0 && (
                 <Link to={`/course-detail/${props.courseDetail.slug}/watch`} onClick={clearUrlVideo}>
-                    <button className="text-white btn btn-sm btn-info hover:opacity-80 ">
+                    <button className=" btn btn-sm btn-info hover:opacity-80 ">
                         <WatchVideoIcon />
-                        <span>Chuyển đến khóa học</span>
+                        <span className="text-white">Chuyển đến khóa học</span>
                     </button>
                 </Link>
             )}

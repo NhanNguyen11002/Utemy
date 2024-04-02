@@ -64,7 +64,7 @@ type UpdateLeecture = {
     video?: any;
 };
 
-export const UpdateLeectureSchema: ObjectSchema<UpdateLeecture> = Joi.object({
+export const UpdateLectureSchema: ObjectSchema<UpdateLeecture> = Joi.object({
     type: Joi.string().trim().required().max(20).messages({
         "any.required": constants.error.ERROR_LECTURE_TYPE_REQUIRED,
         "string.base": constants.error.ERROR_LECTURE_TYPE_STRING,

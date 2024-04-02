@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
 import { cartActions } from "../../redux/slices";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 type GuestButtonProps = {

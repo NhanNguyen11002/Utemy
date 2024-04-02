@@ -14,8 +14,8 @@ const Navbar: React.FC = () => {
 
     return (
         <>
-            <div className="hidden w-full h-[80px] bg-navy mt-[100px] laptop:flex">
-                <ul className="min-w-fit px-20 flex justify-center mx-auto">
+            <div className="hidden w-full fixed h-[60px] bg-navy top-[70px] laptop:flex z-[5]">
+                <ul className="min-w-fit px-20 flex justify-center items-center mx-auto">
                     {categoriesList.length > 0 &&
                         categoriesList.map((category, index) => {
                             return (
@@ -25,7 +25,7 @@ const Navbar: React.FC = () => {
                                 >
                                     <li
                                         key={category.category_id}
-                                        className="text-white hover:bg-navyhover text-lg font-Roboto font-semibold text-center cursor-pointer px-6 py-[26px] min-w-fit"
+                                        className="text-white hover:underline text-lg font-Roboto font-semibold text-center cursor-pointer px-6 py-auto min-w-fit"
                                     >
                                         {category.title}
                                     </li>

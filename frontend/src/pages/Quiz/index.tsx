@@ -9,7 +9,7 @@ import DeleteQuizModal from "./DeleteQuizModal";
 import QuizGroupAddPopup from "./QuizGroupAddPopup";
 import QuizGroupEditPopup from "./QuizGroupEditPopup";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { quizActions } from "../../redux/slices";
+import { quizActions, componentActions } from "../../redux/slices";
 import { SearchIcon } from "../../assets/icons";
 
 const QuizHome: React.FC = () => {
@@ -24,12 +24,14 @@ const QuizHome: React.FC = () => {
     const [searchItem, setSearchItem] = useState<string>("");
     const inputRef = useRef<HTMLInputElement>(null);
     const [groupId, setGroupId] = useState(0);
+    const [groupName, setGroupName] = useState("");
     const quizGroupList = useAppSelector((state) => state.quizSlice.quizGroupList);
     const quizList = useAppSelector((state) => state.quizSlice.quizList);
     const [editQuiz, setEditQuiz] = useState<QuizType>(quizList[0]);
     const [editGroup, setEditGroup] = useState<QuizGroupType>(quizGroupList[0]);
 
     useEffect(() => {
+        dispatch(componentActions.setLecturerNavPlace("quiz"));
         dispatch(quizActions.getAllQuizGroup()).then((response) => {
             if (response.payload?.status_code === 200) {
                 if (quizGroupList.length > 0) setGroupId(quizGroupList[0].quiz_group_id);
@@ -107,7 +109,7 @@ const QuizHome: React.FC = () => {
             {openDeleteGroupModal && <DeleteGroupModal group={editGroup} handleCancel={handleToggleDeleteGroup} />}
             {openEditGroupPopup && <QuizGroupEditPopup group={editGroup} handleCancelEdit={handleCancelEditGroup} />}
             {openAddGroupPopup && <QuizGroupAddPopup handleCancelAdd={handleToggleAddGroup} />}
-            <div className=" w-full h-[100vh] mx-auto mt-[100px]  justify-center flex  ">
+            <div className=" w-full h-[100vh] mx-auto mt-[10px]  justify-center flex  ">
                 <div className="w-1/4 bg-white  shadow-lg pt-[20px]">
                     <div className="h-[10%] flex items-center justify-between text-black border-b mx-3">
                         <div>
@@ -127,7 +129,10 @@ const QuizHome: React.FC = () => {
                             quizGroupList.map((group, index) => {
                                 return (
                                     <QuizGroupCard
-                                        handleOpenGroup={() => setGroupId(group.quiz_group_id)}
+                                        handleOpenGroup={() => {
+                                            setGroupId(group.quiz_group_id);
+                                            setGroupName(group.title);
+                                        }}
                                         key={index}
                                         group={group}
                                         handleOpenDelete={handleOpenDeleteGroup}
@@ -175,7 +180,12 @@ const QuizHome: React.FC = () => {
                         </div>
                     </div>
                     <div className="h-[90%] flex flex-col  overflow-auto">
-                        {quizList.length > 0 &&
+                        {groupId === 0 && (
+                            <div className="text-center">
+                                <p>Vui lòng chọn bộ câu hỏi bên trái để hiển thị câu hỏi</p>
+                            </div>
+                        )}
+                        {quizList.length > 0 ? (
                             quizList.map((data, index) => {
                                 return (
                                     <QuizCard
@@ -185,7 +195,12 @@ const QuizHome: React.FC = () => {
                                         handleOpenDelete={handleOpenDeleteQuiz}
                                     />
                                 );
-                            })}
+                            })
+                        ) : (
+                            <div className="text-center">
+                                <p>Có vẻ {groupName} chưa có câu hỏi nào, tạo mới ngay bây giờ</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

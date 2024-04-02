@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, CardVideo } from "../../components";
+import { CardVideo } from "../../components";
 import { DefaultAvatar } from "../../assets";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { userActions } from "../../redux/slices";
@@ -39,7 +39,6 @@ const AuthorProfile: React.FC = () => {
 
     return (
         <>
-            <Navbar />
             <div className="container h-full mx-auto px-4 mt-[150px] laptop:mt-0 flex w-1/2">
                 <div className="w-2/3 h-full flex flex-col items-starts justify-center gap-2 mt-[50px] p-4">
                     <div className="w-full">

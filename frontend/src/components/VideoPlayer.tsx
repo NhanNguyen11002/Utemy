@@ -48,6 +48,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                             "airplay", // Airplay (currently Safari only)
                             "fullscreen", // Toggle fullscreen
                         ],
+
                         quality: {
                             default: availableQualities[availableQualities.length - 1],
                             options: availableQualities,
@@ -64,7 +65,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     }, [props.sourse]);
 
     return (
-        <div className="w-full flex-1 shrink-0">
+        <div className="w-full flex-1 shrink-0 text-white">
             <video className="w-full h-[480px]" ref={videoRef} controls={true}></video>
         </div>
     );

@@ -39,7 +39,10 @@ export default class CourseController {
         const response: ResponseBase = await services.CourseService.editCourse(req);
         return res.status(response.getStatusCode()).json(response);
     }
-
+    async updateTargetCourse(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.updateTargetCourse(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
     async deleteCourse(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.CourseService.deleteCourse(req);
         return res.status(response.getStatusCode()).json(response);

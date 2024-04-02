@@ -3,20 +3,23 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { sectionActions, courseActions, lectureActions } from "../../redux/slices";
 import { useParams } from "react-router-dom";
 import {
-    Accordion,
     DeleteModal,
     PopupAddLesson,
     PopupUpdateLesson,
-    Navbar,
     Spin,
     PopupChoseLectureType,
     PopupAddTest,
 } from "../../components";
+import AccordionSection from "../../components/Accordion/AccordionSection";
 import { AddSection as AddSectionType, Section as SectionType } from "../../types/section";
+import * as Tabs from "@radix-ui/react-tabs";
 // import { deteleLessonType } from "../../types/lesson";
 
 import toast from "react-hot-toast";
 import EditForm from "./EditForm";
+import TargetTab from "./TargetTab";
+import PromotionTab from "./PromotionTab";
+import StatusTab from "./StatusTab";
 import NotFound from "../NotFound";
 import constants from "../../constants";
 import PopupUpdateTest from "../../components/Popup/PopupUpdateTest";
@@ -28,6 +31,7 @@ const EditCourse: React.FC = () => {
     const [isDisplayAddLessonModal, setIsDisplayAddLessonModal] = useState<boolean>(false);
     const [isDisplayAddTestModal, setIsDisplayAddTestModal] = useState<boolean>(false);
     const [isChangeType, setIsChangeType] = useState<boolean>(false);
+    const [tab, setTab] = useState("form");
 
     //
     const [isDisplayAddLectureModal, setIsDisplayAddLectureModal] = useState<boolean>(false);
@@ -197,55 +201,107 @@ const EditCourse: React.FC = () => {
         <>
             {isGetLoading !== true ? (
                 <>
-                    <Navbar />
                     <div className="min-h-screen h-full px-4 tablet:px-[60px]">
-                        <EditForm course_id={Number(course_id)} />
-
-                        <div className="flex-1 p-4 flex flex-col border border-dashed border-black rounded-lg m-4">
-                            <div className="flex flex-col gap-4 tablet:flex-row tablet:justify-between">
-                                <input
-                                    type="text"
-                                    maxLength={100}
-                                    className="px-2 py-2 rounded-lg border-[1px] outline-none flex-1 max-w-2xl"
-                                    placeholder="Tên của chương học..."
-                                    value={section}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        setSection(e.target.value);
-                                    }}
-                                />
-                                <div className=" flex flex-col-reverse tablet:flex-row items-center justify-center gap-2">
-                                    <button
-                                        className="text-white btn btn-info text-lg flex-2 ml-2"
-                                        onClick={handleAddSection}
-                                    >
-                                        Thêm chương học
-                                    </button>
-                                </div>
-                            </div>
-                            {errorSection && (
-                                <p className={`text-error italic font-medium mt-1`}>Tên chương là bắt buộc</p>
-                            )}
-                            {/* handle list lesson */}
-                            <div className="mt-2">
-                                {sectionOfCourse.length <= 0 ? (
-                                    <h1 className="text-center text-2xl text-error">Khóa học chưa có chương học nào</h1>
-                                ) : (
-                                    sectionOfCourse.map((section, index) => (
-                                        <Accordion
-                                            disable={true}
-                                            key={index}
-                                            section={section}
-                                            handleDeleteSection={handleDeleteSection}
-                                            handleDisplayEditModal={handleDisplayEditModal}
-                                            handleDisplayDeleteModal={handleDisplayDeleteModal}
-                                            handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
-                                            handleDisplayEditLecture={handleDisplayEditLecture}
-                                            isDisplayBtn={true}
+                        <Tabs.Root defaultValue="form" className="h-fit flex w-full">
+                            <Tabs.List className="flex flex-col h-fit gap-2 w-[20%] mt-8">
+                                <Tabs.Trigger
+                                    value="form"
+                                    onClick={() => setTab("form")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "form" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Tổng quan khoá học
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="target"
+                                    onClick={() => setTab("target")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "target" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Học viên mục tiêu
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="section"
+                                    onClick={() => setTab("section")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "section" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Chương trình giảng dạy
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="promotion"
+                                    onClick={() => setTab("promotion")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "promotion" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Giảm giá hoá học
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="status"
+                                    onClick={() => setTab("status")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "status" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Tình trạng khoá học
+                                </Tabs.Trigger>
+                            </Tabs.List>
+                            <Tabs.Content value="form" className="w-[80%]">
+                                <EditForm course_id={Number(course_id)} />
+                            </Tabs.Content>
+                            <Tabs.Content value="target" className="w-[80%]">
+                                <TargetTab />
+                            </Tabs.Content>
+                            <Tabs.Content value="section" className="w-[80%]">
+                                <div className="flex-1 p-4 flex flex-col border border-dashed border-black rounded-lg m-4">
+                                    <div className="flex flex-col gap-4 tablet:flex-row tablet:justify-between">
+                                        <input
+                                            type="text"
+                                            maxLength={100}
+                                            className="px-2 py-2 rounded-lg border-[1px] outline-none flex-1 max-w-2xl"
+                                            placeholder="Tên của chương học..."
+                                            value={section}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                setSection(e.target.value);
+                                            }}
                                         />
-                                    ))
-                                )}
-                            </div>
-                        </div>
+                                        <div className=" flex flex-col-reverse tablet:flex-row items-center justify-center gap-2">
+                                            <button
+                                                className="text-white btn btn-info text-lg flex-2 ml-2"
+                                                onClick={handleAddSection}
+                                            >
+                                                Thêm chương học
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {errorSection && (
+                                        <p className={`text-error italic font-medium mt-1`}>Tên chương là bắt buộc</p>
+                                    )}
+                                    {/* handle list lesson */}
+                                    <div className="mt-2">
+                                        {sectionOfCourse.length <= 0 ? (
+                                            <h1 className="text-center text-2xl text-error">
+                                                Khóa học chưa có chương học nào
+                                            </h1>
+                                        ) : (
+                                            sectionOfCourse.map((section, index) => (
+                                                <AccordionSection
+                                                    key={index}
+                                                    section={section}
+                                                    handleDeleteSection={handleDeleteSection}
+                                                    handleDisplayEditModal={handleDisplayEditModal}
+                                                    handleDisplayDeleteModal={handleDisplayDeleteModal}
+                                                    handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
+                                                    handleDisplayEditLecture={handleDisplayEditLecture}
+                                                    isDisplayEdit={true}
+                                                    isDisplayProgress={false}
+                                                />
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+                            </Tabs.Content>
+                            <Tabs.Content value="promotion" className="w-[80%]">
+                                <PromotionTab />
+                            </Tabs.Content>
+                            <Tabs.Content value="status" className="w-[80%]">
+                                <StatusTab />
+                            </Tabs.Content>
+                        </Tabs.Root>
                     </div>
 
                     {/* POPUP DELETE LECTURE AND SECTION*/}
