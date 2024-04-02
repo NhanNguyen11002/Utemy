@@ -2,7 +2,6 @@ import { IRequestWithId } from "../types/request";
 import { db } from "../configs/db.config";
 import express, { Request, Response } from "express";
 import configs from "../configs";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { ResponseBase, ResponseError, ResponseSuccess } from "../common/response";
 import { generateUniqueSlug } from "../utils/helper";
 import { Prisma } from "@prisma/client";
@@ -21,6 +20,10 @@ import {
 import { PagingResponse } from "../types/response";
 import { Section } from "../types/section";
 import { Lecture } from "../types/lecture";
+import { number } from "joi";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { isFloat64Array } from "util/types";
+import { Author } from "~/types/user";
 const getRightOfCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const user_id = req.user_id;
@@ -1198,6 +1201,139 @@ const getRatingPercentOfCourse = async (req: Request): Promise<ResponseBase> => 
     }
 };
 
+const getAllSalesCourses = async (req: Request): Promise<ResponseBase> => {
+    try {
+        const pageIndex: number | undefined = req.query.page_index
+            ? parseInt(req.query.page_index as string, 10)
+            : undefined;
+        const take = configs.general.PAGE_SIZE;
+        const skip = ((Number(pageIndex) ?? 1) - 1) * take;
+        const courseCardData: any = await configs.db.$queryRaw<CourseCard[]>`
+            SELECT 
+                Course.id AS course_id,
+                Course.title,
+                Course.summary,
+                Course.thumbnail,
+                Course.number_of_rating,
+                Course.average_rating,
+                Course.number_of_enrolled,
+                Course.created_at,
+                Course.price,
+                Course.sale_price,
+                Course.sale_until,
+                Course.status,
+                JSON_OBJECT(
+                    'user_id', User.id,
+                    'first_name', User.first_name,
+                    'last_name', User.last_name
+                ) AS author,
+                Course.slug,
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'id', Category.id,
+                        'title', Category.title,
+                        'url_image', Category.url_image
+                    )
+                ) AS category
+            FROM 
+                Course
+            JOIN 
+                User ON Course.author_id = User.id
+            LEFT JOIN 
+                courses_categories ON courses_categories.course_id = Course.id
+            LEFT JOIN 
+                Category ON Category.id = courses_categories.category_id
+            WHERE 
+                Course.is_delete = false
+                AND Course.status = true
+                AND Course.sale_price IS NOT NULL
+                AND Course.sale_price < Course.price
+            GROUP BY 
+                Course.id
+            LIMIT ${skip}, ${take};
+        `;
+        // const totalRecordBigInt = totalRecord[0].total_record;
+        // const totalRecordNumber = parseInt(totalRecordBigInt.toString());
+        if (!courseCardData) {
+            return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+        } else console.log("This is:", courseCardData.length);
+        const totalPage = Math.ceil(courseCardData.length / take);
+        const responseData: PagingResponse<CourseCard[]> = {
+            total_page: totalPage,
+            total_record: courseCardData.length,
+            data: courseCardData,
+        };
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const getTop10SalesCourses = async (req: Request): Promise<ResponseBase> => {
+    try {
+        const top10SalesCourses: any = await configs.db.$queryRaw`
+        SELECT 
+                Course.id AS course_id,
+                Course.title,
+                Course.summary,
+                Course.thumbnail,
+                Course.number_of_rating,
+                Course.average_rating,
+                Course.number_of_enrolled,
+                User.id AS user_id,
+                User.first_name,
+                User.last_name,
+                Course.slug,
+                Course.study,
+                Course.updated_at,
+                Course.price,
+                Course.sale_price,
+                Course.sale_until,
+                JSON_OBJECT(
+                    'user_id', User.id,
+                    'first_name', User.first_name,
+                    'last_name', User.last_name
+                ) AS author,
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'category_id', Category.id,
+                        'title', Category.title,
+                        'url_image', Category.url_image
+                    )
+                ) AS categories
+            FROM 
+                Course
+            JOIN 
+                User ON Course.author_id = User.id
+            LEFT JOIN 
+                courses_categories ON courses_categories.course_id = Course.id
+            LEFT JOIN 
+                Category ON Category.id = courses_categories.category_id
+            WHERE 
+                Course.is_delete = false
+                AND Course.status = true
+                AND Course.price - Course.sale_price > 0
+            GROUP BY 
+                Course.id
+            ORDER BY 
+                Course.price - Course.sale_price  DESC
+            LIMIT 10;
+        `;
+        if (top10SalesCourses.length === 0) {
+            return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+        } else console.log("Here:", top10SalesCourses.length);
+
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, top10SalesCourses);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+
 const CourseServices = {
     getRightOfCourse,
     createCourse,
@@ -1216,6 +1352,8 @@ const CourseServices = {
     addPromotion,
     stopPromotion,
     getRatingPercentOfCourse,
+    getAllSalesCourses,
+    getTop10SalesCourses,
     updateTargetCourse,
 };
 

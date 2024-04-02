@@ -111,4 +111,12 @@ export default class CourseController {
         const response: ResponseBase = await services.CourseService.stopPromotion(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getAllSalesCourses(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.getAllSalesCourses(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getTop10SalesCourses(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.getTop10SalesCourses(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

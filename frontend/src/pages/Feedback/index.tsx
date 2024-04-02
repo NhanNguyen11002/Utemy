@@ -138,7 +138,7 @@ const Feedback: React.FC = () => {
                                     <GlobeAsiaAustraliaIcon className="w-4 h-4" />
                                     Website:{" "}
                                     <a
-                                        href="https://utemy-cloud-frontend.vercel.app/"
+                                        href="https://utemy.vercel.app/"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >

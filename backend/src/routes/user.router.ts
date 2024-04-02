@@ -5,6 +5,10 @@ import { uploadAvatar } from "../middlewares/multer";
 
 const userRouter: Router = Router();
 
+// get top 10 author by avg of avg rating of all course
+userRouter.get("/top10-author", controllers.userController.getTop10AuthorByAvgRating);
+// get top 10 author by sum of attendees
+userRouter.get("/top10-author-by-enrolled", controllers.userController.getTop10AuthorBySumEnrolled);
 // 8. Get me
 userRouter.get("/profile", isLogin, controllers.userController.getProfile);
 
