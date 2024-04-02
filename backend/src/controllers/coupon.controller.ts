@@ -27,4 +27,18 @@ export default class CouponController {
         const response: ResponseBase = await services.CouponServices.getAllCoupon(req);
         return res.status(response.getStatusCode()).json(response);
     }
+
+    //coupon-history controller
+    async createCouponHistory(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.createCouponHistory(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getCouponHistoryByUserId(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.getCouponHistoryByUserId(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getAllCouponHistory(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.getAllCouponHistory(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

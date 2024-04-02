@@ -5,7 +5,10 @@ import { isAuthor } from "../middlewares/isAuthor";
 import { uploadAvatar, uploadThumbnail } from "../middlewares/multer";
 
 const courseRouter: Router = Router();
-
+// Get all sales courses
+courseRouter.get("/all-sales", controllers.courseController.getAllSalesCourses);
+// Get top 10 sales courses
+courseRouter.get("/top10-sales", controllers.courseController.getTop10SalesCourses);
 //13. Get right of course
 courseRouter.get("/right/:course_id", isLogin, controllers.courseController.getRightOfCourse);
 
@@ -44,5 +47,4 @@ courseRouter.get("/detail/:course_id", isLogin, isAuthor, controllers.courseCont
 courseRouter.get("/all", controllers.courseController.getAllCourse);
 courseRouter.post("/thumbnail", isLogin, uploadAvatar, controllers.courseController.changeThumbnail);
 courseRouter.get("/:slug", controllers.courseController.getCourseDetail);
-
 export default courseRouter;
