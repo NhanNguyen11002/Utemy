@@ -13,9 +13,23 @@ export default class InvoiceController {
         return res.status(response.getStatusCode()).json(response);
     }
     async createInvoice(req: IRequestWithId, res: Response): Promise<Response> {
-        const response: ResponseBase = await services.InvoiceServices.createInvoice(req);
-        return res.status(response.getStatusCode()).json(response);
+        try {
+            const total: number = req.body.totalwithcoupon;
+            const discount: number = req.body.discount;
+            const coupon_id: number | null = req.body.id;
+            const response: ResponseBase = await services.InvoiceServices.createInvoice(
+                req,
+                total,
+                discount,
+                coupon_id,
+            );
+
+            return res.status(response.getStatusCode()).json(response);
+        } catch (error) {
+            return res.status(500).json({ error: "Internal server error" });
+        }
     }
+
     async getInvoiceById(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.InvoiceServices.getInvoiceById(req);
         return res.status(response.getStatusCode()).json(response);

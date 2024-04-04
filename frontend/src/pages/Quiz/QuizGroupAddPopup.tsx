@@ -23,7 +23,7 @@ const QuizGroupAddPopup: React.FC<QuizGroupAddPopupProps> = (props) => {
         };
         dispatch(quizActions.createQuizGroup(data)).then((response) => {
             if (response.payload?.status_code === 200) {
-                toast.success(response.payload.message);
+                toast.success("Create set of quiz successfully");
                 dispatch(quizActions.getAllQuizGroup());
                 props.handleCancelAdd();
             } else {

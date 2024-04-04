@@ -24,6 +24,7 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
             vnp_TransactionStatus,
             vnp_TxnRef,
         } = req.body;
+        const userId = Number(req.user_id);
 
         const orderInfo = vnp_OrderInfo?.toString() as string;
         const invoiceId = Number(orderInfo.split(":")[1]);
@@ -116,13 +117,103 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
                     vnp_txn_ref: vnp_TxnRef as string,
                 },
             });
-            if (createEnrolled && clearCart && createTransactionData) {
-                const data = { RspCode: "00", Message: "success" };
-                return new ResponseSuccess(200, "Transaction success", true, data);
-            } else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
-        } else {
-            const data = { RspCode: "99", Message: "fail" };
-            return new ResponseSuccess(200, "Transaction failed", false, data);
+            // Tạo dữ liệu trong bảng coupon_history
+            // if (invoiceDetail.coupon_id !== null) {
+            //     // Tạo dữ liệu cho bảng coupon_history
+            //     const createCouponHistory = await configs.db.couponHistory.create({
+            //         data: {
+            //             invoice_id: invoiceId as number,
+            //             coupon_id: invoiceDetail.coupon_id,
+            //             user_id: invoiceDetail.user_id,
+            //         },
+            //     });
+            //     const updateCoupon = await configs.db.coupon.update({
+            //         data: {
+            //             remain_quantity: {
+            //                 decrement: 1,
+            //             },
+            //         },
+            //         where: {
+            //             id: invoiceDetail.coupon_id,
+            //         },
+            //     });
+            //     if (createEnrolled && clearCart && createTransactionData && createCouponHistory && updateCoupon) {
+            //         const data = { RspCode: "00", Message: "success" };
+            //         return new ResponseSuccess(200, "Transaction success", true, data);
+            //     } else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+            // } else {
+            //     const data = { RspCode: "99", Message: "fail" };
+            //     return new ResponseSuccess(200, "Transaction failed", false, data);
+            // }
+
+            if (invoiceDetail.coupon_id !== null) {
+                // Tạo dữ liệu cho bảng coupon_history
+                const createCouponHistory = await configs.db.couponHistory.create({
+                    data: {
+                        invoice_id: invoiceId as number,
+                        coupon_id: invoiceDetail.coupon_id,
+                        user_id: invoiceDetail.user_id,
+                    },
+                });
+            
+                // Kiểm tra mã coupon_id có tồn tại trong bảng coupon_owner không
+                const couponOwner = await configs.db.couponOwner.findFirst({
+                    where: {
+                        coupon_id: invoiceDetail.coupon_id,
+                        user_id: invoiceDetail.user_id,
+                        quantity: {
+                            gt: 0,
+                        },
+                    },
+                });
+
+                // Nếu mã coupon_id tồn tại trong bảng coupon_owner
+                if (couponOwner) {
+                    // Cập nhật số lượng còn lại trong bảng coupon_owner và xóa dòng nếu quantity = 0
+                    const updatedCouponOwner = await configs.db.couponOwner.update({
+                        where: {
+                            id: couponOwner.id,
+                        },
+                        data: {
+                            quantity: {
+                                decrement: 1,
+                            },
+                        },
+                    });
+
+                    // Xóa dòng trong bảng coupon_owner nếu quantity = 0
+                    if (updatedCouponOwner.quantity === 0) {
+                        await configs.db.couponOwner.delete({
+                            where: {
+                                id: couponOwner.id,
+                            },
+                        });
+                    }
+                } else {
+                    // Nếu mã coupon_id không tồn tại trong bảng coupon_owner, cập nhật lại remain_quantity trong bảng Coupon
+                    const updateCoupon = await configs.db.coupon.update({
+                        data: {
+                            remain_quantity: {
+                                decrement: 1,
+                            },
+                        },
+                        where: {
+                            id: invoiceDetail.coupon_id,
+                        },
+                    });
+                }
+            
+                // Kiểm tra kết quả các thao tác và trả về kết quả tương ứng
+                if (createCouponHistory) {
+                    const data = { RspCode: "00", Message: "success" };
+                    return new ResponseSuccess(200, "Transaction success", true, data);
+                } else {
+                    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+                }
+            } else {
+                const data = { RspCode: "99", Message: "fail" };
+                return new ResponseSuccess(200, "Transaction failed", false, data);
+            }
         }
     } catch (error) {
         console.log(error);
@@ -131,6 +222,7 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
         }
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
+    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
 };
 const createPaymentUrl = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
