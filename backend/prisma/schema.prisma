@@ -35,6 +35,8 @@ model User {
   coupon_history CouponHistory[]
   report Report[]
   decision Decision[]
+  coupon_owner   CouponOwner[]
+
   @@index([email], name: "idx_email")
 }
 
@@ -44,6 +46,11 @@ model Category {
   url_image         String           @db.Text
   description       String           @db.Text
   course_categories CourseCategory[]
+}
+model SpinHistory {
+  id                Int              @id @default(autoincrement())
+  is_spinned        Boolean          @default(false)
+  @@map(name: "spin_history")
 }
 
 model Course {
@@ -312,9 +319,12 @@ model Invoice {
   total_money    Float           @default(0) @db.Float
   is_success     Boolean         @default(false)
   created_at     DateTime        @default(now())
+  coupon_id      Int?             @db.Int
   user           User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
   invoice_detail InvoiceDetail[]
   Transaction    Transaction[]
+  coupon_history CouponHistory[]
+  coupon         Coupon? @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
 }
 
 model InvoiceDetail {
@@ -342,12 +352,16 @@ model Feedback {
 
 model Coupon {
   id             Int             @id @default(autoincrement())
-  code           String          @db.VarChar(30)
-  discount       Float
+  code           String          @default("") @db.VarChar(30)
+  discount       Float           @default(0) @db.Float
   is_delete      Boolean         @default(false)
   valid_start    DateTime        @default(now())
-  valid_until    DateTime
+  valid_until    DateTime        @default(now())
+  remain_quantity       Int             @default(0) @db.Int
+  is_event  Boolean @default(false)
   coupon_history CouponHistory[]
+  coupon_owner CouponOwner[]
+  invoices Invoice[]
 }
 
 model CouponHistory {
@@ -356,7 +370,8 @@ model CouponHistory {
   coupon    Coupon @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
   user_id   Int
   user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
+  invoice_id Int
+  invoice   Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
   @@map(name: "coupon_history")
 }
 model Report {
@@ -391,4 +406,14 @@ model Decision {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model CouponOwner {
+  id        Int    @id @default(autoincrement())
+  coupon_id Int
+  coupon    Coupon @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  quantity  Int
+  @@map(name: "coupon_owner")
 }

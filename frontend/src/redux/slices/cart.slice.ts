@@ -48,6 +48,17 @@ export const changeSaveForLater = createAsyncThunk<Response<any>, number, { reje
         }
     },
 );
+export const getCouponByCode = createAsyncThunk<Response<Coupon>, string, { rejectValue: Response<null> }>(
+    "cart/getCouponByCode",
+    async (code, thunkAPI) => {
+        try {
+            const response = await apis.couponApis.getCouponByCode(code);
+            return response.data as Response<Coupon>;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 type CartSliceType = {
     userCart: Cart;
     coupons: Coupon[];
@@ -134,6 +145,19 @@ export const cartSlice = createSlice({
         });
         builder.addCase(changeSaveForLater.rejected, (state) => {
             state.isLoading = false;
+        });
+        // Thêm xử lý cho getCouponByCode.pending
+        builder.addCase(getCouponByCode.pending, (state) => {
+            state.isLoading = true; // Đánh dấu đang tải
+        });
+
+        // Thêm xử lý cho getCouponByCode.fulfilled
+        builder.addCase(getCouponByCode.fulfilled, (state, action) => {
+            state.isLoading = false; // Dừng đánh dấu đang tải
+        });
+
+        builder.addCase(getCouponByCode.rejected, (state, action) => {
+            state.isLoading = false; // Dừng đánh dấu đang tải
         });
     },
 });

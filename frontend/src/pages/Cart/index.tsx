@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import InCartCourse from "./InCartCourse";
 import OutCartCourse from "./OutCartCourse";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,13 +13,22 @@ const getPercentDiscount = (subTotal: number, subTotalRetail: number) => {
 const Cart: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const [discountInfo, setDiscountInfo] = useState<{ discount: number, id: number | null } | null>(null);// State để lưu thông tin giảm giá từ server
+    const [couponError,setCouponError] = useState<string | null>(null);
+    const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
+
     const carts = useAppSelector((state) => state.cartSlice.userCart);
     const subTotal = useAppSelector((state) => state.cartSlice.subTotal);
     const subTotalRetail = useAppSelector((state) => state.cartSlice.subTotalRetail);
     const isGetLoading = useAppSelector((state) => state.cartSlice.isGetLoading);
-    const discount = useAppSelector((state) => state.cartSlice.discount) || 0;
+        const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
+
+    // const discount = useAppSelector((state) => state.cartSlice.discount) || 0;
     const handleCheckout = () => {
-        dispatch(invoiceActions.createInvoice()).then((response) => {
+        const totalWithCoupon = calculateTotal();
+        const discount = discountInfo?.discount || 0; // Giảm giá có thể không tồn tại, nên cần xác định giá trị mặc định là 0
+        const coupon_id: number | null = discountInfo?.id || null;        
+        dispatch(invoiceActions.createInvoice({ totalWithCoupon, discount, coupon_id })).then((response) => {
             if (response.payload?.status_code === 200) {
                 toast.success(response.payload?.message);
                 navigate("/checkout");
@@ -28,6 +37,7 @@ const Cart: React.FC = () => {
             }
         });
     };
+
     const handleRemoveFromCart = (cartDetailId: number) => {
         dispatch(cartActions.removeCourseFromCart(cartDetailId)).then((response) => {
             if (response.payload?.status_code === 200) {
@@ -48,11 +58,63 @@ const Cart: React.FC = () => {
             }
         });
     };
-    const getDiscount = (code: string) => {
-        setTimeout(() => {
-            dispatch(cartActions.getDiscount(code));
+    // Hàm xử lý khi nhập mã giảm giá và xác nhận
+    const applyCouponCode = (code: string) => {
+        // Reset previous error message
+        setCouponError("");
+        setCouponSuccess("");
+        // Xóa timeout trước nếu có
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+        }
+        
+        // Thiết lập timeout mới
+        const timeout = setTimeout(() => {
+            dispatch(cartActions.getCouponByCode(code)).then((response) => {
+                if (response.payload?.status_code === 200) {
+                    if (response.payload.data) {
+                        setDiscountInfo({
+                            discount: response.payload.data?.discount || 0,
+                            id: response.payload.data?.id || null,
+                          });                        
+                        setCouponSuccess("Mã giảm giá hợp lệ! Bạn được giảm " + response.payload.data.discount*100 + "%");
+
+                    } else {
+                        setDiscountInfo(null);
+                        setCouponError("Mã giảm giá không hợp lệ!");
+                    }
+                } else {
+                    setDiscountInfo(null);
+                    setCouponError("Mã giảm giá không hợp lệ!");
+                }
+            });
         }, 3000);
+
+        // Lưu lại timeout
+        setTypingTimeout(timeout);
     };
+
+
+    // Tính toán tổng tiền mới sau khi áp dụng mã giảm giá
+    const calculateTotal = () => {
+        if (discountInfo) {
+            // Nếu có thông tin giảm giá từ server, tính toán tổng tiền mới
+            const discountedTotal = subTotal * (1 - discountInfo.discount);
+            return discountedTotal;
+        } else {
+            // Nếu không có thông tin giảm giá, tổng tiền không thay đổi
+            return subTotal;
+        }
+    };
+
+    
+    // const getDiscount = (code: string) => {
+    //     setTimeout(() => {
+    //         dispatch(cartActions.getDiscount(code));
+    //     }, 3000);
+    // };
+    
+    
     useEffect(() => {
         dispatch(cartActions.getAllCart());
         // dispatch(cartAction.getAllCoupon());
@@ -143,20 +205,23 @@ const Cart: React.FC = () => {
                             <input
                                 type="text"
                                 onChange={(e) => {
-                                    getDiscount(e.target.value);
-                                }}
+                                    // getDiscount(e.target.value)
+                                    applyCouponCode((e.target.value));                                }}
                                 placeholder="Tùy chọn..."
                                 className="input input-bordered input-info input-md w-full max-w-xs"
                             />
                         </div>
+                        {couponSuccess && ( // Render success message if there's any
+                        <p className="text-green-500 text-sm">{couponSuccess}</p>
+                        )}
+                        {couponError && ( // Render error message if there's any
+                        <p className="text-red-500 text-sm">{couponError}</p>
+                        )}
                         <div className="flex flex-row justify-between">
                             <p className="text-gray-600 text-3xl font-bold">Tổng cộng</p>
                             <div>
                                 <p className="text-end text-lightblue text-3xl font-bold">
-                                    {discount
-                                        ? (subTotal * (1 - discount)).toLocaleString()
-                                        : subTotal.toLocaleString()}
-                                    đ
+                                {calculateTotal().toLocaleString()}đ
                                 </p>
                             </div>
                         </div>

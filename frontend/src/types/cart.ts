@@ -10,7 +10,7 @@ export type Cart = {
     cart_items: CartItem[];
 };
 export type Coupon = {
-    coupon_id: number;
+    id: number;
     coupon_code: string;
     discount: number;
     valid_until: string;

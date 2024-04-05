@@ -30,5 +30,10 @@ const success = {
 
     //feedback
     SUCCESS_CREATE_FEEDBACK: "Create feedback successfully",
+
+    //Quiz
+    SUCCESS_CREATE_SET_OF_QUIZ: "Create set of quiz successfully",
+    SUCCESS_UPDATE_SET_OF_QUIZ: "Update set of quiz successfully",
+    SUCCESS_DELETE_SET_OF_QUIZ: "Delete set of quiz successfully"
 };
 export default success;
