@@ -100,14 +100,14 @@ function App() {
                                 <Route path="my-profile" element={<MyProfile />}></Route>
                                 <Route path="my-feedback" element={<Feedback />}></Route>
                                 <Route path="history-transaction" element={<HistoryTransaction />}></Route>
-                                <Route path="quiz" element={<Quiz />}></Route>
                                 <Route path="hunt-coupon" element={<HuntCoupon />}></Route>
+
+                                <Route path="my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
                         </Route>
                         <Route path="/*" element={<UserAppLayoutWithNav isLogin={isLogin} />}>
                             <Route path="profile/:id" element={<AuthorProfile />}></Route>
-                            <Route path="my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
                             <Route index element={<HomePage />}></Route>
                         </Route>
                         <Route element={<PrivateRoute />}>

@@ -33,7 +33,7 @@ interface CardVideoProps {
 
 const CardVideo: React.FC<CardVideoProps> = (props) => {
     const study = typeof props.study === typeof [] ? props.study : JSON.parse(props.study);
-    const ratingId = `${props.courseId}${props.for === "rate" ? "1" : "2"}`;
+    const ratingId = `${props.courseId}${props.for === "rate" ? "1" : props.for === "enrolled" ? "2" : "3"}`;
     const navigate = useNavigate();
     const hasPrice = props.price || props.price === 0;
     const hasSalePrice =
