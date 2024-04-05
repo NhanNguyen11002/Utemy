@@ -11,12 +11,14 @@ import {
     UpdateTargetCourse,
 } from "../../types/course";
 import apis from "../../api";
+import { Approval } from "../../types/approval";
 
 type CourseSliceType = {
     courseDetail: Course;
     courses: Course[];
     top10Rate: Course[];
     top10Enrolled: Course[];
+    top10Sale: Course[];
     totalPage: number;
     totalRecord: number;
     isLoading: boolean;
@@ -54,10 +56,12 @@ const initialState: CourseSliceType = {
         updated_at: "",
         requirement: "",
         study: "",
+        approval: [],
     },
     role: "",
     top10Rate: [],
     top10Enrolled: [],
+    top10Sale: [],
     courses: [],
     totalPage: 0,
     totalRecord: 0,
@@ -222,6 +226,39 @@ export const getTop10Enrolled = createAsyncThunk<Response<Course[]>, void, { rej
         }
     },
 );
+export const getTop10Sale = createAsyncThunk<Response<Course[]>, void, { rejectValue: Response<null> }>(
+    "course/top-sale",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.getTop10Sales();
+            return response.data as Response<Course[]>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const approveCourse = createAsyncThunk<Response<null>, number, { rejectValue: Response<null> }>(
+    "course/approve",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.approveCourse(body);
+            return response.data as Response<null>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const restrictCourse = createAsyncThunk<Response<null>, number, { rejectValue: Response<null> }>(
+    "course/restrict",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.restrictCourse(body);
+            return response.data as Response<null>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 export const courseSlice = createSlice({
     name: "course",
     initialState,
@@ -229,6 +266,14 @@ export const courseSlice = createSlice({
         setStudyAndRequirement: (state, action) => {
             state.courseDetail.study = action.payload.study;
             state.courseDetail.requirement = action.payload.requirement;
+        },
+        setSalePriceAndDate: (state, action) => {
+            state.courseDetail.sale_price = action.payload.sale_price;
+            state.courseDetail.sale_until = action.payload.sale_until;
+        },
+        setApprovalCourseDetail: (state, action) => {
+            const approval = state.courseDetail.approval as Approval[];
+            state.courseDetail.approval = [...approval, action.payload];
         },
     },
     extraReducers: (builder) => {
@@ -306,6 +351,16 @@ export const courseSlice = createSlice({
         builder.addCase(getTop10Enrolled.rejected, (state) => {
             state.isGetLoading = false;
         });
+        builder.addCase(getTop10Sale.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getTop10Sale.fulfilled, (state, action) => {
+            state.top10Sale = action.payload.data as Course[];
+            state.isGetLoading = false;
+        });
+        builder.addCase(getTop10Sale.rejected, (state) => {
+            state.isGetLoading = false;
+        });
         builder.addCase(addPromotion.pending, (state) => {
             state.isLoading = true;
         });
@@ -354,9 +409,29 @@ export const courseSlice = createSlice({
         builder.addCase(createCourses.rejected, (state) => {
             state.isLoading = false;
         });
+        builder.addCase(approveCourse.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(approveCourse.fulfilled, (state) => {
+            state.isLoading = false;
+            state.courseDetail.status = true;
+        });
+        builder.addCase(approveCourse.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(restrictCourse.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(restrictCourse.fulfilled, (state) => {
+            state.isLoading = false;
+            state.courseDetail.status = false;
+        });
+        builder.addCase(restrictCourse.rejected, (state) => {
+            state.isLoading = false;
+        });
     },
 });
 
-export const { setStudyAndRequirement } = courseSlice.actions;
+export const { setStudyAndRequirement, setSalePriceAndDate, setApprovalCourseDetail } = courseSlice.actions;
 
 export default courseSlice.reducer;

@@ -12,9 +12,8 @@ import {
 } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 import { AddSection as AddSectionType, Section as SectionType } from "../../types/section";
+import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/outline";
 import * as Tabs from "@radix-ui/react-tabs";
-// import { deteleLessonType } from "../../types/lesson";
-
 import toast from "react-hot-toast";
 import EditForm from "./EditForm";
 import TargetTab from "./TargetTab";
@@ -32,7 +31,6 @@ const EditCourse: React.FC = () => {
     const [isDisplayAddTestModal, setIsDisplayAddTestModal] = useState<boolean>(false);
     const [isChangeType, setIsChangeType] = useState<boolean>(false);
     const [tab, setTab] = useState("form");
-
     //
     const [isDisplayAddLectureModal, setIsDisplayAddLectureModal] = useState<boolean>(false);
     const [isDisplayEditLectureModal, setIsDisplayEditLectureModal] = useState<boolean>(false);
@@ -201,7 +199,15 @@ const EditCourse: React.FC = () => {
         <>
             {isGetLoading !== true ? (
                 <>
-                    <div className="min-h-screen h-full px-4 tablet:px-[60px]">
+                    <div className=" h-full px-4 tablet:px-[60px]">
+                        <a
+                            href={`/lecturer`}
+                            className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300"
+                        >
+                            <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
+                            <p className="text-lg"> Quản lý khoá học của tôi</p>
+                        </a>
+                        <div className="w-[230px] h-px bg-gray-300"></div>
                         <Tabs.Root defaultValue="form" className="h-fit flex w-full">
                             <Tabs.List className="flex flex-col h-fit gap-2 w-[20%] mt-8">
                                 <Tabs.Trigger
@@ -230,7 +236,7 @@ const EditCourse: React.FC = () => {
                                     onClick={() => setTab("promotion")}
                                     className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "promotion" ? "border-blue-400" : "border-white"}`}
                                 >
-                                    Giảm giá hoá học
+                                    Khuyến mại
                                 </Tabs.Trigger>
                                 <Tabs.Trigger
                                     value="status"
@@ -247,51 +253,63 @@ const EditCourse: React.FC = () => {
                                 <TargetTab />
                             </Tabs.Content>
                             <Tabs.Content value="section" className="w-[80%]">
-                                <div className="flex-1 p-4 flex flex-col border border-dashed border-black rounded-lg m-4">
-                                    <div className="flex flex-col gap-4 tablet:flex-row tablet:justify-between">
-                                        <input
-                                            type="text"
-                                            maxLength={100}
-                                            className="px-2 py-2 rounded-lg border-[1px] outline-none flex-1 max-w-2xl"
-                                            placeholder="Tên của chương học..."
-                                            value={section}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                setSection(e.target.value);
-                                            }}
-                                        />
-                                        <div className=" flex flex-col-reverse tablet:flex-row items-center justify-center gap-2">
-                                            <button
-                                                className="text-white btn btn-info text-lg flex-2 ml-2"
-                                                onClick={handleAddSection}
-                                            >
-                                                Thêm chương học
-                                            </button>
-                                        </div>
+                                <div className="flex-1 flex flex-col border border-gray shadow-md ">
+                                    <div className="border-b border-gray">
+                                        <p className="text-2xl font-normal p-6">Chương trình giảng dạy</p>
                                     </div>
-                                    {errorSection && (
-                                        <p className={`text-error italic font-medium mt-1`}>Tên chương là bắt buộc</p>
-                                    )}
-                                    {/* handle list lesson */}
-                                    <div className="mt-2">
-                                        {sectionOfCourse.length <= 0 ? (
-                                            <h1 className="text-center text-2xl text-error">
-                                                Khóa học chưa có chương học nào
-                                            </h1>
-                                        ) : (
-                                            sectionOfCourse.map((section, index) => (
-                                                <AccordionSection
-                                                    key={index}
-                                                    section={section}
-                                                    handleDeleteSection={handleDeleteSection}
-                                                    handleDisplayEditModal={handleDisplayEditModal}
-                                                    handleDisplayDeleteModal={handleDisplayDeleteModal}
-                                                    handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
-                                                    handleDisplayEditLecture={handleDisplayEditLecture}
-                                                    isDisplayEdit={true}
-                                                    isDisplayProgress={false}
-                                                />
-                                            ))
+                                    <div className="p-4">
+                                        <p className="py-4">
+                                            Hãy bắt đầu xây dựng khóa học của bạn bằng cách tạo các chương, bài giảng và
+                                            bài kiểm tra. Hãy chắc chắn các nội dung được chau chuốt và tên các chương,
+                                            bài giảng, bài kiểm tra phải cô đọng nội dung cho học viên
+                                        </p>
+                                        <div className="flex flex-col gap-4 tablet:flex-row tablet:justify-between">
+                                            <input
+                                                type="text"
+                                                maxLength={100}
+                                                className="px-2 py-2 rounded-lg border-[1px] outline-none flex-1 max-w-2xl"
+                                                placeholder="Tên của chương học..."
+                                                value={section}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                    setSection(e.target.value);
+                                                }}
+                                            />
+                                            <div className=" flex flex-col-reverse tablet:flex-row items-center justify-center gap-2">
+                                                <button
+                                                    className="text-white btn btn-info text-lg flex-2 ml-2"
+                                                    onClick={handleAddSection}
+                                                >
+                                                    Thêm chương học
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {errorSection && (
+                                            <p className={`text-error italic font-medium mt-1`}>
+                                                Tên chương là bắt buộc
+                                            </p>
                                         )}
+                                        {/* handle list lesson */}
+                                        <div className="mt-2">
+                                            {sectionOfCourse.length <= 0 ? (
+                                                <h1 className="text-center text-2xl text-error">
+                                                    Khóa học chưa có chương học nào
+                                                </h1>
+                                            ) : (
+                                                sectionOfCourse.map((section, index) => (
+                                                    <AccordionSection
+                                                        key={index}
+                                                        section={section}
+                                                        handleDeleteSection={handleDeleteSection}
+                                                        handleDisplayEditModal={handleDisplayEditModal}
+                                                        handleDisplayDeleteModal={handleDisplayDeleteModal}
+                                                        handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
+                                                        handleDisplayEditLecture={handleDisplayEditLecture}
+                                                        isDisplayEdit={true}
+                                                        isDisplayProgress={false}
+                                                    />
+                                                ))
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </Tabs.Content>

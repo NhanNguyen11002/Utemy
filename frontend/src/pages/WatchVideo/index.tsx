@@ -14,6 +14,7 @@ import AfterTestGround from "./AfterTestGround";
 import BeforeTestGround from "./BeforeTestGround";
 import HistoryTest from "./HistoryTest";
 const WatchVideo: React.FC = () => {
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
     const [getLecture, setGetLecture] = useState(false);
     const courseDetail: Course = useAppSelector((state) => state.courseSlice.courseDetail);
@@ -66,7 +67,7 @@ const WatchVideo: React.FC = () => {
             dispatch(testActions.getTestByTestId(lecture.content.id));
         } else return;
     }, [dispatch, lecture.lecture_id]);
-    if (role === constants.util.ROLE_USER) return <NotFound />;
+    if (role === constants.util.ROLE_USER && !isAdmin) return <NotFound />;
     if (isNotFound) return <NotFound />;
 
     return (

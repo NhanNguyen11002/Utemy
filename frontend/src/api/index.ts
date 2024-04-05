@@ -12,6 +12,9 @@ import statisticApis from "./statistic";
 import quizApis from "./quiz";
 import lectureApis from "./lecture";
 import testApis from "./test";
+import approvalApis from "./approval";
+import decisionApis from "./decision";
+import reportApis from "./report";
 import couponApis from "./coupon";
 
 const apis = {
@@ -29,6 +32,9 @@ const apis = {
     quizApis,
     lectureApis,
     testApis,
+    approvalApis,
+    decisionApis,
+    reportApis,
     couponApis,
 };
 export default apis;

@@ -17,10 +17,10 @@ import SubscribeUserButton from "./SubscribeUserButton";
 import PopupPromotion from "./PopupPromotion";
 import CommentSection from "./CommentSection";
 import constants from "../../constants";
-import { calDayRemains, getCourseIncludes } from "../../utils/helper";
+import { calDayRemains, getCourseIncludes, convertStringDate } from "../../utils/helper";
 // import { orderLesson } from "../../types/lesson";
-import { convertStringDate } from "../../utils/helper";
 import AuthorDropdown from "./AuthorDropdown";
+import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/outline";
 
 import { Tabs, TabsHeader, TabsBody, Tab, TabPanel } from "@material-tailwind/react";
 import {
@@ -52,6 +52,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const [activeTab, setActiveTab] = useState("Description");
     const { duration, lessonCount } = getCourseIncludes(courseDetail);
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "Unenrolled";
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
     const isGetLoadingCourse: boolean = useAppSelector((state) => state.courseSlice.isGetLoading) ?? false;
     const ratingPercent = useAppSelector((state) => state.ratingSlice.ratingPercent) ?? [];
     const hasSalePrice =
@@ -167,6 +168,26 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
 
             {isGetLoadingCourse && <Spin />}
             <div className="container mx-auto mt-[100px] laptop:mt-0">
+                {role === constants.util.ROLE_AUTHOR && (
+                    <>
+                        <a
+                            href={`/lecturer/course/edit/${courseDetail.course_id}`}
+                            className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300"
+                        >
+                            <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
+                            <p className="text-lg"> Quay lại chỉnh sửa</p>
+                        </a>
+                        <div className="w-[230px] h-px bg-gray-300"></div>
+                    </>
+                )}
+                {isAdmin && (
+                    <Link to={`/admin/course/${slug}`}>
+                        <div className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300">
+                            <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
+                            <p className="text-lg"> Quay lại quản lý</p>
+                        </div>
+                    </Link>
+                )}
                 <div className="min-h-screen h-full px-4 tablet:px-[60px]">
                     <div className="mt-4 container mx-auto p-4">
                         <div className="flex flex-col gap-4 laptop:flex-row items-center rounded-lg">
@@ -238,7 +259,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                 {" "}
                                                 {courseDetail.price?.toLocaleString()}đ{" "}
                                             </span>{" "}
-                                            <span className=" font-extrabold font-OpenSans ml-2 text-lightblue ">
+                                            <span className=" font-extrabold font-OpenSans ml-2 text-blue-500 ">
                                                 {" "}
                                                 Trong vòng {dayRemains}
                                             </span>{" "}
@@ -268,7 +289,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     </div>
                                 </div>
                                 <div className="flex-1 flex items-end gap-2 flex-wrap">
-                                    {isLogin && role === constants.util.ROLE_AUTHOR && (
+                                    {isLogin && (role === constants.util.ROLE_AUTHOR || isAdmin) && (
                                         <AuthorButton
                                             handleTogglePromotion={handleTogglePromotion}
                                             handleDelete={() => {
@@ -281,7 +302,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     {isLogin && role === constants.util.ROLE_ENROLLED && (
                                         <SubscribeUserButton courseDetail={courseDetail} />
                                     )}
-                                    {(!isLogin || role === constants.util.ROLE_USER) && (
+                                    {(!isLogin || role === constants.util.ROLE_USER) && !isAdmin && (
                                         <GuestButton isLogin={isLogin} course_id={courseDetail.course_id} />
                                     )}
                                 </div>
@@ -322,6 +343,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         Đánh giá
                                     </Tab>
                                 </TabsHeader>
+                                <div className="h-px w-full bg-gray-300"></div>
                                 <TabsBody>
                                     <TabPanel key="Study" value="Study">
                                         <div className="w-1/2">

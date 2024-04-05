@@ -3,11 +3,10 @@ import { DefaultAvatar } from "../../../assets/images";
 import { useAppSelector, useAppDispatch } from "../../../hooks/hooks";
 import { userActions } from "../../../redux/slices";
 import { User } from "../../../types/user";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Course } from "../../../types/course";
 import NotFound from "../../NotFound";
 import { CardVideo } from "../../../components";
-import { useNavigate } from "react-router-dom";
 import { StarIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
 const UserProfile = () => {

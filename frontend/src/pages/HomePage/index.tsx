@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { Spin, Carousel as CarouselUtemy } from "../../components";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { courseActions } from "../../redux/slices";
+import { courseActions, userActions } from "../../redux/slices";
 import { Course as CourseType } from "../../types/course";
+import { EnrolledAuthor } from "../../types/user";
 import CategoryCard from "./CategoryCard";
 import { Learning } from "../../assets/images";
 import LecturerCard from "./LecturerCard";
@@ -12,16 +13,20 @@ import CompanyCard from "../../components/Card/CompanyCard";
 
 const Home: React.FC = () => {
     const isLogin = useAppSelector((state) => state.authSlice.isLogin);
-    const user = useAppSelector((state) => state.authSlice.user);
+    // const user = useAppSelector((state) => state.authSlice.user);
+    // const dummyData = [user, user];
     const dispatch = useAppDispatch();
     const top10Enrolled: CourseType[] = useAppSelector((state) => state.courseSlice.top10Enrolled) ?? [];
     const top10Rate: CourseType[] = useAppSelector((state) => state.courseSlice.top10Rate) ?? [];
     const top8Category = useAppSelector((state) => state.categorySlice.top5categories) ?? [];
+    const top10Sale = useAppSelector((state) => state.courseSlice.top10Sale) ?? [];
+    const top10AuthorEnrolled: EnrolledAuthor[] = useAppSelector((state) => state.userSlice.top10AuthorEnrolled) ?? [];
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
-    const dummyData = [user, user];
     useEffect(() => {
         dispatch(courseActions.getTop10Rate());
         dispatch(courseActions.getTop10Enrolled());
+        dispatch(courseActions.getTop10Sale());
+        dispatch(userActions.getTop10AuthorByEnrolled());
     }, [dispatch]);
     return (
         <>
@@ -54,6 +59,17 @@ const Home: React.FC = () => {
                         <CarouselCourse courses={top10Rate} type="rate" />
                     </div>
                 </div>
+                {top10Sale && top10Sale.length > 0 && (
+                    <div className="my-4 px-4">
+                        <h2 className="text-xl tablet:text-4xl font-bold mb-3">
+                            Đang <span className="text-lightblue">giảm giá</span>{" "}
+                        </h2>
+                        <span className="w-[60px] h-1 bg-black block"></span>
+                        <div className="mt-3 flex shrink-0 gap-3 py-2">
+                            <CarouselCourse courses={top10Sale} type="sale" />
+                        </div>
+                    </div>
+                )}
                 <div className="my-4 px-4">
                     <h2 className="text-xl tablet:text-4xl font-bold mb-3">
                         Danh mục <span className="text-lightblue">hàng đầu</span>{" "}
@@ -82,7 +98,7 @@ const Home: React.FC = () => {
                     <div className="w-full mt-8">
                         <Carousel>
                             <CarouselContent>
-                                {dummyData.map((user, index) => {
+                                {top10AuthorEnrolled.map((user, index) => {
                                     return (
                                         <CarouselItem>
                                             <LecturerCard key={index} lecturer={user} />

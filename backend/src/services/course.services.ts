@@ -511,7 +511,14 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                         is_delete: false,
                     },
                     include: {
-                        Lecture: true,
+                        Lecture: {
+                            select: {
+                                id: true,
+                                type: true,
+                                lesson: true,
+                                test: true,
+                            },
+                        },
                     },
                 },
                 enrolleds: {
@@ -535,6 +542,27 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         const totalPage = Math.ceil(totalRecord / take);
 
         const courseCard: CourseInfo[] = (courses as any).map((data: any) => {
+            const sections: Section[] = data.sections.map((section: any) => {
+                const lecture = section.Lecture.map((lecture: any) => {
+                    let content;
+                    if (lecture.type === "Lesson") content = lecture.lesson;
+                    else content = lecture.test;
+                    const tempLecture: Lecture = {
+                        lecture_id: lecture.id,
+                        type: lecture.type,
+                        content,
+                    };
+                    return tempLecture;
+                });
+                const temp: Section = {
+                    title: section.title,
+                    updated_at: section.updated_at,
+                    id: section.id,
+                    lecture,
+                };
+                return temp;
+            });
+
             return {
                 course_id: data.id,
                 title: data.title,
@@ -553,7 +581,7 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 slug: data.slug,
                 study: JSON.stringify(data.study),
                 requirement: JSON.stringify(data.requirement),
-                sections: data.sections,
+                sections,
                 description: data.description,
             };
         });
@@ -864,6 +892,7 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     categories.push(category.Category as any);
                 });
                 const author = { ...course.user, user_id: course.user.id };
+
                 const sections: Section[] = course.sections.map((section) => {
                     const lecture = section.Lecture.map((lecture) => {
                         let content;
@@ -969,6 +998,11 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                         id: true,
                     },
                 },
+                approval: {
+                    where: {
+                        is_handle: false,
+                    },
+                },
             },
         });
 
@@ -984,6 +1018,10 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                         url_image: category.Category.url_image,
                     };
                     categories.push(temp);
+                });
+                const approval = course.approval.map((approval) => {
+                    const temp = { ...approval, approval_id: approval.id };
+                    return temp;
                 });
                 const author = { ...course.user, user_id: course.user.id };
                 const sections: Section[] = course.sections.map((section) => {
@@ -1016,6 +1054,7 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                     number_of_rating: course.number_of_rating,
                     number_of_enrolled: course.number_of_enrolled,
                     author: author,
+                    approval,
                     categories: categories,
                     sections: sections,
                     status: course.status,
@@ -1333,7 +1372,91 @@ const getTop10SalesCourses = async (req: Request): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const approveCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { course_id } = req.params;
+        const user_id = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                is_admin: true,
+                id: user_id,
+            },
+        });
+        if (!isAdmin) return new ResponseError(401, constants.error.ERROR_UNAUTHORIZED, false);
+        const isFoundCourse = await configs.db.course.findFirst({
+            where: {
+                id: Number(course_id),
+                is_delete: false,
+                status: false,
+            },
+        });
+        if (!isFoundCourse) return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+        const approveCourse = await configs.db.course.update({
+            where: {
+                id: isFoundCourse.id,
+            },
+            data: {
+                status: true,
+            },
+        });
 
+        if (!approveCourse) return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        const clearApproval = await configs.db.approval.updateMany({
+            where: {
+                course_id: isFoundCourse.id,
+                is_handle: false,
+            },
+            data: {
+                is_handle: true,
+            },
+        });
+        return new ResponseSuccess(200, constants.success.SUCCESS_APPROVE_COURSE, true);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const restrictCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { course_id } = req.params;
+        const user_id = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                is_admin: true,
+                id: user_id,
+            },
+        });
+        if (!isAdmin) return new ResponseError(401, constants.error.ERROR_UNAUTHORIZED, false);
+        const isFoundCourse = await configs.db.course.findFirst({
+            where: {
+                id: Number(course_id),
+                is_delete: false,
+                status: true,
+            },
+        });
+        if (!isFoundCourse) return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+        const restrictCourse = await configs.db.course.update({
+            where: {
+                id: isFoundCourse.id,
+            },
+            data: {
+                status: false,
+            },
+        });
+
+        if (!restrictCourse) return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_RESTRICT_COURSE, true);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const CourseServices = {
     getRightOfCourse,
     createCourse,
@@ -1355,6 +1478,8 @@ const CourseServices = {
     getAllSalesCourses,
     getTop10SalesCourses,
     updateTargetCourse,
+    approveCourse,
+    restrictCourse,
 };
 
 export default CourseServices;

@@ -15,6 +15,9 @@ courseRouter.get("/right/:course_id", isLogin, controllers.courseController.getR
 //14. Create course
 courseRouter.post("/", isLogin, uploadThumbnail, controllers.courseController.createCourse);
 
+courseRouter.patch("/approve/:course_id", isLogin, controllers.courseController.approveCourse);
+courseRouter.patch("/restrict/:course_id", isLogin, controllers.courseController.restrictCourse);
+
 //19. Get course detail by id
 
 //15. Edit course

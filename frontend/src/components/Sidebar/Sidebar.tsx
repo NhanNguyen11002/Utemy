@@ -7,8 +7,10 @@ import {
     PlusCircleIcon,
     ChartBarIcon,
     StarIcon,
+    LockOpenIcon,
+    LockClosedIcon,
     ReceiptPercentIcon,
-    InformationCircleIcon
+    InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 // import { LogoutIcon } from "../../assets/icons";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -18,7 +20,6 @@ import { useState } from "react";
 export function Sidebar() {
     // const navigate = useNavigate();
     const selected = useAppSelector((state) => state.componentSlice.adminNavPlace).toLowerCase() || "dashboard";
-    console.log(selected);
     const dispatch = useAppDispatch();
     const handleClick = (route: string) => {
         dispatch(componentActions.setAdminNavPlace(route));
@@ -104,7 +105,36 @@ export function Sidebar() {
                             </button>
                         </NavLink>
                     </li>
-
+                    <li key={"admin/approval"}>
+                        <NavLink to="/admin/approval">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "approval" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("approval")}
+                            >
+                                <LockOpenIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Phê duyệt khoá học
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
+                    <li key={"admin/report"}>
+                        <NavLink to="/admin/report">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "report" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("report")}
+                            >
+                                <LockClosedIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Báo cáo khoá học
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
                     <li key={"admin/feedback"}>
                         <NavLink to="/admin/feedback">
                             <button

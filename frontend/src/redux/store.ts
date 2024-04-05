@@ -14,6 +14,9 @@ import statisticSlice from "./slices/statistic.slice";
 import quizSlice from "./slices/quiz.slice";
 import lectureSlice from "./slices/lecture.slice";
 import testSlice from "./slices/test.slice";
+import approvalSlice from "./slices/approval.slice";
+import decisionSlice from "./slices/decision.slice";
+import reportSlice from "./slices/report.slice";
 import couponSlice from "./slices/coupon.slice";
 
 // import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
@@ -36,6 +39,9 @@ const store = configureStore({
         quizSlice,
         lectureSlice,
         testSlice,
+        approvalSlice,
+        decisionSlice,
+        reportSlice,
         couponSlice,
         // fileStorageSlice: fileStorageSlice,
     },

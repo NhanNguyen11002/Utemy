@@ -6,7 +6,7 @@ import { DefaultAvatar as Logo } from "../../assets/images";
 import Utemy from "../../assets/images/utemy_logo_notext.png";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { authActions } from "../../redux/slices";
-
+import { Toaster } from "react-hot-toast";
 // profile menu component
 const profileMenuItems = [
     {
@@ -95,6 +95,7 @@ function ProfileMenu() {
 export function AdminNavbar() {
     return (
         <Navbar className="mx-auto my-2 max-w-screen-xl bg-gray-300 p-2 lg:rounded-full lg:pl-6">
+            <Toaster />
             <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
                 <Avatar src={Utemy} className="rounded-full" />
                 {/* <Typography as="a" href="#" className="mr-4 ml-2 text-black cursor-pointer py-1.5 font-medium">

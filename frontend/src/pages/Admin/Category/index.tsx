@@ -1,20 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-// import {
-//     Typography,
-//     Card,
-//     CardHeader,
-//     CardBody,
-//     IconButton,
-//     Menu,
-//     MenuHandler,
-//     MenuList,
-//     MenuItem,
-//     Avatar,
-//     Tooltip,
-//     Progress,
-// } from "@material-tailwind/react";
-
 import CategoryCard from "./CategoryCard";
 import PopupAddCategory from "./PopupAddCategory";
 import PopupEditCategory from "./PopupEditCategory";
@@ -103,7 +88,6 @@ const CategoryAdmin = () => {
             {isGetLoading && <Loading />}
             {/* minhscreen */}
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2">
-                {/* <Toaster /> */}
                 <div className="w-3/4 px-10 mb-5 flex flex-col gap-4 justify-between shrink-0 tablet:flex-row">
                     <div className="flex justify-between w-full">
                         <div className="w-3/4 mx-auto">

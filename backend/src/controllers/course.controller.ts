@@ -119,4 +119,12 @@ export default class CourseController {
         const response: ResponseBase = await services.CourseService.getTop10SalesCourses(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async approveCourse(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.approveCourse(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async restrictCourse(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.restrictCourse(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

@@ -57,8 +57,7 @@ const MyCourseCard: FC<MyCourseCardProps> = ({ course }) => {
                                     </span>
                                 ) : (
                                     <span className="font-normal flex gap-1 items-center">
-                                        Đang chờ duyệt{" "}
-                                        <LockClosedIcon className="w-5 h-5 fill-red-400" strokeWidth={2} />
+                                        Bị hạn chế <LockClosedIcon className="w-5 h-5 fill-red-400" strokeWidth={2} />
                                     </span>
                                 )}
                             </p>

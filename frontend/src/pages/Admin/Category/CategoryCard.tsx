@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../../assets/images/utemy_logo_notext.png";
 import { Category } from "../../../types/category";
 
@@ -9,10 +9,13 @@ type CategoryCardProps = {
 };
 
 const CategoryCard: React.FC<CategoryCardProps> = (props) => {
+    const [hovered, setHovered] = useState(false);
     return (
         <>
             <div
                 className={`relative w-full overflow-hidden transition-all duration-500 bg-white border rounded-md shadow group hover:shadow-lg h-fit `}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
             >
                 <div className="p-1 flex flex-row justify-between">
                     <div className="p-1 flex flex-row justify-between">
@@ -37,7 +40,7 @@ const CategoryCard: React.FC<CategoryCardProps> = (props) => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col mr-1">
+                    <div className={`${hovered ? "block" : "hidden"} flex flex-col mr-1`}>
                         <button
                             className="w-full px-5 py-2 mt-2 text-white  btn btn-info hover:bg-info/70 hover:cursor-pointer rounded-2xl "
                             onClick={() => props.handleOpenPopupEdit(props.category.category_id)}

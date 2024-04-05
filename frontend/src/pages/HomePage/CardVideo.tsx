@@ -28,11 +28,12 @@ interface CardVideoProps {
     saleUntil?: string;
     updatedAt?: Date;
     summary: string;
-    study: any[];
+    study: any;
 }
 
 const CardVideo: React.FC<CardVideoProps> = (props) => {
-    const ratingId = `${props.courseId}${props.for === "rate" ? "1" : "2"}`;
+    const study = typeof props.study === typeof [] ? props.study : JSON.parse(props.study);
+    const ratingId = `${props.courseId}${props.for === "rate" ? "1" : props.for === "enrolled" ? "2" : "3"}`;
     const navigate = useNavigate();
     const hasPrice = props.price || props.price === 0;
     const hasSalePrice =
@@ -143,9 +144,9 @@ const CardVideo: React.FC<CardVideoProps> = (props) => {
                 <div className="flex flex-col gap-2">
                     <p className="text-base font-ligh">{props.summary}</p>
                     <ul>
-                        {props.study &&
-                            props.study.length > 0 &&
-                            props.study.slice(0, 3).map((study: string) => (
+                        {study &&
+                            study.length > 0 &&
+                            study.slice(0, 3).map((study: string) => (
                                 <li className="text-base font-light" key={study}>
                                     <div className="flex gap-1 items-start shrink-0">
                                         <CheckIcon className="w-4 h-4 shrink-0" />
