@@ -82,7 +82,7 @@ const CouponAdmin = () => {
         <>
             {isOpenAddCoupon && <PopUpAddCoupon handleCancelAddCoupon={handleCancelAddCoupon} />}
             {isOpenEditCoupon && (
-                <PopUpEditCoupon couponId={couponId} handleCancelEditCoupon={handleCancelEditCoupon}/>
+                <PopUpEditCoupon couponId={couponId} handleCancelEditCoupon={handleCancelEditCoupon} />
             )}
             {isOpenDeleteModel && (
                 <DeleteModal handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteCoupon} />
@@ -90,7 +90,6 @@ const CouponAdmin = () => {
             {isGetLoading && <Loading />}
             {/* minhscreen */}
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2">
-                {/* <Toaster /> */}
                 <div className="w-3/4 px-10 mb-5 flex flex-col gap-4 justify-between shrink-0 tablet:flex-row">
                     <div className="flex justify-between w-full">
                         <div className="w-3/4 mx-auto">
@@ -125,7 +124,9 @@ const CouponAdmin = () => {
                 {coupons.length === 0 ? (
                     <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy phiếu giảm giá</p>
                 ) : (
-                    <p className="mt-4 text-2xl text-center font-bold">Có {totalRecord} phiếu giảm giá được tìm thấy </p>
+                    <p className="mt-4 text-2xl text-center font-bold">
+                        Có {totalRecord} phiếu giảm giá được tìm thấy{" "}
+                    </p>
                 )}
                 <div className="flex-1  my-1  w-3/4 px-10 justify-start">
                     {coupons.map((coupon, index) => {
