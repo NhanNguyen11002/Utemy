@@ -13,3 +13,4 @@ export * as statisticActions from "./statistic.slice";
 export * as quizActions from "./quiz.slice";
 export * as lectureActions from "./lecture.slice";
 export * as testActions from "./test.slice";
+export * as couponActions from "./coupon.slice";

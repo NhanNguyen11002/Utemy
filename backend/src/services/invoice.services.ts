@@ -5,8 +5,14 @@ import { ResponseBase, ResponseError, ResponseSuccess } from "../common/response
 import constants from "../constants";
 import { PagingArrayResponse, PagingResponse } from "../types/response";
 import { InvoiceInfo } from "../types/invoice";
+import { Console } from "console";
 
-const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
+const createInvoice = async (
+    req: IRequestWithId,
+    totalwithcoupon: number,
+    discount: number,
+    coupon_id: number | null,
+): Promise<ResponseBase> => {
     try {
         const userId = Number(req.user_id);
         const isInvoiceNotSucess = await configs.db.invoice.findFirst({
@@ -24,6 +30,7 @@ const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
         const createInvoice = await configs.db.invoice.create({
             data: {
                 user_id: userId,
+                total_money: totalwithcoupon,
             },
         });
         let cartId = 0;
@@ -59,9 +66,9 @@ const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
         const createInvoiceDetailData = boughtCourses.map((cartDetail) => {
             const now = new Date();
             let paidPrice;
-            if (cartDetail.course.sale_until && cartDetail.course.sale_until > now) {
-                paidPrice = cartDetail.course.sale_price;
-            } else paidPrice = cartDetail.course.price;
+            if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
+                paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * discount;
+            } else paidPrice = cartDetail.course.price - cartDetail.course.price * discount;
             total_money += Number(paidPrice);
             const data = {
                 invoice_id: createInvoice.id,
@@ -77,13 +84,17 @@ const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
             data: {
                 total_money,
+                coupon_id: coupon_id,
             },
         });
         const createInvoiceDetail = await configs.db.invoiceDetail.createMany({
             data: createInvoiceDetailData,
         });
         if (createInvoiceDetail && updateInvoice)
+        {
+            console.log("couponid:", coupon_id);
             return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
+        }
         else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {

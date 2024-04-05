@@ -31,6 +31,7 @@ import MyProfile from "./pages/MyProfile";
 import CreateUser from "./pages/Admin/CreateUser";
 import UserProfile from "./pages/Admin/UserProfile";
 import Quiz from "./pages/Quiz";
+import HuntCoupon from "./pages/HuntCoupon";
 import ATestingComponent from "./pages/ATestingComponent";
 import PrivateRoute from "./routes/PrivateRoutes";
 import UserAppLayout from "./layout/userAppLayout";
@@ -42,6 +43,7 @@ import HistoryTransaction from "./pages/HistoryTransaction";
 import UserWatchVideoLayout from "./layout/userWatchVideoLayout";
 import UserAppLayoutWithNav from "./layout/userAppLayoutWithNav";
 import LecturerAppLayout from "./layout/lecturerAppLayout";
+import CouponAdmin from "./pages/Admin/Coupon";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -63,6 +65,7 @@ function App() {
                                 <Route index element={<Dashboard />}></Route>
                                 <Route path="profile" element={<ProfileAdmin />}></Route>
                                 <Route path="category" element={<CategoryAdmin />}></Route>
+                                <Route path="coupon" element={<CouponAdmin />}></Route>
                                 <Route path="user" element={<UserAdmin />}></Route>
                                 <Route path="user-profile/:id" element={<UserProfile />}></Route>
                                 <Route path="user/create" element={<CreateUser />}></Route>
@@ -90,6 +93,7 @@ function App() {
                                 <Route path="my-feedback" element={<Feedback />}></Route>
                                 <Route path="history-transaction" element={<HistoryTransaction />}></Route>
                                 <Route path="quiz" element={<Quiz />}></Route>
+                                <Route path="hunt-coupon" element={<HuntCoupon />}></Route>
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
                         </Route>

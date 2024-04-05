@@ -50,7 +50,9 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
         formData.append("title", values.title);
         formData.append("description", values.description);
         formData.append("category_image", image as File);
-        console.log(formData);
+        formData.forEach((value, key) => {
+            console.log(`${key}: ${value}`);
+          });        
         dispatch(categoryActions.createCategory(formData)).then((response: any) => {
             if (response.payload && response.payload.status_code === 200) {
                 dispatch(categoryActions.getCategoriesWithPagination({ searchItem: "", pageIndex: 1 }));
