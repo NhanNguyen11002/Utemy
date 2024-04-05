@@ -14,7 +14,8 @@ import QuizServices from "./quiz.services";
 import LectureServices from "./lecture.services";
 import TestServices from "./test.services";
 import CouponServices from "./coupon.services";
-
+import ApprovalServices from "./approval.services";
+import DecisionServices from "./decision.services";
 export default {
     AuthServices,
     UserService,
@@ -32,4 +33,6 @@ export default {
     LectureServices,
     TestServices,
     CouponServices,
+    ApprovalServices,
+    DecisionServices,
 };

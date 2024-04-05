@@ -75,6 +75,21 @@ const getTop10Enrolled = async () => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getTop10Sales = async () => {
+    const path = `course/top10-sales`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const approveCourse = async (values: number) => {
+    const path = `course/approve/${values}`;
+    const reponse = await apiCaller("PATCH", path);
+    return reponse;
+};
+const restrictCourse = async (values: number) => {
+    const path = `course/restrict/${values}`;
+    const reponse = await apiCaller("PATCH", path);
+    return reponse;
+};
 const courseApis = {
     createCourse,
     getMyCourses,
@@ -84,12 +99,15 @@ const courseApis = {
     getRightOfCourse,
     getTop10Rate,
     getTop10Enrolled,
+    getTop10Sales,
     getCourseDetailById,
     editCourse,
     addPromotion,
     stopPromotion,
     getAllCourses,
     updateTargetCourse,
+    approveCourse,
+    restrictCourse,
 };
 
 export default courseApis;

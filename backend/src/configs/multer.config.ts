@@ -27,6 +27,14 @@ const storageCategory = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname));
     },
 });
+const storageEvidence = multer.diskStorage({
+    destination: (req, res, cb) => {
+        cb(null, `${configs.general.PATH_TO_IMAGES}/evidence`);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    },
+});
 
 const uploadAvatar = multer({
     storage: storageAvatar,
@@ -79,7 +87,23 @@ const uploadCategory = multer({
         }
     },
 }).single("category_image");
-
+const uploadEvidence = multer({
+    storage: storageEvidence,
+    limits: {
+        fileSize: 1024 * 1024 * 4,
+    },
+    fileFilter(req, file, cb) {
+        if (file.mimetype === "image/png") {
+            cb(null, true);
+        } else if (file.mimetype === "image/jpeg") {
+            cb(null, true);
+        } else if (file.mimetype === "image/jpg") {
+            cb(null, true);
+        } else {
+            return cb(new Error("Invalid file type: Only .png, .jpeg or .jpg is allowed"));
+        }
+    },
+}).single("evidence_image");
 //video
 const storageVideo = multer.diskStorage({
     destination: (req, res, cb) => {
@@ -107,4 +131,4 @@ const uploadVideo = multer({
     },
 }).single("video");
 
-export default { uploadAvatar, uploadCategory, uploadThumbnail, uploadVideo };
+export default { uploadAvatar, uploadCategory, uploadThumbnail, uploadEvidence, uploadVideo };

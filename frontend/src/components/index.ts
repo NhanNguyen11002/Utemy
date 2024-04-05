@@ -20,6 +20,7 @@ import PopupAddTest from "./Popup/PopupAddTest";
 import CardVideo from "./Card/CardVideo";
 import AccordionSection from "./Accordion/AccordionSection";
 import LectureCard from "./Card/LectureCard";
+import ApprovalCard from "./Card/ApprovalCard";
 import { Checkbox } from "./ui/checkbox";
 
 export {
@@ -46,4 +47,5 @@ export {
     LectureCard,
     Checkbox,
     MyCourseCard,
+    ApprovalCard,
 };

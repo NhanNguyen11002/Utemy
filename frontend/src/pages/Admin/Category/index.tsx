@@ -1,20 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-// import {
-//     Typography,
-//     Card,
-//     CardHeader,
-//     CardBody,
-//     IconButton,
-//     Menu,
-//     MenuHandler,
-//     MenuList,
-//     MenuItem,
-//     Avatar,
-//     Tooltip,
-//     Progress,
-// } from "@material-tailwind/react";
-
 import CategoryCard from "./CategoryCard";
 import PopupAddCategory from "./PopupAddCategory";
 import PopupEditCategory from "./PopupEditCategory";

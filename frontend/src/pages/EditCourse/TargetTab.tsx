@@ -72,13 +72,12 @@ const TargetTab: React.FC<TargetTabProps> = () => {
                 <button
                     type="button"
                     onClick={handleClickButton}
-                    className={`bg-blue-400 hover:bg-blue-500 p-3 text-white text-lg font-medium disabled:bg-gray-300`}
+                    className={`bg-blue-400 hover:bg-blue-500 p-3 text-white text-lg font-medium disabled:bg-gray-300 mt-2`}
                     disabled={edit || isLoading}
                 >
                     {isLoading ? "Loading..." : "Lưu thay đổi"}
                 </button>
             </div>
-            <div></div>
         </div>
     );
 };

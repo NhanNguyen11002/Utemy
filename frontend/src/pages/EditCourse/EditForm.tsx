@@ -363,7 +363,7 @@ const EditForm: React.FC<props> = (props) => {
                                                 onClick={() => navigate(`/lecturer/course-detail/${courseDetail.slug}`)}
                                                 disabled={isLoading}
                                             >
-                                                Quay trở lại khoá học
+                                                Xem trước khoá học
                                             </button>
                                         </div>
                                     </form>

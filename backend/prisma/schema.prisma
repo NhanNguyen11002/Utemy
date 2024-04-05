@@ -33,7 +33,8 @@ model User {
   test_history   TestHistory[]
   quiz_group     QuizGroup[]
   coupon_history CouponHistory[]
-
+  report Report[]
+  decision Decision[]
   @@index([email], name: "idx_email")
 }
 
@@ -80,6 +81,12 @@ model Course {
   carts CartDetail[]
 
   invoice_detail InvoiceDetail[]
+
+  report Report[]
+
+  approval Approval[]
+
+  decision Decision[]
 
   @@index([slug], name: "idx_slug")
   @@index([title], name: "idx_title")
@@ -133,6 +140,8 @@ model Lecture {
   lesson     Lesson?
   // test_id    Int?
   test       Test?
+
+  report Report[]
 }
 
 model Test {
@@ -349,4 +358,37 @@ model CouponHistory {
   user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map(name: "coupon_history")
+}
+model Report {
+  id        Int    @id @default(autoincrement())
+  course_id Int
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  is_lecture Boolean @default(false)
+  lecture_id   Int?
+  lecture      Lecture?   @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  content String @db.Text
+  is_handle Boolean @default(false)
+  user_id Int
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+}
+
+model Approval {
+  id        Int    @id @default(autoincrement())
+  course_id Int
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  is_handle Boolean @default(false)
+  created_at DateTime @default(now())
+} 
+model Decision {
+  id        Int    @id @default(autoincrement())
+  course_id Int
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  type String @db.VarChar(50)
+  content String @db.Text
+  is_handle Boolean @default(false)
+  user_id Int
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }

@@ -7,6 +7,7 @@ import {
     AuthorInformation,
     UpdateInformation,
     EditUser,
+    EnrolledAuthor,
 } from "../../types/user";
 import apis from "../../api";
 import { Course } from "../../types/course";
@@ -14,6 +15,7 @@ import { Course } from "../../types/course";
 type UserSliceType = {
     users: User[];
     courses: Course[];
+    top10AuthorEnrolled: EnrolledAuthor[];
     user: User;
     isLoading: boolean;
     isGetLoading: boolean;
@@ -86,6 +88,18 @@ export const getProfile = createAsyncThunk<Response<User>, null, { rejectValue: 
         }
     },
 );
+export const getTop10AuthorByEnrolled = createAsyncThunk<
+    Response<EnrolledAuthor[]>,
+    void,
+    { rejectValue: Response<null> }
+>("user/top10enrolled", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.userApis.getTop10AuthorByEnrolled();
+        return response.data as Response<EnrolledAuthor[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 export const changeAvatar = createAsyncThunk<Response<null>, FormData, { rejectValue: Response<null> }>(
     "user/avatar",
     async (formData, ThunkAPI) => {
@@ -163,6 +177,7 @@ const initialState: UserSliceType = {
         },
     ],
     users: [],
+    top10AuthorEnrolled: [],
     user: {
         user_id: 0,
         url_avatar: "",
@@ -234,6 +249,16 @@ export const userSlice = createSlice({
             state.courses = action.payload.data?.courses as Course[];
         });
         builder.addCase(getAuthorProfile.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(getTop10AuthorByEnrolled.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getTop10AuthorByEnrolled.fulfilled, (state, action) => {
+            state.isGetLoading = false;
+            state.top10AuthorEnrolled = action.payload.data as EnrolledAuthor[];
+        });
+        builder.addCase(getTop10AuthorByEnrolled.rejected, (state) => {
             state.isGetLoading = false;
         });
         builder.addCase(changeAvatar.pending, (state) => {

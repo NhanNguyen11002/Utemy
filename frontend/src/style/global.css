@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: smooth;
+}
+
 .HoverCardContent {
     transform-origin: var(--radix-hover-card-content-transform-origin);
     animation: scaleIn 0.5s ease-out;

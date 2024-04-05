@@ -1,5 +1,6 @@
 import { Author } from "./user";
 import { Section } from "./section";
+import { Approval } from "./approval";
 import { Prisma } from "@prisma/client";
 export type CourseDetail = {
     course_id: number;
@@ -25,6 +26,7 @@ export type CourseDetail = {
     updated_at?: Date | string | null;
     requirement?: Prisma.JsonValue;
     study?: Prisma.JsonValue;
+    approval?: Approval[];
 };
 
 export type CourseInfo = {

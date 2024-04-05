@@ -1,6 +1,7 @@
 import { User } from "./user";
 import { Category } from "./category";
 import { Section } from "./section";
+import { Approval } from "./approval";
 export type SearchMyCourseEnrolledCourse = {
     keyword: string | undefined;
     pageIndex: number;
@@ -27,6 +28,7 @@ export type Course = {
     sections?: Section[];
     requirement?: any;
     study?: any;
+    approval?: Approval[];
 };
 export type PagingCourse = {
     total_page: number;

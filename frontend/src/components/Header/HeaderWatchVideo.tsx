@@ -17,6 +17,7 @@ interface HeaderProps {
 
 const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
     const avatar = useAppSelector((state) => state.authSlice.user.url_avatar);
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin);
     const [isDisplayUserDrawer, setIsDisplayUserDrawer] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
@@ -39,7 +40,7 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                         <div className="h-6 w-px bg-gray-700"></div>
                     </div>
                     <div className="w-full  p-[16px]  rounded-[8px]">
-                        <Link to={`/course-detail/${course.slug}`}>
+                        <Link to={`${isAdmin && "/admin"}/course-detail/${course.slug}`}>
                             <h2 className="text-white text-xl  hover:opacity-70 ">{course.title}</h2>
                         </Link>
                     </div>
@@ -70,7 +71,9 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                                     type="checkbox"
                                     className="drawer-toggle"
                                     checked={isDisplayUserDrawer}
-                                    onChange={() => setIsDisplayUserDrawer(!isDisplayUserDrawer)}
+                                    onChange={() => {
+                                        if (!isAdmin) setIsDisplayUserDrawer(!isDisplayUserDrawer);
+                                    }}
                                 />
                                 <div className="drawer-content">
                                     <label

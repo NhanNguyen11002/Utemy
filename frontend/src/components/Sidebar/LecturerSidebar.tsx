@@ -28,7 +28,7 @@ export function LecturerSidebar() {
             <div className={` `}>
                 <Link to="/lecturer" className="py-6 px-4 text-center flex flex-row  items-center justify-start gap-3">
                     <PresentationChartBarIcon className="w-6 h-6 shrink-0 text-white" />
-                    <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate  `}>Lecturer</p>
+                    <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate  `}>Giảng viên</p>
                 </Link>
             </div>
             <div className="">

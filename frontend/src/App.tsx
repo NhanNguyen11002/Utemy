@@ -30,6 +30,8 @@ import ProfileAdmin from "./pages/Admin/Profile";
 import MyProfile from "./pages/MyProfile";
 import CreateUser from "./pages/Admin/CreateUser";
 import UserProfile from "./pages/Admin/UserProfile";
+import ApprovalAdmin from "./pages/Admin/Approval";
+import CourseAdmin from "./pages/Admin/Course";
 import Quiz from "./pages/Quiz";
 import ATestingComponent from "./pages/ATestingComponent";
 import PrivateRoute from "./routes/PrivateRoutes";
@@ -67,7 +69,13 @@ function App() {
                                 <Route path="user-profile/:id" element={<UserProfile />}></Route>
                                 <Route path="user/create" element={<CreateUser />}></Route>
                                 <Route path="feedback" element={<FeedbackAdmin />}></Route>
+                                <Route path="approval" element={<ApprovalAdmin />}></Route>
+                                <Route path="course/:slug" element={<CourseAdmin />}></Route>
+                                <Route path="course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
                                 <Route path="*" element={<NotFound />}></Route>
+                            </Route>
+                            <Route path="course-detail/:slug/watch" element={<UserWatchVideoLayout />}>
+                                <Route index element={<WatchVideo />}></Route>
                             </Route>
                         </Route>
                         <Route element={<UserAppLayout isLogin={isLogin} />}>

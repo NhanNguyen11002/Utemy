@@ -87,8 +87,11 @@ export function Home() {
         title: "Phần trăm khóa học đạt được mức đánh giá từ 1-5",
         description: "Mô tả phần trăm số khóa học đạt được mức đánh giá từ 1-5 trên nền tảng",
         name: "Điểm",
-        data: ratingPercent.map((rating) => rating.percent),
-        categories: ratingPercent.map((rating) => `${rating.title} star`),
+        data: ratingPercent.length > 0 ? ratingPercent.map((rating) => rating.percent) : [20, 20, 20, 20, 20],
+        categories:
+            ratingPercent.length > 0
+                ? ratingPercent.map((rating) => `${rating.title} sao`)
+                : "1 sao-2 sao-3 sao-4 sao-5 sao".split("-"),
         footer: "Cập nhật ngay bây giờ",
     };
     const statisticLineData = {
@@ -133,7 +136,6 @@ export function Home() {
             footer: "Cập nhật ngay bây giờ",
         },
     ];
-
     return (
         <div className="pt-[15px] bg-background_2">
             <div className="mb-12 grid gap-y-10 items-center gap-x-6 md:grid-cols-2 xl:grid-cols-4">
