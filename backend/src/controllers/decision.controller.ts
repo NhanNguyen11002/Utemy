@@ -12,4 +12,8 @@ export default class DecisionController {
         const response: ResponseBase = await services.DecisionServices.getDecisionsByCourseId(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async handleDecision(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.DecisionServices.handleDecision(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

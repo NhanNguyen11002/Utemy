@@ -1,20 +1,20 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React, { useState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
-import { approvalActions } from "../../../redux/slices";
-import { Pagination, ApprovalCard } from "../../../components";
-import { ApprovalCard as Approval } from "../../../types/approval";
+import { reportActions } from "../../../redux/slices";
+import { Pagination, AllReportCard } from "../../../components";
+import { ReportType as Report } from "../../../types/report";
 
 // import { Pagination } from "../../../components";
 // import { TotalRating } from "../../../components";
 
-export function ApprovalAdmin() {
+export function ReportAdmin() {
     const [userInput, setUserInput] = useState<string>("");
     const inputRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
-    const approvals: Approval[] = useAppSelector((state) => state.approvalSlice.approvals) || [];
+    const reports: Report[] = useAppSelector((state) => state.reportSlice.reports) || [];
     const [pageIndex, setPageIndex] = useState(1);
-    const totalPage = useAppSelector((state) => state.approvalSlice.totalPage) || 0;
+    const totalPage = useAppSelector((state) => state.reportSlice.totalPage) || 0;
     const [keyword, setKeyword] = useState("");
     const handleKeyWordSearch = () => {
         if (inputRef.current) {
@@ -33,7 +33,7 @@ export function ApprovalAdmin() {
         return;
     };
     useEffect(() => {
-        dispatch(approvalActions.getApprovalsWithPagenation({ pageIndex, keyword }));
+        dispatch(reportActions.getAllReportWithPagination({ pageIndex, keyword }));
     }, [keyword, pageIndex]);
     return (
         <>
@@ -54,17 +54,17 @@ export function ApprovalAdmin() {
                         <MagnifyingGlassIcon className="w-5 h-5" />
                     </div>
                 </div>
-                <div className="flex flex-col w-2/3">
-                    {approvals.length > 0 ? (
-                        approvals.map((approval, index) => {
+                <div className="grid grid-cols-1 w-2/3">
+                    {reports.length > 0 ? (
+                        reports.map((report, index) => {
                             return (
                                 <div key={index}>
-                                    <ApprovalCard approval={approval} key={index} />
+                                    <AllReportCard report={report} key={index} />
                                 </div>
                             );
                         })
                     ) : (
-                        <p className={`text-lg mt-2 `}>Có vẻ như không có đơn yêu cầu được xét duyệt khoá học nào</p>
+                        <p className={`text-lg mt-2 `}>Có vẻ như không có báo cáo đến khoá học nào</p>
                     )}
                 </div>
                 {totalPage > 1 && (
@@ -81,4 +81,4 @@ export function ApprovalAdmin() {
     );
 }
 
-export default ApprovalAdmin;
+export default ReportAdmin;
