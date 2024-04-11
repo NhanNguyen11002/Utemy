@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Response } from "../../types/response";
-import { Coupon } from "@/types/coupon";
+import { Coupon, VoucherDropdown } from "@/types/coupon";
 import apis from "../../api";
 import { GetCouponsWithPagination } from "@/types/coupon";
 
@@ -44,6 +44,17 @@ export const getAllEventCouponByEventId = createAsyncThunk<Coupon[], number, { r
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.data);
     }
+  },
+);
+export const getVoucherBySpin = createAsyncThunk<VoucherDropdown[], void, { rejectValue: Response<null> }>(
+  "coupon/getVoucherBySpin",
+  async (body, thunkAPI) => {
+      try {
+          const response = await apis.couponApis.getVoucherBySpin();
+          return response.data;
+      } catch (error: any) {
+          return thunkAPI.rejectWithValue(error.data);
+      }
   },
 );
 
@@ -136,6 +147,7 @@ type CouponSliceType = {
   isLoading: boolean;
   isGetLoading: boolean;
   eventCoupons: Coupon[]
+  voucherDropdown: VoucherDropdown[]
 };
 const initialState: CouponSliceType = {
   isLoading: false,
@@ -156,6 +168,7 @@ const initialState: CouponSliceType = {
   coupons: [],
   totalPage: 0,
   totalRecord: 0,
+  voucherDropdown: []
 };
 
 const couponSlice = createSlice({
@@ -256,6 +269,16 @@ const couponSlice = createSlice({
       .addCase(getHistorySpinOfUserForAEvent.rejected, (state) => {
         state.isLoading = false;
         // Handle rejection if needed
+      })
+      .addCase(getVoucherBySpin.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getVoucherBySpin.fulfilled, (state, action: any) => {
+        state.voucherDropdown = action.payload.data as VoucherDropdown[];
+        state.isLoading = false;
+      })
+      .addCase(getVoucherBySpin.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });

@@ -17,17 +17,26 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
     const events = useAppSelector((state) => state.eventSlice.events);
     const isGetLoading = useAppSelector((state) => state.couponSlice.isGetLoading);
     const [isChecked, setIsChecked] = useState(false); // State để theo dõi trạng thái của checkbox
-    const [selectedEventId, setSelectedEventId] = useState(''); // Theo dõi trạng thái của dropdown nếu có giá trị được chọn
+    const [selectedEventId, setSelectedEventId] = useState(events.length > 0 ? events[0].event_id : '');
+    const [isEvent, setIsEvent] = useState(false); 
+
     const dispatch = useAppDispatch();
     useEffect(() => {
         // Dispatch action để lấy danh sách sự kiện khi component được mount
         dispatch(eventActions.getAllEvents());
+        setSelectedEventId('');
     }, [dispatch]);
     const handleCheckboxChange = (e:any) => {
         setIsChecked(e.target.checked); // Cập nhật trạng thái của checkbox khi thay đổi
+        setIsEvent(true);
         if (!e.target.checked) {
             setSelectedEventId('');
+            setIsEvent(false);
         }
+    };
+    const handleDropdownChange = (value: string) => {
+        setSelectedEventId(value);
+        console.log("Selected event ID:", value); // In ra giá trị đã chọn từ dropdown
     };
     // const [couponCode, setCouponCode] = useState("");
 
@@ -62,10 +71,10 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
             const validUntil = new Date(values.valid_until).toISOString();
             formData.append("valid_start", validStart);
             formData.append("valid_until", validUntil);
-            formData.append("is_event", String(values.is_event));
+            formData.append("is_event", String(isEvent));
             formData.append("max_discount_money", values.max_discount_money.toString());
             if (selectedEventId !== '') {
-                formData.append("event_id", selectedEventId);
+                formData.append("event_id", String(selectedEventId));
             }
             console.log("Here is form data", formData);
             formData.forEach((value, key) => {
@@ -295,7 +304,8 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                             {isChecked && ( // Hiển thị dropdown nếu checkbox được chọn
                                                 <select style={{ marginTop: '20px', backgroundColor: 'lightgray', color: 'black', border: '1px solid black', height: '30px' }}
                                                     value={selectedEventId}
-                                                    onChange={(e) => setSelectedEventId(e.target.value)}>
+                                                    onChange={(e) => handleDropdownChange(e.target.value)}>
+                                                    <option value="" selected>-- Chọn sự kiện --</option>
                                                 {/* Render options from events array */}
                                                 {events.map((event) => (
                                                     <option key={event.event_id} value={event.event_id}>

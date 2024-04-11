@@ -141,7 +141,7 @@ const error = {
     ERROR_CODE_REQUIRED: "Code is required",
     ERROR_CODE_MAX: "Code must be under than 30 chars",
     ERROR_CODE_MIN: "Code must be upper than 8 chars",
-    ERROR_DISCOUNT_MAX:"Discount must less than 1",
+    ERROR_DISCOUNT_MAX:"Discount must less than 100",
     ERROR_DISCOUNT_MIN:"Discount must more than 0",
     ERROR_DISCOUNT_REQUIRED: "Discount is required",
     ERROR_REMAIN_QUANTITY_REQUIRED: "Remain_quantity is required",

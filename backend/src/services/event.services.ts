@@ -7,7 +7,6 @@ import constants from "../constants";
 import { EventResponse } from "~/types/event.type";
 import { DateTime } from "luxon";
 
-
 const createEvent = async (req: IRequestWithId, formData: FormData): Promise<ResponseBase> => {
     try {
         // const { code, discount, valid_start, valid_until, remain_quantity, is_event } = req.body;
@@ -38,14 +37,42 @@ const createEvent = async (req: IRequestWithId, formData: FormData): Promise<Res
                 is_delete: false,
             },
         });
-        if (isExistActiveEvent && isActive)
-            return new ResponseError(
-                501,
-                constants.error.ERROR_EXIST_ACTIVE_EVENT +
-                    ", please choose the start date of this event later than " +
-                    isExistActiveEvent.end_date,
-                false,
-            );
+        const maxEndDateEvent = await configs.db.event.findFirst({
+            where: {
+                is_delete: false, // Đảm bảo chỉ lấy sự kiện chưa bị xóa
+            },
+            orderBy: {
+                end_date: "desc", // Sắp xếp giảm dần theo end_date
+            },
+        });
+
+        console.log("Max end date event:", maxEndDateEvent);
+
+        if (isExistActiveEvent) {
+            console.log("startDateISO:", startDateISO);
+            console.log("end_date of active event:", isExistActiveEvent?.end_date);
+
+            if (maxEndDateEvent && maxEndDateEvent.end_date) {
+                const maxEndDateISO = DateTime.fromISO(maxEndDateEvent?.end_date.toISOString());
+                console.log("Max end date ISO:", maxEndDateISO);
+                if (startDateISO <= maxEndDateISO) {
+                    console.log("Start date of new event is earlier than or equal to end date of active event");
+                    return new ResponseError(
+                        501,
+                        constants.error.ERROR_EXIST_ACTIVE_EVENT +
+                            ", please choose the start date of this event later than " +
+                            maxEndDateEvent.end_date,
+                        false,
+                    );
+                } else {
+                    console.log("Start date of new event is later than end date of active event");
+                }
+            } else {
+                console.log("No active event found or end date is undefined");
+                // Xử lý khi không có maxEndDateEvent hoặc end_date là undefined
+            }
+        }
+
         const createEvent = await configs.db.event.create({
             data: {
                 name: name,
@@ -57,7 +84,7 @@ const createEvent = async (req: IRequestWithId, formData: FormData): Promise<Res
         });
         if (createEvent) return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
         else {
-            // console.error("Error occurred while creating coupon:", createCoupon); // Log lỗi cụ thể
+            console.error("Error occurred while creating coupon:", createEvent); // Log lỗi cụ thể
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         }
     } catch (error) {
@@ -71,54 +98,108 @@ const createEvent = async (req: IRequestWithId, formData: FormData): Promise<Res
 const updateEvent = async (req: IRequestWithId, formData: FormData): Promise<ResponseBase> => {
     try {
         const { event_id } = req.params;
-        // const { code, discount, valid_start, valid_until, is_event, remain_quantity } = req.body;
         const name = req.body.name as string;
         const description = req.body.description as string;
         const startDate = req.body.start_date as string;
         const endDate = req.body.end_date as string;
-        const startDateISO = DateTime.fromISO(req.body.start_date); // Chuyển đổi start_date thành đối tượng DateTime
-        const endDateISO = DateTime.fromISO(req.body.end_date); // Chuyển đổi end_date thành đối tượng DateTime
-        // const isActive = req.body.is_active === "true";
+        const startDateISO = DateTime.fromISO(req.body.start_date).toJSDate(); // Chuyển đổi thành dạng Date
+        const endDateISO = DateTime.fromISO(req.body.end_date).toJSDate(); // Chuyển đổi thành dạng Date
         const user_id = Number(req.user_id);
-        const now = DateTime.local(); // Ngày giờ hiện tại
+        const now = DateTime.local().toJSDate(); // Chuyển đổi thành dạng Date
         const isAdmin = await configs.db.user.findFirst({
             where: {
                 id: user_id,
                 is_admin: true,
             },
         });
-        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+
+        if (!isAdmin) {
+            return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+        }
+
         let isActive = false;
-        // So sánh start_date và end_date với ngày giờ hiện tại
+
         if (startDateISO <= now && endDateISO > now) {
             isActive = true;
         }
+
         const isEventExist = await configs.db.event.findUnique({
             where: {
                 id: Number(event_id),
             },
         });
-        if (!isEventExist) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
-        const whereConditionForIsExistActiveEvent = {
-            is_active: true,
-            is_delete: false,
-            NOT: {
-                id: parseInt(event_id),
-            },
-        };
-        const isExistActiveEvent = await configs.db.event.findFirst({
-            where: whereConditionForIsExistActiveEvent,
-        });
-        if (isExistActiveEvent && isActive)
-            return new ResponseError(
-                501,
-                constants.error.ERROR_EXIST_ACTIVE_EVENT +
-                    ", please choose the start date of this event later than " +
-                    isExistActiveEvent.end_date,
-                false,
-            );
 
-        const updateCoupon = await configs.db.event.update({
+        if (!isEventExist) {
+            return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        }
+
+        const newStartDate = DateTime.fromISO(startDate).toJSDate(); // Chuyển đổi thành dạng Date
+        const newEndDate = DateTime.fromISO(endDate).toJSDate(); // Chuyển đổi thành dạng Date
+
+        // Kiểm tra xem có sự kiện nào khác nằm giữa thời gian mới của sự kiện không
+        const eventsInBetween = await configs.db.event.findMany({
+            where: {
+                id: {
+                    not: Number(event_id), // Loại trừ sự kiện đang chỉnh sửa
+                },
+                OR: [
+                    {
+                        AND: [
+                            {
+                                start_date: {
+                                    lte: newStartDate,
+                                },
+                            },
+                            {
+                                end_date: {
+                                    gte: newStartDate,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        AND: [
+                            {
+                                start_date: {
+                                    lte: newEndDate,
+                                },
+                            },
+                            {
+                                end_date: {
+                                    gte: newEndDate,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        AND: [
+                            {
+                                start_date: {
+                                    gte: newStartDate,
+                                },
+                            },
+                            {
+                                end_date: {
+                                    lte: newEndDate,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+        });
+
+        if (eventsInBetween.length > 0) {
+            const conflictingEvents = eventsInBetween.map((event) => event.name);
+            const errorMessage = `There is another event in this period of time: ${conflictingEvents.join(
+                ", ",
+            )}, please adjust the suitable time`;
+
+            // Nếu có sự kiện nằm giữa thời gian mới của sự kiện
+            return new ResponseError(501, errorMessage, false);
+        }
+
+        const updateEvent = await configs.db.event.update({
             data: {
                 name: name,
                 description: description,
@@ -130,19 +211,22 @@ const updateEvent = async (req: IRequestWithId, formData: FormData): Promise<Res
                 id: isEventExist.id,
             },
         });
-        if (updateCoupon) return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
-        {
-            console.error("error upat:", updateCoupon);
+
+        if (updateEvent) {
+            return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+        } else {
+            console.error("Error updating event:", updateEvent);
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         }
     } catch (error) {
+        console.error("An error occurred while updating event:", error);
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }
-        console.log(error);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+
 const deleteEvent = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { event_id } = req.params;
@@ -198,6 +282,7 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
             },
         });
         if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+        await updateEventsIsActiveAutomatic(req);
         const { search_item: searchItem, page_index: pageIndex } = req.query;
         const parsedSearchItem = searchItem as string;
         const pageSize = configs.general.PAGE_SIZE;
@@ -212,16 +297,19 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
                 is_delete: false,
             },
             orderBy: {
-                start_date: "desc",
+                start_date: "asc",
             },
             include: {
-                coupons: true,
-            }
+                coupons: {
+                    where: {
+                        is_delete: false,
+                    },
+                },
+            },
         });
         if (!getAllEvent) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         const totalRecord = await configs.db.event.count({
             where: {
-
                 is_delete: false,
             },
         });
@@ -257,6 +345,37 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
             data: events,
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, eventsResponseData);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const updateEventsIsActiveAutomatic = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: user_id,
+                is_admin: true,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+        const now = DateTime.local();
+        const allEvents = await configs.db.event.findMany();
+
+        for (const event of allEvents) {
+            const startDate = DateTime.fromISO(event.start_date.toISOString());
+            const endDate = DateTime.fromISO(event.end_date.toISOString());
+            const isActive = startDate <= now && now < endDate;
+
+            const updateEventAutomatic = await configs.db.event.update({
+                where: { id: event.id },
+                data: { is_active: isActive },
+            });
+        }
+        return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
@@ -357,7 +476,7 @@ const getEventById = async (req: IRequestWithId): Promise<ResponseBase> => {
             is_active: item.is_active,
             start_date: DateTime.fromISO(item.start_date.toISOString()),
             end_date: DateTime.fromISO(item.end_date.toISOString()),
-            coupons: (item.coupons as any).map((cp: any) => { 
+            coupons: (item.coupons as any).map((cp: any) => {
                 return {
                     coupon_id: cp.id,
                     code: cp.code,
@@ -414,5 +533,6 @@ const eventService = {
     getAllEvents,
     getEventById,
     getActiveEvent,
+    updateEventsIsActiveAutomatic,
 };
 export default eventService;

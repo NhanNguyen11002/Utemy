@@ -41,7 +41,7 @@ const CouponCard: React.FC<CouponCardProps> = (props) => {
                                 <h1 className="text-black font-bold text-lg"> Phần trăm giảm giá:</h1>
 
                                 <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
-                                    {props.coupon.discount}
+                                    {props.coupon.discount*100+"%"}
                                 </p>
                             </div>
                             <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
@@ -69,7 +69,7 @@ const CouponCard: React.FC<CouponCardProps> = (props) => {
                                 <h1 className="text-black font-bold text-lg"> Giá giảm tối đa:</h1>
 
                                 <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
-                                    {props.coupon.max_discount_money}
+                                    {props.coupon.max_discount_money+" VNĐ"}
                                 </p>
                             </div>
                             <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">

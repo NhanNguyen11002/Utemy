@@ -20,5 +20,5 @@ couponRouter.post("/owner/", isLogin, controllers.couponController.createCouponO
 
 couponRouter.get("/route/:coupon_id", isLogin, controllers.couponController.getCouponById);
 couponRouter.get("/spin-history/:event_id", isLogin, controllers.couponController.getHistorySpinOfUserForAEvent);
-
+couponRouter.get("/spin/voucher", isLogin, controllers.couponController.getVoucherBySpin);
 export default couponRouter;
