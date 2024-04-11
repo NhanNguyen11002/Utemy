@@ -75,15 +75,24 @@ export default class CouponController {
     }
     async createCouponOwner(req: IRequestWithId, res: Response): Promise<Response> {
         const coupon_id: number = req.body.id;
-        const response: ResponseBase = await services.CouponServices.createCouponOwner(req, coupon_id);
+        const event_id: number = req.body.event_id;
+        const response: ResponseBase = await services.CouponServices.createCouponOwner(req, coupon_id, event_id);
         return res.status(response.getStatusCode()).json(response);
     }
     async getAllEventCoupon(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.CouponServices.getAllEventCoupon(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getAllEventCouponByEventId(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.getAllEventCouponByEventId(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
     async getCouponById(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.CouponServices.getCouponById(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getHistorySpinOfUserForAEvent(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.getHistorySpinOfUserForAEvent(req);
         return res.status(response.getStatusCode()).json(response);
     }
 }

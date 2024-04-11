@@ -1,14 +1,15 @@
 import { Formik, ErrorMessage, Field } from "formik";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../../hooks/hooks";
 import toast, { Toaster } from "react-hot-toast";
 import { NewCoupon as CreateCouponType } from "../../../types/coupon";
-import { couponActions } from "../../../redux/slices";
+import { couponActions, eventActions } from "../../../redux/slices";
 import { editCouponValidationSchema } from "../../../validations/coupon";
 
 type PopUpEditCouponProps = {
     couponId: number;
     // couponCode: string,
+    eventId: number | null;
     handleCancelEditCoupon(): void;
 };
 
@@ -18,15 +19,54 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
     const formikRef = useRef(null);
     const isLoading = useAppSelector((state) => state.couponSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.couponSlice.isGetLoading);
-    // const [image, setImage] = useState<File | null>(null);
+    const events = useAppSelector((state) => state.eventSlice.events);
+    // const event = useAppSelector((state) => state.eventSlice.event);
+    const [isChecked, setIsChecked] = useState(false); // State để theo dõi trạng thái của checkbox
+    const [selectedEventId, setSelectedEventId] = useState(''); // Theo dõi trạng thái của dropdown nếu có giá trị được chọn
     const dispatch = useAppDispatch();
+    // useEffect(() => {
+    //     if (events.length > 0 && selectedEventId === '') {
+    //         setSelectedEventId(events[0].event_id.toString()); // Chọn giá trị đầu tiên trong dropdown nếu chưa có giá trị được chọn
+    //     }
+       
+    // }, [events, selectedEventId]);
+    
+    useEffect(() => {
+        // Dispatch action để lấy danh sách sự kiện khi component được mount
+        dispatch(eventActions.getAllEvents());
+    }, [dispatch]);
+    const handleCheckboxChange = (e:any) => {
+        if (events.length > 0 && selectedEventId === '') {
+            setSelectedEventId(events[0].event_id.toString()); // Chọn giá trị đầu tiên trong dropdown nếu chưa có giá trị được chọn
+        }
+        setIsChecked(e.target.checked); // Cập nhật trạng thái của checkbox khi thay đổi
+        if (!e.target.checked) {
+            setSelectedEventId('');
+        }
+    };
+    // const [image, setImage] = useState<File | null>(null);
+    const validStart = new Date(coupon.valid_start);
+    const validUntil = new Date(coupon.valid_until);
+
+    const formatDateTime = (date: Date): string => {
+        const pad = (n: number) => (n < 10 ? '0' + n : n);
+        const year = date.getFullYear();
+        const month = pad(date.getMonth() + 1);
+        const day = pad(date.getDate());
+        const hours = pad(date.getHours());
+        const minutes = pad(date.getMinutes());
+
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
     const initialValues: CreateCouponType = {
         code: coupon.code,
         discount: coupon.discount,
         is_event: coupon.is_event,
         remain_quantity: coupon.remain_quantity,
-        valid_start: coupon.valid_start,
-        valid_until: coupon.valid_until,
+        valid_start: formatDateTime(validStart),
+        valid_until: formatDateTime(validUntil),
+        max_discount_money: coupon.max_discount_money,
+        event_id: coupon.event_id
     };
     const handleOnSubmit = async (values: CreateCouponType) => {
         const formData = new FormData();
@@ -38,8 +78,10 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
         const validUntil = new Date(values.valid_until).toISOString();
         formData.append("valid_start", validStart);
         formData.append("valid_until", validUntil);
-        formData.append("is_event", String(values.is_event));
-
+        const isEventValue = selectedEventId !== '' ? 'true' : 'false';
+        // Thêm giá trị của is_event vào FormData
+        formData.append("is_event", isEventValue);        formData.append("max_discount_money", values.max_discount_money.toString());
+        formData.append("event_id", selectedEventId); // Đây là trường ẩn chứa event_id được chọn từ select
         console.log(formData);
         dispatch(couponActions.updateCoupon({ coupon_id: props.couponId, body: formData })).then((response: any) => {
             if (response.payload && response.payload.status_code === 200) {
@@ -54,9 +96,29 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
     useEffect(() => {
         console.log("Coupon ID:");
         dispatch(couponActions.getCouponById(props.couponId));
-    }, [dispatch, props.couponId]);
-    const validStart = coupon.valid_start.slice(0, -5);
-    const validUntil = coupon.valid_until.slice(0, -5);
+        if (props.eventId !== null) {
+            dispatch(eventActions.getEventById(props.eventId)).then((response: any) => {
+                setIsChecked(true);
+                setSelectedEventId(response.payload.data.event_id);
+            });      
+        } else {
+            setIsChecked(false);
+            setSelectedEventId('');
+        }
+        }, [dispatch, props.couponId, props.eventId]);
+    // useEffect(() => {
+    //     if (event.event_id.toString() !== '') {
+    //         setSelectedEventId(event.event_id.toString()); // Assume id is the property containing the event id
+    //         console.log("eventid: ",event.event_id)
+    //         setIsChecked(true);
+    //     }
+    //     else{
+    //         setIsChecked(false);
+    //         setSelectedEventId('');
+    //     }
+    // }, [event]);
+
+    // const validUntil = coupon.valid_until.slice(0, -5);
 
     return (
         <>
@@ -142,7 +204,7 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
                                                 type="datetime-local"
                                                 name="valid_start"
                                                 id="valid_start"
-                                                value={validStart} // Thêm giá trị value tương ứng
+                                                value={formik.values.valid_start} // Thêm giá trị value tương ứng
                                                 onBlur={formik.handleBlur} // Xử lý sự kiện blur
                                                 onChange={formik.handleChange} // Xử lý sự kiện thay đổi
                                                 className={`${
@@ -169,8 +231,12 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
                                                 type="datetime-local"
                                                 name="valid_until"
                                                 id="valid_until"
-                                                value={validUntil} // Thêm giá trị value tương ứng
-                                                onChange={formik.handleChange} // Xử lý sự kiện thay đổi
+                                                value={formik.values.valid_until} // Thêm giá trị value tương ứng
+                                                onChange={(e: { target: { value: any; }; }) => {
+                                                    formik.handleChange(e);
+                                                    console.log("Datetime value changed:", e.target.value);
+
+                                                } }// Xử lý sự kiện thay đổi
                                                 onBlur={formik.handleBlur} // Xử lý sự kiện blur
                                                 className={`${
                                                     formik.errors.valid_until && formik.touched.valid_until
@@ -208,6 +274,30 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
                                                 className="text-[14px] text-error font-medium"
                                             />
                                         </div>
+                                        <div className="flex-1 flex flex-col w-full">
+                                            <label
+                                                htmlFor="max_discount_money"
+                                                className="text-sm mb-1 font-medium tablet:text-xl"
+                                            >
+                                                Giá giảm tối đa:
+                                            </label>
+                                            <Field
+                                                type="text"
+                                                name="max_discount_money"
+                                                id="max_discount_money"
+                                                placeholder={coupon.max_discount_money}
+                                                className={`${
+                                                    formik.errors.max_discount_money && formik.touched.max_discount_money
+                                                        ? "border-error"
+                                                        : ""
+                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                            />
+                                            <ErrorMessage
+                                                name="max_discount_money"
+                                                component="span"
+                                                className="text-[14px] text-error font-medium"
+                                            />
+                                        </div>
                                         <div className="flex flex-col w-full">
                                             <label
                                                 htmlFor="is_event"
@@ -216,16 +306,30 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
                                                 Coupon cho sự kiện?
                                             </label>
                                             <div className="flex items-center mt-4">
-                                                <Field
-                                                    type="checkbox"
-                                                    name="is_event"
-                                                    id="is_event"
-                                                    className="mr-2 transform scale-150"
+                                                <input
+                                                type="checkbox"
+                                                name="is_event"
+                                                id="is_event"
+                                                className="mr-2 transform scale-150"
+                                                checked={isChecked} // Sử dụng state để xác định trạng thái của checkbox
+                                                onChange={handleCheckboxChange} // Sự kiện xảy ra khi checkbox thay đổi
                                                 />
                                                 <label htmlFor="is_event" className="text-sm text-sm ml-4">
-                                                    Check để chọn
+                                                Check để chọn
                                                 </label>
                                             </div>
+                                            {isChecked && ( // Hiển thị dropdown nếu checkbox được chọn
+                                                <select style={{ marginTop: '20px', backgroundColor: 'lightgray', color: 'black', border: '1px solid black', height: '30px' }}
+                                                    value={selectedEventId}
+                                                    onChange={(e) => setSelectedEventId(e.target.value)}>
+                                                {/* Render options from events array */}
+                                                {events.map((event) => (
+                                                    <option key={event.event_id} value={event.event_id}>
+                                                        {event.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            )}
                                         </div>
                                     </div>
 

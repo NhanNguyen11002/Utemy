@@ -17,11 +17,13 @@ export default class InvoiceController {
             const total: number = req.body.totalwithcoupon;
             const discount: number = req.body.discount;
             const coupon_id: number | null = req.body.id;
+            const max_discount_money: number = req.body.maxdiscountamount;
             const response: ResponseBase = await services.InvoiceServices.createInvoice(
                 req,
                 total,
                 discount,
                 coupon_id,
+                max_discount_money,
             );
 
             return res.status(response.getStatusCode()).json(response);

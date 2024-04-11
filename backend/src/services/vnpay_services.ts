@@ -202,7 +202,7 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
                         },
                     });
                 }
-            
+
                 // Kiểm tra kết quả các thao tác và trả về kết quả tương ứng
                 if (createCouponHistory) {
                     const data = { RspCode: "00", Message: "success" };

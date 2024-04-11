@@ -12,7 +12,7 @@ import {
 } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 import { AddSection as AddSectionType, Section as SectionType } from "../../types/section";
-import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 import * as Tabs from "@radix-ui/react-tabs";
 import toast from "react-hot-toast";
 import EditForm from "./EditForm";
@@ -204,7 +204,7 @@ const EditCourse: React.FC = () => {
                             href={`/lecturer`}
                             className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300"
                         >
-                            <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
+                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
                             <p className="text-lg"> Quản lý khoá học của tôi</p>
                         </a>
                         <div className="w-[230px] h-px bg-gray-300"></div>

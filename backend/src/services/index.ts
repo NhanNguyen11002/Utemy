@@ -17,6 +17,7 @@ import CouponServices from "./coupon.services";
 import ApprovalServices from "./approval.services";
 import DecisionServices from "./decision.services";
 import ReportServices from "./report.services";
+import EventServices from "./event.services";
 export default {
     AuthServices,
     UserService,
@@ -37,4 +38,5 @@ export default {
     ApprovalServices,
     DecisionServices,
     ReportServices,
+    EventServices,
 };

@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
 import { cartActions, invoiceActions } from "../../redux/slices";
 import { toast } from "react-hot-toast";
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const getPercentDiscount = (subTotal: number, subTotalRetail: number) => {
     return 100 - Math.ceil((subTotal / subTotalRetail) * 100);
@@ -14,21 +15,28 @@ const Cart: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [discountInfo, setDiscountInfo] = useState<{ discount: number, id: number | null } | null>(null);// State để lưu thông tin giảm giá từ server
+    const [maxDiscountMoneyInfo, setMaxDiscountMoneyInfo] = useState<{ max_discount_money: number, id: number | null } | null>(null);// State để lưu thông tin giá giảm tối đa từ server
     const [couponError,setCouponError] = useState<string | null>(null);
     const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
+    const [couponValue, setCouponValue] = useState("");
+    const [showRecaptcha, setShowRecaptcha] = useState(false);
+
+
 
     const carts = useAppSelector((state) => state.cartSlice.userCart);
     const subTotal = useAppSelector((state) => state.cartSlice.subTotal);
     const subTotalRetail = useAppSelector((state) => state.cartSlice.subTotalRetail);
     const isGetLoading = useAppSelector((state) => state.cartSlice.isGetLoading);
-        const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
+        // const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
 
     // const discount = useAppSelector((state) => state.cartSlice.discount) || 0;
+    
     const handleCheckout = () => {
         const totalWithCoupon = calculateTotal();
         const discount = discountInfo?.discount || 0; // Giảm giá có thể không tồn tại, nên cần xác định giá trị mặc định là 0
-        const coupon_id: number | null = discountInfo?.id || null;        
-        dispatch(invoiceActions.createInvoice({ totalWithCoupon, discount, coupon_id })).then((response) => {
+        const max_discount_money = maxDiscountMoneyInfo?.max_discount_money || 0; // Giảm giá có thể không tồn tại, nên cần xác định giá trị mặc định là 0
+        const coupon_id: number | null = discountInfo?.id || maxDiscountMoneyInfo?.id || null;        
+        dispatch(invoiceActions.createInvoice({ totalWithCoupon, discount, coupon_id, max_discount_money})).then((response) => {
             if (response.payload?.status_code === 200) {
                 toast.success(response.payload?.message);
                 navigate("/checkout");
@@ -58,48 +66,77 @@ const Cart: React.FC = () => {
             }
         });
     };
-    // Hàm xử lý khi nhập mã giảm giá và xác nhận
+    const handleCheckCoupon = () => {
+        // Check if couponValue is empty
+        if (!couponValue.trim()) {
+            // Display error toast message if couponValue is empty
+            toast.error("Hãy nhập mã trước khi nhấn nút kiểm tra.");
+            return;
+        }
+        setCouponSuccess(null);
+        setCouponError(null);
+        // Hiển thị ReCAPTCHA
+        setShowRecaptcha(true);
+    };
+
     const applyCouponCode = (code: string) => {
+            
         // Reset previous error message
         setCouponError("");
         setCouponSuccess("");
+    
         // Xóa timeout trước nếu có
-        if (typingTimeout) {
-            clearTimeout(typingTimeout);
-        }
-        
-        // Thiết lập timeout mới
-        const timeout = setTimeout(() => {
-            dispatch(cartActions.getCouponByCode(code)).then((response) => {
-                if (response.payload?.status_code === 200) {
-                    if (response.payload.data) {
+        // if (typingTimeout) {
+        //     clearTimeout(typingTimeout);
+        // }
+    
+        // Gọi hàm dispatch ngay khi người dùng nhấn nút
+        dispatch(cartActions.getCouponByCode(code)).then((response) => {
+            if (response.payload?.status_code === 200) {
+                if (response.payload.data) {
+                    const couponData = response.payload.data;
+                    const couponDiscount = couponData.discount || 0;
+                    const maxDiscountMoney = couponData.max_discount_money || 0;
+    
+                    if (couponDiscount * subTotal < maxDiscountMoney) {
                         setDiscountInfo({
-                            discount: response.payload.data?.discount || 0,
-                            id: response.payload.data?.id || null,
-                          });                        
-                        setCouponSuccess("Mã giảm giá hợp lệ! Bạn được giảm " + response.payload.data.discount*100 + "%");
-
+                            discount: couponDiscount,
+                            id: couponData.id || null,
+                        });
+                        setMaxDiscountMoneyInfo({
+                            max_discount_money: maxDiscountMoney,
+                            id: couponData.id || null,
+                        });
+                        setCouponSuccess("Mã giảm giá hợp lệ! Bạn được giảm " + couponDiscount * 100 + "%");
                     } else {
+                        setMaxDiscountMoneyInfo({
+                            max_discount_money: maxDiscountMoney,
+                            id: couponData.id || null,
+                        });
                         setDiscountInfo(null);
-                        setCouponError("Mã giảm giá không hợp lệ!");
+                        setCouponSuccess("Mã giảm giá hợp lệ! Bạn được giảm " + couponDiscount * 100 + "%, nhưng chỉ được giảm tối đa " + maxDiscountMoney + "đ đối với đơn hàng này");
                     }
-                } else {
-                    setDiscountInfo(null);
-                    setCouponError("Mã giảm giá không hợp lệ!");
                 }
-            });
-        }, 3000);
-
-        // Lưu lại timeout
-        setTypingTimeout(timeout);
+            } else {
+                setDiscountInfo(null);
+                setMaxDiscountMoneyInfo(null);
+                setCouponError("Mã giảm giá không hợp lệ!");
+            }
+        });
+        console.log('ReCAPTCHA verified, applying coupon code:', couponValue);
+    
     };
-
+    
 
     // Tính toán tổng tiền mới sau khi áp dụng mã giảm giá
     const calculateTotal = () => {
         if (discountInfo) {
             // Nếu có thông tin giảm giá từ server, tính toán tổng tiền mới
             const discountedTotal = subTotal * (1 - discountInfo.discount);
+            return discountedTotal;
+        } else if (maxDiscountMoneyInfo) {
+            // Nếu có thông tin giảm giá tối đa từ server, tính toán tổng tiền mới
+            const discountedTotal = subTotal - maxDiscountMoneyInfo.max_discount_money;
             return discountedTotal;
         } else {
             // Nếu không có thông tin giảm giá, tổng tiền không thay đổi
@@ -117,8 +154,16 @@ const Cart: React.FC = () => {
     
     useEffect(() => {
         dispatch(cartActions.getAllCart());
+        setCouponValue("");
+
         // dispatch(cartAction.getAllCoupon());
     }, [dispatch]);
+    // const location = useLocation();
+    // const fromCheckout = location.state?.fromCheckout || false;
+    useEffect(() => {
+        setCouponValue("");
+        
+      },[]);
     let count = 0;
     return (
         <>
@@ -204,13 +249,35 @@ const Cart: React.FC = () => {
                             <p className="text-gray-600">Mã giảm giá</p>
                             <input
                                 type="text"
+                                value={couponValue}
                                 onChange={(e) => {
                                     // getDiscount(e.target.value)
-                                    applyCouponCode((e.target.value));                                }}
+                                    // applyCouponCode((e.target.value));   
+                                    setCouponValue(e.target.value)
+                                }
+                                }
                                 placeholder="Tùy chọn..."
                                 className="input input-bordered input-info input-md w-full max-w-xs"
                             />
+                            <button
+                                className="transition-colors text-center text-sm bg-bluelogo hover:bg-background hover:text-bluelogo hover:border-bluelogo hover:border p-2 rounded-sm w-40 text-white text-hover shadow-md"
+                                onClick={handleCheckCoupon}
+                            >
+                                {/* Thay thế dấu "?" bằng biểu tượng hoặc hình ảnh của nút kiểm tra */}
+                                KIỂM TRA
+                            </button>
+                            
                         </div>
+                        {showRecaptcha && (
+                                <ReCAPTCHA
+                                    sitekey="6Ldix7QpAAAAAISxU5qJ7Jh4wGTNao6CR50YzCP3"
+                                    onChange={(token) => {
+                                        console.log('ReCAPTCHA verified, token:', token);
+                                        applyCouponCode(couponValue);
+                                        setShowRecaptcha(false); // Ẩn ReCAPTCHA sau khi được xác nhận
+                                        document.querySelectorAll('iframe[src*=recaptcha]').forEach(a => a.remove());                                    }}
+                                />
+                            )}
                         {couponSuccess && ( // Render success message if there's any
                         <p className="text-green-500 text-sm">{couponSuccess}</p>
                         )}

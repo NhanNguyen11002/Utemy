@@ -16,6 +16,7 @@ import CouponController from "./coupon.controller";
 import ApprovalController from "./approval.controller";
 import DecisionController from "./decision.controller";
 import ReportController from "./report.controller";
+import EventController from "./event.controller";
 
 export default {
     authController: new AuthController(),
@@ -36,4 +37,5 @@ export default {
     approvalController: new ApprovalController(),
     decisionController: new DecisionController(),
     reportController: new ReportController(),
+    eventController: new EventController(),
 };

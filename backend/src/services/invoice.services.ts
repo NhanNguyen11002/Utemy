@@ -12,8 +12,10 @@ const createInvoice = async (
     totalwithcoupon: number,
     discount: number,
     coupon_id: number | null,
+    max_discount_money: number,
 ): Promise<ResponseBase> => {
     try {
+        console.log("Total with coupon is: ", max_discount_money);
         const userId = Number(req.user_id);
         const isInvoiceNotSucess = await configs.db.invoice.findFirst({
             where: {
@@ -31,6 +33,7 @@ const createInvoice = async (
             data: {
                 user_id: userId,
                 total_money: totalwithcoupon,
+                coupon_id: coupon_id,
             },
         });
         let cartId = 0;
@@ -63,12 +66,35 @@ const createInvoice = async (
             return new ResponseError(404, "You don't have any courses in cart", false);
         }
         let total_money = 0;
+        let totalorigin = 0;
+        const now = new Date();
+        boughtCourses.forEach((cartDetail) => {
+            if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
+                totalorigin += cartDetail.course.sale_price;
+            } else {
+                totalorigin += cartDetail.course.price;
+            }
+        });
+        const ratio = max_discount_money / totalorigin;
+        console.log("totalorigin: ", totalorigin);
+        console.log("max discount money: ", max_discount_money);
         const createInvoiceDetailData = boughtCourses.map((cartDetail) => {
             const now = new Date();
             let paidPrice;
             if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
-                paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * discount;
-            } else paidPrice = cartDetail.course.price - cartDetail.course.price * discount;
+                if (Number(totalorigin)- totalwithcoupon < max_discount_money)
+                    paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * discount;
+                else paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * ratio;
+            } else {
+                if (Number(totalorigin) - totalwithcoupon < max_discount_money) {
+                    paidPrice = cartDetail.course.price - cartDetail.course.price * discount;
+                } else paidPrice = cartDetail.course.price - cartDetail.course.price * ratio;
+            }
+            // if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
+            //     paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * discount;
+            // } else {
+            //     paidPrice = cartDetail.course.price - cartDetail.course.price * discount;
+            // }
             total_money += Number(paidPrice);
             const data = {
                 invoice_id: createInvoice.id,

@@ -17,4 +17,7 @@ export type CouponResponse = {
     valid_until: DateTime | null;
     remain_quantity: number;
     is_event: boolean;
-}
+    max_discount_money: number;
+    event_id: number | null;
+    event_name: string | null;
+};

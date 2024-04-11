@@ -1,7 +1,11 @@
+import { useAppSelector } from '../../hooks/hooks';
+import { couponActions } from '../../redux/slices';
+import { AppDispatch } from '@/redux/store';
 import React, { useState } from 'react';
 import { Wheel } from 'react-custom-roulette';
 import { WheelData } from 'react-custom-roulette/dist/components/Wheel/types'; // Import WheelData type
 import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 
 // Define props interface
 interface Props {
@@ -17,19 +21,31 @@ const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
     ...discounts,
     { option: 'Chúc bạn may mắn lần sau' , style: { fontSize: 12 } }
   ];
+  const dispatch = useDispatch<AppDispatch>();
+  const eventForSpin = useAppSelector((state) => state.eventSlice.eventForSpin);
   const handleSpinClick = () => {
-    // Clear the previous spin result
-    onSpinResult(null);
+    dispatch(couponActions.getHistorySpinOfUserForAEvent(eventForSpin.id))
+        .then((action: any) => {
+          if(action.payload.status_code !==200)
+          {
+            // Clear the previous spin result
+            onSpinResult(null);
 
-    // Generate a random prize number
-    const newPrizeNumber = Math.floor(Math.random() * wheelDataWithGoodLuckMessage.length);
-    // Set the prize number and start spinning
-    setPrizeNumber(newPrizeNumber);
-    setMustSpin(true);
-    // Call the parent component's spin result handler with the selected discount
-    // setTimeout(() => {
-    //     onSpinResult(discounts[newPrizeNumber]);
-    //   }, 3000); // Display the result after 3 seconds (3000 milliseconds)
+            // Generate a random prize number
+            const newPrizeNumber = Math.floor(Math.random() * wheelDataWithGoodLuckMessage.length);
+            // Set the prize number and start spinning
+            setPrizeNumber(newPrizeNumber);
+            setMustSpin(true);
+            // Call the parent component's spin result handler with the selected discount
+            // setTimeout(() => {
+            //     onSpinResult(discounts[newPrizeNumber]);
+            //   }, 3000); // Display the result after 3 seconds (3000 milliseconds)
+          }
+          else{
+            toast.error("Bạn đã quay vòng quay cho sự kiện này rồi!!")
+          }
+        })
+    
     };
 
     // Thêm ô "Chúc bạn may mắn lần sau" vào mảng discounts
