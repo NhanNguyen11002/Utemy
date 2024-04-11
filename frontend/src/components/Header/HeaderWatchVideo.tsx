@@ -40,7 +40,7 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                         <div className="h-6 w-px bg-gray-700"></div>
                     </div>
                     <div className="w-full  p-[16px]  rounded-[8px]">
-                        <Link to={`${isAdmin && "/admin"}/course-detail/${course.slug}`}>
+                        <Link to={`/${isAdmin ? "admin/" : ""}course-detail/${course.slug}`}>
                             <h2 className="text-white text-xl  hover:opacity-70 ">{course.title}</h2>
                         </Link>
                     </div>

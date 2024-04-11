@@ -46,6 +46,7 @@ import UserWatchVideoLayout from "./layout/userWatchVideoLayout";
 import UserAppLayoutWithNav from "./layout/userAppLayoutWithNav";
 import LecturerAppLayout from "./layout/lecturerAppLayout";
 import CouponAdmin from "./pages/Admin/Coupon";
+import ReportAdmin from "./pages/Admin/Report";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -73,6 +74,7 @@ function App() {
                                 <Route path="user/create" element={<CreateUser />}></Route>
                                 <Route path="feedback" element={<FeedbackAdmin />}></Route>
                                 <Route path="approval" element={<ApprovalAdmin />}></Route>
+                                <Route path="report" element={<ReportAdmin />}></Route>
                                 <Route path="course/:slug" element={<CourseAdmin />}></Route>
                                 <Route path="course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
                                 <Route path="*" element={<NotFound />}></Route>

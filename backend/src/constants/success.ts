@@ -47,5 +47,10 @@ const success = {
     //decision
     SUCCESS_CREATE_DECISION: "Create decision successfully",
     SUCCESS_GET_DECISION: "Get decision successfully",
+    SUCCES_HANDLE_DECISION: "Handle decision successfully",
+
+    //report
+    SUCCESS_CREATE_REPORT: "Create report successfully",
+    SUCCESS_HANDLE_REPORT: "Handle report successfully",
 };
 export default success;

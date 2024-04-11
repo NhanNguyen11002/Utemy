@@ -15,6 +15,7 @@ import testRouter from "./test.router";
 import couponRouter from "./coupon.router";
 import approvalRouter from "./approval.router";
 import decisionRouter from "./decision.router";
+import reportRouter from "./report.router";
 
 export default {
     authRouter,
@@ -34,4 +35,5 @@ export default {
     couponRouter,
     decisionRouter,
     approvalRouter,
+    reportRouter,
 };

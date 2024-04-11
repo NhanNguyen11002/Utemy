@@ -381,6 +381,7 @@ model Report {
   is_lecture Boolean @default(false)
   lecture_id   Int?
   lecture      Lecture?   @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  title String @db.VarChar(200)
   content String @db.Text
   is_handle Boolean @default(false)
   user_id Int

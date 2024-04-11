@@ -45,7 +45,7 @@ export const uploadThumbnail = async (req: IRequestWithId, res: Response, next: 
         next();
     });
 };
-export const uploadEvidence = async (req: IRequestWithId, res: Response, next: NextFunction) => {
+export const uploadEvidence = async (req: IRequestWithId, res: Response) => {
     configs.upload.uploadEvidence(req, res, (error: any) => {
         if (error instanceof MulterError) {
             console.log(error);
@@ -59,9 +59,11 @@ export const uploadEvidence = async (req: IRequestWithId, res: Response, next: N
         const file = req.file;
         if (file) {
             const convertFilePath = helper.ConvertHelper.convertFilePath(file.path);
-            res.status(200).json({ message: "Upload success", success: true, status_code: 200, url: convertFilePath });
+            res.status(200).json({ message: "Upload success", success: true, status_code: 200, data: convertFilePath });
+            return;
         }
         res.status(400).json({ message: error.message, success: false, status_code: 400 });
+        return;
     });
 };
 export const uploadVideo = async (req: IRequestWithId, res: Response, next: NextFunction) => {

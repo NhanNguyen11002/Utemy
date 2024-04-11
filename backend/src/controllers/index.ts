@@ -15,6 +15,7 @@ import TestController from "./test.controller";
 import CouponController from "./coupon.controller";
 import ApprovalController from "./approval.controller";
 import DecisionController from "./decision.controller";
+import ReportController from "./report.controller";
 
 export default {
     authController: new AuthController(),
@@ -34,4 +35,5 @@ export default {
     couponController: new CouponController(),
     approvalController: new ApprovalController(),
     decisionController: new DecisionController(),
+    reportController: new ReportController(),
 };

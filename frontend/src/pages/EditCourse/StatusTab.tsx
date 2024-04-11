@@ -1,9 +1,9 @@
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { ScrollArea } from "../../components/ui/scroll-area";
+// import { ScrollArea } from "../../components/ui/scroll-area";
 import { CheckBadgeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { DeleteModal } from "../../components";
-import { useState } from "react";
-import { approvalActions, courseActions } from "../../redux/slices";
+import { DeleteModal, DecisionCard } from "../../components";
+import { useEffect, useState } from "react";
+import { approvalActions, courseActions, decisionActions } from "../../redux/slices";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 type StatusTabProps = {};
@@ -14,9 +14,9 @@ const StatusTab: React.FC<StatusTabProps> = () => {
     const course_id = useAppSelector((state) => state.courseSlice.courseDetail.course_id);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
-    console.log(course_id, isGetLoading, isLoading);
     const status = useAppSelector((state) => state.courseSlice.courseDetail.status);
     const approval = useAppSelector((state) => state.courseSlice.courseDetail.approval) || [];
+    const decision = useAppSelector((state) => state.decisionSlice.decisions) || [];
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState<boolean>(false);
 
     const handleDeleteCourse = () => {
@@ -53,6 +53,9 @@ const StatusTab: React.FC<StatusTabProps> = () => {
             }
         });
     };
+    useEffect(() => {
+        dispatch(decisionActions.getDecisionsByCourseId(course_id));
+    }, [course_id]);
 
     return (
         <div className="w-full border min-h-[600px] shadow-md">
@@ -98,13 +101,15 @@ const StatusTab: React.FC<StatusTabProps> = () => {
                 </div>
                 <div className="mt-2 mb-4">
                     <p className="font-bold mb-2">Các quyết định trên khoá học của bạn</p>
-                    <ScrollArea className=" min-h-[100px] h-fit max-h-[400px] w-[full] rounded-md border p-4">
-                        Jokester began sneaking into the castle in the middle of the night and leaving jokes all over
-                        the place: under the king's pillow, in his soup, even in the royal toilet. The king was furious,
-                        but he couldn't seem to stop Jokester. And then, one day, the people of the kingdom discovered
-                        that the jokes left by Jokester were so funny that they couldn't help but laugh. And once they
-                        started laughing, they couldn't stop.
-                    </ScrollArea>
+                    <div className=" min-h-[100px] h-fit max-h-[400px] w-[full] rounded-md border p-4 grid grid-cols-2 gap-3 overflow-y-scroll ">
+                        {decision.length > 0 ? (
+                            decision.map((decision) => {
+                                return <DecisionCard decision={decision} isAuthor={true} />;
+                            })
+                        ) : (
+                            <p>Không có quyết định nào trên khoá học của bạn</p>
+                        )}
+                    </div>
                 </div>
             </div>
             <div className="p-6">
@@ -118,7 +123,7 @@ const StatusTab: React.FC<StatusTabProps> = () => {
                     onClick={() => setIsOpenDeleteModal(true)}
                     className="p-4 py-3 px-4 bg-red-400 hover:bg-red-500 rounded-sm transition-all duration-300 my-2 text-white text-lg"
                 >
-                    Xoá khoá học{" "}
+                    {isLoading || isGetLoading ? "Loading" : "Xoá khoá học"}{" "}
                 </button>
             </div>
         </div>

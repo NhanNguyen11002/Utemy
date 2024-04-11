@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import ReactQuill from "react-quill";
-
 //{  QuillOptions}
 import "react-quill/dist/quill.snow.css"; // Import styles
 import "react-quill/dist/quill.bubble.css"; // (Optional) Import additional styles
-// interface QuillWithCustomOptions extends QuillOptions {
-//     getCustomToolbar(): string[];
-// }
-type TextEditorProps = {
+import { useAppDispatch } from "../../hooks/hooks";
+import { decisionActions } from "../../redux/slices";
+import toast from "react-hot-toast";
+type TextEditorWithImageProps = {
     content?: string;
     handleChangeContent(content: string): void;
 };
-const TextEditor: React.FC<TextEditorProps> = (props) => {
-    const [display, setDisplay] = useState<string>(props.content ? props.content : "");
-    let quillObj: any;
-    console.log(quillObj);
-    const imageHandler = async () => {
+const TextEditorWithImage: React.FC<TextEditorWithImageProps> = (props) => {
+    const [display, setDisplay] = useState<string>("");
+    const dispatch = useAppDispatch();
+    const quillObj = useRef<any>();
+    const imageHandler = async (img: any) => {
         const input = document.createElement("input");
 
         input.setAttribute("type", "file");
@@ -28,28 +27,40 @@ const TextEditor: React.FC<TextEditorProps> = (props) => {
                 let file: any = input.files[0];
                 let formData = new FormData();
 
-                formData.append("evidence", file);
+                formData.append("evidence_image", file);
+
+                dispatch(decisionActions.uploadEvidence(formData)).then((res) => {
+                    if (res.payload && res.payload.data) {
+                        const range = quillObj.current.getEditorSelection();
+                        quillObj.current.getEditor().insertEmbed(range.index, "image", res.payload.data);
+                    } else toast.error("Something wrong happened");
+                });
             }
         };
     };
-    const modules = {
-        toolbar: {
-            container: [
-                [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                ["bold", "italic", "underline", "strike", "blockquote"],
-                [{ list: "ordered" }, { list: "bullet" }],
-                [{ align: [] }],
-                ["link", "image"],
-                ["clean"],
-                [{ color: [] }],
-            ],
-            handlers: {
-                image: imageHandler,
-            },
-        },
-        table: true,
-    };
 
+    const modules = useMemo(
+        () => ({
+            toolbar: {
+                container: [
+                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                    ["bold", "italic", "underline"],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    [{ align: [] }],
+                    ["link", "image"],
+                    ["clean"],
+                    [{ color: [] }],
+                ],
+                handlers: {
+                    image: imageHandler,
+                },
+            },
+        }),
+        [],
+    );
+    useEffect(() => {
+        setDisplay(props.content ? props.content : "");
+    }, [props.content]);
     const handleOnChange = (content: string) => {
         props.handleChangeContent(content);
         setDisplay(content);
@@ -57,16 +68,14 @@ const TextEditor: React.FC<TextEditorProps> = (props) => {
     return (
         <div>
             <ReactQuill
-                ref={(el) => {
-                    quillObj = el;
-                }}
+                ref={quillObj}
                 theme="snow"
                 value={display}
                 modules={modules}
                 onChange={handleOnChange}
-                className="h-[200px]"
+                className="h-[200px] display:block z-20"
             />
         </div>
     );
 };
-export default TextEditor;
+export default TextEditorWithImage;

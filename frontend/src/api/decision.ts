@@ -10,6 +10,11 @@ const getDecisionsByCourseId = async (values: number) => {
     const response = await apiCaller("get", path);
     return response;
 };
+const handleDecision = async (values: number) => {
+    const path = `decision/handle/${values}`;
+    const response = await apiCaller("patch", path);
+    return response;
+};
 const uploadEvidence = async (values: FormData) => {
     const path = `decision/evidence`;
     const response = await apiCaller("post", path, values);
@@ -19,6 +24,7 @@ const decisionApis = {
     createDecision,
     getDecisionsByCourseId,
     uploadEvidence,
+    handleDecision,
 };
 
 export default decisionApis;
