@@ -10,6 +10,9 @@ import {
     Slide1,
     Slide2,
     Slide3,
+    Event1,
+    Event2,
+    Event3,
 } from "./images";
 
 const images = {
@@ -24,6 +27,9 @@ const images = {
     Slide1,
     Slide2,
     Slide3,
+    Event1,
+    Event2,
+    Event3,
 };
 
 export { images, DefaultAvatar };

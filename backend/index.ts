@@ -31,6 +31,7 @@ app.use("/api/quiz", routes.quizRouter);
 app.use("/api/lecture", routes.lectureRouter);
 app.use("/api/test", routes.testRouter);
 app.use("/api/coupon", routes.couponRouter);
+app.use("/api/event", routes.eventRouter);
 app.use("/api/approval", routes.approvalRouter);
 app.use("/api/decision", routes.decisionRouter);
 app.use("/api/report", routes.reportRouter);

@@ -18,6 +18,7 @@ import approvalSlice from "./slices/approval.slice";
 import decisionSlice from "./slices/decision.slice";
 import reportSlice from "./slices/report.slice";
 import couponSlice from "./slices/coupon.slice";
+import eventSlice from "./slices/event.slice";
 
 // import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
 // import { composeWithDevTools } from "redux-devtools-extension";
@@ -43,6 +44,7 @@ const store = configureStore({
         decisionSlice,
         reportSlice,
         couponSlice,
+        eventSlice,
         // fileStorageSlice: fileStorageSlice,
     },
     middleware: (getDefaultMiddleware) =>

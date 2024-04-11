@@ -16,9 +16,19 @@ const getAllEventCoupon = async () => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
-const createCouponOwner = async( id: number )=> {
+const getAllEventCouponByEventId = async (event_id: number) => {
+    const path = `coupon/all-coupon-event/${event_id}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getHistorySpinOfUserForAEvent = async (event_id: number) => {
+    const path = `coupon/spin-history/${event_id}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const createCouponOwner = async( id: number, event_id: number )=> {
     const path =`coupon/owner/`;
-    const reponse = await apiCaller("POST", path, { id });
+    const reponse = await apiCaller("POST", path, { id, event_id });
     return reponse;
 };
 const createCoupon = async (values: FormData)=> {
@@ -55,7 +65,9 @@ const couponApis = {
     updateCoupon,
     deleteCoupon,
     getCouponsWithPagination,
-    getCouponById
+    getCouponById,
+    getAllEventCouponByEventId,
+    getHistorySpinOfUserForAEvent
 };
 
 export default couponApis;

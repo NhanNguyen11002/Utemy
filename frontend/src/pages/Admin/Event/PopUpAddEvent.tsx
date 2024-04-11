@@ -1,83 +1,45 @@
-import { couponActions, eventActions } from "../../../redux/slices";
-import { Formik, ErrorMessage, Field, FormikProps } from "formik";
-import React, { useEffect, useRef, useState } from "react";
+import { eventActions } from "../../../redux/slices";
+import { Formik, ErrorMessage, Field } from "formik";
+import React, {  useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import toast, { Toaster } from "react-hot-toast";
-import { NewCoupon as CreateCouponType } from "../../../types/coupon";
-import { createCouponValidationSchema } from "../../../validations/coupon";
+import { NewEvent as CreateEventType } from "../../../types/event";
+import { createEventValidationSchema } from "../../../validations/event";
 // import { useFormikContext } from 'formik';
 
-type PopUpAddCouponProps = {
-    handleCancelAddCoupon(): void;
+type PopUpAddEventProps = {
+    handleCancelAddEvent(): void;
 };
 
-const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
+const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
     const formikRef = useRef(null);
-    const isLoading = useAppSelector((state) => state.couponSlice.isLoading);
-    const events = useAppSelector((state) => state.eventSlice.events);
-    const isGetLoading = useAppSelector((state) => state.couponSlice.isGetLoading);
-    const [isChecked, setIsChecked] = useState(false); // State để theo dõi trạng thái của checkbox
-    const [selectedEventId, setSelectedEventId] = useState(''); // Theo dõi trạng thái của dropdown nếu có giá trị được chọn
+    const isLoading = useAppSelector((state) => state.eventSlice.isLoading);
+    const isGetLoading = useAppSelector((state) => state.eventSlice.isGetLoading);
     const dispatch = useAppDispatch();
-    useEffect(() => {
-        // Dispatch action để lấy danh sách sự kiện khi component được mount
-        dispatch(eventActions.getAllEvents());
-    }, [dispatch]);
-    const handleCheckboxChange = (e:any) => {
-        setIsChecked(e.target.checked); // Cập nhật trạng thái của checkbox khi thay đổi
-        if (!e.target.checked) {
-            setSelectedEventId('');
-        }
-    };
-    // const [couponCode, setCouponCode] = useState("");
-
-    // Hàm sinh mã code ngẫu nhiên
-    const generateRandomCode = () => {
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        const length = Math.floor(Math.random() * 3) + 8; // Tạo độ dài từ 8 đến 10 kí tự
-        let result = "";
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-        return result;
-    };
-    // const formik = useFormikContext(); // Sử dụng hook useFormikContext để truy cập vào context của Formik
-
-    // Xử lý sự kiện khi nhấn vào nút sinh mã code ngẫu nhiên
-    const handleGenerateRandomCode = (formik: FormikProps<CreateCouponType>) => {
-        // const randomCode = generateRandomCode();
-        // setCouponCode(randomCode);
-        // console.log("random code:", randomCode);
-        // console.log("coipon code:", couponCode);
-        const randomCode = generateRandomCode();
-        formik.setFieldValue('code', randomCode);
-    };
-    const handleOnSubmit = async (values: CreateCouponType) => {
+    // useEffect(() => {
+    //     // Dispatch action để lấy danh sách sự kiện khi component được mount
+    //     dispatch(eventActions.getAllEvents());
+    // }, [dispatch]);
+    const handleOnSubmit = async (values: CreateEventType) => {
         try {
             const formData = new FormData();
-            formData.append("code", values.code);
-            formData.append("discount", values.discount.toString());
-            formData.append("remain_quantity", values.remain_quantity.toString());
-            const validStart = new Date(values.valid_start).toISOString();
-            const validUntil = new Date(values.valid_until).toISOString();
-            formData.append("valid_start", validStart);
-            formData.append("valid_until", validUntil);
-            formData.append("is_event", String(values.is_event));
-            formData.append("max_discount_money", values.max_discount_money.toString());
-            if (selectedEventId !== '') {
-                formData.append("event_id", selectedEventId);
-            }
+            formData.append("name", values.name);
+            formData.append("description", values.description.toString());
+            const startDate = new Date(values.start_date).toISOString();
+            const endDate = new Date(values.end_date).toISOString();
+            formData.append("start_date", startDate);
+            formData.append("end_date", endDate);
             console.log("Here is form data", formData);
             formData.forEach((value, key) => {
                 console.log(`${key}: ${value}`);
             });
     
-            const response = await dispatch(couponActions.createCoupon(formData));
+            const response = await dispatch(eventActions.createEvent(formData));
     
             if (response.payload && response.payload.status_code === 200) {
-                dispatch(couponActions.getCouponsWithPagination({ searchItem: "", pageIndex: 1 }));
+                dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }));
                 toast.success(response.payload.message);
-                props.handleCancelAddCoupon();
+                props.handleCancelAddEvent();
             } else {
                 toast.error(response.payload?.message as string);
             }
@@ -86,15 +48,12 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
             // Handle error here
         }
     };
-    const initialValues: CreateCouponType = {
-        code: "",
-        discount: 0,
-        is_event: false,
-        remain_quantity: 0,
-        valid_start: "",
-        valid_until: "",
-        max_discount_money: 0,
-        event_id: null
+    const initialValues: CreateEventType = {
+        name: "",
+        description: "",
+        start_date: "",
+        end_date: "",
+        is_active: 0
     };
     return (
         <>
@@ -102,17 +61,17 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                 <Toaster />
                 <div className="  max-w-[360px] tablet:max-w-[600px] max-h-[630px] tablet:max-h-[1000px] rounded-[12px] bg-background mx-auto tablet:mx-0 flex-1 ">
                     <div className="w-full p-[12px]">
-                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">THÊM PHIẾU GIẢM GIÁ</h1>
+                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">THÊM SỰ KIỆN</h1>
                         <Formik
                             initialValues={initialValues}
-                            validationSchema={createCouponValidationSchema}
+                            validationSchema={createEventValidationSchema}
                             onSubmit={handleOnSubmit}
                             innerRef={formikRef}
                         >
                             {(formik) => (
                                 <form onSubmit={formik.handleSubmit} className="p-4">
                                     <div className="flex flex-col items-center">
-                                        <div className="flex rounded-lg items-start">
+                                        {/* <div className="flex rounded-lg items-start">
                                             <div className="flex flex-col gap-11 ">
                                                 <div className="flex-1 flex flex-col w-full ">
                                                     <label
@@ -152,50 +111,50 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                                 <div className="flex flex-col gap-3">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
 
                                         <div className="flex-1 flex flex-col w-full ">
                                             <label
-                                                htmlFor="discount"
+                                                htmlFor="name"
                                                 className="text-sm mb-1 font-medium tablet:text-xl"
                                             >
-                                                Mức giảm giá
+                                                Tên sự kiện
                                             </label>
                                             <Field
                                                 as="input"
-                                                name="discount"
-                                                placeholder="Phần trăm giảm giá..."
+                                                name="name"
+                                                placeholder="Tên sự kiện..."
                                                 className={`${
-                                                    formik.errors.discount && formik.touched.discount
+                                                    formik.errors.name && formik.touched.name
                                                         ? "border-error"
                                                         : ""
                                                 } flex-1 w-full  min-h-[50px]  resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
                                             />
                                             <ErrorMessage
-                                                name="discount"
+                                                name="name"
                                                 component="span"
                                                 className="text-[14px] text-error font-medium"
                                             />
                                         </div>
                                         <div className="flex flex-col w-full">
                                             <label
-                                                htmlFor="valid_start"
+                                                htmlFor="description"
                                                 className="text-sm mb-1 font-medium tablet:text-xl"
                                             >
-                                                Ngày bắt đầu:
+                                                Mô tả cho sự kiện:
                                             </label>
                                             <Field
-                                                type="datetime-local"
-                                                name="valid_start"
-                                                id="valid_start"
+                                                as="input"
+                                                name="description"
+                                                placeholder="Mô tả cho sự kiện..."
                                                 className={`${
-                                                    formik.errors.valid_start && formik.touched.valid_start
+                                                    formik.errors.description && formik.touched.description
                                                         ? "border-error"
                                                         : ""
                                                 } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
                                             />
                                             <ErrorMessage
-                                                name="valid_start"
+                                                name="description"
                                                 component="span"
                                                 className="text-[14px] text-error font-medium"
                                             />
@@ -203,107 +162,49 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
 
                                         <div className="flex flex-col w-full">
                                             <label
-                                                htmlFor="valid_until"
+                                                htmlFor="start_date"
                                                 className="text-sm mb-1 font-medium tablet:text-xl"
                                             >
-                                                Ngày kết thúc:
+                                                Ngày bắt đầu sự kiện:
                                             </label>
                                             <Field
                                                 type="datetime-local"
-                                                name="valid_until"
-                                                id="valid_until"
+                                                name="start_date"
+                                                id="start_date"
                                                 className={`${
-                                                    formik.errors.valid_until && formik.touched.valid_until
+                                                    formik.errors.start_date && formik.touched.start_date
                                                         ? "border-error"
                                                         : ""
                                                 } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
                                             />
                                             <ErrorMessage
-                                                name="valid_until"
-                                                component="span"
-                                                className="text-[14px] text-error font-medium"
-                                            />
-                                        </div>
-                                        <div className="flex-1 flex flex-col w-full">
-                                            <label
-                                                htmlFor="remain_quantity"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
-                                            >
-                                                Số lượng còn lại:
-                                            </label>
-                                            <Field
-                                                type="text"
-                                                name="remain_quantity"
-                                                id="remain_quantity"
-                                                placeholder="Số lượng voucher còn khả dụng..."
-                                                className={`${
-                                                    formik.errors.remain_quantity && formik.touched.remain_quantity
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
-                                            />
-                                            <ErrorMessage
-                                                name="remain_quantity"
-                                                component="span"
-                                                className="text-[14px] text-error font-medium"
-                                            />
-                                        </div>
-                                        <div className="flex-1 flex flex-col w-full">
-                                            <label
-                                                htmlFor="max_discount_money"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
-                                            >
-                                                Giá giảm tối đa:
-                                            </label>
-                                            <Field
-                                                type="text"
-                                                name="max_discount_money"
-                                                id="max_discount_money"
-                                                placeholder="Giá giảm tối đa cho loại coupon này..."
-                                                className={`${
-                                                    formik.errors.max_discount_money && formik.touched.max_discount_money
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
-                                            />
-                                            <ErrorMessage
-                                                name="max_discount_money"
+                                                name="start_date"
                                                 component="span"
                                                 className="text-[14px] text-error font-medium"
                                             />
                                         </div>
                                         <div className="flex flex-col w-full">
                                             <label
-                                                htmlFor="is_event"
+                                                htmlFor="end_date"
                                                 className="text-sm mb-1 font-medium tablet:text-xl"
                                             >
-                                                Coupon cho sự kiện?
+                                                Ngày kết thúc sự kiện:
                                             </label>
-                                            <div className="flex items-center mt-4">
-                                                <input
-                                                type="checkbox"
-                                                name="is_event"
-                                                id="is_event"
-                                                className="mr-2 transform scale-150"
-                                                checked={isChecked} // Sử dụng state để xác định trạng thái của checkbox
-                                                onChange={handleCheckboxChange} // Sự kiện xảy ra khi checkbox thay đổi
-                                                />
-                                                <label htmlFor="is_event" className="text-sm text-sm ml-4">
-                                                Check để chọn
-                                                </label>
-                                            </div>
-                                            {isChecked && ( // Hiển thị dropdown nếu checkbox được chọn
-                                                <select style={{ marginTop: '20px', backgroundColor: 'lightgray', color: 'black', border: '1px solid black', height: '30px' }}
-                                                    value={selectedEventId}
-                                                    onChange={(e) => setSelectedEventId(e.target.value)}>
-                                                {/* Render options from events array */}
-                                                {events.map((event) => (
-                                                    <option key={event.event_id} value={event.event_id}>
-                                                        {event.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            )}
+                                            <Field
+                                                type="datetime-local"
+                                                name="end_date"
+                                                id="end_date"
+                                                className={`${
+                                                    formik.errors.end_date && formik.touched.end_date
+                                                        ? "border-error"
+                                                        : ""
+                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                            />
+                                            <ErrorMessage
+                                                name="end_date"
+                                                component="span"
+                                                className="text-[14px] text-error font-medium"
+                                            />
                                         </div>
                                     </div>
 
@@ -321,7 +222,7 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                             className="btn text-lg ml-2"
                                             disabled={isLoading || isGetLoading}
                                             onClick={() => {
-                                                props.handleCancelAddCoupon();
+                                                props.handleCancelAddEvent();
                                                 // formik.resetForm(initialValues);
                                             }}
                                         >
@@ -338,4 +239,4 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
     );
 };
 
-export default PopUpAddCoupon;
+export default PopUpAddEvent;

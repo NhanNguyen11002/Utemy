@@ -17,3 +17,4 @@ export * as approvalActions from "./approval.slice";
 export * as decisionActions from "./decision.slice";
 export * as reportActions from "./report.slice";
 export * as couponActions from "./coupon.slice";
+export * as eventActions from "./event.slice";
