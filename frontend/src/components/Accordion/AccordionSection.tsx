@@ -78,9 +78,9 @@ const AccordionSection: React.FC<AccordionSectionType> = (props) => {
                         <div className="border">
                             {props.section.lecture && props.section.lecture?.length > 0 ? (
                                 props.section.lecture?.map((lecture, index) => (
-                                    <>
+                                    <div key={index}>
                                         <LectureCard
-                                            key={index}
+                                            key={lecture.lecture_id * index}
                                             lecture={lecture}
                                             lectureId={props.lectureId}
                                             isDisplayEdit={props.isDisplayEdit}
@@ -90,7 +90,7 @@ const AccordionSection: React.FC<AccordionSectionType> = (props) => {
                                             handleDisplayEditLecture={props.handleDisplayEditLecture}
                                             handleChangeLesson={props.handleChangeLesson}
                                         />
-                                    </>
+                                    </div>
                                 ))
                             ) : (
                                 <>

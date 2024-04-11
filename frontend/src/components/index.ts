@@ -20,8 +20,13 @@ import PopupAddTest from "./Popup/PopupAddTest";
 import CardVideo from "./Card/CardVideo";
 import AccordionSection from "./Accordion/AccordionSection";
 import LectureCard from "./Card/LectureCard";
+import ApprovalCard from "./Card/ApprovalCard";
 import { Checkbox } from "./ui/checkbox";
-
+import TextEditorWithImage from "./TextEditor/TextEditorWithImage";
+import ReportCard from "./Card/ReportCard";
+import DecisionCard from "./Card/DecisionCard";
+import UserToolDropdown from "./Dropdown/UserToolDropdown";
+import AllReportCard from "./Card/AllReportCard";
 export {
     Spin,
     Navbar,
@@ -46,4 +51,10 @@ export {
     LectureCard,
     Checkbox,
     MyCourseCard,
+    ApprovalCard,
+    ReportCard,
+    DecisionCard,
+    TextEditorWithImage,
+    UserToolDropdown,
+    AllReportCard,
 };

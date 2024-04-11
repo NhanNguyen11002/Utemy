@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { courseActions, lectureActions, testActions } from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
-import { VideoPlayer, Spin, WatchVideoHeader } from "../../components";
+import { VideoPlayer, Spin, WatchVideoHeader, UserToolDropdown } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 import { Section } from "../../types/section";
 import constants from "../../constants";
@@ -14,6 +14,7 @@ import AfterTestGround from "./AfterTestGround";
 import BeforeTestGround from "./BeforeTestGround";
 import HistoryTest from "./HistoryTest";
 const WatchVideo: React.FC = () => {
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
     const [getLecture, setGetLecture] = useState(false);
     const courseDetail: Course = useAppSelector((state) => state.courseSlice.courseDetail);
@@ -66,7 +67,7 @@ const WatchVideo: React.FC = () => {
             dispatch(testActions.getTestByTestId(lecture.content.id));
         } else return;
     }, [dispatch, lecture.lecture_id]);
-    if (role === constants.util.ROLE_USER) return <NotFound />;
+    if (role === constants.util.ROLE_USER && !isAdmin) return <NotFound />;
     if (isNotFound) return <NotFound />;
 
     return (
@@ -107,7 +108,12 @@ const WatchVideo: React.FC = () => {
                 </div>
 
                 <div className="my-4 ml-10 w-1/2 description-course ">
-                    <h2 className=" tablet:text-2xl font-bold mb-3">Mô tả bài học</h2>
+                    <div className="flex gap-2">
+                        <h2 className=" tablet:text-2xl font-bold mb-3">Mô tả bài học</h2>
+                        {!isAdmin && role !== constants.util.ROLE_AUTHOR && (
+                            <UserToolDropdown courseDetail={courseDetail} isLecture={true} lecture={lecture} />
+                        )}
+                    </div>
                     {getLecture && lecture.content.description && (
                         <div
                             className=""

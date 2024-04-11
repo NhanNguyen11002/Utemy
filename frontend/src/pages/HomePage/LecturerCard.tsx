@@ -1,4 +1,4 @@
-import { User } from "@/types/user";
+import { EnrolledAuthor } from "@/types/user";
 import React from "react";
 import { images } from "../../assets";
 import { useAppSelector } from "../../hooks/hooks";
@@ -6,7 +6,7 @@ import { UserCircleIcon, StarIcon } from "@heroicons/react/24/outline";
 // import { Link } from "react-router-dom";
 
 interface CategoryProps {
-    lecturer: User;
+    lecturer: EnrolledAuthor;
 }
 
 const LecturerCard: React.FC<CategoryProps> = ({ lecturer }) => {
@@ -54,11 +54,11 @@ const LecturerCard: React.FC<CategoryProps> = ({ lecturer }) => {
                     </a>
                     <div className="flex gap-2 items-center">
                         <div className="flex gap-1 items-center">
-                            <p>123456</p>
+                            <p>{lecturer.number_of_enrolled_all_course}</p>
                             <UserCircleIcon className="w-4 h-4" />
                         </div>
                         <div className="flex gap-1 items-center">
-                            <p> - 4.6</p>
+                            <p> - {lecturer.average_rating_all_course}</p>
                             <StarIcon className="w-4 h-4 fill-yellow-300" />
                         </div>
                     </div>

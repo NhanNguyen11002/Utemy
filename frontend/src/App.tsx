@@ -30,6 +30,8 @@ import ProfileAdmin from "./pages/Admin/Profile";
 import MyProfile from "./pages/MyProfile";
 import CreateUser from "./pages/Admin/CreateUser";
 import UserProfile from "./pages/Admin/UserProfile";
+import ApprovalAdmin from "./pages/Admin/Approval";
+import CourseAdmin from "./pages/Admin/Course";
 import Quiz from "./pages/Quiz";
 import HuntCoupon from "./pages/HuntCoupon";
 import ATestingComponent from "./pages/ATestingComponent";
@@ -44,6 +46,7 @@ import UserWatchVideoLayout from "./layout/userWatchVideoLayout";
 import UserAppLayoutWithNav from "./layout/userAppLayoutWithNav";
 import LecturerAppLayout from "./layout/lecturerAppLayout";
 import CouponAdmin from "./pages/Admin/Coupon";
+import ReportAdmin from "./pages/Admin/Report";
 import EventAdmin from "./pages/Admin/Event";
 
 function App() {
@@ -73,7 +76,14 @@ function App() {
                                 <Route path="user-profile/:id" element={<UserProfile />}></Route>
                                 <Route path="user/create" element={<CreateUser />}></Route>
                                 <Route path="feedback" element={<FeedbackAdmin />}></Route>
+                                <Route path="approval" element={<ApprovalAdmin />}></Route>
+                                <Route path="report" element={<ReportAdmin />}></Route>
+                                <Route path="course/:slug" element={<CourseAdmin />}></Route>
+                                <Route path="course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
                                 <Route path="*" element={<NotFound />}></Route>
+                            </Route>
+                            <Route path="course-detail/:slug/watch" element={<UserWatchVideoLayout />}>
+                                <Route index element={<WatchVideo />}></Route>
                             </Route>
                         </Route>
                         <Route element={<UserAppLayout isLogin={isLogin} />}>
@@ -95,14 +105,14 @@ function App() {
                                 <Route path="my-profile" element={<MyProfile />}></Route>
                                 <Route path="my-feedback" element={<Feedback />}></Route>
                                 <Route path="history-transaction" element={<HistoryTransaction />}></Route>
-                                <Route path="quiz" element={<Quiz />}></Route>
                                 <Route path="hunt-coupon" element={<HuntCoupon />}></Route>
+
+                                <Route path="my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
                         </Route>
                         <Route path="/*" element={<UserAppLayoutWithNav isLogin={isLogin} />}>
                             <Route path="profile/:id" element={<AuthorProfile />}></Route>
-                            <Route path="my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
                             <Route index element={<HomePage />}></Route>
                         </Route>
                         <Route element={<PrivateRoute />}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DeleteModal, Spin, TotalRating, Pagination } from "../../components";
+import { DeleteModal, Spin, TotalRating, Pagination, UserToolDropdown } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { useNavigate, useParams } from "react-router-dom";
@@ -17,10 +17,9 @@ import SubscribeUserButton from "./SubscribeUserButton";
 import PopupPromotion from "./PopupPromotion";
 import CommentSection from "./CommentSection";
 import constants from "../../constants";
-import { calDayRemains, getCourseIncludes } from "../../utils/helper";
+import { calDayRemains, getCourseIncludes, convertStringDate } from "../../utils/helper";
 // import { orderLesson } from "../../types/lesson";
-import { convertStringDate } from "../../utils/helper";
-import AuthorDropdown from "./AuthorDropdown";
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 
 import { Tabs, TabsHeader, TabsBody, Tab, TabPanel } from "@material-tailwind/react";
 import {
@@ -52,6 +51,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const [activeTab, setActiveTab] = useState("Description");
     const { duration, lessonCount } = getCourseIncludes(courseDetail);
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "Unenrolled";
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
     const isGetLoadingCourse: boolean = useAppSelector((state) => state.courseSlice.isGetLoading) ?? false;
     const ratingPercent = useAppSelector((state) => state.ratingSlice.ratingPercent) ?? [];
     const hasSalePrice =
@@ -167,6 +167,26 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
 
             {isGetLoadingCourse && <Spin />}
             <div className="container mx-auto mt-[100px] laptop:mt-0">
+                {role === constants.util.ROLE_AUTHOR && (
+                    <>
+                        <a
+                            href={`/lecturer/course/edit/${courseDetail.course_id}`}
+                            className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300"
+                        >
+                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+                            <p className="text-lg"> Quay lại chỉnh sửa</p>
+                        </a>
+                        <div className="w-[230px] h-px bg-gray-300"></div>
+                    </>
+                )}
+                {isAdmin && (
+                    <Link to={`/admin/course/${slug}`}>
+                        <div className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300">
+                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+                            <p className="text-lg"> Quay lại quản lý</p>
+                        </div>
+                    </Link>
+                )}
                 <div className="min-h-screen h-full px-4 tablet:px-[60px]">
                     <div className="mt-4 container mx-auto p-4">
                         <div className="flex flex-col gap-4 laptop:flex-row items-center rounded-lg">
@@ -183,15 +203,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         <h2 className="text-2xl laptop:text-3xl font-bold text-title mb-3 tablet:w-[300px] xl:w-[600px] title-card-content ">
                                             {courseDetail.title}
                                         </h2>
-                                        {isLogin && role === constants.util.ROLE_AUTHOR && (
-                                            <AuthorDropdown
-                                                handleTogglePromotion={handleTogglePromotion}
-                                                handleDelete={() => {
-                                                    setIsOpenDeleteModal(!isOpenDeleteModal);
-                                                    setIdItem(courseDetail.course_id as number);
-                                                }}
-                                                courseDetail={courseDetail}
-                                            />
+                                        {isLogin && !isAdmin && role !== constants.util.ROLE_AUTHOR && (
+                                            <UserToolDropdown courseDetail={courseDetail} isLecture={false} />
                                         )}
                                     </div>
                                     <div className="summary-card-content mb-3">
@@ -238,7 +251,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                 {" "}
                                                 {courseDetail.price?.toLocaleString()}đ{" "}
                                             </span>{" "}
-                                            <span className=" font-extrabold font-OpenSans ml-2 text-lightblue ">
+                                            <span className=" font-extrabold font-OpenSans ml-2 text-blue-500 ">
                                                 {" "}
                                                 Trong vòng {dayRemains}
                                             </span>{" "}
@@ -268,7 +281,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     </div>
                                 </div>
                                 <div className="flex-1 flex items-end gap-2 flex-wrap">
-                                    {isLogin && role === constants.util.ROLE_AUTHOR && (
+                                    {isLogin && (role === constants.util.ROLE_AUTHOR || isAdmin) && (
                                         <AuthorButton
                                             handleTogglePromotion={handleTogglePromotion}
                                             handleDelete={() => {
@@ -281,7 +294,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     {isLogin && role === constants.util.ROLE_ENROLLED && (
                                         <SubscribeUserButton courseDetail={courseDetail} />
                                     )}
-                                    {(!isLogin || role === constants.util.ROLE_USER) && (
+                                    {(!isLogin || role === constants.util.ROLE_USER) && !isAdmin && (
                                         <GuestButton isLogin={isLogin} course_id={courseDetail.course_id} />
                                     )}
                                 </div>
@@ -322,14 +335,15 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         Đánh giá
                                     </Tab>
                                 </TabsHeader>
+                                <div className="h-px w-full bg-gray-300"></div>
                                 <TabsBody>
                                     <TabPanel key="Study" value="Study">
                                         <div className="w-1/2">
                                             {courseDetail.study &&
                                                 courseDetail.study.length > 0 &&
-                                                courseDetail.study.map((study: any) => {
+                                                courseDetail.study.map((study: any, index: any) => {
                                                     return (
-                                                        <div className="flex gap-1 items-start shrink-0">
+                                                        <div key={index} className="flex gap-1 items-start shrink-0">
                                                             <CheckIcon className="w-6 h-6 shrink-0" />
                                                             <p className="text-xl">{study}</p>
                                                         </div>
@@ -345,8 +359,12 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                     <ul className="list-disc">
                                                         {courseDetail.requirement &&
                                                             courseDetail.requirement.length > 0 &&
-                                                            courseDetail.requirement.map((req: any) => {
-                                                                return <li className="ml-5">{req}</li>;
+                                                            courseDetail.requirement.map((req: any, index: any) => {
+                                                                return (
+                                                                    <li key={index} className="ml-5">
+                                                                        {req}
+                                                                    </li>
+                                                                );
                                                             })}
                                                     </ul>
                                                 </div>
@@ -370,18 +388,20 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                         ))}
                                                     {courseDetail.sections?.map((section: Section, index: number) => {
                                                         return (
-                                                            <AccordionSection
-                                                                // orderLesson={orderLesson}
-                                                                key={index}
-                                                                isDisplayEdit={false}
-                                                                isDisplayProgress={
-                                                                    role === constants.util.ROLE_ENROLLED
-                                                                }
-                                                                section={section}
-                                                                redirectToWatchVideo={
-                                                                    isLogin && !(role === constants.util.ROLE_USER)
-                                                                }
-                                                            />
+                                                            <div key={index}>
+                                                                <AccordionSection
+                                                                    // orderLesson={orderLesson}
+                                                                    key={section.id * index}
+                                                                    isDisplayEdit={false}
+                                                                    isDisplayProgress={
+                                                                        role === constants.util.ROLE_ENROLLED
+                                                                    }
+                                                                    section={section}
+                                                                    redirectToWatchVideo={
+                                                                        isLogin && !(role === constants.util.ROLE_USER)
+                                                                    }
+                                                                />
+                                                            </div>
                                                         );
                                                     })}
                                                 </div>

@@ -13,7 +13,7 @@ const UserAppLayoutWithNav: React.FC<HeaderProps> = ({ isLogin }) => {
     return isAdmin ? (
         <Navigate to={"/admin"} />
     ) : (
-        <div className="flex flex-col min-h-scråeen">
+        <div className="flex flex-col min-h-screen">
             <Header isLogin={isLogin} />
             <Navbar />
             <div className=" h-[150px] w-full"></div>

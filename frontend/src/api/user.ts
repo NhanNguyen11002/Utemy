@@ -39,7 +39,13 @@ const getProfile = async () => {
 
     return response;
 };
+const getTop10AuthorByEnrolled = async () => {
+    const path = "user/top10-author-by-enrolled";
 
+    const response = await apiCaller("GET", path);
+
+    return response;
+};
 const updateProfile = async (values: UpdateInformationType) => {
     const path = "user/update-profile";
 
@@ -78,6 +84,7 @@ const userApis = {
     changeAvatar,
     activeUser,
     editUser,
+    getTop10AuthorByEnrolled,
 };
 
 export default userApis;

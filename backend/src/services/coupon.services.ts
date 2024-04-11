@@ -212,6 +212,9 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                 coupon_owner CO
             JOIN
                 coupon C ON CO.coupon_id = C.id
+            WHERE
+                C.valid_start < NOW()  -- Lọc ra các bản ghi có valid_start nhỏ hơn ngày hiện tại
+				AND C.valid_until > NOW() 
             GROUP BY
                 CO.coupon_id, CO.user_id;
         `;
@@ -233,6 +236,9 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                         is_event: false,
                         valid_until: {
                             gt: new Date(),
+                        },
+                        valid_start: {
+                            lt: new Date(),
                         },
                         remain_quantity: {
                             gt: 0,

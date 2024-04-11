@@ -37,5 +37,20 @@ const success = {
     SUCCESS_REMOVE_CART: "Remove from cart successfully",
     SUCCESS_SAVE_FOR_LATER: "Change saved successfully",
     SUCCESS_GET_CART: "Get cart successfully ",
+
+    //approval
+    SUCCESS_CREATE_APPROVAL: "Create approval successfully",
+    SUCCESS_GET_APPROVAL: "Get approval successfully",
+    SUCCESS_APPROVE_COURSE: "Approve course successfully",
+    SUCCESS_RESTRICT_COURSE: "Restrict course successfully",
+
+    //decision
+    SUCCESS_CREATE_DECISION: "Create decision successfully",
+    SUCCESS_GET_DECISION: "Get decision successfully",
+    SUCCES_HANDLE_DECISION: "Handle decision successfully",
+
+    //report
+    SUCCESS_CREATE_REPORT: "Create report successfully",
+    SUCCESS_HANDLE_REPORT: "Handle report successfully",
 };
 export default success;

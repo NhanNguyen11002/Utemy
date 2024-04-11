@@ -136,22 +136,24 @@ export const courseSetupProgress = (course: Course) => {
         numerator++;
         denominator++;
     }
-
     if (!course.requirement || course.requirement.length === 0) {
         denominator++;
     } else {
         numerator++;
         denominator++;
     }
-    const strippedText = course.description.replace(/<[^>]*>/g, "");
-    const characterCount = strippedText.length;
-    if (!course.description || characterCount === 0) {
+    if (!course.description) {
         denominator++;
     } else {
-        numerator++;
-        denominator++;
+        const strippedText = course.description.replace(/<[^>]*>/g, "");
+        const characterCount = strippedText.length;
+        if (characterCount === 0) {
+            denominator++;
+        } else {
+            numerator++;
+            denominator++;
+        }
     }
-
     const ob = getCourseIncludes(course);
     if (ob.lessonCount === 0) {
         denominator++;
@@ -159,6 +161,5 @@ export const courseSetupProgress = (course: Course) => {
         numerator++;
         denominator++;
     }
-
     return (numerator / denominator) * 100;
 };
