@@ -2,7 +2,7 @@ import Hls from "hls.js";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import "plyr/dist/plyr.min.mjs";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type VideoJSType = {
     sourse: string;
@@ -10,7 +10,22 @@ type VideoJSType = {
 
 export const VideoJS: React.FC<VideoJSType> = (props) => {
     const videoRef = useRef<HTMLVideoElement>(null);
-
+    const [player, setPlayer] = useState<Plyr | null>(null);
+    if (player) {
+        // load lại progress video
+        player?.on("loadeddata", () => {
+            console.log("ready");
+            player.currentTime = 10;
+        });
+        // gọi để update progress video
+        player?.on("timeupdate", () => {
+            console.log(player.currentTime);
+        });
+        // gọi update progress khi dừng video, chuyển sang trang khác
+        player?.on("pause", () => {
+            console.log("pause", player.currentTime);
+        });
+    }
     const updateQuality = (newQuality: any) => {
         if (Hls.isSupported()) {
             window.hls.levels.forEach((level: any, levelIndex: any) => {
@@ -56,7 +71,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                             onChange: (event) => updateQuality(event),
                         },
                     };
-                    new Plyr(videoElement, defaultOptions);
+                    setPlayer(new Plyr(videoElement, defaultOptions));
                 });
 
                 hls.attachMedia(videoElement);
