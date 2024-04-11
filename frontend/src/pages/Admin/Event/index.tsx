@@ -1,47 +1,46 @@
 import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import CouponCard from "./CouponCard";
-import PopUpAddCoupon from "./PopUpAddCoupon";
-import PopUpEditCoupon from "./PopUpEditCoupon";
+import EventCard from "./EventCard";
+import PopUpAddEvent from "./PopUpAddEvent";
+import PopUpEditEvent from "./PopUpEditEvent";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
-import { couponActions } from "../../../redux/slices";
+import { eventActions } from "../../../redux/slices";
 import { Pagination } from "../../../components";
 import SearchIcon from "../../../assets/icons/SeacrchIcon";
 import { DeleteModal } from "../../../components";
 import Loading from "../../Loading";
-const CouponAdmin = () => {
-    const [isOpenAddCoupon, setIsOpenAddCoupon] = useState(false);
-    const [isOpenEditCoupon, setIsOpenEditCoupon] = useState(false);
+const EventAdmin = () => {
+    const [isOpenAddEvent, setIsOpenAddEvent] = useState(false);
+    const [isOpenEditEvent, setIsOpenEditEvent] = useState(false);
     const [isOpenDeleteModel, setIsOpenDeleteModel] = useState(false);
     const [userInput, setUserInput] = useState<string>("");
     const [pageIndex, setPageIndex] = useState(1);
     const [searchItem, setSearchItem] = useState("");
-    // const [couponCode] = useState("");
-    const [couponId, setCouponId] = useState(0);
-    const [eventId, setEventId] = useState<number | null>(null);
+    // const [EventCode] = useState("");
+    const [eventId, setEventId] = useState(0);
+    // const [eventId, setEventId] = useState<number | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
-    const coupons = useAppSelector((state) => state.couponSlice.coupons);
-    const totalPage = useAppSelector((state) => state.couponSlice.totalPage);
-    const totalRecord = useAppSelector((state) => state.couponSlice.totalRecord);
-    const isGetLoading = useAppSelector((state) => state.couponSlice.isGetLoading);
-    const handleCancelAddCoupon = () => {
-        setIsOpenAddCoupon(!isOpenAddCoupon);
+    const events = useAppSelector((state) => state.eventSlice.events);
+    const totalPage = useAppSelector((state) => state.eventSlice.totalPage);
+    const totalRecord = useAppSelector((state) => state.eventSlice.totalRecord);
+    const isGetLoading = useAppSelector((state) => state.eventSlice.isGetLoading);
+    const handleCancelAddEvent = () => {
+        setIsOpenAddEvent(!isOpenAddEvent);
     };
     const handleCancelDeleteModel = () => {
         setIsOpenDeleteModel(false);
     };
     const handleOpenDeleteModel = (id: number) => {
-        setCouponId(id);
+        setEventId(id);
         setIsOpenDeleteModel(true);
     };
-    const handleOpenPopupEdit = (id: number, event_id: number | null) => {
-        setCouponId(id);
-        setEventId(event_id);
-        setIsOpenEditCoupon(true);
+    const handleOpenPopupEdit = (id: number) => {
+        setEventId(id);
+        setIsOpenEditEvent(true);
     };
-    const handleCancelEditCoupon = () => {
-        setIsOpenEditCoupon(!isOpenEditCoupon);
+    const handleCancelEditEvent = () => {
+        setIsOpenEditEvent(!isOpenEditEvent);
     };
     const handleChangePageIndex = (pageIndex: number) => {
         if (pageIndex < 1) {
@@ -63,11 +62,11 @@ const CouponAdmin = () => {
         setPageIndex(1);
         setSearchItem("");
     };
-    const handleDeleteCoupon = () => {
-        dispatch(couponActions.deleteCoupon(couponId)).then((response) => {
+    const handleDeleteEvent = () => {
+        dispatch(eventActions.deleteEvent(eventId)).then((response) => {
             if (response.payload && response.payload.status_code === 200) {
                 toast.success(response.payload.message);
-                dispatch(couponActions.getCouponsWithPagination({ searchItem: "", pageIndex: 1 }));
+                dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }));
                 handleCancelDeleteModel();
             } else {
                 if (response.payload) toast.error(response.payload.message);
@@ -75,19 +74,19 @@ const CouponAdmin = () => {
         });
     };
     useEffect(() => {
-        console.log("Total page:", totalPage); // Log the current value of 'coupons' to the console
-        console.log("Total record:", totalRecord); // Log the current value of 'coupons' to the console
-        dispatch(couponActions.getCouponsWithPagination({ searchItem, pageIndex }));
+        console.log("Total page:", totalPage); // Log the current value of 'events' to the console
+        console.log("Total record:", totalRecord); // Log the current value of 'events' to the console
+        dispatch(eventActions.getEventsWithPagination({ searchItem, pageIndex }));
     }, [dispatch, searchItem, pageIndex]);
 
     return (
         <>
-            {isOpenAddCoupon && <PopUpAddCoupon handleCancelAddCoupon={handleCancelAddCoupon} />}
-            {isOpenEditCoupon && (
-                <PopUpEditCoupon couponId={couponId} eventId={eventId} handleCancelEditCoupon={handleCancelEditCoupon}/>
+            {isOpenAddEvent && <PopUpAddEvent handleCancelAddEvent={handleCancelAddEvent} />}
+            {isOpenEditEvent && (
+                <PopUpEditEvent eventId={eventId} handleCancelEditEvent={handleCancelEditEvent}/>
             )}
             {isOpenDeleteModel && (
-                <DeleteModal handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteCoupon} />
+                <DeleteModal handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteEvent} />
             )}
             {isGetLoading && <Loading />}
             {/* minhscreen */}
@@ -118,23 +117,23 @@ const CouponAdmin = () => {
                         </button>{" "}
                     </div>
                     <button
-                        onClick={() => setIsOpenAddCoupon(!isOpenAddCoupon)}
+                        onClick={() => setIsOpenAddEvent(!isOpenAddEvent)}
                         className="relative btn-info btn btn-outline  text-xl font-w hover:text-white text-white"
                     >
                         <span className="left-1/2 top-1/2 ">Thêm</span>{" "}
                     </button>{" "}
                 </div>
-                {coupons.length === 0 ? (
-                    <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy phiếu giảm giá</p>
+                {events.length === 0 ? (
+                    <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy sự kiện</p>
                 ) : (
-                    <p className="mt-4 text-2xl text-center font-bold">Có {totalRecord} phiếu giảm giá được tìm thấy </p>
+                    <p className="mt-4 text-2xl text-center font-bold">Có {totalRecord} sự kiện được tìm thấy </p>
                 )}
                 <div className="flex-1  my-1  w-3/4 px-10 justify-start">
-                    {coupons.map((coupon, index) => {
+                    {events.map((event, index) => {
                         return (
                             <div className="w-full my-1 max-w-xs tablet:max-w-full " key={index}>
-                                <CouponCard
-                                    coupon={coupon}
+                                <EventCard
+                                    event={event}
                                     handleOpenPopupEdit={handleOpenPopupEdit}
                                     handleOpenDeleteModel={handleOpenDeleteModel}
                                 />
@@ -156,4 +155,4 @@ const CouponAdmin = () => {
     );
 };
 
-export default CouponAdmin;
+export default EventAdmin;

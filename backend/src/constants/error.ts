@@ -145,5 +145,12 @@ const error = {
 
     //Invoice
     ERROR_INVOICE_NOT_FOUND: "Invoice not found",
+
+    //Event
+    ERROR_EVENT_NOT_FOUND: "Event is finished or not found",
+    ERROR_EXIST_ACTIVE_EVENT: "There was an actived event before so cannot create another event",
+
+    // History Spin
+    ERROR_HISTORY_SPIN_NOT_FOUND: "This user doesn't have history spin for this event before",
 };
 export default error;

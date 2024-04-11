@@ -11,9 +11,9 @@ const getInvoiceById = async (values: number) => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
-const createInvoice = async (totalwithcoupon: number, discount: number, id: number|null) => {
+const createInvoice = async (totalwithcoupon: number, discount: number, id: number|null, maxdiscountamount: number) => {
     const path = "invoice/";
-    const response = await apiCaller("POST", path, { totalwithcoupon, discount, id }); // Truyền giá trị total xuống endpoint
+    const response = await apiCaller("POST", path, { totalwithcoupon, discount, id, maxdiscountamount }); // Truyền giá trị total xuống endpoint
     return response;
 };
 

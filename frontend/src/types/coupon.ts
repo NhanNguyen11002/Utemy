@@ -6,6 +6,9 @@ export type Coupon = {
     valid_until: string;
     remain_quantity: number;
     is_event: boolean;
+    max_discount_money: number;
+    event_id: number | null;
+    event_name: string | null;
 };
 export type NewCoupon = {
     code: string;
@@ -14,6 +17,8 @@ export type NewCoupon = {
     valid_until: string;
     remain_quantity: number;
     is_event: boolean;
+    max_discount_money: number;
+    event_id: number | null;
 };
 export type GetCouponsWithPagination = {
     searchItem: string;

@@ -11,7 +11,9 @@ export type Cart = {
 };
 export type Coupon = {
     id: number;
-    coupon_code: string;
+    code: string;
     discount: number;
     valid_until: string;
+    max_discount_money: number;
+    remain_quantity: number;
 };

@@ -8,7 +8,8 @@ import {
     ChartBarIcon,
     StarIcon,
     ReceiptPercentIcon,
-    InformationCircleIcon
+    InformationCircleIcon,
+    CalendarDaysIcon
 } from "@heroicons/react/24/outline";
 // import { LogoutIcon } from "../../assets/icons";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -146,6 +147,21 @@ export function Sidebar() {
                                 <ReceiptPercentIcon className="w-6 h-6 shrink-0 text-white" />
                                 <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
                                     Phiếu giảm giá
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
+                    <li key={"admin/event"}>
+                        <NavLink to="/admin/event">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "event" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("event")}
+                            >
+                                <CalendarDaysIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Sự kiện
                                 </p>
                             </button>
                         </NavLink>

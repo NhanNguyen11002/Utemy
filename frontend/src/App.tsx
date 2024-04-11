@@ -44,6 +44,8 @@ import UserWatchVideoLayout from "./layout/userWatchVideoLayout";
 import UserAppLayoutWithNav from "./layout/userAppLayoutWithNav";
 import LecturerAppLayout from "./layout/lecturerAppLayout";
 import CouponAdmin from "./pages/Admin/Coupon";
+import EventAdmin from "./pages/Admin/Event";
+
 function App() {
     const dispatch = useAppDispatch();
 
@@ -66,6 +68,7 @@ function App() {
                                 <Route path="profile" element={<ProfileAdmin />}></Route>
                                 <Route path="category" element={<CategoryAdmin />}></Route>
                                 <Route path="coupon" element={<CouponAdmin />}></Route>
+                                <Route path="event" element={<EventAdmin />}></Route>
                                 <Route path="user" element={<UserAdmin />}></Route>
                                 <Route path="user-profile/:id" element={<UserProfile />}></Route>
                                 <Route path="user/create" element={<CreateUser />}></Route>

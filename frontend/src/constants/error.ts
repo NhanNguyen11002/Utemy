@@ -139,7 +139,7 @@ const error = {
 
     //coupon
     ERROR_CODE_REQUIRED: "Code is required",
-    ERROR_CODE_MAX: "Code must be under than 50 chars",
+    ERROR_CODE_MAX: "Code must be under than 30 chars",
     ERROR_CODE_MIN: "Code must be upper than 8 chars",
     ERROR_DISCOUNT_MAX:"Discount must less than 1",
     ERROR_DISCOUNT_MIN:"Discount must more than 0",
@@ -149,6 +149,20 @@ const error = {
     ERROR_VALID_START_EARLIER_VALID_UNTIL: "Valid until must be later than Valid start",
     ERROR_VALID_START_REQUIRED: "Valid start is required",
     ERROR_VALID_UNTIL_REQUIRED: "Valid until is required",
+
+
+    //event
+    ERROR_NAME_REQUIRED: "Name is required",
+    ERROR_NAME_MAX: "Name must be under than 50 chars",
+    ERROR_DESCRIPTION_EVENT_REQUIRED: "Description is required",
+    ERROR_DESCRIPTION_EVENT_MAX: "Description must be under 200 chars",
+    ERROR_DESCRIPTION_EVENT_MIN: "Description must be upper 8 chars",
+    ERROR_END_DATE_LATER_START_DATE: "End date must be later than start date",
+    ERROR_START_DATE_EARLIER_END_DATE: "Start date must be earlier than end date",
+    ERROR_START_DATE_REQUIRED: "Start date is required",
+    ERROR_END_DATE_REQUIRED: "End date is required",
+
+
 
 };
 export default error;

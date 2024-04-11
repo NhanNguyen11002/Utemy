@@ -4,6 +4,7 @@ import { isLogin } from "../middlewares/isLogin";
 
 const couponRouter: Router = Router();
 couponRouter.get("/allevent", isLogin, controllers.couponController.getAllEventCoupon);
+couponRouter.get("/all-coupon-event/:event_id", isLogin, controllers.couponController.getAllEventCouponByEventId);
 couponRouter.get("/all", isLogin, controllers.couponController.getCouponsWithPagination);
 
 couponRouter.post("/", isLogin, controllers.couponController.createCoupon);
@@ -18,5 +19,6 @@ couponRouter.get("/all-history", isLogin, controllers.couponController.getAllCou
 couponRouter.post("/owner/", isLogin, controllers.couponController.createCouponOwner);
 
 couponRouter.get("/route/:coupon_id", isLogin, controllers.couponController.getCouponById);
+couponRouter.get("/spin-history/:event_id", isLogin, controllers.couponController.getHistorySpinOfUserForAEvent);
 
 export default couponRouter;

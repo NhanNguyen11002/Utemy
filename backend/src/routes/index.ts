@@ -13,6 +13,7 @@ import quizRouter from "./quiz.router";
 import lectureRouter from "./lecture.router";
 import testRouter from "./test.router";
 import couponRouter from "./coupon.router";
+import eventRouter from "./event.router";
 
 export default {
     authRouter,
@@ -30,4 +31,5 @@ export default {
     lectureRouter,
     testRouter,
     couponRouter,
+    eventRouter,
 };

@@ -10,11 +10,11 @@ import { GetCouponsWithPagination } from "@/types/coupon";
 // }
 
 
-export const createCouponOwner = createAsyncThunk<Response<null>, { coupon_id: number }, { rejectValue: Response<null> }>(
+export const createCouponOwner = createAsyncThunk<Response<null>, { coupon_id: number, event_id: number }, { rejectValue: Response<null> }>(
   "coupon/hunt",
-  async ({ coupon_id }, thunkAPI) => { // Change the parameter to underscore (_) to indicate it's unused
+  async ({ coupon_id, event_id }, thunkAPI) => { // Change the parameter to underscore (_) to indicate it's unused
     try {
-      const response = await apis.couponApis.createCouponOwner(coupon_id);
+      const response = await apis.couponApis.createCouponOwner(coupon_id, event_id);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.data);
@@ -35,6 +35,29 @@ export const getAllEventCoupon = createAsyncThunk<Coupon[], void, { rejectValue:
   },
 );
 
+export const getAllEventCouponByEventId = createAsyncThunk<Coupon[], number, { rejectValue: any }>(
+  "coupon/all-coupon-event",
+  async (body, thunkAPI) => {
+    try {
+      const response = await apis.couponApis.getAllEventCouponByEventId(body);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.data);
+    }
+  },
+);
+
+export const getHistorySpinOfUserForAEvent = createAsyncThunk<Response<null>, number, { rejectValue: any }>(
+  "coupon/spin-history",
+  async (body, thunkAPI) => {
+    try {
+      const response = await apis.couponApis.getHistorySpinOfUserForAEvent(body);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.data);
+    }
+  },
+);
 export const createCoupon = createAsyncThunk<Response<null>, FormData, { rejectValue: Response<null> }>(
   "coupon/create",
   async (body, ThunkAPI) => {
@@ -126,6 +149,9 @@ const initialState: CouponSliceType = {
     valid_start: "",
     remain_quantity: 0,
     is_event: false,
+    max_discount_money: 0,
+    event_id: null,
+    event_name: null
   },
   coupons: [],
   totalPage: 0,
@@ -218,6 +244,16 @@ const couponSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(getCouponsWithPagination.rejected, (state) => {
+        state.isLoading = false;
+        // Handle rejection if needed
+      })
+      .addCase(getHistorySpinOfUserForAEvent.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getHistorySpinOfUserForAEvent.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(getHistorySpinOfUserForAEvent.rejected, (state) => {
         state.isLoading = false;
         // Handle rejection if needed
       });

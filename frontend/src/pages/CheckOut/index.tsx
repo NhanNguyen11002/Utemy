@@ -1,16 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import toast from "react-hot-toast";
-import { invoiceActions, vnpayActions } from "../../redux/slices";
-import { useNavigate } from "react-router-dom";
+import {  invoiceActions, vnpayActions } from "../../redux/slices";
+// import { useNavigate } from "react-router-dom";
 import { Spin } from "../../components";
+import { getCouponByCode, setCouponNull } from "../../redux/slices/cart.slice";
+import { useNavigate } from "react-router-dom";
 function Checkout() {
-    const [method, setMethod] = useState("");
     const navigate = useNavigate();
+    const [method, setMethod] = useState("");
+    // const navigate = useNavigate();
     const [error, setError] = useState(false);
     const dispatch = useAppDispatch();
     const invoice = useAppSelector((state) => state.invoiceSlice.invoice);
     const isGetLoading = useAppSelector((state) => state.invoiceSlice.isGetLoading);
+    const coupon = useAppSelector((state) => state.cartSlice.coupon);
+    useEffect(() => {
+
+        if (coupon) {
+            dispatch(getCouponByCode(coupon.code)).then((response) => {
+                if (response.payload?.status_code == 404) {
+                    toast.error("Mã coupon của bạn vừa chọn đã hết hạn hoặc hết số lượng, vui lòng kiểm tra lại");
+                    navigate("/cart");
+                } 
+            });
+            dispatch(setCouponNull());
+        }
+
+    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(getCouponByCode(coupon.code)).then((response) => {
+    //         if (response.payload?.status_code === 404) {
+    //             toast.error("Mã coupon của bạn vừa chọn đã hết hạn hoặc hết số lượng, vui lòng kiểm tra lại");
+    //             navigate("/cart",{ state: {fromCheckout: true} });
+    //         } else {
+    //             dispatch(invoiceActions.getInvoiceNow()).then((response: any) => {
+    //                 if (response.payload?.status_code !== 200) navigate("/");
+    //             });
+    //         }
+    //     });
+    // }, [dispatch, coupon]);
+    
+    
     const handleChosePaymentMethod = (name: string) => {
         setMethod(name);
     };

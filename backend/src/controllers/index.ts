@@ -13,6 +13,7 @@ import QuizController from "./quiz.controller";
 import LectureController from "./lecture.controller";
 import TestController from "./test.controller";
 import CouponController from "./coupon.controller";
+import EventController from "./event.controller";
 
 export default {
     authController: new AuthController(),
@@ -30,4 +31,5 @@ export default {
     lectureController: new LectureController(),
     testController: new TestController(),
     couponController: new CouponController(),
+    eventController: new EventController(),
 };

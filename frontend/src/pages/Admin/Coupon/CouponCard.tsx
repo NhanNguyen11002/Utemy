@@ -5,9 +5,17 @@ import { Coupon } from "../../../types/coupon";
 type CouponCardProps = {
     coupon: Coupon;
     handleOpenDeleteModel(id: number): void;
-    handleOpenPopupEdit(id: number): void;
+    handleOpenPopupEdit(id: number, event_id: number | null): void;
 };
-
+const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+};
 const CouponCard: React.FC<CouponCardProps> = (props) => {
     return (
         <>
@@ -48,14 +56,21 @@ const CouponCard: React.FC<CouponCardProps> = (props) => {
                                 <h1 className="text-black font-bold text-lg"> Ngày bắt đầu mở:</h1>
 
                                 <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
-                                    {props.coupon.valid_start}
+                                    {formatDate(props.coupon.valid_start)}
                                 </p>
                             </div>
                             <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
                                 <h1 className="text-black font-bold text-lg"> Ngày kết thúc:</h1>
 
                                 <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
-                                    {props.coupon.valid_until}
+                                    {formatDate(props.coupon.valid_until)}
+                                </p>
+                            </div>
+                            <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
+                                <h1 className="text-black font-bold text-lg"> Giá giảm tối đa:</h1>
+
+                                <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
+                                    {props.coupon.max_discount_money}
                                 </p>
                             </div>
                             <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
@@ -65,6 +80,15 @@ const CouponCard: React.FC<CouponCardProps> = (props) => {
                                     {props.coupon.is_event ? 'Có' : 'Không'}
                                 </p>
                             </div>
+                            {props.coupon.event_name !== null && (
+                                <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
+                                    <h1 className="text-black font-bold text-lg"> Tên sự kiện:</h1>
+                                    <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
+                                        {props.coupon.event_name}
+                                    </p>
+                                </div>
+                            )}
+
 
                         </div>
                     </div>
@@ -72,7 +96,7 @@ const CouponCard: React.FC<CouponCardProps> = (props) => {
                     <div className="flex flex-col mr-1">
                         <button
                             className="w-full px-5 py-2 mt-2 text-white  btn btn-info hover:bg-info/70 hover:cursor-pointer rounded-2xl "
-                            onClick={() => props.handleOpenPopupEdit(props.coupon.coupon_id)}
+                            onClick={() => props.handleOpenPopupEdit(props.coupon.coupon_id, props.coupon.event_id)}
                         >
                             Chỉnh sửa
                         </button>

@@ -15,7 +15,9 @@ const createCoupon = async (req: IRequestWithId, formData: FormData): Promise<Re
         const validStart = req.body.valid_start as string;
         const validUntil = req.body.valid_until as string;
         const remainQuantity = Number(req.body.remain_quantity);
+        const eventId = Number(req.body.event_id) || null;
         const isEvent = req.body.is_event === "true";
+        const maxDiscountMoney = Number(req.body.max_discount_money);
         const user_id = Number(req.user_id);
         const isAdmin = await configs.db.user.findFirst({
             where: {
@@ -32,6 +34,8 @@ const createCoupon = async (req: IRequestWithId, formData: FormData): Promise<Re
                 valid_until: validUntil,
                 remain_quantity: remainQuantity,
                 is_event: isEvent,
+                max_discount_money: maxDiscountMoney,
+                event_id: eventId,
             },
         });
         if (createCoupon) return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
@@ -55,8 +59,10 @@ const updateCoupon = async (req: IRequestWithId, formData: FormData): Promise<Re
         const discount = Number(req.body.discount);
         const validStart = req.body.valid_start as string;
         const validUntil = req.body.valid_until as string;
+        const eventId = Number(req.body.event_id) || null;
         const remainQuantity = Number(req.body.remain_quantity);
         const isEvent = req.body.is_event === "true";
+        const maxDiscountMoney = Number(req.body.max_discount_money);
         const user_id = Number(req.user_id);
         const isAdmin = await configs.db.user.findFirst({
             where: {
@@ -79,6 +85,8 @@ const updateCoupon = async (req: IRequestWithId, formData: FormData): Promise<Re
                 valid_until: validUntil,
                 remain_quantity: remainQuantity,
                 is_event: isEvent,
+                max_discount_money: maxDiscountMoney,
+                event_id: eventId,
             },
             where: {
                 id: isCouponExsist.id,
@@ -186,57 +194,72 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
         const user_id = Number(req.user_id);
 
         // Tìm kiếm trong bảng coupon_owner
-        const couponOwner = await configs.db.couponOwner.findFirst({
-            where: {
-                quantity: {
-                    gt: 0,
-                },
-                coupon: {
-                    code: code,
-                    is_delete: false,
-                },
-            },
-            include: {
-                coupon: true,
-            },
-        });
+        const couponOwnersWithCouponInfo: any[] = await configs.db.$queryRaw`
+            SELECT
+                CO.coupon_id as id,
+                CO.user_id,
+                COALESCE(SUM(CO.quantity), 0) AS total_quantity,
+                C.code,
+                ROUND(C.discount, 2) AS discount,
+                C.is_delete,
+                C.valid_start,
+                C.valid_until,
+                C.remain_quantity,
+                C.is_event,
+                C.max_discount_money,
+                C.event_id
+            FROM
+                coupon_owner CO
+            JOIN
+                coupon C ON CO.coupon_id = C.id
+            GROUP BY
+                CO.coupon_id, CO.user_id;
+        `;
 
-        if (couponOwner) {
-            // Nếu có dữ liệu trong bảng coupon_owner, trả về thông tin coupon
-            return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, couponOwner.coupon);
-        } else {
-            // Nếu không có dữ liệu trong bảng coupon_owner, tiếp tục kiểm tra trong bảng coupon
-            const isCouponExsist = await configs.db.coupon.findFirst({
-                where: {
-                    code,
-                    is_delete: false,
-                    is_event: false,
-                    valid_until: {
-                        gt: new Date(),
-                    },
-                    remain_quantity: {
-                        gt: 0,
-                    },
-                },
-                select: {
-                    id: true,
-                    code: true,
-                    discount: true,
-                    valid_until: true,
-                },
-            });
-
-            if (isCouponExsist) {
-                return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExsist);
-            } else {
-                // Xử lý trường hợp coupon không tồn tại
-                return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        if (couponOwnersWithCouponInfo.length > 0) {
+            const findCouponEventByCode = couponOwnersWithCouponInfo.find(
+                (coupon) => coupon.code === code && coupon.user_id === user_id,
+            );
+            if (findCouponEventByCode) {
+                console.log(findCouponEventByCode);
+                return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, findCouponEventByCode);
             }
-        }
+            else {
+                // Nếu không có dữ liệu trong bảng coupon_owner, tiếp tục kiểm tra trong bảng coupon
+                const isCouponExist = await configs.db.coupon.findFirst({
+                    where: {
+                        code,
+                        is_delete: false,
+                        is_event: false,
+                        valid_until: {
+                            gt: new Date(),
+                        },
+                        remain_quantity: {
+                            gt: 0,
+                        },
+                    },
+                    select: {
+                        id: true,
+                        code: true,
+                        discount: true,
+                        valid_until: true,
+                        max_discount_money: true,
+                        remain_quantity: true,
+                    },
+                });
+    
+                if (isCouponExist) {
+                    return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
+                }
+            }
+        } 
+        // Xử lý trường hợp coupon không tồn tại
+        return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }
+        console.log(error);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
@@ -267,11 +290,13 @@ const GetCouponsWithPagination = async (req: IRequestWithId): Promise<ResponseBa
             orderBy: {
                 valid_start: "desc",
             },
+            include: {
+                event: true,
+            },
         });
         if (!getAllCoupon) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         const totalRecord = await configs.db.coupon.count({
             where: {
-
                 is_delete: false,
             },
         });
@@ -287,6 +312,9 @@ const GetCouponsWithPagination = async (req: IRequestWithId): Promise<ResponseBa
                 valid_start: DateTime.fromISO(item.valid_start.toISOString()),
                 valid_until: DateTime.fromISO(item.valid_until.toISOString()),
                 is_event: item.is_event,
+                max_discount_money: item.max_discount_money,
+                event_id: item.event_id,
+                event_name: item.event ? item.event.name : null, // Lấy tên của sự kiện
             };
             return coupons.push(coupon);
         });
@@ -357,7 +385,7 @@ const getAllCouponHistory = async (req: IRequestWithId): Promise<ResponseBase> =
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
-const createCouponOwner = async (req: IRequestWithId, coupon_id: number): Promise<ResponseBase> => {
+const createCouponOwner = async (req: IRequestWithId, coupon_id: number, event_id: number): Promise<ResponseBase> => {
     try {
         const user_id = Number(req.user_id);
 
@@ -380,6 +408,7 @@ const createCouponOwner = async (req: IRequestWithId, coupon_id: number): Promis
             where: {
                 coupon_id: coupon_id,
                 user_id,
+                event_id: event_id,
             },
         });
 
@@ -388,6 +417,7 @@ const createCouponOwner = async (req: IRequestWithId, coupon_id: number): Promis
             const createNewOwner = await configs.db.couponOwner.create({
                 data: {
                     coupon_id: coupon_id,
+                    event_id: event_id,
                     user_id,
                     quantity: 1, // Mỗi lần săn được coupon sẽ có số lượng là 1
                 },
@@ -403,7 +433,15 @@ const createCouponOwner = async (req: IRequestWithId, coupon_id: number): Promis
                     },
                 },
             });
-            if (createNewOwner && updateCoupon) console.log(createNewOwner);
+            const historySpin = await configs.db.userEvent.create({
+                data: {
+                    user_id,
+                    event_id: event_id,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                },
+            });
+            if (createNewOwner && updateCoupon && historySpin) console.log(createNewOwner);
             return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true, createNewOwner);
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         } else {
@@ -474,6 +512,52 @@ const getAllEventCoupon = async (req: IRequestWithId): Promise<ResponseBase> => 
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getAllEventCouponByEventId = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const { event_id } = req.params;
+        // const isAdmin = await configs.db.user.findFirst({
+        //     where: {
+        //         id: user_id,
+        //         is_admin: true,
+        //     },
+        // });
+        // if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+        const isActiveEvent = await configs.db.event.findFirst({
+            where: {
+                id: Number(event_id),
+                is_active: true,
+                is_delete: false,
+            },
+        });
+        if (!isActiveEvent) return new ResponseError(404, constants.error.ERROR_EVENT_NOT_FOUND, false);
+        const getAllEventCouponByEventId = await configs.db.coupon.findMany({
+            where: {
+                is_delete: false,
+                is_event: true,
+                event_id: Number(event_id),
+                remain_quantity: {
+                    gt: 0,
+                },
+            },
+            select: {
+                id: true,
+                // code: true,
+                discount: true,
+                valid_until: true,
+                event_id: true,
+            },
+        });
+        if (!getAllEventCouponByEventId) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, getAllEventCouponByEventId);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { coupon_id } = req.params;
@@ -517,6 +601,25 @@ const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getHistorySpinOfUserForAEvent = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const { event_id } = req.params;
+        const findHistorySpin = await configs.db.userEvent.findFirst({
+            where: {
+                user_id: user_id,
+                event_id: Number(event_id),
+            },
+        });
+        if (!findHistorySpin) return new ResponseError(404, constants.error.ERROR_HISTORY_SPIN_NOT_FOUND, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, findHistorySpin);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const couponService = {
     createCoupon,
     updateCoupon,
@@ -524,9 +627,11 @@ const couponService = {
     getCouponByCode,
     GetCouponsWithPagination,
     getAllEventCoupon,
+    getAllEventCouponByEventId,
     getCouponHistoryByUserId,
     getAllCouponHistory,
     createCouponOwner,
     getCouponById,
+    getHistorySpinOfUserForAEvent,
 };
 export default couponService;

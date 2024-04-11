@@ -13,6 +13,7 @@ import quizApis from "./quiz";
 import lectureApis from "./lecture";
 import testApis from "./test";
 import couponApis from "./coupon";
+import eventApis from "./event";
 
 const apis = {
     authApis,
@@ -30,5 +31,6 @@ const apis = {
     lectureApis,
     testApis,
     couponApis,
+    eventApis,
 };
 export default apis;

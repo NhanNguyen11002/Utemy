@@ -15,6 +15,7 @@ import quizSlice from "./slices/quiz.slice";
 import lectureSlice from "./slices/lecture.slice";
 import testSlice from "./slices/test.slice";
 import couponSlice from "./slices/coupon.slice";
+import eventSlice from "./slices/event.slice";
 
 // import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
 // import { composeWithDevTools } from "redux-devtools-extension";
@@ -37,6 +38,7 @@ const store = configureStore({
         lectureSlice,
         testSlice,
         couponSlice,
+        eventSlice,
         // fileStorageSlice: fileStorageSlice,
     },
     middleware: (getDefaultMiddleware) =>
