@@ -57,6 +57,12 @@ const getCouponsWithPagination = async (values: GetCouponsWithPagination) => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getVoucherBySpin = async () => {
+    const path = `coupon/spin/voucher`;
+
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const couponApis = {
     getCouponByCode,
     getAllEventCoupon,
@@ -67,7 +73,8 @@ const couponApis = {
     getCouponsWithPagination,
     getCouponById,
     getAllEventCouponByEventId,
-    getHistorySpinOfUserForAEvent
+    getHistorySpinOfUserForAEvent,
+    getVoucherBySpin,
 };
 
 export default couponApis;

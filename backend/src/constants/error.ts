@@ -148,6 +148,7 @@ const error = {
 
     //Event
     ERROR_EVENT_NOT_FOUND: "Event is finished or not found",
+    ERROR_EVENT_IN_BETWEEN: "There is another event in this period of time,",
     ERROR_EXIST_ACTIVE_EVENT: "There was an actived event before so cannot create another event",
 
     // History Spin

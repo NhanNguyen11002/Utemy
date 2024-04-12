@@ -60,7 +60,7 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
     };
     const initialValues: CreateCouponType = {
         code: coupon.code,
-        discount: coupon.discount,
+        discount: coupon.discount*100,
         is_event: coupon.is_event,
         remain_quantity: coupon.remain_quantity,
         valid_start: formatDateTime(validStart),

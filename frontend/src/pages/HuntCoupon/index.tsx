@@ -40,8 +40,8 @@ const HuntCoupon = () => {
         const response = action.payload;
         if (response.status_code === 200) {
           const coupons = response.data || [];
-          const formattedDiscounts: WheelData[] = coupons.map((coupon: any) => ({
-            option: `${coupon.discount}`,
+          const formattedDiscounts: WheelData[] = coupons.map((coupon: any, index: number) => ({
+            option: `${index + 1}`,
             coupon: coupon // Gán thông tin về coupon vào đây
           }));
         //   const receivedCoupons = response.data || [];
@@ -76,7 +76,7 @@ const HuntCoupon = () => {
         .then((action) => {
           // Xử lý kết quả từ dispatch nếu cần
           if (action.payload?.status_code === 200) {
-            toast.success(action.payload?.message);
+            // toast.success(action.payload?.message);
             // setHasSpun(true); // Đặt state hasSpun thành true khi người dùng quay vòng quay
             handleGetAllEventCouponByEventId();
         } else {
@@ -99,6 +99,14 @@ const HuntCoupon = () => {
       <ToastContainer /> {/* Container cho pop-up */}
       {discounts.length > 0 && <LuckyWheel discounts={discounts} onSpinResult={handleSpinResult} />}
       {/* {result && <p>Result: {result.option}</p>} */}
+      <div style={{ marginRight: '100px',marginLeft: '100px', fontSize: '2.2rem', fontFamily:'monospace' }}>
+      <h2>Danh sách phần thưởng:</h2>
+      <ul>
+        {discounts.map((discount, index) => (
+          <li key={index}>{`${index + 1}: Phiếu giảm giá ${discount.coupon.discount*100}%`}</li>
+        ))}
+      </ul>
+    </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import InCartCourse from "./InCartCourse";
 import OutCartCourse from "./OutCartCourse";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { cartActions, invoiceActions } from "../../redux/slices";
+import { cartActions, couponActions, invoiceActions } from "../../redux/slices";
 import { toast } from "react-hot-toast";
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -20,6 +20,7 @@ const Cart: React.FC = () => {
     const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
     const [couponValue, setCouponValue] = useState("");
     const [showRecaptcha, setShowRecaptcha] = useState(false);
+    const [selectedVoucher, setSelectedVoucher] = useState('');
 
 
 
@@ -27,6 +28,9 @@ const Cart: React.FC = () => {
     const subTotal = useAppSelector((state) => state.cartSlice.subTotal);
     const subTotalRetail = useAppSelector((state) => state.cartSlice.subTotalRetail);
     const isGetLoading = useAppSelector((state) => state.cartSlice.isGetLoading);
+
+    const voucherDropdown = useAppSelector((state) => state.couponSlice.voucherDropdown);
+
         // const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
 
     // const discount = useAppSelector((state) => state.cartSlice.discount) || 0;
@@ -78,7 +82,11 @@ const Cart: React.FC = () => {
         // Hiển thị ReCAPTCHA
         setShowRecaptcha(true);
     };
-
+    const handleVoucherChange = (e: any) => {
+        // Update selected voucher when dropdown value changes
+        setSelectedVoucher(e.target.value);
+        setCouponValue(e.target.value);
+    };
     const applyCouponCode = (code: string) => {
             
         // Reset previous error message
@@ -153,6 +161,7 @@ const Cart: React.FC = () => {
     
     
     useEffect(() => {
+        dispatch(couponActions.getVoucherBySpin());
         dispatch(cartActions.getAllCart());
         setCouponValue("");
 
@@ -259,8 +268,24 @@ const Cart: React.FC = () => {
                                 placeholder="Tùy chọn..."
                                 className="input input-bordered input-info input-md w-full max-w-xs"
                             />
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <select
+                                    value={selectedVoucher}
+                                    onChange={handleVoucherChange}
+                                    style={{ width: '120px' }}
+                                    className="input input-bordered input-info input-md max-w-xs"
+                                >
+                                    <option value="">-- Chọn --</option>
+                                    {voucherDropdown.map((voucher) => (
+                                        <option key={voucher.code} value={voucher.code}>
+                                            {voucher.code} - {voucher.valid_start} - {voucher.valid_until} - {100 - voucher.discount*100}% off
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                             <button
                                 className="transition-colors text-center text-sm bg-bluelogo hover:bg-background hover:text-bluelogo hover:border-bluelogo hover:border p-2 rounded-sm w-40 text-white text-hover shadow-md"
+                                style={{ width: '120px' }}
                                 onClick={handleCheckCoupon}
                             >
                                 {/* Thay thế dấu "?" bằng biểu tượng hoặc hình ảnh của nút kiểm tra */}
@@ -278,6 +303,7 @@ const Cart: React.FC = () => {
                                         document.querySelectorAll('iframe[src*=recaptcha]').forEach(a => a.remove());                                    }}
                                 />
                             )}
+
                         {couponSuccess && ( // Render success message if there's any
                         <p className="text-green-500 text-sm">{couponSuccess}</p>
                         )}
