@@ -29,7 +29,7 @@ const createCoupon = async (req: IRequestWithId, formData: FormData): Promise<Re
         const createCoupon = await configs.db.coupon.create({
             data: {
                 code: code,
-                discount: discount,
+                discount: discount / 100,
                 valid_start: validStart,
                 valid_until: validUntil,
                 remain_quantity: remainQuantity,
@@ -80,7 +80,7 @@ const updateCoupon = async (req: IRequestWithId, formData: FormData): Promise<Re
         const updateCoupon = await configs.db.coupon.update({
             data: {
                 code: code,
-                discount: discount,
+                discount: discount / 100,
                 valid_start: validStart,
                 valid_until: validUntil,
                 remain_quantity: remainQuantity,
@@ -227,8 +227,25 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                 console.log(findCouponEventByCode);
                 return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, findCouponEventByCode);
             }
-            else {
-                // Nếu không có dữ liệu trong bảng coupon_owner, tiếp tục kiểm tra trong bảng coupon
+        } else {
+            const isUsedCoupon = await configs.db.couponHistory.findFirst({
+                where: {
+                    user_id: user_id,
+                    coupon: {
+                        code: code,
+                    },
+                },
+                select: {
+                    user_id: true,
+                    coupon: {
+                        select: {
+                            code: true,
+                        },
+                    },
+                },
+            });
+            if (!isUsedCoupon) {
+                // Nếu không có dữ liệu trong bảng coupon_owner và chưa có lịch sử sd cp đó, tiếp tục kiểm tra trong bảng coupon
                 const isCouponExist = await configs.db.coupon.findFirst({
                     where: {
                         code,
@@ -253,21 +270,20 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                         remain_quantity: true,
                     },
                 });
-    
                 if (isCouponExist) {
                     return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
-                }
+                } else return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
             }
-        } 
-        // Xử lý trường hợp coupon không tồn tại
-        return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        }
     } catch (error) {
+        // Xử lý trường hợp coupon không tồn tại
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }
         console.log(error);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
+    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
 };
 
 const GetCouponsWithPagination = async (req: IRequestWithId): Promise<ResponseBase> => {
@@ -626,6 +642,41 @@ const getHistorySpinOfUserForAEvent = async (req: IRequestWithId): Promise<Respo
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getVoucherBySpin = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const allVoucherSpin = await configs.db.couponOwner.findMany({
+            where: {
+                user_id: user_id, // Giá trị user_id mà người dùng nhập vào
+            },
+            select: {
+                coupon: {
+                    select: {
+                        code: true,
+                        valid_start: true,
+                        valid_until: true,
+                        discount: true,
+                    },
+                },
+            },
+        });
+        const validVouchers = allVoucherSpin.filter((voucher) => voucher.coupon.valid_until >= new Date());
+        const validVoucherData = validVouchers.map((voucherSpin) => ({
+            code: voucherSpin.coupon.code,
+            valid_start: voucherSpin.coupon.valid_start,
+            valid_until: voucherSpin.coupon.valid_until,
+            discount: voucherSpin.coupon.discount,
+        }));
+        if (!allVoucherSpin) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, validVoucherData);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const couponService = {
     createCoupon,
     updateCoupon,
@@ -639,5 +690,6 @@ const couponService = {
     createCouponOwner,
     getCouponById,
     getHistorySpinOfUserForAEvent,
+    getVoucherBySpin,
 };
 export default couponService;

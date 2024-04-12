@@ -7,7 +7,7 @@ export const createCouponValidationSchema = Yup.object({
         .positive()
         .required(constants.error.ERROR_DISCOUNT_REQUIRED)
         .moreThan(0, constants.error.ERROR_DISCOUNT_MIN)
-        .lessThan(1, constants.error.ERROR_DISCOUNT_MAX),
+        .lessThan(100, constants.error.ERROR_DISCOUNT_MAX),
     remain_quantity: Yup.number().positive().required(constants.error.ERROR_REMAIN_QUANTITY_REQUIRED),
     valid_start: Yup.date()
         .required(constants.error.ERROR_VALID_START_REQUIRED), // Ensure valid_start is required
@@ -22,7 +22,7 @@ export const editCouponValidationSchema = Yup.object({
       .positive()
       .required(constants.error.ERROR_DISCOUNT_REQUIRED)
       .moreThan(0, constants.error.ERROR_DISCOUNT_MIN)
-      .lessThan(1, constants.error.ERROR_DISCOUNT_MAX),
+      .lessThan(100, constants.error.ERROR_DISCOUNT_MAX),
   remain_quantity: Yup.number().positive().required(constants.error.ERROR_REMAIN_QUANTITY_REQUIRED),
   valid_start: Yup.date()
       .required(constants.error.ERROR_VALID_START_REQUIRED), // Ensure valid_start is required

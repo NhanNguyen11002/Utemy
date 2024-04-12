@@ -95,4 +95,8 @@ export default class CouponController {
         const response: ResponseBase = await services.CouponServices.getHistorySpinOfUserForAEvent(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getVoucherBySpin(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.getVoucherBySpin(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }
