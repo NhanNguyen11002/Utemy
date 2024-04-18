@@ -1,4 +1,5 @@
-import { ExclamationTriangleIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { Presentation, ClipboardX } from "lucide-react";
 import { convertDateFormat } from "../../utils/helper";
 import { useState } from "react";
 import {
@@ -54,12 +55,15 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
                         >
                             <DialogTrigger className="w-[90%]">
                                 <div className="flex items-center justify-start gap-3 text-start">
-                                    <ExclamationTriangleIcon className="w-5 h-5 fill-red-500" />
-
+                                    {report.is_lecture ? (
+                                        <ClipboardX className="w-5 h-5 fill-red-500" />
+                                    ) : (
+                                        <Presentation className="w-5 h-5 fill-red-500" />
+                                    )}
                                     <div>
                                         <div className="flex gap-2">
-                                            <p>
-                                                Báo cáo tới{" "}
+                                            <p className={`${report.is_lecture ? "text-[#ff9966]" : "text-[#ffcc00]"}`}>
+                                                #
                                                 <span className="font-bold">
                                                     {report.is_lecture ? "bài học" : "khoá học"}
                                                 </span>{" "}
@@ -119,7 +123,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
                                 </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Giải quyết </p>
+                                <p>{report.is_handle ? "Đã xem" : "Đánh giấu đã xem"} </p>
                             </TooltipContent>
                         </div>
                     </>
