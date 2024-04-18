@@ -176,7 +176,8 @@ const EditForm: React.FC<props> = (props) => {
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
-        formData.append("trailer", trailer as File);
+        if (trailer)
+            formData.append("trailer", trailer as File);
 
         dispatch(courseActions.editCourse(formData)).then((response) => {
             if (response.payload?.status_code === 200) {

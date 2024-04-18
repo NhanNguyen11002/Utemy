@@ -104,6 +104,7 @@ const updateCourseSchema: ObjectSchema<UpdateCourse> = Joi.object({
     study: Joi.string(),
 
     thumbnail: Joi.string(),
+    url_trailer: Joi.string(),
     price: Joi.number().required().positive().messages({
         "any.required": constants.error.ERROR_COURSE_PRICE_REQUIRED,
         "number.base": constants.error.ERROR_COURSE_PRICE_NUMBER,
