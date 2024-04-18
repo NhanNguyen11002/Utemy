@@ -156,6 +156,7 @@ const initialState: UserSliceType = {
             summary: "",
             number_of_rating: 0,
             thumbnail: "",
+            url_trailer: "",
             description: "",
             author: {
                 email: "",

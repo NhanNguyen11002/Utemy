@@ -21,6 +21,7 @@ export default class CourseController {
                 success: false,
             });
         }
+        // const trailerFile: Express.Multer.File | undefined = req.file;
         const response: ResponseBase = await services.CourseService.createCourse(req);
         return res.status(response.getStatusCode()).json(response);
     }
@@ -87,6 +88,10 @@ export default class CourseController {
 
     async getCourseDetail(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.CourseService.getCourseDetail(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getCourseDetailForTrialLesson(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.getCourseDetailForTrialLesson(req);
         return res.status(response.getStatusCode()).json(response);
     }
     async getCourseDetailById(req: IRequestWithId, res: Response): Promise<Response> {

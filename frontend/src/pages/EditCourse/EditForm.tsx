@@ -9,7 +9,8 @@ import { EditCourse, Course } from "../../types/course";
 import { Category as CategoryType } from "../../types/category";
 import slugify from "slugify";
 import toast from "react-hot-toast";
-import { previewImage } from "../../utils/helper";
+import { previewImage, previewTrailer } from "../../utils/helper";
+import Hls from "hls.js";
 
 type Options = {
     value: number;
@@ -40,8 +41,9 @@ type props = {
 
 const EditForm: React.FC<props> = (props) => {
     const [errorImage, setErrorImage] = useState<boolean>(false);
+    const [errorTrailer, setErrorTrailer] = useState<boolean>(false);
     const [thumbnail, setThumbnail] = useState<File | null>(null);
-
+    const [trailer, setTrailer] = useState<File | null>(null);
     const categories = useAppSelector((state) => state.categorySlice.categories); // all category
     const categoriesOptionsTemp = categories.map((category) => {
         const option: Options = {
@@ -57,6 +59,7 @@ const EditForm: React.FC<props> = (props) => {
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
     const imageRef = useRef<HTMLImageElement>(null);
+    const trailerRef = useRef<HTMLVideoElement>(null);
     const navigate = useNavigate();
     const chosenOptionsCategories: Options[] = [];
     courseCategories.forEach((category: CategoryType) => {
@@ -77,8 +80,22 @@ const EditForm: React.FC<props> = (props) => {
         slug: courseDetail.slug,
         price: Number(courseDetail.price),
         thumbnail: null,
+        trailer: null
     };
     const dispatch = useAppDispatch();
+    useEffect(() => {
+        const videoElement = trailerRef.current;
+
+        if (videoElement && courseDetail.url_trailer) {
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(courseDetail.url_trailer);
+                hls.attachMedia(videoElement);
+            } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+                videoElement.src = courseDetail.url_trailer;
+            }
+        }
+    }, [courseDetail.url_trailer]);
 
     useEffect(() => {
         dispatch(categoryActions.getCategories());
@@ -126,7 +143,7 @@ const EditForm: React.FC<props> = (props) => {
         formik.setFieldValue("categories", event);
     };
 
-    const onChangeInputFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeInputThumbnailFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.currentTarget.files![0] && event.currentTarget.files![0].size > 1024 * 1024 * 4) {
             setErrorImage(true);
         } else {
@@ -134,6 +151,16 @@ const EditForm: React.FC<props> = (props) => {
             setThumbnail(event.currentTarget.files![0]);
             const thumbnail = event.currentTarget.files![0];
             previewImage(thumbnail, imageRef, courseDetail.thumbnail);
+        }
+    };
+    const onChangeInputTrailerFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.currentTarget.files![0] && event.currentTarget.files![0].size > 1024 * 1024 * 1000) {
+            setErrorTrailer(true);
+        } else {
+            setErrorTrailer(false);
+            setTrailer(event.currentTarget.files![0]);
+            const trailer = event.currentTarget.files![0];
+            previewTrailer(trailer, trailerRef, courseDetail.url_trailer);
         }
     };
 
@@ -149,6 +176,7 @@ const EditForm: React.FC<props> = (props) => {
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
+        formData.append("trailer", trailer as File);
 
         dispatch(courseActions.editCourse(formData)).then((response) => {
             if (response.payload?.status_code === 200) {
@@ -179,6 +207,23 @@ const EditForm: React.FC<props> = (props) => {
                             </p>
                             <div className="flex justify-center items-center gap-4 laptop:items-start laptop:justify-start my-4">
                                 <div className="">
+                                    <div className="flex flex-col gap-3">
+                                        <div className="text-center tablet:text-start">
+                                            <p className="text-lg font-medium">Tải lên hình ảnh bìa của khoá học tại đây</p>
+                                            <p className={`${errorImage ? "text-red-500" : ""}  italic`}>
+                                                Lưu ý: Kích cỡ nhỏ hơn 4MB, phải là file .jpg .jpeg .png
+                                            </p>
+                                        </div>
+                                        <input
+                                            name="thumbnail"
+                                            type="file"
+                                            accept=".png, .jpg"
+                                            className="file-input file-input-bordered file-input-info w-full max-w-xs"
+                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                onChangeInputThumbnailFile(event);
+                                            }}
+                                        />
+                                    </div>
                                     <img
                                         ref={imageRef}
                                         src={`${courseDetail.thumbnail}`}
@@ -186,22 +231,33 @@ const EditForm: React.FC<props> = (props) => {
                                         className="w-60 h-60 rounded-lg outline-none border border-dashed border-black tablet:w-80 tablet:h-80 laptop:h-96 laptop:w-96"
                                     />
                                 </div>
-                                <div className="flex flex-col gap-3">
+                                
+                                <div className="flex flex-col gap-3" style={{ marginLeft: '250px' }}>
                                     <div className="text-center tablet:text-start">
-                                        <p className="text-lg font-medium">Tải lên hình ảnh bìa của khoá học tại đây</p>
-                                        <p className={`${errorImage ? "text-red-500" : ""}  italic`}>
-                                            Lưu ý: Kích cỡ hình nhỏ hơn 4MB, phải là file .jpg .jpeg .png
+                                        <p className="text-lg font-medium">Chọn video trailer</p>
+                                        <p className={`${errorTrailer ? "text-red-500" : ""}  italic`}>
+                                            Lưu ý: Kích cỡ video nhỏ hơn 100MB, phải là file .mp4 .mkv .mov
                                         </p>
                                     </div>
                                     <input
-                                        name="thumbnail"
+                                        name="trailer"
                                         type="file"
-                                        accept=".png, .jpg"
+                                        accept=".mp4, .mkv, .mov"
                                         className="file-input file-input-bordered file-input-info w-full max-w-xs"
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                            onChangeInputFile(event);
+                                            onChangeInputTrailerFile(event);
                                         }}
                                     />
+
+                                    {/* Video player */}
+                                    {courseDetail.url_trailer!= null && (
+                                        <video ref={trailerRef} controls className="mt-2" width="640" height="480">
+                                            {["video/mp4", "video/x-matroska", "video/mov"].map((type, index) => (
+                                                <source key={index} src={courseDetail.url_trailer ? courseDetail.url_trailer : ""} type={type} />
+                                            ))}
+                                        Your browser does not support the video tag.
+                                        </video>
+                                    )}
                                 </div>
                             </div>
                             {/* chừng thêm video quảng cáo ở đây nữa */}

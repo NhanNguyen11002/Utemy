@@ -2,7 +2,7 @@ import { Router } from "express";
 import controllers from "../controllers/index";
 import { isLogin } from "../middlewares/isLogin";
 import { isAuthor } from "../middlewares/isAuthor";
-import { uploadAvatar, uploadThumbnail } from "../middlewares/multer";
+import { uploadAvatar, uploadMixFiles, uploadThumbnail, uploadTrailer, uploadVideo } from "../middlewares/multer";
 
 const courseRouter: Router = Router();
 // Get all sales courses
@@ -13,7 +13,7 @@ courseRouter.get("/top10-sales", controllers.courseController.getTop10SalesCours
 courseRouter.get("/right/:course_id", isLogin, controllers.courseController.getRightOfCourse);
 
 //14. Create course
-courseRouter.post("/", isLogin, uploadThumbnail, controllers.courseController.createCourse);
+courseRouter.post("/", isLogin, uploadMixFiles, controllers.courseController.createCourse);
 
 courseRouter.patch("/approve/:course_id", isLogin, controllers.courseController.approveCourse);
 courseRouter.patch("/restrict/:course_id", isLogin, controllers.courseController.restrictCourse);
@@ -21,7 +21,7 @@ courseRouter.patch("/restrict/:course_id", isLogin, controllers.courseController
 //19. Get course detail by id
 
 //15. Edit course
-courseRouter.patch("/", isLogin, uploadThumbnail, isAuthor, controllers.courseController.editCourse);
+courseRouter.patch("/", isLogin, uploadMixFiles, isAuthor, controllers.courseController.editCourse);
 
 courseRouter.patch("/target", isLogin, isAuthor, controllers.courseController.updateTargetCourse);
 
@@ -52,4 +52,5 @@ courseRouter.get("/detail/:course_id", isLogin, isAuthor, controllers.courseCont
 courseRouter.get("/all", controllers.courseController.getAllCourse);
 courseRouter.post("/thumbnail", isLogin, uploadAvatar, controllers.courseController.changeThumbnail);
 courseRouter.get("/:slug", controllers.courseController.getCourseDetail);
+courseRouter.get("/trial/:slug", controllers.courseController.getCourseDetailForTrialLesson);
 export default courseRouter;

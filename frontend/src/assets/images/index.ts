@@ -14,6 +14,8 @@ import Event2 from "./event2.jpeg";
 import Event3 from "./event3.jpg";
 import Learning from "./learning";
 import ImgLearn from "./img-e-learning-design-lab-2022.jpeg";
+import QuillLetter from "./QuillLetter.jpg";
+import QuillLetterReflect from "./QuillLetterReflect.jpg"
 
 export {
     DefaultAvatar,
@@ -32,4 +34,6 @@ export {
     Event3,
     Learning,
     ImgLearn,
+    QuillLetter,
+    QuillLetterReflect,
 };

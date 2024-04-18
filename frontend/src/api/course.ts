@@ -46,6 +46,11 @@ const getCourseDetail = async (values: string) => {
     const reponse = await apiCaller("GET", path, values);
     return reponse;
 };
+const getCourseDetailForTrialLesson = async (values: string) => {
+    const path = `course/trial/${values}`;
+    const reponse = await apiCaller("GET", path, values);
+    return reponse;
+};
 const getCourseDetailById = async (values: number) => {
     const path = `course/detail/${values}`;
     const reponse = await apiCaller("GET", path, values);
@@ -108,6 +113,7 @@ const courseApis = {
     updateTargetCourse,
     approveCourse,
     restrictCourse,
+    getCourseDetailForTrialLesson,
 };
 
 export default courseApis;

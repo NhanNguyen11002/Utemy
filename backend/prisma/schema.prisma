@@ -70,6 +70,8 @@ model Course {
   sale_until         DateTime?
   study              Json?
   requirement        Json?
+  url_trailer        String   @db.Text
+
   
 
   user User @relation(fields: [author_id], references: [id])

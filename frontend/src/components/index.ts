@@ -19,7 +19,9 @@ import PopupChoseLectureType from "./Popup/PopupChoseLectureType";
 import PopupAddTest from "./Popup/PopupAddTest";
 import CardVideo from "./Card/CardVideo";
 import AccordionSection from "./Accordion/AccordionSection";
+import AccordionSectionForTrial from "./Accordion/AccordionSectionForTrial";
 import LectureCard from "./Card/LectureCard";
+import LectureCardForTrial from "./Card/LectureCardForTrial";
 import ApprovalCard from "./Card/ApprovalCard";
 import { Checkbox } from "./ui/checkbox";
 import TextEditorWithImage from "./TextEditor/TextEditorWithImage";
@@ -48,7 +50,9 @@ export {
     PopupAddTest,
     CardVideo,
     AccordionSection,
+    AccordionSectionForTrial,
     LectureCard,
+    LectureCardForTrial,
     Checkbox,
     MyCourseCard,
     ApprovalCard,

@@ -80,3 +80,31 @@ export const uploadVideo = async (req: IRequestWithId, res: Response, next: Next
         next();
     });
 };
+export const uploadTrailer = async (req: IRequestWithId, res: Response, next: NextFunction) => {
+    configs.upload.uploadVideo(req, res, (error: any) => {
+        if (error instanceof MulterError) {
+            console.log(error);
+            res.status(400).json({ message: error.message, success: false, status_code: 400 });
+            return;
+        } else if (error) {
+            console.log(error);
+            res.status(400).json({ message: error.message, success: false, status_code: 400 });
+            return;
+        }
+        next();
+    });
+};
+export const uploadMixFiles = async (req: IRequestWithId, res: Response, next: NextFunction) => {
+    configs.upload.uploadMixFile(req, res, (error: any) => {
+        if (error instanceof MulterError) {
+            console.log(error);
+            res.status(400).json({ message: error.message, success: false, status_code: 400 });
+            return;
+        } else if (error) {
+            console.log(error);
+            res.status(400).json({ message: error.message, success: false, status_code: 400 });
+            return;
+        }
+        next();
+    });
+};

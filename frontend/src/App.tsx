@@ -128,6 +128,7 @@ function App() {
                         <Route path="course-detail/:slug/watch" element={<UserWatchVideoLayout />}>
                             <Route index element={<WatchVideo />}></Route>
                         </Route>
+                        
                     </Routes>
                 </div>
             </BrowserRouter>

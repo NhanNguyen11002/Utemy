@@ -31,6 +31,11 @@ const createCouponOwner = async( id: number, event_id: number )=> {
     const reponse = await apiCaller("POST", path, { id, event_id });
     return reponse;
 };
+const createHistoryForGoodLuckNextTime = async( event_id: number )=> {
+    const path =`coupon/good-luck/`;
+    const reponse = await apiCaller("POST", path, { event_id });
+    return reponse;
+};
 const createCoupon = async (values: FormData)=> {
     const path ="coupon/";
     const reponse = await apiCaller("POST", path, values);
@@ -67,6 +72,7 @@ const couponApis = {
     getCouponByCode,
     getAllEventCoupon,
     createCouponOwner,
+    createHistoryForGoodLuckNextTime,
     createCoupon,
     updateCoupon,
     deleteCoupon,
