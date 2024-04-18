@@ -3,12 +3,13 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import AnswerCard from "./AnswerCard";
 import TimeCounter from "./TimeCounter";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { testActions } from "../../redux/slices";
+import { testActions, progressActions } from "../../redux/slices";
 import { TestProgressType, TestResultType } from "../../types/test";
 import FinishTestPopup from "./FinishTestPopup";
 import QuestionCounter from "./QuestionCounter";
 const TestGround: React.FC = () => {
     const dispatch = useAppDispatch();
+    const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
     const [finishPopup, setFinishPopup] = useState(false);
     const nowQuestion = useAppSelector((state) => state.testSlice.nowQuestion);
     const questionCount = useAppSelector((state) => state.testSlice.questionCount);
@@ -33,7 +34,11 @@ const TestGround: React.FC = () => {
         dispatch(testActions.setProgress(updatedProgress));
     };
     const handleFinishTest = () => {
-        dispatch(testActions.createTestHistory(testResult));
+        dispatch(testActions.createTestHistory(testResult)).then((res) => {
+            if (res.payload?.status_code === 200) {
+                dispatch(progressActions.getProgressByCourseSlug(slug));
+            }
+        });
         dispatch(testActions.setStopTest());
     };
 

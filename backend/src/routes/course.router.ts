@@ -36,6 +36,8 @@ courseRouter.delete("/promotion/:course_id", isLogin, isAuthor, controllers.cour
 //20. Get list of rating course
 courseRouter.get("/:slug/rating", controllers.courseController.getListRatingOfCourse);
 
+courseRouter.get("/:slug/progress", isLogin, controllers.courseController.getProgressByCourseSlug);
+
 courseRouter.get("/percent/:slug", controllers.courseController.getRatingPercentOfCourse);
 
 //21. Get user's rating of course

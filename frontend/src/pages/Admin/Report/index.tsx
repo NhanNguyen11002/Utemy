@@ -2,8 +2,13 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React, { useState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import { reportActions } from "../../../redux/slices";
-import { Pagination, AllReportCard } from "../../../components";
+import { Pagination } from "../../../components";
 import { ReportType as Report } from "../../../types/report";
+
+import { convertDateFormat } from "../../../utils/helper";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
+import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "../../../components/ui/avatar";
 
 // import { Pagination } from "../../../components";
 // import { TotalRating } from "../../../components";
@@ -37,34 +42,61 @@ export function ReportAdmin() {
     }, [keyword, pageIndex]);
     return (
         <>
-            <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2 ">
-                <div className="relative w-[60%]">
+            <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2 gap-4 ">
+                <div className="relative w-[40%]">
                     <input
                         ref={inputRef}
                         type="text"
                         placeholder="Từ khóa..."
-                        className="rounded-full py-4 px-10 w-full border-[1px] border-black"
+                        className="rounded-full py-2 px-10 w-full border-[1px] border-black"
                         value={userInput}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") handleKeyWordSearch();
                         }}
                     />
-                    <div className="cursor-pointer absolute bottom-5 left-4 " onClick={handleKeyWordSearch}>
+                    <div className="cursor-pointer absolute bottom-3 left-4 " onClick={handleKeyWordSearch}>
                         <MagnifyingGlassIcon className="w-5 h-5" />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 w-2/3">
+                <div className="flex flex-col w-2/3">
                     {reports.length > 0 ? (
-                        reports.map((report, index) => {
-                            return (
-                                <div key={index}>
-                                    <AllReportCard report={report} key={index} />
-                                </div>
-                            );
-                        })
+                        <Table className="border">
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="">Khoá học</TableHead>
+                                    <TableHead className="text-center">Ngày gửi báo cáo</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {reports.map((report, index) => {
+                                    return (
+                                        <TableRow key={index}>
+                                            <Link
+                                                to={`/admin/course/${report.course.slug}/`}
+                                                className="hover:cursor-pointer"
+                                            >
+                                                <TableCell className="font-medium">
+                                                    <div className="flex items-center gap-4">
+                                                        <Avatar className=" rounded-sm">
+                                                            <AvatarImage src={report.course.thumbnail} />
+                                                            <AvatarFallback>CN</AvatarFallback>
+                                                        </Avatar>
+                                                        <p className="title-card-content">{report.course.title}</p>
+                                                    </div>
+                                                </TableCell>
+                                            </Link>
+                                            <TableCell className="text-center">
+                                                {" "}
+                                                <p>{convertDateFormat(report.created_at.toString())}</p>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
                     ) : (
-                        <p className={`text-lg mt-2 `}>Có vẻ như không có báo cáo đến khoá học nào</p>
+                        <p className={`text-lg mt-2 `}>Có vẻ như không có báo cáo tới khoá học nào</p>
                     )}
                 </div>
                 {totalPage > 1 && (

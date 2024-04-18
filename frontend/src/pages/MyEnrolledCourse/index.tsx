@@ -3,8 +3,7 @@ import SearchIcon from "../../assets/icons/SearchIcon";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { courseActions } from "../../redux/slices";
 import { Course } from "../../types/course";
-import { Spin, Pagination, CourseCard } from "../../components";
-import { User } from "../../types/user";
+import { Spin, Pagination, MyEnrolledCourseCard } from "../../components";
 
 const MyEnrolledCourse: React.FC = () => {
     const [userInput, setUserInput] = useState<string>("");
@@ -74,18 +73,7 @@ const MyEnrolledCourse: React.FC = () => {
                         {courseList.map((course, index) => {
                             return (
                                 <div className="w-full max-w-xs tablet:max-w-full place-self-center" key={index}>
-                                    <CourseCard
-                                        id={course.course_id}
-                                        thumbnail={course.thumbnail}
-                                        slug={course.slug}
-                                        title={course.title}
-                                        rating={course.average_rating}
-                                        summary={course.summary}
-                                        author={course.author as User}
-                                        attendees={course.number_of_enrolled}
-                                        numberOfSection={course.number_of_section}
-                                        enrolled={true}
-                                    />
+                                    <MyEnrolledCourseCard enrolledCourse={course} />
                                 </div>
                             );
                         })}

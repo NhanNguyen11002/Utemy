@@ -17,7 +17,7 @@ import ApprovalController from "./approval.controller";
 import DecisionController from "./decision.controller";
 import ReportController from "./report.controller";
 import EventController from "./event.controller";
-
+import ProgressController from "./progress.controller";
 export default {
     authController: new AuthController(),
     sectionController: new SectionController(),
@@ -38,4 +38,5 @@ export default {
     decisionController: new DecisionController(),
     reportController: new ReportController(),
     eventController: new EventController(),
+    progressController: new ProgressController(),
 };

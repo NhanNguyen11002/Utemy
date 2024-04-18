@@ -639,8 +639,14 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                             where: {
                                 is_delete: false,
                             },
+                            include: {
+                                Lecture: {
+                                    where: {
+                                        is_delete: false,
+                                    },
+                                },
+                            },
                         },
-                        enrolleds: true,
                     },
                 },
             },
@@ -664,6 +670,10 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
         const totalPage = Math.ceil(totalRecord / take);
 
         const courseCard: CourseInfo[] = (enrolledCourses as any).map((enroll: any) => {
+            let number_of_lecture = 0;
+            enroll.course.sections.forEach((section: any) => {
+                number_of_lecture += section.Lecture.length;
+            });
             return {
                 course_id: enroll.course?.id,
                 title: enroll.course?.title,
@@ -672,8 +682,10 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                 number_of_rating: enroll.course?.number_of_rating,
                 number_of_enrolled: enroll.course?.number_of_enrolled,
                 average_rating: enroll.course?.average_rating,
-                created_at: enroll.course.created_at,
+                updated_at: enroll.course.updated_at,
                 number_of_section: enroll.course.sections.length,
+                number_of_lecture,
+                overall_progress: enroll.overall_progress,
                 author: {
                     user_id: enroll.course?.user.id,
                     first_name: enroll.course?.user.first_name,
@@ -913,9 +925,11 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     };
                     return temp;
                 });
+                let number_of_lecture = 0;
                 let number_of_section = 0;
                 sections.forEach((section, index) => {
                     number_of_section += 1;
+                    number_of_lecture += section.lecture.length;
                 });
                 const courseData: CourseDetail = {
                     course_id: course.id,
@@ -928,6 +942,7 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     number_of_enrolled: course.number_of_enrolled,
                     author: author,
                     number_of_section,
+                    number_of_lecture,
                     categories: categories,
                     sections: sections,
                     status: course.status,
@@ -1457,6 +1472,68 @@ const restrictCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getProgressByCourseSlug = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { slug } = req.params;
+        const userId = Number(req.user_id);
+        const isFoundCourse = await configs.db.course.findFirst({
+            where: {
+                slug,
+            },
+        });
+        if (!isFoundCourse) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const getProgress = await configs.db.progress.findMany({
+            where: {
+                course_id: Number(isFoundCourse.id),
+                user_id: userId,
+            },
+            orderBy: {
+                lecture_id: "asc",
+            },
+            include: {
+                lecture: {
+                    select: {
+                        section_id: true,
+                        lesson: true,
+                        test: true,
+                        type: true,
+                    },
+                },
+            },
+        });
+        const getOverall = await configs.db.enrolled.findFirst({
+            where: {
+                user_id: userId,
+                course_id: Number(isFoundCourse.id),
+            },
+        });
+        if (!getProgress || !getOverall) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const progressData = getProgress.map((progress) => {
+            const duration =
+                progress.lecture.type === "Lesson"
+                    ? progress.lecture.lesson?.duration
+                    : progress.lecture.test?.duration;
+            const temp = {
+                progress_id: progress.id,
+                lecture_id: progress.lecture_id,
+                section_id: progress.lecture.section_id,
+                is_pass: progress.pass,
+                duration,
+                progress_value: progress.progress_value,
+                progress_percent: progress.progress_percent,
+            };
+            return temp;
+        });
+        const data = {
+            overall_progress: getOverall.overall_progress,
+            progress: progressData,
+        };
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
+    } catch (error) {
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const CourseServices = {
     getRightOfCourse,
     createCourse,
@@ -1480,6 +1557,7 @@ const CourseServices = {
     updateTargetCourse,
     approveCourse,
     restrictCourse,
+    getProgressByCourseSlug,
 };
 
 export default CourseServices;

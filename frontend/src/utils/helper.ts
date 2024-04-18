@@ -119,6 +119,21 @@ export const secondsToMinutesAndSeconds = (seconds: number) => {
 
     return `${formattedMinutes}:${formattedSeconds}`;
 };
+export const convertSecondsToTimeString = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.ceil((seconds % 3600) / 60); // Làm tròn lên
+    let result = "";
+
+    if (hours > 0) {
+        result += hours + " giờ ";
+    }
+
+    if (minutes > 0 || hours === 0) {
+        result += minutes + " phút";
+    }
+
+    return result;
+};
 export const checkAnswerArray = (array: QuizAnswerType[]) => {
     let count = 0;
     array.forEach((answer) => {

@@ -8,7 +8,7 @@ import { Course as CourseDetailType } from "../../types/course";
 import { GetRating, Rating as RatingType } from "../../types/rating";
 import { Link } from "react-router-dom";
 import NotFound from "../NotFound";
-import { courseActions, ratingActions } from "../../redux/slices";
+import { courseActions, ratingActions, progressActions } from "../../redux/slices";
 import PopupRating from "./PopupRating";
 import toast from "react-hot-toast";
 import AuthorButton from "./AuthorButton";
@@ -118,7 +118,14 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     }, [dispatch, slug, isNotFound]);
     useEffect(() => {
         if (courseDetail.course_id && isLogin) {
-            dispatch(courseActions.getRightOfCourse(courseDetail.course_id));
+            dispatch(courseActions.getRightOfCourse(courseDetail.course_id)).then((res) => {
+                if (res.payload && res.payload.data) {
+                    if (res.payload.data.role === constants.util.ROLE_ENROLLED) {
+                        console.log(role);
+                        dispatch(progressActions.getProgressByCourseSlug(slug as string));
+                    }
+                }
+            });
             dispatch(ratingActions.getUserRating(courseDetail.course_id));
         }
     }, [dispatch, courseDetail.course_id, isLogin]);
@@ -390,7 +397,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                         return (
                                                             <div key={index}>
                                                                 <AccordionSection
-                                                                    // orderLesson={orderLesson}
                                                                     key={section.id * index}
                                                                     isDisplayEdit={false}
                                                                     isDisplayProgress={

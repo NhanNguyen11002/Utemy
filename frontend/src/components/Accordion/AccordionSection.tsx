@@ -3,6 +3,8 @@ import { Section as SectionType } from "../../types/section";
 import LectureCard from "../Card/LectureCard";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Lecture } from "../../types/lecture";
+import { useAppSelector } from "../../hooks/hooks";
+import { convertSecondsToTimeString } from "../../utils/helper";
 type AccordionSectionType = {
     section: SectionType;
     isDisplayEdit: boolean;
@@ -24,6 +26,14 @@ const AccordionSection: React.FC<AccordionSectionType> = (props) => {
             : " Chương học chưa có bài học nào"
         : "";
     const lectureCount = props.section.lecture ? props.section.lecture.length : "0";
+    const progressOfSection = useAppSelector((state) => state.progressSlice.progressOfSection);
+    const passLecture = progressOfSection.get(props.section.id) || 0;
+    const totalDuration: number =
+        (props.section.lecture &&
+            props.section.lecture?.reduce((acc: number, curr: any) => {
+                return acc + Number(curr.content.duration);
+            }, 0)) ||
+        0;
     return (
         <>
             <Accordion type="single" collapsible>
@@ -33,9 +43,13 @@ const AccordionSection: React.FC<AccordionSectionType> = (props) => {
                             <div className="flex flex-col gap-1 text-left">
                                 <p className="font-semibold">{props.section.title}</p>
                                 {props.isDisplayProgress ? (
-                                    <p className="text-sm font-normal">3/{lectureCount} | 20 phút</p>
+                                    <p className="text-sm font-normal">
+                                        {passLecture}/{lectureCount} | {convertSecondsToTimeString(totalDuration)}
+                                    </p>
                                 ) : (
-                                    <p className="text-sm font-normal">{lectureCount} | 20 phút</p>
+                                    <p className="text-sm font-normal">
+                                        {lectureCount} bài học | {convertSecondsToTimeString(totalDuration)}
+                                    </p>
                                 )}
                             </div>
                             {props.isDisplayEdit && (
