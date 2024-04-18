@@ -42,7 +42,7 @@ const AccordionSectionForTrial: React.FC<AccordionSectionForTrialType> = (props)
                         <div className="flex justify-between items-center w-[95%]">
                             <div className="flex flex-col gap-1 text-left">
                                 <p className="font-semibold">{props.section.title}</p>
-                                    <p className="text-sm font-normal">{lectureCount} |  {convertSecondsToTimeString(totalDuration)} </p>
+                                    <p className="text-sm font-normal">{lectureCount} bài học|  {convertSecondsToTimeString(totalDuration)} </p>
                             </div>
                             {props.isDisplayEdit && (
                                 <div className="flex gap-2">
