@@ -9,6 +9,7 @@ import { Course } from "../../types/course";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "../../components/ui/hover-card";
+import constants from "../../constants";
 
 interface HeaderProps {
     course: Course;
@@ -18,6 +19,8 @@ interface HeaderProps {
 const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
     const avatar = useAppSelector((state) => state.authSlice.user.url_avatar);
     const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin);
+    const overallProgress = useAppSelector((state) => state.progressSlice.overallProgress) || 0;
+    const number_of_lecture = useAppSelector((state) => state.courseSlice.courseDetail.number_of_lecture) || 1;
     const [isDisplayUserDrawer, setIsDisplayUserDrawer] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
@@ -46,22 +49,26 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                     </div>
 
                     <div className="flex gap-4 items-center">
-                        <HoverCard>
-                            <HoverCardTrigger className="flex items-center w-fit shrink-0 hover:opacity-85 transition-all duration-300 hover:cursor-pointer">
-                                <CircularProgressbar
-                                    value={66}
-                                    text={``}
-                                    styles={buildStyles({
-                                        pathColor: "#60a5fa",
-                                    })}
-                                    className="w-10 h-10 fill-blue-400"
-                                />
-                                <p className="text-white text-sm ">Tiến độ của bạn</p>
-                            </HoverCardTrigger>
-                            <HoverCardContent>
-                                <div>Cac</div>
-                            </HoverCardContent>
-                        </HoverCard>
+                        {role === constants.util.ROLE_ENROLLED && (
+                            <HoverCard>
+                                <HoverCardTrigger className="flex items-center w-fit shrink-0 hover:opacity-85 transition-all duration-300 hover:cursor-pointer">
+                                    <CircularProgressbar
+                                        value={(overallProgress / number_of_lecture) * 100}
+                                        text={``}
+                                        styles={buildStyles({
+                                            pathColor: "#60a5fa",
+                                        })}
+                                        className="w-10 h-10 fill-blue-400"
+                                    />
+                                    <p className="text-white text-sm ">Tiến độ của bạn</p>
+                                </HoverCardTrigger>
+                                <HoverCardContent>
+                                    <div>
+                                        Đã hoàn thành {overallProgress}/{number_of_lecture} bài học
+                                    </div>
+                                </HoverCardContent>
+                            </HoverCard>
+                        )}
 
                         <div className="ml-auto flex shrink-0 items-center">
                             {/* DRAWER AVATAR */}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { courseActions, lectureActions, testActions } from "../../redux/slices";
+import { courseActions, lectureActions, testActions, progressActions } from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
 import { VideoPlayer, Spin, WatchVideoHeader, UserToolDropdown } from "../../components";
@@ -40,7 +40,15 @@ const WatchVideo: React.FC = () => {
             if (!response.payload || !response.payload.data || response.payload.status_code !== 200) {
                 setIsNotFound(true);
             } else {
-                dispatch(courseActions.getRightOfCourse(response.payload?.data.course_id));
+                dispatch(courseActions.getRightOfCourse(response.payload?.data.course_id)).then((res) => {
+                    if (res.payload && res.payload.data) {
+                        if (res.payload.data.role === constants.util.ROLE_ENROLLED) {
+                            console.log(role);
+                            dispatch(progressActions.getProgressByCourseSlug(slug as string));
+                        }
+                    }
+                });
+
                 if (response.payload.data.sections && response.payload.data.sections.length > 0) {
                     const sections = response.payload.data.sections;
                     for (const section of sections) {
@@ -80,7 +88,10 @@ const WatchVideo: React.FC = () => {
                     <div className="w-3/4 shrink-0 mt-1 bg-[#2D2F31] ">
                         {lecture.type === "Lesson" ? (
                             <>
-                                <VideoPlayer sourse={lecture.content.url_video ? lecture.content.url_video : ""} />
+                                <VideoPlayer
+                                    source={lecture.content.url_video ? lecture.content.url_video : ""}
+                                    lectureId={lecture.lecture_id}
+                                />
                             </>
                         ) : (
                             <div className="w-full flex-1 shrink-0">
@@ -100,7 +111,7 @@ const WatchVideo: React.FC = () => {
                                     handleChangeLesson={handleChangeLesson}
                                     section={section}
                                     isDisplayEdit={false}
-                                    isDisplayProgress={true}
+                                    isDisplayProgress={role === constants.util.ROLE_ENROLLED}
                                 />
                             );
                         })}

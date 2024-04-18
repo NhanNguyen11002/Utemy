@@ -17,6 +17,7 @@ import decisionApis from "./decision";
 import reportApis from "./report";
 import couponApis from "./coupon";
 import eventApis from "./event";
+import progressApis from "./progress";
 
 const apis = {
     authApis,
@@ -38,5 +39,6 @@ const apis = {
     reportApis,
     couponApis,
     eventApis,
+    progressApis,
 };
 export default apis;

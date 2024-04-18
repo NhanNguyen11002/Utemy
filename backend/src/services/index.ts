@@ -18,6 +18,7 @@ import ApprovalServices from "./approval.services";
 import DecisionServices from "./decision.services";
 import ReportServices from "./report.services";
 import EventServices from "./event.services";
+import ProgressServices from "./progress.services";
 export default {
     AuthServices,
     UserService,
@@ -39,4 +40,5 @@ export default {
     DecisionServices,
     ReportServices,
     EventServices,
+    ProgressServices,
 };

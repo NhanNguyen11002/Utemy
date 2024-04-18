@@ -4,6 +4,8 @@ import Pagination from "./Pagination";
 import DeleteModal from "./Popup/DeleteModal";
 import CourseCard from "./Card/CourseCard";
 import MyCourseCard from "./Card/MyCourseCard";
+
+import MyEnrolledCourseCard from "./Card/MyEnrolledCourseCard";
 import CustomeSelect from "./CustomSelect";
 import TotalRating from "./TotalRating";
 import Accordion from "./Accordion";
@@ -57,4 +59,5 @@ export {
     TextEditorWithImage,
     UserToolDropdown,
     AllReportCard,
+    MyEnrolledCourseCard,
 };
