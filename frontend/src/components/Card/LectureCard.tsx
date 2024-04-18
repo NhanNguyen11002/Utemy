@@ -2,7 +2,6 @@ import { PlayIcon, DocumentIcon, PencilIcon, TrashIcon } from "@heroicons/react/
 import { Lecture } from "../../types/lecture";
 import { secondsToMinutesAndSeconds } from "../../utils/helper";
 import { Checkbox } from "../ui/checkbox";
-import { useState } from "react";
 import { lectureActions } from "../../redux/slices";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -19,8 +18,9 @@ type LectureCardType = {
 };
 
 const LectureCard: React.FC<LectureCardType> = (props) => {
-    const [checked, setChecked] = useState(true);
-    console.log(checked);
+    const progress = useAppSelector((state) => state.progressSlice.progress) || new Map<number, any>();
+    const lectureProgress = progress.get(props.lecture.lecture_id);
+    const check = lectureProgress ? lectureProgress.is_pass : false;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const slug: string = useAppSelector((state) => state.courseSlice.courseDetail.slug) ?? {};
@@ -42,7 +42,7 @@ const LectureCard: React.FC<LectureCardType> = (props) => {
         >
             {props.isDisplayProgress && (
                 <div className="w-[5%] items-start mt-5 flex mx-3">
-                    <Checkbox checked={checked} onCheckedChange={() => setChecked(!checked)} />
+                    <Checkbox checked={check} disabled />
                 </div>
             )}
 

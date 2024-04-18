@@ -97,10 +97,10 @@ const Home: React.FC = () => {
                     <span className="w-[60px] h-1 bg-black block"></span>
                     <div className="w-full mt-8">
                         <Carousel>
-                            <CarouselContent>
+                            <CarouselContent className="">
                                 {top10AuthorEnrolled.map((user, index) => {
                                     return (
-                                        <CarouselItem className="w-full basis-1/2">
+                                        <CarouselItem className="w-full basis-1/2 ">
                                             <LecturerCard key={index} lecturer={user} />
                                         </CarouselItem>
                                     );

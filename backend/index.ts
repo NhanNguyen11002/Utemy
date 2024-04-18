@@ -35,6 +35,7 @@ app.use("/api/event", routes.eventRouter);
 app.use("/api/approval", routes.approvalRouter);
 app.use("/api/decision", routes.decisionRouter);
 app.use("/api/report", routes.reportRouter);
+app.use("/api/progress", routes.progressRouter);
 app.use("/IPN", routes.vnpayRouter);
 
 app.listen(port, () => {

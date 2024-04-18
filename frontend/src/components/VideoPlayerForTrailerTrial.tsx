@@ -1,78 +1,16 @@
-import { progressActions } from "../redux/slices";
-import { useAppSelector, useAppDispatch } from "../hooks/hooks";
 import Hls from "hls.js";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import "plyr/dist/plyr.min.mjs";
-import React, { useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import React, { useEffect, useRef } from "react";
 
 type VideoJSType = {
     source: string;
-    lectureId: number;
 };
 
 export const VideoJS: React.FC<VideoJSType> = (props) => {
-    const dispatch = useAppDispatch();
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [player, setPlayer] = useState<Plyr | null>(null);
-    const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
-    const progress = useAppSelector((state) => state.progressSlice.progress) || new Map<number, any>();
-    const lectureProgress = progress.get(props.lectureId);
-    const current = lectureProgress ? lectureProgress.progress_value : 0;
-    if (player) {
-        // load lại progress video
-        player?.on("loadeddata", () => {
-            console.log("ready");
-            player.currentTime = current || 0;
-        });
-        // gọi để update progress video
-        player?.on(
-            "timeupdate",
-            _.throttle(() => {
-                dispatch(
-                    progressActions.updateProgress({
-                        progress_value: Math.floor(player.currentTime),
-                        lecture_id: props.lectureId,
-                    }),
-                ).then((res: any) => {
-                    if (
-                        res &&
-                        res.payload &&
-                        res.payload.data &&
-                        res.payload.data.isPass &&
-                        res.payload.status_code === 200
-                    ) {
-                        if (res.payload.data.isPass) {
-                            dispatch(progressActions.getProgressByCourseSlug(slug));
-                        }
-                    }
-                });
-            }, 20000),
-        );
-        // gọi update progress khi dừng video, chuyển sang trang khác
-        player?.on("pause", () => {
-            console.log("pause", player.currentTime);
-            dispatch(
-                progressActions.updateProgress({
-                    progress_value: Math.floor(player.currentTime),
-                    lecture_id: props.lectureId,
-                }),
-            ).then((res: any) => {
-                if (
-                    res &&
-                    res.payload &&
-                    res.payload.data &&
-                    res.payload.data.isPass &&
-                    res.payload.status_code === 200
-                ) {
-                    if (res.payload.data.isPass) {
-                        dispatch(progressActions.getProgressByCourseSlug(slug));
-                    }
-                }
-            });
-        });
-    }
+
     const updateQuality = (newQuality: any) => {
         if (Hls.isSupported()) {
             window.hls.levels.forEach((level: any, levelIndex: any) => {
@@ -85,6 +23,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
 
     useEffect(() => {
         const videoElement = videoRef.current;
+
         if (videoElement) {
             if (Hls.isSupported()) {
                 const hls = new Hls();
@@ -117,7 +56,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                             onChange: (event) => updateQuality(event),
                         },
                     };
-                    setPlayer(new Plyr(videoElement, defaultOptions));
+                    new Plyr(videoElement, defaultOptions);
                 });
 
                 hls.attachMedia(videoElement);

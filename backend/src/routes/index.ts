@@ -17,6 +17,7 @@ import approvalRouter from "./approval.router";
 import decisionRouter from "./decision.router";
 import reportRouter from "./report.router";
 import eventRouter from "./event.router";
+import progressRouter from "./progress.router";
 
 export default {
     authRouter,
@@ -38,4 +39,5 @@ export default {
     approvalRouter,
     reportRouter,
     eventRouter,
+    progressRouter,
 };

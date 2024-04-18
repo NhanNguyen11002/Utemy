@@ -3,6 +3,7 @@ import { ResponseSuccess, ResponseError, ResponseBase } from "../common";
 import configs from "../configs";
 import constants from "../constants";
 import { CreateTestType, TestProgressType } from "../types/test";
+import { ppid } from "process";
 const createTest = async (content: CreateTestType, lectureId: number): Promise<ResponseBase> => {
     try {
         const title = content.title;
@@ -243,22 +244,72 @@ const createTestHistory = async (req: IRequestWithId): Promise<ResponseBase> => 
             where: {
                 id: test_id,
             },
-            select: {
-                number_of_question: true,
-                pass_percent: true,
+            include: {
+                lecture: {
+                    include: {
+                        section: true,
+                    },
+                },
             },
         });
         if (!isExistTest) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
         const total_percent = Number(
             Number(countRightAnswer(test_progress) / Number(isExistTest.number_of_question)).toFixed(2),
         );
+        const isEnrolled = await configs.db.enrolled.findFirst({
+            where: {
+                user_id,
+                course_id: isExistTest.lecture?.section.course_id,
+            },
+        });
+        const is_pass = total_percent >= isExistTest.pass_percent;
+        if (is_pass && isEnrolled) {
+            const isExistProgress = await configs.db.progress.findFirst({
+                where: {
+                    user_id,
+                    lecture_id: Number(isExistTest.lecture_id),
+                    course_id: Number(isExistTest.lecture?.section.course_id),
+                },
+            });
+            if (!isExistProgress) {
+                const createProgress = await configs.db.progress.create({
+                    data: {
+                        user_id,
+                        lecture_id: Number(isExistTest.lecture_id),
+                        course_id: Number(isExistTest.lecture?.section.course_id),
+                        progress_value: countRightAnswer(test_progress),
+                        progress_percent: total_percent,
+                        pass: is_pass,
+                    },
+                });
+                const findEnrolled = await configs.db.enrolled.findFirst({
+                    where: {
+                        user_id,
+                        course_id: Number(isExistTest.lecture?.section.course_id),
+                    },
+                    select: {
+                        id: true,
+                    },
+                });
+                const updateOverallProgress = await configs.db.enrolled.update({
+                    where: {
+                        id: findEnrolled?.id,
+                    },
+                    data: {
+                        overall_progress: {
+                            increment: 1,
+                        },
+                    },
+                });
+            }
+        }
         const createTestHistory = await configs.db.testHistory.create({
             data: {
                 test_id,
                 user_id,
                 total_score: countRightAnswer(test_progress),
                 total_percent: total_percent * 100,
-                is_pass: total_percent >= isExistTest.pass_percent,
+                is_pass,
             },
         });
         const createTestHistoryDetailData = test_progress.map((progress) => {

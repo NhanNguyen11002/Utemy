@@ -15,6 +15,8 @@ export type Course = {
     thumbnail: string;
     summary: string;
     number_of_section: number;
+    number_of_lecture?: number;
+    overall_progress?: number;
     number_of_rating: number;
     number_of_enrolled: number;
     author?: User;

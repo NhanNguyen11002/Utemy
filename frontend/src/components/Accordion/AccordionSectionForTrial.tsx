@@ -3,6 +3,7 @@ import { Section as SectionType } from "../../types/section";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Lecture } from "../../types/lecture";
 import LectureCardForTrial from "../Card/LectureCardForTrial";
+import { convertSecondsToTimeString } from "../../utils/helper";
 type AccordionSectionForTrialType = {
     section: SectionType;
     isDisplayEdit: boolean;
@@ -16,6 +17,7 @@ type AccordionSectionForTrialType = {
     handleChangeLesson?: (lecture: Lecture) => void;
     handleDeleteSection?: (id: number) => void;
     handleShowVideoDialog?: (url_video: string, description: string) => void;
+    
 };
 
 const AccordionSectionForTrial: React.FC<AccordionSectionForTrialType> = (props) => {
@@ -25,19 +27,22 @@ const AccordionSectionForTrial: React.FC<AccordionSectionForTrialType> = (props)
             : " Chương học chưa có bài học nào"
         : "";
     const lectureCount = props.section.lecture ? props.section.lecture.length : "0";
+    const totalDuration: number =
+        (props.section.lecture &&
+            props.section.lecture?.reduce((acc: number, curr: any) => {
+                return acc + Number(curr.content.duration);
+            }, 0)) ||
+        0;
     return (
         <>
+        {lectureCount !== 0 && (
             <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                     <AccordionTrigger className="border pr-2 pl-6 flex justify-between">
                         <div className="flex justify-between items-center w-[95%]">
                             <div className="flex flex-col gap-1 text-left">
                                 <p className="font-semibold">{props.section.title}</p>
-                                {props.isDisplayProgress ? (
-                                    <p className="text-sm font-normal">3/{lectureCount} | 20 phút</p>
-                                ) : (
-                                    <p className="text-sm font-normal">{lectureCount} | 20 phút</p>
-                                )}
+                                    <p className="text-sm font-normal">{lectureCount} |  {convertSecondsToTimeString(totalDuration)} </p>
                             </div>
                             {props.isDisplayEdit && (
                                 <div className="flex gap-2">
@@ -105,6 +110,7 @@ const AccordionSectionForTrial: React.FC<AccordionSectionForTrialType> = (props)
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
+        )}
         </>
     );
 };

@@ -18,3 +18,4 @@ export * as decisionActions from "./decision.slice";
 export * as reportActions from "./report.slice";
 export * as couponActions from "./coupon.slice";
 export * as eventActions from "./event.slice";
+export * as progressActions from "./progress.slice";

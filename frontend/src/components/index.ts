@@ -4,12 +4,15 @@ import Pagination from "./Pagination";
 import DeleteModal from "./Popup/DeleteModal";
 import CourseCard from "./Card/CourseCard";
 import MyCourseCard from "./Card/MyCourseCard";
+
+import MyEnrolledCourseCard from "./Card/MyEnrolledCourseCard";
 import CustomeSelect from "./CustomSelect";
 import TotalRating from "./TotalRating";
 import Accordion from "./Accordion";
 import PopupAddLesson from "./Popup/PopupAddLesson";
 import PopupUpdateLesson from "./Popup/PopupUpdateLesson";
 import VideoPlayer from "./VideoPlayer";
+import VideoPlayerForTrailerTrial from "./VideoPlayerForTrailerTrial";
 import RequirementPopup from "./Popup/RequirementPopup";
 import StudyPopup from "./Popup/StudyPopup";
 import TextEditor from "./TextEditor";
@@ -41,6 +44,7 @@ export {
     PopupAddLesson,
     PopupUpdateLesson,
     VideoPlayer,
+    VideoPlayerForTrailerTrial,
     RequirementPopup,
     StudyPopup,
     TextEditor,
@@ -61,4 +65,5 @@ export {
     TextEditorWithImage,
     UserToolDropdown,
     AllReportCard,
+    MyEnrolledCourseCard,
 };

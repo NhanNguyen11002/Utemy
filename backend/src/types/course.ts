@@ -18,6 +18,7 @@ export type CourseDetail = {
     sections: Section[];
     average_rating: number;
     number_of_section?: number;
+    number_of_lecture?: number;
     number_of_rating: number;
     number_of_enrolled: number;
     author: Author;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DeleteModal, Spin, TotalRating, Pagination, UserToolDropdown, VideoPlayer } from "../../components";
+import { DeleteModal, Spin, TotalRating, Pagination, UserToolDropdown, VideoPlayerForTrailerTrial } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 import AccordionSectionForTrial from "../../components/Accordion/AccordionSectionForTrial";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -9,7 +9,7 @@ import { Course as CourseDetailType } from "../../types/course";
 import { GetRating, Rating as RatingType } from "../../types/rating";
 import { Link } from "react-router-dom";
 import NotFound from "../NotFound";
-import { courseActions, ratingActions } from "../../redux/slices";
+import { courseActions, ratingActions, progressActions } from "../../redux/slices";
 import PopupRating from "./PopupRating";
 import toast from "react-hot-toast";
 import AuthorButton from "./AuthorButton";
@@ -150,7 +150,14 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     }, [dispatch, slug, isNotFound]);
     useEffect(() => {
         if (courseDetail.course_id && isLogin) {
-            dispatch(courseActions.getRightOfCourse(courseDetail.course_id));
+            dispatch(courseActions.getRightOfCourse(courseDetail.course_id)).then((res) => {
+                if (res.payload && res.payload.data) {
+                    if (res.payload.data.role === constants.util.ROLE_ENROLLED) {
+                        console.log(role);
+                        dispatch(progressActions.getProgressByCourseSlug(slug as string));
+                    }
+                }
+            });
             dispatch(ratingActions.getUserRating(courseDetail.course_id));
         }
     }, [dispatch, courseDetail.course_id, isLogin]);
@@ -260,7 +267,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         </DialogTrigger>
                                         <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
                                             <DialogTitle className={"text-center"}>This is introduce video about this course</DialogTitle>
-                                            <VideoPlayer sourse={courseDetail.url_trailer} />
+                                            <VideoPlayerForTrailerTrial source={courseDetail.url_trailer}/>
                                         </DialogContent>
                                     </Dialog>
                                 </div>
@@ -469,7 +476,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                         return (
                                                             <div key={index}>
                                                                 <AccordionSection
-                                                                    // orderLesson={orderLesson}
                                                                     key={section.id * index}
                                                                     isDisplayEdit={false}
                                                                     isDisplayProgress={
@@ -571,8 +577,9 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                         Bạn có thể học thử khóa học này dưới đây
                                                     </h2>
                                                     <span className="w-[60px] h-1 bg-black block mb-4"></span>
-                                                    {!courseDetailForTrial.sections || (courseDetailForTrial.sections.length === 0 && (
-                                                        <p className="mt-4 text-xl text-center text-lightblue font-bold">
+                                                    {!courseDetailForTrial.sections || 
+                                                        (courseDetailForTrial.sections.every(section => section.lecture !== undefined && section.lecture.length === 0) && (
+                                                            <p className="mt-4 text-xl text-center text-lightblue font-bold">
                                                             Khóa học này chưa có nội dung để học thử
                                                         </p>
                                                     ))}
@@ -589,11 +596,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                         </div>
                                                         
                                                     ))}
-                                                    {showDialog && (
+                                                    {showDialog && isLogin && (
                                                         <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                                                             <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
                                                                 <DialogTitle className ="text-center">{descriptionVideo.replace(/<[^>]+>/g, '')}</DialogTitle>
-                                                                <VideoPlayer sourse={videoUrl} />
+                                                                <VideoPlayerForTrailerTrial source={videoUrl} />
                                                             </DialogContent>
                                                             
                                                         </Dialog>
