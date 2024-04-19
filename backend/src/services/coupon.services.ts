@@ -226,53 +226,53 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
             if (findCouponEventByCode) {
                 console.log(findCouponEventByCode);
                 return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, findCouponEventByCode);
-            }
-        } else {
-            const isUsedCoupon = await configs.db.couponHistory.findFirst({
-                where: {
-                    user_id: user_id,
-                    coupon: {
-                        code: code,
-                    },
-                },
-                select: {
-                    user_id: true,
-                    coupon: {
-                        select: {
-                            code: true,
-                        },
-                    },
-                },
-            });
-            if (!isUsedCoupon) {
-                // Nếu không có dữ liệu trong bảng coupon_owner và chưa có lịch sử sd cp đó, tiếp tục kiểm tra trong bảng coupon
-                const isCouponExist = await configs.db.coupon.findFirst({
+            } else {
+                const isUsedCoupon = await configs.db.couponHistory.findFirst({
                     where: {
-                        code,
-                        is_delete: false,
-                        is_event: false,
-                        valid_until: {
-                            gt: new Date(),
-                        },
-                        valid_start: {
-                            lt: new Date(),
-                        },
-                        remain_quantity: {
-                            gt: 0,
+                        user_id: user_id,
+                        coupon: {
+                            code: code,
                         },
                     },
                     select: {
-                        id: true,
-                        code: true,
-                        discount: true,
-                        valid_until: true,
-                        max_discount_money: true,
-                        remain_quantity: true,
+                        user_id: true,
+                        coupon: {
+                            select: {
+                                code: true,
+                            },
+                        },
                     },
                 });
-                if (isCouponExist) {
-                    return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
-                } else return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+                if (!isUsedCoupon) {
+                    // Nếu không có dữ liệu trong bảng coupon_owner và chưa có lịch sử sd cp đó, tiếp tục kiểm tra trong bảng coupon
+                    const isCouponExist = await configs.db.coupon.findFirst({
+                        where: {
+                            code: code,
+                            is_delete: false,
+                            is_event: false,
+                            valid_until: {
+                                gt: new Date(),
+                            },
+                            valid_start: {
+                                lt: new Date(),
+                            },
+                            remain_quantity: {
+                                gt: 0,
+                            },
+                        },
+                        select: {
+                            id: true,
+                            code: true,
+                            discount: true,
+                            valid_until: true,
+                            max_discount_money: true,
+                            remain_quantity: true,
+                        },
+                    });
+                    if (isCouponExist) {
+                        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
+                    } else return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+                }
             }
         }
     } catch (error) {
@@ -465,7 +465,6 @@ const createCouponOwner = async (req: IRequestWithId, coupon_id: number, event_i
             });
             if (createNewOwner && updateCoupon && historySpin) console.log(createNewOwner);
             return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true, createNewOwner);
-            return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         } else {
             // Cập nhật số lượng voucher trong bảng coupon_owner
             const updateOwner = await configs.db.couponOwner.update({
@@ -489,10 +488,38 @@ const createCouponOwner = async (req: IRequestWithId, coupon_id: number, event_i
                     },
                 },
             });
-            if (updateOwner && updateCoupon)
+            const historySpin = await configs.db.userEvent.create({
+                data: {
+                    user_id,
+                    event_id: event_id,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                },
+            });
+            if (updateOwner && updateCoupon && historySpin)
                 return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, updateOwner);
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         }
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const createHistoryForGoodLuckNextTime = async (req: IRequestWithId, event_id: number): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const historySpin = await configs.db.userEvent.create({
+            data: {
+                user_id,
+                event_id: event_id,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+        if (!historySpin) return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
@@ -691,5 +718,6 @@ const couponService = {
     getCouponById,
     getHistorySpinOfUserForAEvent,
     getVoucherBySpin,
+    createHistoryForGoodLuckNextTime,
 };
 export default couponService;

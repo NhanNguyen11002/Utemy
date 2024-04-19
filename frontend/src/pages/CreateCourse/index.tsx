@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
-import { previewImage } from "../../utils/helper";
+import { previewImage, previewTrailer } from "../../utils/helper";
 
 type CategoriesOptions = {
     value: number;
@@ -39,12 +39,14 @@ const customStyles = {
 const CreateCourse: FC = () => {
     const dispatch = useAppDispatch();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
+    const [trailer, setTrailer] = useState<File | null>(null);
     const [study, setStudy] = useState([]);
     const [requirement, setRequirement] = useState([]);
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const categories: Category[] = useAppSelector((state) => state.categorySlice.categories) ?? [];
     const formikRef = useRef(null);
     const imageRef = useRef<HTMLImageElement>(null);
+    const trailerRef = useRef<HTMLVideoElement>(null);
     const navigate = useNavigate();
     const categoriesOptions: CategoriesOptions[] = [];
 
@@ -60,6 +62,7 @@ const CreateCourse: FC = () => {
     useEffect(() => {
         dispatch(categoryActions.getCategories());
         setThumbnail(null);
+        setTrailer(null);
     }, [dispatch]);
 
     const initialValues: CreateCourseType = {
@@ -69,6 +72,7 @@ const CreateCourse: FC = () => {
         summary: "",
         description: "",
         thumbnail: null,
+        trailer: null,
         slug: "",
         price: 0,
     };
@@ -83,6 +87,7 @@ const CreateCourse: FC = () => {
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
+        formData.append("trailer", trailer as File);
         formData.append("description", values.description);
         formData.append("study", JSON.stringify(study));
         formData.append("requirement", JSON.stringify(requirement));
@@ -101,10 +106,15 @@ const CreateCourse: FC = () => {
         console.log(formik.values);
     };
 
-    const onChangeInputFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeInputThumbnailFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         setThumbnail(event.currentTarget.files![0]);
         const thumbnail = event.currentTarget.files![0];
         previewImage(thumbnail, imageRef);
+    };
+    const onChangeInputTrailerFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTrailer(event.currentTarget.files![0]);
+        const trailer = event.currentTarget.files![0];
+        previewTrailer(trailer, trailerRef);
     };
     const handleDescriptionChange = (description: string, formik: any) => {
         formik.setFieldValue("description", description);
@@ -131,11 +141,7 @@ const CreateCourse: FC = () => {
                                 <form onSubmit={formik.handleSubmit} className="p-4">
                                     <div className="flex">
                                         <div className="flex rounded-lg items-start">
-                                            <img
-                                                ref={imageRef}
-                                                alt="Thumbnail"
-                                                className="w-32 h-32 rounded-lg mr-3 outline-none border border-dashed border-black tablet:w-60 tablet:h-60"
-                                            />
+                                            
                                             <div className="flex flex-col gap-3">
                                                 <div className="">
                                                     <p className="text-lg font-medium">Chọn ảnh bìa</p>
@@ -152,7 +158,7 @@ const CreateCourse: FC = () => {
                                                             event.currentTarget.files![0],
                                                         );
                                                         formik.setFieldError("thumbnail", undefined);
-                                                        onChangeInputFile(event);
+                                                        onChangeInputThumbnailFile(event);
                                                     }}
                                                 />
                                                 <ErrorMessage
@@ -160,7 +166,47 @@ const CreateCourse: FC = () => {
                                                     component="span"
                                                     className="text-[14px] text-error font-medium"
                                                 />
+                                                <img
+                                                    ref={imageRef}
+                                                    alt="Thumbnail"
+                                                    className="w-32 h-32 rounded-lg mr-3 outline-none border border-dashed border-black tablet:w-60 tablet:h-60"
+                                                />
                                             </div>
+                                            <div className="flex flex-col gap-3" style={{ marginLeft: '250px' }}>
+                                                <div className="">
+                                                    <p className="text-lg font-medium">Chọn video trailer</p>
+                                                    <p className="italic">Kích thước video nhỏ hơn hoặc bằng 100mb</p>
+                                                </div>
+                                                <Field
+                                                    name="trailer"
+                                                    type="file"
+                                                    value={undefined}
+                                                    className="file-input file-input-bordered file-input-info w-full max-w-xs"
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        formik.setFieldValue("trailer", event.currentTarget.files![0]);
+                                                        formik.setFieldError("trailer", undefined);
+                                                        onChangeInputTrailerFile(event);
+                                                    }}
+                                                />
+                                                <ErrorMessage
+                                                    name="trailer"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
+
+                                                {/* Video player */}
+                                                {formik.values.trailer && (
+                                                    <div className="mt-4">
+                                                        <video ref={trailerRef} controls className="mt-2" width="400" height="300">
+                                                            {["video/mp4", "video/x-matroska", "video/mov"].map((type, index) => (
+                                                                <source key={index} src={formik.values.trailer ? URL.createObjectURL(formik.values.trailer) : ''} type={type} />
+                                                            ))}
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    </div>
+                                                )}
+                                            </div>
+
                                         </div>
                                     </div>
 

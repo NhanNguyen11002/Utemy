@@ -19,6 +19,24 @@ export const previewImage = (image: File | null, imageRef: React.RefObject<HTMLI
         }
     }
 };
+export const previewTrailer = (video: File | null, videoRef: React.RefObject<HTMLVideoElement>, videoSource?: string) => {
+    if (video && video.type.includes("video/")) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            if (videoRef.current) {
+                videoRef.current.src = e.target?.result as string;
+            }
+        };
+        reader.readAsDataURL(video);
+        return;
+    } else {
+        if (videoRef.current && videoSource) {
+            videoRef.current.src = videoSource;
+        } else if (videoRef.current) {
+            videoRef.current.src = "";
+        }
+    }
+};
 
 export const convertDateFormat = (inputDate: string) => {
     const date = new Date(inputDate); // Chuyển chuỗi thành đối tượng ngày tháng

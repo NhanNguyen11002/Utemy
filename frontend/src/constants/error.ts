@@ -79,6 +79,7 @@ const error = {
     ERROR_COURSE_SUMMARY_STRING: "Course's summary must be string",
     ERROR_COURSE_CATEGORIES_REQUIRED: "Course's categories is required",
     ERROR_COURSE_THUMBNAIL_REQUIRED: "Course's thumbnail is required",
+    ERROR_COURSE_TRAILER_REQUIRED: "Course's trailer is required",
     ERROR_COURSE_PRICE_REQUIRED: "Price is required",
     ERROR_COURSE_PRICE_NUMBER: "Price must be number",
     ERROR_CREATE_COURSE_FAILED: "Create course failed",

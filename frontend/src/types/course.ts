@@ -31,6 +31,7 @@ export type Course = {
     requirement?: any;
     study?: any;
     approval?: Approval[];
+    url_trailer: string;
 };
 export type PagingCourse = {
     total_page: number;
@@ -46,6 +47,7 @@ export type NewCourse = {
     status: boolean;
     thumbnail: File | null;
     price: number;
+    trailer: File | null;
 };
 
 export type CourseDetail = {
@@ -71,6 +73,7 @@ export type EditCourse = {
     description: string;
     price: number;
     thumbnail: File | null;
+    trailer: File | null;
     status: boolean | StatusOption;
 };
 export type StatusOption = {

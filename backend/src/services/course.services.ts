@@ -7,6 +7,7 @@ import { generateUniqueSlug } from "../utils/helper";
 import { Prisma } from "@prisma/client";
 import constants from "../constants";
 import helper from "../helper";
+import { v4 as uuidv4 } from "uuid";
 import { Rating } from "../types/rating.type";
 import {
     CourseDetail,
@@ -24,6 +25,7 @@ import { number } from "joi";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { isFloat64Array } from "util/types";
 import { Author } from "~/types/user";
+import { resolutions } from "../common";
 const getRightOfCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const user_id = req.user_id;
@@ -119,16 +121,68 @@ const stopPromotion = async (req: IRequestWithId): Promise<ResponseBase> => {
     }
 };
 const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
-    const file = req.file;
+    let fullPathConvertedThumbnail = "";
+    let fullpathConvertedTrailer = "";
     const { title, slug, description, summary, categories, price, requirement, study } = req.body;
     const user_id = req.user_id;
+
+    // Check if req.files exists and is an object
+    if (req.files && typeof req.files === "object") {
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+        // Check if 'thumbnail' exists in files
+        if ("thumbnail" in files) {
+            const thumbnailFiles = files["thumbnail"];
+
+            // Check if thumbnailFiles is an array and not empty
+            if (Array.isArray(thumbnailFiles) && thumbnailFiles.length > 0) {
+                const thumbnailFile = thumbnailFiles[0];
+                console.log("Thumbnail file:", thumbnailFiles);
+                console.log(thumbnailFile.path)
+                fullPathConvertedThumbnail = helper.ConvertHelper.convertFilePath(thumbnailFile.path);
+            } else {
+                console.log("No thumbnail file uploaded.");
+            }
+        } else {
+            console.log("No thumbnail file uploaded.");
+        }
+
+        // Check if 'trailer' exists in files
+        if ("trailer" in files) {
+            const trailerFiles = files["trailer"];
+
+            // Check if trailerFiles is an array and not empty
+            if (Array.isArray(trailerFiles) && trailerFiles.length > 0) {
+                const trailerFile = trailerFiles[0];
+                console.log("Trailer file:", trailerFile);
+                const uuid = uuidv4();
+                const createFile: any = await helper.FileHelper.createFileM3U8AndTS(
+                    trailerFile,
+                    resolutions,
+                    configs.general.PATH_TO_PUBLIC_FOLDER_VIDEOS,
+                    `${slug}_${uuid}`,
+                );
+                if (!createFile) {
+                    await helper.FileHelper.destroyedVideoIfFailed(createFile.urlVideo);
+                } else {
+                    fullpathConvertedTrailer = helper.ConvertHelper.convertFilePath(createFile.urlVideo);
+                }
+            } else {
+                console.log("No trailer file uploaded.");
+            }
+        } else {
+            console.log("No trailer file uploaded.");
+        }
+    } else {
+        console.log("No files uploaded.");
+    }
+
     try {
-        let fullPathConverted = "";
-        if (file) fullPathConverted = helper.ConvertHelper.convertFilePath(file.path);
         const listCategoryId = categories.split(",").map((item: number) => ({
             category_id: Number(item),
         }));
         const uniqueSlug = generateUniqueSlug(slug);
+
         if (user_id) {
             const isCreateCourse = await db.course.create({
                 data: {
@@ -136,7 +190,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     slug: uniqueSlug,
                     description: description,
                     summary: summary,
-                    thumbnail: fullPathConverted,
+                    thumbnail: fullPathConvertedThumbnail,
                     author_id: user_id,
                     status: false,
                     price: Number(price),
@@ -146,14 +200,15 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                     },
                     study,
                     requirement,
+                    url_trailer: fullpathConvertedTrailer,
                 },
                 include: {
-                    user: true, // Liên kết tới bảng User
-                    enrolleds: true, // Liên kết tới bảng Enrolled
-                    ratings: true, // Liên kết tới bảng Rating
+                    user: true,
+                    enrolleds: true,
+                    ratings: true,
                     sections: {
                         include: {
-                            Lecture: true, // Liên kết tới bảng Lesson bên trong bảng Section
+                            Lecture: true,
                         },
                     },
                 },
@@ -164,15 +219,15 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         }
         return new ResponseError(400, constants.error.ERROR_CREATE_COURSE_FAILED, false);
     } catch (error) {
-        console.log("Lỗi create", error);
+        console.log("Error creating course:", error);
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+
 const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
-    const file = req.file;
     const { course_id, title, slug, summary, description, categories, price } = req.body;
     try {
         const isFoundCourseById = await configs.db.course.findFirst({
@@ -185,45 +240,82 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
         }
 
-        if (file) {
-            const oldThumbnailPath = helper.ConvertHelper.deConvertFilePath(isFoundCourseById.thumbnail);
-            const fullPathConverted = helper.ConvertHelper.convertFilePath(file.path);
-            const updatedCourse = await configs.db.course.update({
-                where: {
-                    id: Number(course_id),
-                },
-                data: {
-                    title: title,
-                    slug: slug,
-                    summary: summary,
-                    description: description,
-                    thumbnail: fullPathConverted,
-                    price: Number(price),
-                },
-            });
-            if (!updatedCourse) {
-                helper.FileHelper.destroyedFileIfFailed(file.path);
-                return new ResponseError(400, constants.error.ERROR_MISSING_REQUEST_BODY, false);
-            } else {
+        if (req.files && typeof req.files === "object") {
+            const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+            const thumbnailFile = files["thumbnail"] ? files["thumbnail"][0] : undefined;
+            const trailerFile = files["trailer"] ? files["trailer"][0] : undefined;
+
+            // Update thumbnail if available
+            if (thumbnailFile) {
+                console.log("Thumbnail file:", thumbnailFile);
+                const oldThumbnailPath = helper.ConvertHelper.deConvertFilePath(isFoundCourseById.thumbnail);
+                const fullPathConvertedThumbnail = helper.ConvertHelper.convertFilePath(thumbnailFile.path);
+                await configs.db.course.update({
+                    where: { id: Number(course_id) },
+                    data: {
+                        title: title,
+                        slug: slug,
+                        summary: summary,
+                        description: description,
+                        thumbnail: fullPathConvertedThumbnail,
+                        price: Number(price),
+                    },
+                });
                 helper.FileHelper.destroyedFileIfFailed(oldThumbnailPath);
             }
-        } else {
-            const updatedCourse = await configs.db.course.update({
-                where: {
-                    id: Number(course_id),
-                },
-                data: {
-                    title: title,
-                    slug: slug,
-                    summary: summary,
-                    description: description,
-                    price: Number(price),
-                },
-            });
-            if (!updatedCourse) {
-                return new ResponseError(400, constants.error.ERROR_MISSING_REQUEST_BODY, false);
+
+            // Update trailer if available
+            if (trailerFile) {
+                console.log("Trailer file:", trailerFile);
+                const uuid = uuidv4();
+                const createFile: any = await helper.FileHelper.createFileM3U8AndTS(
+                    trailerFile,
+                    resolutions,
+                    configs.general.PATH_TO_PUBLIC_FOLDER_VIDEOS,
+                    `${slug}_${uuid}`,
+                );
+                if (!createFile) {
+                    await helper.FileHelper.destroyedVideoIfFailed(createFile.urlVideo);
+                } else {
+                    const oldTrailerPath = helper.ConvertHelper.deConvertFilePath(isFoundCourseById.thumbnail);
+                    const fullpathConvertedTrailer = helper.ConvertHelper.convertFilePath(createFile.urlVideo);
+                    await configs.db.course.update({
+                        where: { id: Number(course_id) },
+                        data: {
+                            title: title,
+                            slug: slug,
+                            summary: summary,
+                            description: description,
+                            url_trailer: fullpathConvertedTrailer,
+                            price: Number(price),
+                        },
+                    });
+                    helper.FileHelper.destroyedFileIfFailed(oldTrailerPath);
+                }
             }
+        } else {
+            console.log("No files uploaded.");
         }
+
+        // Update other course details
+        const updatedCourse = await configs.db.course.update({
+            where: {
+                id: Number(course_id),
+            },
+            data: {
+                title: title,
+                slug: slug,
+                summary: summary,
+                description: description,
+                price: Number(price),
+            },
+        });
+
+        if (!updatedCourse) {
+            return new ResponseError(400, constants.error.ERROR_MISSING_REQUEST_BODY, false);
+        }
+
+        // Update course categories
         await db.courseCategory.deleteMany({
             where: { course_id: Number(course_id) },
         });
@@ -233,7 +325,10 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 category_id: Number(category),
             })),
         });
-        if (!isUpdateCategory) return new ResponseError(400, constants.error.ERROR_MISSING_REQUEST_BODY, false);
+        if (!isUpdateCategory) {
+            return new ResponseError(400, constants.error.ERROR_MISSING_REQUEST_BODY, false);
+        }
+
         return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
     } catch (error) {
         console.log(error);
@@ -243,6 +338,7 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+
 const updateTargetCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { course_id, requirement, study } = req.body;
@@ -937,6 +1033,7 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     summary: course.summary,
                     description: course.description,
                     thumbnail: course.thumbnail,
+                    url_trailer: course.url_trailer,
                     average_rating: course.average_rating,
                     number_of_rating: course.number_of_rating,
                     number_of_enrolled: course.number_of_enrolled,
@@ -1065,6 +1162,7 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                     summary: course.summary,
                     description: course.description,
                     thumbnail: course.thumbnail,
+                    url_trailer: course.url_trailer,
                     average_rating: course.average_rating,
                     number_of_rating: course.number_of_rating,
                     number_of_enrolled: course.number_of_enrolled,
@@ -1534,6 +1632,127 @@ const getProgressByCourseSlug = async (req: IRequestWithId): Promise<ResponseBas
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getCourseDetailForTrialLesson = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { slug } = req.params;
+        const course = await db.course.findFirst({
+            where: {
+                slug: slug,
+            },
+            include: {
+                course_categories: {
+                    include: {
+                        Category: {
+                            select: {
+                                id: true,
+                                title: true,
+                            },
+                        },
+                    },
+                },
+                sections: {
+                    select: {
+                        title: true,
+                        updated_at: true,
+                        id: true,
+                        Lecture: {
+                            where: {
+                                is_delete: false,
+                                type: "lesson",
+                            },
+                            select: {
+                                id: true,
+                                type: true,
+                                lesson: true,
+                                // test: true,
+                            },
+                            orderBy: {
+                                created_at: "asc",
+                            },
+                            take: 1,
+                        },
+                    },
+                    where: {
+                        is_delete: false,
+                    },
+                    take: 2,
+                },
+                user: {
+                    select: {
+                        first_name: true,
+                        last_name: true,
+                        id: true,
+                    },
+                },
+            },
+        });
+
+        if (course) {
+            if (course.is_delete) {
+                return new ResponseError(404, constants.error.ERROR_COURSE_NOT_FOUND, false);
+            } else {
+                const categories: Category[] = [];
+                course.course_categories.forEach((category) => {
+                    categories.push(category.Category as any);
+                });
+                const author = { ...course.user, user_id: course.user.id };
+
+                const sections: Section[] = course.sections.map((section) => {
+                    const lecture = section.Lecture.map((lecture) => {
+                        let content;
+                        if (lecture.type === "Lesson") content = lecture.lesson;
+                        // else content = lecture.test;
+                        const tempLecture: Lecture = {
+                            lecture_id: lecture.id,
+                            type: lecture.type,
+                            content,
+                        };
+                        return tempLecture;
+                    });
+                    const temp: Section = {
+                        title: section.title,
+                        updated_at: section.updated_at,
+                        id: section.id,
+                        lecture,
+                    };
+                    return temp;
+                });
+                let number_of_section = 0;
+                sections.forEach((section, index) => {
+                    number_of_section += 1;
+                });
+                const courseData: CourseDetail = {
+                    course_id: course.id,
+                    title: course.title,
+                    summary: course.summary,
+                    description: course.description,
+                    thumbnail: course.thumbnail,
+                    url_trailer: course.url_trailer,
+                    average_rating: course.average_rating,
+                    number_of_rating: course.number_of_rating,
+                    number_of_enrolled: course.number_of_enrolled,
+                    author: author,
+                    number_of_section,
+                    categories: categories,
+                    sections: sections,
+                    status: course.status,
+                    price: course.price,
+                    sale_price: course.sale_price,
+                    sale_until: course.sale_until,
+                    slug: course.slug,
+                    updated_at: course.updated_at.toString(),
+                    requirement: JSON.parse(course.requirement as string),
+                    study: JSON.parse(course.study as string),
+                };
+                return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, courseData);
+            }
+        }
+        return new ResponseError(404, constants.error.ERROR_GET_COURSE_FAILED, false);
+    } catch (error) {
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const CourseServices = {
     getRightOfCourse,
     createCourse,
@@ -1558,6 +1777,7 @@ const CourseServices = {
     approveCourse,
     restrictCourse,
     getProgressByCourseSlug,
+    getCourseDetailForTrialLesson,
 };
 
 export default CourseServices;

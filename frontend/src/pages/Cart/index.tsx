@@ -262,7 +262,7 @@ const Cart: React.FC = () => {
                                 onChange={(e) => {
                                     // getDiscount(e.target.value)
                                     // applyCouponCode((e.target.value));   
-                                    setCouponValue(e.target.value)
+                                    setCouponValue(e.target.value.toUpperCase())
                                 }
                                 }
                                 placeholder="Tùy chọn..."

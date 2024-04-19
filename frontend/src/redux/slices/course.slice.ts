@@ -15,6 +15,7 @@ import { Approval } from "../../types/approval";
 
 type CourseSliceType = {
     courseDetail: Course;
+    courseDetailForTrial: Course;
     courses: Course[];
     top10Rate: Course[];
     top10Enrolled: Course[];
@@ -57,6 +58,38 @@ const initialState: CourseSliceType = {
         requirement: "",
         study: "",
         approval: [],
+        url_trailer: ""
+    },
+    courseDetailForTrial: {
+        course_id: 0,
+        title: "",
+        slug: "",
+        status: false,
+        description: "",
+        thumbnail: "",
+        summary: "",
+        number_of_section: 0,
+        number_of_rating: 0,
+        number_of_enrolled: 0,
+        author: {
+            first_name: "",
+            last_name: "",
+            email: "",
+            url_avatar: "",
+            user_id: undefined,
+            description: "",
+            is_admin: false,
+        },
+        price: 0,
+        sale_price: 0,
+        average_rating: 0,
+        categories: [],
+        sections: [],
+        updated_at: "",
+        requirement: "",
+        study: "",
+        approval: [],
+        url_trailer: ""
     },
     role: "",
     top10Rate: [],
@@ -176,6 +209,17 @@ export const getCourseDetail = createAsyncThunk<Response<Course>, string, { reje
     async (body, ThunkAPI) => {
         try {
             const response = await apis.courseApis.getCourseDetail(body);
+            return response.data as Response<Course>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getCourseDetailForTrialLesson = createAsyncThunk<Response<Course>, string, { rejectValue: Response<null> }>(
+    "course/trial/detail",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.getCourseDetailForTrialLesson(body);
             return response.data as Response<Course>;
         } catch (error: any) {
             return ThunkAPI.rejectWithValue(error.data as Response<null>);
@@ -309,6 +353,16 @@ export const courseSlice = createSlice({
             state.isGetLoading = false;
         });
         builder.addCase(getCourseDetail.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(getCourseDetailForTrialLesson.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getCourseDetailForTrialLesson.fulfilled, (state, action) => {
+            state.courseDetailForTrial = action.payload.data as Course;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getCourseDetailForTrialLesson.rejected, (state) => {
             state.isGetLoading = false;
         });
         builder.addCase(getCourseDetailById.pending, (state) => {

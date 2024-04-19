@@ -22,6 +22,18 @@ export const createCouponOwner = createAsyncThunk<Response<null>, { coupon_id: n
   },
 );
 
+export const createHistoryForGoodLuckNextTime = createAsyncThunk<Response<null>, { event_id: number }, { rejectValue: Response<null> }>(
+  "coupon/good-luck",
+  async ({ event_id }, thunkAPI) => { // Change the parameter to underscore (_) to indicate it's unused
+    try {
+      const response = await apis.couponApis.createHistoryForGoodLuckNextTime(event_id);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.data);
+    }
+  },
+);
+
 
 export const getAllEventCoupon = createAsyncThunk<Coupon[], void, { rejectValue: any }>(
   "coupon/all-event",
@@ -211,6 +223,17 @@ const couponSlice = createSlice({
         // Handle fulfillment if needed
       })
       .addCase(createCouponOwner.rejected, (state) => {
+        state.isLoading = false;
+        // Handle rejection if needed
+      })
+      .addCase(createHistoryForGoodLuckNextTime.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createHistoryForGoodLuckNextTime.fulfilled, (state) => {
+        state.isLoading = false;
+        // Handle fulfillment if needed
+      })
+      .addCase(createHistoryForGoodLuckNextTime.rejected, (state) => {
         state.isLoading = false;
         // Handle rejection if needed
       })

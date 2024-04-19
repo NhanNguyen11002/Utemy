@@ -10,6 +10,7 @@ export type CourseDetail = {
     status: boolean;
     description: string;
     thumbnail: string;
+    url_trailer: string;
     summary: string;
     // is_delete: boolean;
     // created_at: Date;

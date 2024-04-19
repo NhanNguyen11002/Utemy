@@ -1,7 +1,7 @@
 import { useAppSelector } from '../../hooks/hooks';
 import { couponActions } from '../../redux/slices';
 import { AppDispatch } from '@/redux/store';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Wheel } from 'react-custom-roulette';
 import { WheelData } from 'react-custom-roulette/dist/components/Wheel/types'; // Import WheelData type
 import toast from 'react-hot-toast';
@@ -16,10 +16,11 @@ interface Props {
 const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
-  const goodLuckOption = 'Chúc bạn may mắn lần sau'; // Option text for "Good luck" message
+  const [numberOfTurn, setNumberOfTurn] = useState(Number);
+  // const goodLuckOption = 'Chúc bạn may mắn lần sau'; // Option text for "Good luck" message
   const wheelDataWithGoodLuckMessage: WheelData[] = [
     ...discounts,
-    { option: 'Chúc bạn may mắn lần sau' , style: { fontSize: 12 } }
+    // { option: 'Chúc bạn may mắn lần sau' , style: { fontSize: 12 } }
   ];
   const dispatch = useDispatch<AppDispatch>();
   const eventForSpin = useAppSelector((state) => state.eventSlice.eventForSpin);
@@ -32,6 +33,17 @@ const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
     }
     return color;
   };
+  useEffect(() => {
+    dispatch(couponActions.getHistorySpinOfUserForAEvent(eventForSpin.id))
+        .then((action: any) => {
+            if (action.payload.status_code !== 200) {
+                setNumberOfTurn(1);
+            } else {
+                setNumberOfTurn(0);
+            }
+        });
+}, []);
+
   const handleSpinClick = () => {
     dispatch(couponActions.getHistorySpinOfUserForAEvent(eventForSpin.id))
         .then((action: any) => {
@@ -49,6 +61,7 @@ const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
             // setTimeout(() => {
             //     onSpinResult(discounts[newPrizeNumber]);
             //   }, 3000); // Display the result after 3 seconds (3000 milliseconds)
+            setNumberOfTurn(0);
           }
           else{
             toast.error("Bạn đã quay vòng quay cho sự kiện này rồi!!")
@@ -67,10 +80,18 @@ const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
           prizeNumber={prizeNumber}
           data={wheelDataWithGoodLuckMessage}
           backgroundColors={Array.from({ length: wheelDataWithGoodLuckMessage.length }, getRandomColor)}
+          outerBorderColor= 'white'
+          // outerBorderWidth= {5}
+          innerRadius={20}
+          innerBorderColor = "blue"
+          innerBorderWidth= {10}
+          radiusLineColor	="white"
+          radiusLineWidth	={8}
+          perpendicularText={true}
           onStopSpinning={() => {
             setMustSpin(false);
             const selectedDiscount = wheelDataWithGoodLuckMessage[prizeNumber];
-            if (selectedDiscount.option !== goodLuckOption) {
+            if (selectedDiscount.option !== null) {
               onSpinResult(selectedDiscount);
             }
             else {
@@ -92,6 +113,9 @@ const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
       >
         SPIN
       </button>
+      <div>
+        Số lượt quay còn lại: {numberOfTurn}
+      </div>
     </div>
     )};
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { DeleteModal, Spin, TotalRating, Pagination, UserToolDropdown } from "../../components";
+import { DeleteModal, Spin, TotalRating, Pagination, UserToolDropdown, VideoPlayerForTrailerTrial } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
+import AccordionSectionForTrial from "../../components/Accordion/AccordionSectionForTrial";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { Section } from "../../types/section";
@@ -30,6 +31,14 @@ import {
     GlobeAsiaAustraliaIcon,
     TicketIcon,
 } from "@heroicons/react/24/outline";
+import {
+    Dialog,
+    DialogContent,
+    // DialogDescription,
+    // DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "../../components/ui/dialog";
 
 type CourseDetailProps = {
     isLogin: boolean;
@@ -46,6 +55,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const navigate = useNavigate();
     const courseDetail: CourseDetailType = useAppSelector((state) => state.courseSlice.courseDetail) ?? {};
+    const courseDetailForTrial: CourseDetailType = useAppSelector((state) => state.courseSlice.courseDetailForTrial) ?? {};
     const ratings: RatingType[] = useAppSelector((state) => state.ratingSlice.ratings) ?? [];
     const totalRatingPage: number = useAppSelector((state) => state.ratingSlice.totalPage) ?? Number(1);
     const [activeTab, setActiveTab] = useState("Description");
@@ -109,8 +119,30 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const handleAfterPromotion = () => {
         dispatch(courseActions.getCourseDetail(slug as string));
     };
+    // const [videoDialog, setVideoDialog] = useState<React.ReactNode | null>(null);
+    const [showDialog, setShowDialog] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('');
+    const [descriptionVideo, setDescriptionVideo] = useState('');
+
+    const handleShowVideoDialog = (urlVideo: string, descriptionVideo: string) => {
+        setVideoUrl(urlVideo);
+        setDescriptionVideo(descriptionVideo);
+        setShowDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setShowDialog(false);
+    };
+
     useEffect(() => {
         dispatch(courseActions.getCourseDetail(slug as string)).then((response) => {
+            if (response.payload && response.payload.status_code !== 200) {
+                setIsNotFound(true);
+            }
+        });
+    }, [dispatch, slug, isNotFound]);
+    useEffect(() => {
+        dispatch(courseActions.getCourseDetailForTrialLesson(slug as string)).then((response) => {
             if (response.payload && response.payload.status_code !== 200) {
                 setIsNotFound(true);
             }
@@ -151,6 +183,17 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
             dispatch(ratingActions.getListRatingOfCourseBySlug(values));
         }
     };
+    // const [openDialog, ] = useState(false);
+
+    // const handleOpenDialog = () => {
+    //     setOpenDialog(true);
+    // };
+
+    // const handleCloseDialog = () => {
+    //     setOpenDialog(false);
+    // };
+    const [isHovered, setIsHovered] = useState(false);
+
     if (isNotFound) return <NotFound />;
 
     return (
@@ -196,13 +239,38 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                 )}
                 <div className="min-h-screen h-full px-4 tablet:px-[60px]">
                     <div className="mt-4 container mx-auto p-4">
-                        <div className="flex flex-col gap-4 laptop:flex-row items-center rounded-lg">
-                            <div className=" flex-1 w-full laptop:max-w-[600px] max-h-[400px] bg-gray-600 rounded-lg">
-                                <img
-                                    src={courseDetail.thumbnail}
-                                    alt={courseDetail.title}
-                                    className="h-[300px] w-full m-auto rounded-lg tablet:h-[400px] object-contain"
-                                />
+                        <div className="flex flex-col gap-4 laptop:flex-row items-center rounded-lg ">
+                            <div className="flex justify-center items-center w-full h-full">
+                                <div className=" flex-1 w-full laptop:max-w-[600px] max-h-[400px] bg-gray-600 rounded-lg relative">
+                                    <div className="overflow-hidden">
+                                    <img
+                                        src={courseDetail.thumbnail}
+                                        alt="Thumbnail"
+                                        className={`h-[300px] w-full m-auto rounded-lg tablet:h-[400px] object-contain transition-transform ${isHovered ? "scale-110" : ""}`}
+                                        // style={{maxHeight: "380px", marginTop: "10px" }}
+                                        onMouseEnter={() => setIsHovered(true)}
+                                        onMouseLeave={() => setIsHovered(false)}
+                                    />
+                                    </div>
+                                    
+                                    <Dialog>
+                                        <DialogTrigger>
+                                            <div className="flex items-center justify-center absolute top-0 left-0 w-full h-full">
+                                                <PlayCircleIcon
+                                                    className={`text-white w-28 h-28 transition-transform ${
+                                                        isHovered ? "" : "scale-110"
+                                                    }`}
+                                                    onMouseEnter={() => setIsHovered(true)}
+                                                    onMouseLeave={() => setIsHovered(false)}
+                                                />
+                                            </div>
+                                        </DialogTrigger>
+                                        <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
+                                            <DialogTitle className={"text-center"}>This is introduce video about this course</DialogTitle>
+                                            <VideoPlayerForTrailerTrial source={courseDetail.url_trailer}/>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
                             </div>
                             <div className=" flex-1 object-right flex flex-col gap-4 px-3 pb-3 laptop:pt-3">
                                 <div className="flex-1">
@@ -341,6 +409,17 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     >
                                         Đánh giá
                                     </Tab>
+                                    {(!isLogin || (isLogin && role !== constants.util.ROLE_ENROLLED && role !== constants.util.ROLE_AUTHOR)) && (
+                                        <Tab
+                                            key={"Trial"}
+                                            value={"Trial"}
+                                            onClick={() => setActiveTab("Trial")}
+                                            className={activeTab === "Trial" ? "text-gray-900" : ""}
+                                        >
+                                            Học thử
+                                        </Tab>
+                                    )}
+
                                 </TabsHeader>
                                 <div className="h-px w-full bg-gray-300"></div>
                                 <TabsBody>
@@ -488,6 +567,49 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                     Khóa học này chưa có đánh giá
                                                 </p>
                                             )}
+                                        </div>
+                                    </TabPanel>
+                                    <TabPanel key="Trial" value="Trial">
+                                        <div className="w-full flex gap-10">
+                                            <div className="w-1/2">
+                                                <div className="table-of-content my-4">
+                                                    <h2 className="text-xl tablet:text-2xl font-bold mb-3">
+                                                        Bạn có thể học thử khóa học này dưới đây
+                                                    </h2>
+                                                    <span className="w-[60px] h-1 bg-black block mb-4"></span>
+                                                    {!courseDetailForTrial.sections || 
+                                                        (courseDetailForTrial.sections.every(section => section.lecture !== undefined && section.lecture.length === 0) && (
+                                                            <p className="mt-4 text-xl text-center text-lightblue font-bold">
+                                                            Khóa học này chưa có nội dung để học thử
+                                                        </p>
+                                                    ))}
+                                                    {courseDetailForTrial.sections?.map((section: Section, index: number) => (
+                                                        <div key={index}>
+                                                            <AccordionSectionForTrial
+                                                                key={section.id * index}
+                                                                isDisplayEdit={false}
+                                                                isDisplayProgress={role === constants.util.ROLE_ENROLLED}
+                                                                section={section}
+                                                                // redirectToWatchVideo={isLogin}
+                                                                handleShowVideoDialog={handleShowVideoDialog}
+                                                            />
+                                                        </div>
+                                                        
+                                                    ))}
+                                                    {showDialog && isLogin && (
+                                                        <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
+                                                            <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
+                                                                <DialogTitle className ="text-center">{descriptionVideo.replace(/<[^>]+>/g, '')}</DialogTitle>
+                                                                <VideoPlayerForTrailerTrial source={videoUrl} />
+                                                            </DialogContent>
+                                                            
+                                                        </Dialog>
+                                                    )}
+                                                    
+                                                </div>
+                                            </div>
+                                            <div className="w-1/2 ">
+                                            </div>
                                         </div>
                                     </TabPanel>
                                 </TabsBody>
