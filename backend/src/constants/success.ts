@@ -52,5 +52,7 @@ const success = {
     //report
     SUCCESS_CREATE_REPORT: "Create report successfully",
     SUCCESS_HANDLE_REPORT: "Handle report successfully",
+
+    SUCCESS_BUT_NO_UPDATE_PROGRESS: "Please don't skip the lesson, we will have to force you to the last progress",
 };
 export default success;

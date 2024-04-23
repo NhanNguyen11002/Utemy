@@ -282,25 +282,6 @@ const createTestHistory = async (req: IRequestWithId): Promise<ResponseBase> => 
                         pass: is_pass,
                     },
                 });
-                const findEnrolled = await configs.db.enrolled.findFirst({
-                    where: {
-                        user_id,
-                        course_id: Number(isExistTest.lecture?.section.course_id),
-                    },
-                    select: {
-                        id: true,
-                    },
-                });
-                const updateOverallProgress = await configs.db.enrolled.update({
-                    where: {
-                        id: findEnrolled?.id,
-                    },
-                    data: {
-                        overall_progress: {
-                            increment: 1,
-                        },
-                    },
-                });
             }
         }
         const createTestHistory = await configs.db.testHistory.create({

@@ -32,24 +32,57 @@ const updateProgress = async (req: IRequestWithId): Promise<ResponseBase> => {
     const progressPercent = progressValue / Number(isLectureExist.lesson?.duration);
     const isPass = progressPercent >= 0.85;
     if (isProgressExist) {
-        if (!isProgressExist.pass) {
-            const updateProgress = await configs.db.progress.update({
-                where: {
-                    id: isProgressExist.id,
-                },
-                data: {
-                    progress_value: progressValue,
-                    progress_percent: progressPercent,
-                    pass: isPass,
-                },
-            });
-            if (isPass) updateOverallProgress(userId, courseId);
-            if (updateProgress) {
-                return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, { isPass });
+        const progressGap = progressValue - Number(isProgressExist.progress_value);
+        if (progressGap <= 45 && progressGap >= 0) {
+            const data = {
+                progress_value: progressValue,
+                progress_percent: progressPercent,
+            };
+            if (!isProgressExist.pass) {
+                const updateProgress = await configs.db.progress.update({
+                    where: {
+                        id: isProgressExist.id,
+                    },
+                    data: {
+                        ...data,
+                        pass: isPass,
+                    },
+                });
+                if (updateProgress) {
+                    return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, {
+                        progressPercent,
+                        progressValue,
+                        isPass,
+                    });
+                } else {
+                    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+                }
             } else {
-                return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+                const updateProgress = await configs.db.progress.update({
+                    where: {
+                        id: isProgressExist.id,
+                    },
+                    data: {
+                        ...data,
+                    },
+                });
+                if (updateProgress) {
+                    return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, {
+                        progressPercent,
+                        progressValue,
+                    });
+                } else {
+                    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+                }
             }
-        } else return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+        } else if (progressGap > 45) {
+            return new ResponseSuccess(200, constants.success.SUCCESS_BUT_NO_UPDATE_PROGRESS, true, {
+                force: true,
+                progress_value: Number(isProgressExist.progress_value),
+            });
+        } else {
+            return new ResponseSuccess(200, constants.success.SUCCESS_BUT_NO_UPDATE_PROGRESS, true);
+        }
     } else {
         const createProgress = await configs.db.progress.create({
             data: {
@@ -61,34 +94,16 @@ const updateProgress = async (req: IRequestWithId): Promise<ResponseBase> => {
                 pass: isPass,
             },
         });
-        if (isPass) updateOverallProgress(userId, courseId);
         if (createProgress) {
-            return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true, { isPass });
+            return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true, {
+                progressPercent,
+                progressValue,
+                isPass,
+            });
         } else {
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         }
     }
-};
-const updateOverallProgress = async (userId: number, courseId: number) => {
-    const findEnrolled = await configs.db.enrolled.findFirst({
-        where: {
-            user_id: userId,
-            course_id: courseId,
-        },
-        select: {
-            id: true,
-        },
-    });
-    const updateOverallProgress = await configs.db.enrolled.update({
-        where: {
-            id: findEnrolled?.id,
-        },
-        data: {
-            overall_progress: {
-                increment: 1,
-            },
-        },
-    });
 };
 
 const ProgressServices = {

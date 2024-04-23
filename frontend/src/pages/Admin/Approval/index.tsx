@@ -63,8 +63,8 @@ export function ApprovalAdmin() {
                         <Table className="border">
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="">Khoá học</TableHead>
-                                    <TableHead className="text-center">Ngày gửi yêu cầu</TableHead>
+                                    <TableHead className="border">Khoá học</TableHead>
+                                    <TableHead className="text-center border">Ngày gửi yêu cầu</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -85,7 +85,7 @@ export function ApprovalAdmin() {
                                                     </div>
                                                 </TableCell>
                                             </Link>
-                                            <TableCell className="text-center">
+                                            <TableCell className="text-center border">
                                                 {" "}
                                                 <p>{convertDateFormat(approval.created_at.toString())}</p>
                                             </TableCell>

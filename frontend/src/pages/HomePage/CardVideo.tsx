@@ -132,7 +132,10 @@ const CardVideo: React.FC<CardVideoProps> = (props) => {
                     </div>
                 </div>
             </HoverCardTrigger>
-            <HoverCardContent side="right" className="w-auto max-w-[300px] flex flex-col gap-2 HoverCardContent">
+            <HoverCardContent
+                side="right"
+                className="w-auto max-w-[300px] h-fit  min-h-[400px] flex flex-col gap-2 HoverCardContent"
+            >
                 <div>
                     <p className="text-2xl font-semibold">{props.title}</p>
                     {props.updatedAt && (

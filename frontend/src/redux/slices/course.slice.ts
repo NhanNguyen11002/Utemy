@@ -26,6 +26,7 @@ type CourseSliceType = {
     isGetLoading: boolean;
     isUpload: boolean;
     role: string;
+    myEnrolled: Map<number, object>;
 };
 
 const initialState: CourseSliceType = {
@@ -58,7 +59,7 @@ const initialState: CourseSliceType = {
         requirement: "",
         study: "",
         approval: [],
-        url_trailer: ""
+        url_trailer: "",
     },
     courseDetailForTrial: {
         course_id: 0,
@@ -89,13 +90,14 @@ const initialState: CourseSliceType = {
         requirement: "",
         study: "",
         approval: [],
-        url_trailer: ""
+        url_trailer: "",
     },
     role: "",
     top10Rate: [],
     top10Enrolled: [],
     top10Sale: [],
     courses: [],
+    myEnrolled: new Map<number, object>(),
     totalPage: 0,
     totalRecord: 0,
     isLoading: false,
@@ -151,6 +153,17 @@ export const stopPromotion = createAsyncThunk<Response<null>, number, { rejectVa
     async (body, ThunkAPI) => {
         try {
             const response = await apis.courseApis.stopPromotion(body);
+            return response.data as Response<null>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getAllEnrolled = createAsyncThunk<Response<null>, void, { rejectValue: Response<null> }>(
+    "course/enrolled-id",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.getAllEnrolled();
             return response.data as Response<null>;
         } catch (error: any) {
             return ThunkAPI.rejectWithValue(error.data as Response<null>);
@@ -215,17 +228,18 @@ export const getCourseDetail = createAsyncThunk<Response<Course>, string, { reje
         }
     },
 );
-export const getCourseDetailForTrialLesson = createAsyncThunk<Response<Course>, string, { rejectValue: Response<null> }>(
-    "course/trial/detail",
-    async (body, ThunkAPI) => {
-        try {
-            const response = await apis.courseApis.getCourseDetailForTrialLesson(body);
-            return response.data as Response<Course>;
-        } catch (error: any) {
-            return ThunkAPI.rejectWithValue(error.data as Response<null>);
-        }
-    },
-);
+export const getCourseDetailForTrialLesson = createAsyncThunk<
+    Response<Course>,
+    string,
+    { rejectValue: Response<null> }
+>("course/trial/detail", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.courseApis.getCourseDetailForTrialLesson(body);
+        return response.data as Response<Course>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 export const getCourseDetailById = createAsyncThunk<Response<Course>, number, { rejectValue: Response<null> }>(
     "course/detail-id",
     async (body, ThunkAPI) => {
@@ -343,6 +357,21 @@ export const courseSlice = createSlice({
             state.isLoading = false;
         });
         builder.addCase(getEnrolledCourses.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(getAllEnrolled.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(getAllEnrolled.fulfilled, (state, action: any) => {
+            console.log(action.payload);
+            const map = new Map<number, object>();
+            action.payload.data?.forEach((element: any) => {
+                map.set(element.course_id, element);
+            });
+            state.myEnrolled = map;
+            state.isLoading = false;
+        });
+        builder.addCase(getAllEnrolled.rejected, (state) => {
             state.isLoading = false;
         });
         builder.addCase(getCourseDetail.pending, (state) => {

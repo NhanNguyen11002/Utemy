@@ -138,7 +138,7 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             if (Array.isArray(thumbnailFiles) && thumbnailFiles.length > 0) {
                 const thumbnailFile = thumbnailFiles[0];
                 console.log("Thumbnail file:", thumbnailFiles);
-                console.log(thumbnailFile.path)
+                console.log(thumbnailFile.path);
                 fullPathConvertedThumbnail = helper.ConvertHelper.convertFilePath(thumbnailFile.path);
             } else {
                 console.log("No thumbnail file uploaded.");
@@ -770,6 +770,18 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
             enroll.course.sections.forEach((section: any) => {
                 number_of_lecture += section.Lecture.length;
             });
+
+            let getOverall = 0;
+            configs.db.progress
+                .count({
+                    where: {
+                        user_id: userId,
+                        course_id: enroll.course.id,
+                        pass: true,
+                        is_delete: false,
+                    },
+                })
+                .then((result) => (getOverall = result));
             return {
                 course_id: enroll.course?.id,
                 title: enroll.course?.title,
@@ -781,7 +793,7 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                 updated_at: enroll.course.updated_at,
                 number_of_section: enroll.course.sections.length,
                 number_of_lecture,
-                overall_progress: enroll.overall_progress,
+                overall_progress: getOverall,
                 author: {
                     user_id: enroll.course?.user.id,
                     first_name: enroll.course?.user.first_name,
@@ -1584,6 +1596,7 @@ const getProgressByCourseSlug = async (req: IRequestWithId): Promise<ResponseBas
             where: {
                 course_id: Number(isFoundCourse.id),
                 user_id: userId,
+                is_delete: false,
             },
             orderBy: {
                 lecture_id: "asc",
@@ -1599,10 +1612,12 @@ const getProgressByCourseSlug = async (req: IRequestWithId): Promise<ResponseBas
                 },
             },
         });
-        const getOverall = await configs.db.enrolled.findFirst({
+        const getOverall = await configs.db.progress.count({
             where: {
-                user_id: userId,
                 course_id: Number(isFoundCourse.id),
+                user_id: userId,
+                pass: true,
+                is_delete: false,
             },
         });
         if (!getProgress || !getOverall) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
@@ -1623,7 +1638,7 @@ const getProgressByCourseSlug = async (req: IRequestWithId): Promise<ResponseBas
             return temp;
         });
         const data = {
-            overall_progress: getOverall.overall_progress,
+            overall_progress: getOverall,
             progress: progressData,
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
@@ -1753,6 +1768,24 @@ const getCourseDetailForTrialLesson = async (req: IRequestWithId): Promise<Respo
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getAllEnrolled = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const getAllEnrolled = await configs.db.enrolled.findMany({
+            where: {
+                user_id,
+            },
+        });
+        if (!getAllEnrolled) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, getAllEnrolled);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const CourseServices = {
     getRightOfCourse,
     createCourse,
@@ -1778,6 +1811,7 @@ const CourseServices = {
     restrictCourse,
     getProgressByCourseSlug,
     getCourseDetailForTrialLesson,
+    getAllEnrolled,
 };
 
 export default CourseServices;

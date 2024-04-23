@@ -1,6 +1,6 @@
 import React from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../../components/ui/carousel";
-import CardVideo from "./CardVideo";
+import CardVideo from "./CardVideoNew";
 import { Course } from "../../types/course";
 import { User } from "../../types/user";
 
@@ -12,7 +12,7 @@ type CarouselCourseProps = {
 const CarouselCourse: React.FC<CarouselCourseProps> = ({ courses, type }) => {
     return (
         <>
-            <Carousel>
+            <Carousel className="">
                 <CarouselContent className="w-[1340px] h-[350px]">
                     {courses.length > 0 &&
                         courses.map((course, index) => {
