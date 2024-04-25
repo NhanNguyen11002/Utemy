@@ -122,6 +122,15 @@ export const testSlice = createSlice({
             state.nowQuestion = { quiz_id: 0, question: "", type: 0, quiz_answer: [] };
             state.questionIndex = 0;
             state.testResult.test_progress = [];
+            state.questionList = state.questionList.map((detail: TestDetail) => {
+                if (detail.type !== 3) {
+                    return {
+                        ...detail,
+                        quiz_answer: shuffle(detail.quiz_answer),
+                    };
+                }
+                return detail;
+            });
             state.duration = Number(state.test.duration);
             state.afterTest = {
                 totalPercent: 0,
@@ -134,7 +143,11 @@ export const testSlice = createSlice({
         },
         setStopTest: (state) => {
             state.testState = 2;
-            const totalQuestionRight = getQuestionRightCount(state.testResult.test_progress);
+            const type3Data = processType3Data(state.testResult.test_progress);
+            const format_test_progress = state.testResult.test_progress
+                .filter((e) => e.type !== 3)
+                .concat(type3Data.length > 0 ? type3Data : []);
+            const totalQuestionRight = getQuestionRightCount(format_test_progress);
             state.afterTest.totalQuestionRight = totalQuestionRight;
             state.afterTest.totalPercent = Number((totalQuestionRight / state.questionCount).toFixed(2));
         },
@@ -149,7 +162,15 @@ export const testSlice = createSlice({
         builder.addCase(getTestByTestId.fulfilled, (state, action) => {
             state.test = action.payload.data as TestResponse;
             state.questionCount = action.payload.data.number_of_question;
-            state.questionList = action.payload.data.test_detail;
+            state.questionList = action.payload.data.test_detail.map((detail: TestDetail) => {
+                if (detail.type !== 3) {
+                    return {
+                        ...detail,
+                        quiz_answer: shuffle(detail.quiz_answer),
+                    };
+                }
+                return detail;
+            });
             state.duration = Number(action.payload.data.duration);
             state.testResult.test_id = action.payload.data.test_id;
             state.isGetLoading = false;
@@ -204,4 +225,47 @@ const getQuestionRightCount = (testProgress: TestProgressType[]) => {
         if (progress.is_correct) count += 1;
     });
     return count;
+};
+
+function processType3Data(data: TestProgressType[]): TestProgressType[] {
+    if (data.length === 0) return [];
+    const type3Data = data.filter((item) => item.type === 3);
+    if (type3Data.length === 0) return [];
+    const id = type3Data[0].quiz_answer_id;
+    const groupedData = type3Data.reduce((acc, cur) => {
+        //@ts-expect-error đéo lỗi đc mà cứ báo lỗi
+        const newValue: TestProgressType[] =
+            acc.get(cur.quiz_id) !== undefined
+                ? acc.get(cur.quiz_id)?.concat(cur)
+                : new Array<TestProgressType>().concat(cur);
+        acc.set(cur.quiz_id, newValue);
+        return acc;
+    }, new Map<number, TestProgressType[]>());
+
+    const processedData = Array.from(groupedData).map(([quizId, group]) => {
+        console.log(group);
+        const totalCorrect = group.reduce((acc, cur) => acc + (cur.is_correct ? 1 : 0), 0);
+        const averageCorrect = totalCorrect / group.length;
+        const isCorrect = averageCorrect >= 0.5 ? true : false;
+        const quizAnswerString = group
+            .map((item) => `${item.quiz_answer_string}:${item.is_correct ? "t" : "f"}`)
+            .join(",");
+        return {
+            quiz_id: quizId,
+            quiz_answer_string: quizAnswerString,
+            quiz_answer_id: id,
+            is_correct: isCorrect,
+            type: 3,
+        };
+    });
+
+    return processedData.length > 0 ? processedData : [];
+}
+const shuffle = (array: any[]) => {
+    // for (let i = array.length - 1; i > 0; i--) {
+    //     const j = Math.floor(Math.random() * (i + 1));
+    //     [array[i], array[j]] = [array[j], array[i]];
+    // }
+    // return array;
+    return array.sort(() => Math.random() - 0.5);
 };

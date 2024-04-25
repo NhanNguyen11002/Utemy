@@ -8,7 +8,7 @@ type HistoryCardProps = {
 const HistoryCard: React.FC<HistoryCardProps> = (props) => {
     return (
         <>
-            <div className="flex gap-2 text-black border-2 border-black rounded-md p-3 w-1/2 justify-between items-center">
+            <div className="flex gap-2 text-black border-2 border-black rounded-md p-3 w-fit justify-between items-center">
                 <div className="flex gap-2 items-center">
                     {props.history.is_pass ? (
                         <FaceSmileIcon className="w-8 h-8 text-success shrink-0" />

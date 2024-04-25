@@ -7,6 +7,7 @@ import { testActions, progressActions } from "../../redux/slices";
 import { TestProgressType, TestResultType } from "../../types/test";
 import FinishTestPopup from "./FinishTestPopup";
 import QuestionCounter from "./QuestionCounter";
+import { FillInQuiz } from "../../components";
 const TestGround: React.FC = () => {
     const dispatch = useAppDispatch();
     const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
@@ -26,7 +27,20 @@ const TestGround: React.FC = () => {
     const handleCheck = (quiz_answer_id: number, is_correct: boolean) => {
         const checkAnswer: TestProgressType = {
             quiz_id: nowQuestion.quiz_id,
+            type: nowQuestion.type,
             quiz_answer_id,
+            is_correct,
+        };
+        const copyProgress = [...testProgress];
+        const updatedProgress = updateTestProgress(copyProgress, checkAnswer);
+        dispatch(testActions.setProgress(updatedProgress));
+    };
+    const handleFill = (quiz_answer_id: number, quiz_answer_string: string, is_correct: boolean) => {
+        const checkAnswer: TestProgressType = {
+            quiz_id: nowQuestion.quiz_id,
+            type: nowQuestion.type,
+            quiz_answer_id,
+            quiz_answer_string,
             is_correct,
         };
         const copyProgress = [...testProgress];
@@ -56,18 +70,26 @@ const TestGround: React.FC = () => {
                             handleOpenFinishPopup={() => setFinishPopup(true)}
                         />
                     </div>
-                    <h1 className="text-black font-bold text-xl mb-5 w-[80%]">{nowQuestion.question}</h1>
-                    <div className="flex flex-col gap-2 w-3/4 h-2/3 items-center justify-items-center">
-                        {nowQuestion.quiz_answer.map((answer, index) => {
-                            return (
-                                <AnswerCard
-                                    quizId={nowQuestion.quiz_id}
-                                    key={answer.quiz_answer_id}
-                                    handleCheck={handleCheck}
-                                    quizAnswer={answer}
-                                />
-                            );
-                        })}
+                    <div className="w-4/5 min-h-[250px]">
+                        {nowQuestion.type === 3 ? (
+                            <FillInQuiz quiz={nowQuestion} handleFill={handleFill} testProgress={testProgress} />
+                        ) : (
+                            <h1 className="text-black font-bold text-xl mb-5 w-full">{nowQuestion.question}</h1>
+                        )}
+                        {nowQuestion.type !== 3 && (
+                            <div className="grid grid-rows-4 gap-2 w-full h-2/3 items-center justify-items-center">
+                                {nowQuestion.quiz_answer.map((answer, index) => {
+                                    return (
+                                        <AnswerCard
+                                            quizId={nowQuestion.quiz_id}
+                                            key={answer.quiz_answer_id}
+                                            handleCheck={handleCheck}
+                                            quizAnswer={answer}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                     <div className="flex justify-between w-full px-5 my-3">
                         <button
@@ -100,13 +122,17 @@ export default TestGround;
 
 const updateTestProgress = (testProgressArray: TestProgressType[], newAnswer: TestProgressType) => {
     if (testProgressArray.length > 0) {
-        const existingIndex = testProgressArray.findIndex((item) => item.quiz_id === newAnswer.quiz_id);
+        const existingIndex =
+            newAnswer.type !== 3
+                ? testProgressArray.findIndex((item) => item.quiz_id === newAnswer.quiz_id)
+                : testProgressArray.findIndex(
+                      (item) => item.quiz_id === newAnswer.quiz_id && item.quiz_answer_id === newAnswer.quiz_answer_id,
+                  );
         if (existingIndex !== -1) {
             testProgressArray[existingIndex] = newAnswer;
         } else {
             testProgressArray.push(newAnswer);
         }
     } else testProgressArray.push(newAnswer);
-
     return testProgressArray;
 };

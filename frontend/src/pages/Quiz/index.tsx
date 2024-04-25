@@ -110,7 +110,7 @@ const QuizHome: React.FC = () => {
             {openEditGroupPopup && <QuizGroupEditPopup group={editGroup} handleCancelEdit={handleCancelEditGroup} />}
             {openAddGroupPopup && <QuizGroupAddPopup handleCancelAdd={handleToggleAddGroup} />}
             <div className=" w-full h-[100vh] mx-auto mt-[10px]  justify-center flex  ">
-                <div className="w-1/4 bg-white  shadow-lg pt-[20px]">
+                <div className=" w-[30%] bg-white  shadow-lg pt-[20px]">
                     <div className="h-[10%] flex items-center justify-between text-black border-b mx-3">
                         <div>
                             <h1 className="text-2xl text-black font-bold ">Bộ câu hỏi</h1>
@@ -119,7 +119,7 @@ const QuizHome: React.FC = () => {
                         <button
                             type="button"
                             onClick={handleToggleAddGroup}
-                            className="btn btn-info text-white hover:bg-lightblue/80"
+                            className="py-2 px-4 hover:cursor-pointer text-white bg-blue-500 hover:bg-white hover:text-blue-500 border hover:border-blue-400 transition-all rounded-md"
                         >
                             Thêm
                         </button>
@@ -173,7 +173,7 @@ const QuizHome: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleToggleAdd}
-                                className="btn btn-info text-white hover:bg-lightblue/80"
+                                className="py-2 px-4 hover:cursor-pointer text-white bg-blue-500 hover:bg-white hover:text-blue-500 border hover:border-blue-400 transition-all rounded-md"
                             >
                                 Thêm
                             </button>
@@ -185,15 +185,17 @@ const QuizHome: React.FC = () => {
                                 <p>Vui lòng chọn bộ câu hỏi bên trái để hiển thị câu hỏi</p>
                             </div>
                         )}
-                        {quizList.length > 0 ? (
+                        {groupId !== 0 && quizList.length > 0 ? (
                             quizList.map((data, index) => {
                                 return (
-                                    <QuizCard
-                                        key={index}
-                                        quiz={data}
-                                        handleOpenEdit={handleOpenEditQuiz}
-                                        handleOpenDelete={handleOpenDeleteQuiz}
-                                    />
+                                    <div key={index}>
+                                        <QuizCard
+                                            key={index}
+                                            quiz={data}
+                                            handleOpenEdit={handleOpenEditQuiz}
+                                            handleOpenDelete={handleOpenDeleteQuiz}
+                                        />
+                                    </div>
                                 );
                             })
                         ) : (

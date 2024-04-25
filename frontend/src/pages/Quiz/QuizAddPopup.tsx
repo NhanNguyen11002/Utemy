@@ -1,13 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Formik, Field, ErrorMessage } from "formik";
-import {
-    HandThumbUpIcon,
-    CheckCircleIcon,
-    TrashIcon,
-    PlusCircleIcon,
-    XCircleIcon,
-    HandThumbDownIcon,
-} from "@heroicons/react/24/solid";
+import { CheckCircleIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import toast, { Toaster } from "react-hot-toast";
 import { QuizAnswerType, QuizType } from "../../types/quiz";
 import { CustomeSelect } from "../../components";
@@ -15,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { quizActions } from "../../redux/slices";
 import { addQuizValidationSchema } from "../../validations/quiz";
 import { checkAnswerArray } from "../../utils/helper";
+import AnswerCardInPopup from "./AnswerCardInPopup";
 // trc khi thêm answer mới thì xóa hết anwser cũ
 type QuizAddPopupProps = {
     handleCancelAdd(): void;
@@ -48,13 +42,25 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
             value: 1,
             label: "Trắc nghiệm",
         },
+        {
+            value: 2,
+            label: "True/False",
+        },
+        {
+            value: 3,
+            label: "Điền khuyết",
+        },
     ];
     const [error, setError] = useState("");
+    const quizRef = useRef<HTMLInputElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const inputRightRef = useRef<HTMLInputElement>(null);
     const [add, setAdd] = useState(false);
+    const [edit, setEdit] = useState(false);
     const formikRef = useRef(null);
     const [answer, setAnswer] = useState<QuizAnswerType[]>([]);
+    const [type, setType] = useState(0);
+    const [blank, setBlank] = useState(0);
     const initialValue = {
         question: "",
         type: null,
@@ -69,13 +75,37 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
             quiz_group_id: props.groupId,
             quiz_answer: answer,
         };
-        if (answer.length !== 4) {
-            setError("Loại câu hỏi trắc nghiệm yêu cầu 4 câu trả lời");
+        if (type === 0) {
+            displayError("Vui lòng chọn loại câu hỏi");
             return;
         }
-        if (!checkAnswerArray(answer)) {
-            toast.error("One correct answer required");
-            return;
+        if (type === 1) {
+            if (answer.length !== 4) {
+                displayError("Loại câu hỏi trắc nghiệm yêu cầu 4 câu trả lời");
+                return;
+            }
+            if (checkAnswerArray(answer) !== 1) {
+                displayError("Trắc nghiệm chỉ có 1 câu trả lời đúng");
+                return;
+            }
+        } else if (type === 2) {
+            if (answer.length !== 2) {
+                displayError("Loại câu hỏi true/false yêu cầu 2 câu trả lời");
+                return;
+            }
+            if (checkAnswerArray(answer) !== 1) {
+                displayError("True/False chỉ có 1 câu trả lời đúng");
+                return;
+            }
+        } else if (type === 3) {
+            if (answer.length < 1) {
+                displayError("Loại câu hỏi điền khuyết yêu cầu ít nhất 1 câu trả lời");
+                return;
+            }
+            if (checkAnswerArray(answer) !== blank) {
+                displayError("Số lượng câu trả lời đúng phải bằng số lượng khuyết");
+                return;
+            }
         }
         //dispatch add quiz
         dispatch(quizActions.createQuiz(data)).then((response) => {
@@ -90,6 +120,7 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
     };
     const handleChangeStatus = (event: any, formik: any) => {
         formik.setFieldValue("type", event.value);
+        setType(event.value);
     };
     const handleClearAnswer = (index: number) => {
         const copy = [...answer];
@@ -97,16 +128,25 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
         setAnswer(copy);
         setError("");
     };
+    const handleEditAnswer = (index: number, edited: QuizAnswerType) => {
+        const copy = [...answer];
+        copy[index] = edited;
+        setAnswer(copy);
+    };
     const handleSubmitAnswer = () => {
         if (inputRef.current && inputRightRef.current) {
             if (add && inputRef.current.value === "") {
-                setError("Vui lòng hoàn tất thêm câu trả lời");
+                displayError("Vui lòng hoàn tất thêm câu trả lời");
+                return;
+            }
+            if (edit) {
+                displayError("Vui lòng hoàn tất chỉnh sửa câu trả lời");
                 return;
             }
             const temp: QuizAnswerType = {
                 // quiz_answer_id: 0,
                 answer: inputRef.current.value,
-                is_correct: inputRightRef.current.checked as any,
+                is_correct: type === 3 ? true : inputRightRef.current.checked,
             };
             setAnswer([...answer, temp]);
             inputRef.current.value = "";
@@ -116,6 +156,40 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
     const toggleAdd = () => {
         setAdd(!add);
         setError("");
+    };
+    const checkBlankCount = () => {
+        if (quizRef.current) {
+            const regex = new RegExp("\\$\\[\\.\\.\\.\\]\\$", "g");
+            // Sử dụng match() để tìm tất cả các kết quả khớp với biểu thức chính quy
+            const matches = quizRef.current.value.match(regex);
+            if (matches) {
+                const num = matches.length;
+                console.log(num);
+                setBlank(num);
+            } else setBlank(0);
+        }
+    };
+    const onAddBlank = (formik: any) => {
+        if (quizRef.current) {
+            const startPos = quizRef.current.selectionStart;
+            const endPos = quizRef.current.selectionEnd;
+            if (startPos && endPos) {
+                const newValue =
+                    quizRef.current.value.substring(0, startPos) +
+                    "$[...]$" +
+                    quizRef.current.value.substring(endPos, quizRef.current.value.length);
+                quizRef.current.value = newValue;
+                formik.setFieldValue("question", newValue);
+            }
+        }
+        checkBlankCount();
+    };
+    const displayError = (err: string) => {
+        setError(err);
+        toast.error(err);
+        setTimeout(() => {
+            setError("");
+        }, 3000);
     };
     return (
         <div className="fixed z-50 top-0 left-0 right-0 bottom-0 bg-black/50 flex items-center justify-center">
@@ -133,32 +207,11 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                         {(formik) => (
                             <form onSubmit={formik.handleSubmit} className="text-sm mb-1 tablet:text-xl font-medium">
                                 <div className="py-2">
-                                    <label htmlFor="question" className="text-sm mb-1 tablet:text-xl font-medium">
-                                        Tên câu hỏi
-                                    </label>{" "}
-                                    <br />
-                                    <Field
-                                        type="text"
-                                        name="question"
-                                        placeholder="Tên câu hỏi..."
-                                        className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
-                                            formik.errors.question && formik.touched.question && "border-error"
-                                        } `}
-                                    />
-                                    <br />
-                                    <ErrorMessage
-                                        name="question"
-                                        component="span"
-                                        className="text-[14px] text-error font-medium"
-                                    />
-                                </div>
-                                <div className="py-2">
                                     <label htmlFor="type" className="text-sm mb-1 tablet:text-xl font-medium">
                                         Loại câu hỏi
                                     </label>{" "}
                                     <br />
                                     <Field
-                                        // className="custom-select"
                                         name="type"
                                         component={CustomeSelect}
                                         handleOnchange={(e: any) => handleChangeStatus(e, formik)}
@@ -166,6 +219,7 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                         isMulti={false}
                                         placeholder="Chọn loại câu hỏi..."
                                         styles={customStyles}
+                                        disabled={add}
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.type && formik.touched.type && "border-error"
                                         } `}
@@ -177,6 +231,36 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                         className="text-[14px] text-error font-medium"
                                     />
                                 </div>
+                                <div className="py-2">
+                                    <div className="flex justify-between mb-2">
+                                        <label htmlFor="question" className="text-sm mb-1 tablet:text-xl font-medium">
+                                            Tên câu hỏi
+                                        </label>{" "}
+                                        <button
+                                            type="button"
+                                            onClick={() => onAddBlank(formik)}
+                                            className={`text-sm py-1 px-2 rounded-md text-black border-black border hover:cursor-pointer hover:border-gray-400 transition-all ${type === 3 ? "block" : "hidden"}`}
+                                        >
+                                            Thêm
+                                        </button>
+                                    </div>
+                                    <Field
+                                        as="textarea"
+                                        innerRef={quizRef}
+                                        onBlur={checkBlankCount}
+                                        name="question"
+                                        placeholder="Tên câu hỏi..."
+                                        className={`w-full px-2 py-2 rounded-lg border-[1px] text-sm outline-none ${
+                                            formik.errors.question && formik.touched.question && "border-error"
+                                        } `}
+                                    />
+                                    <br />
+                                    <ErrorMessage
+                                        name="question"
+                                        component="span"
+                                        className="text-[14px] text-error font-medium"
+                                    />
+                                </div>
                                 <div className="gap-2 flex flex-col">
                                     <label htmlFor="answer" className="text-sm mb-1 tablet:text-xl font-medium">
                                         Câu trả lời
@@ -184,35 +268,14 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                     {answer.length > 0 &&
                                         answer.map((answer, index) => {
                                             return (
-                                                <>
-                                                    <div
-                                                        key={index}
-                                                        className="flex rounded-lg bg-[#D4EEF9] border border-1 justify-between gap-2 items-center p-2"
-                                                    >
-                                                        <p className=" text-black text-lg truncate">{answer.answer}</p>
-                                                        <div className="w-[10%] flex gap-1 items-center justify-end shrink-0">
-                                                            {answer.is_correct ? (
-                                                                <div className="flex gap-1 items-center">
-                                                                    <HandThumbUpIcon
-                                                                        fill="#28a745"
-                                                                        className=" w-4 h-4"
-                                                                    />
-                                                                </div>
-                                                            ) : (
-                                                                <div className="flex gap-1 items-center">
-                                                                    <HandThumbDownIcon
-                                                                        fill="#FF0000"
-                                                                        className=" w-4 h-4"
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                            <TrashIcon
-                                                                className="w-6 h-6 text-black hover:cursor-pointer shrink-0"
-                                                                onClick={() => handleClearAnswer(index)}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </>
+                                                <AnswerCardInPopup
+                                                    toggleEdit={(bool: boolean) => setEdit(bool)}
+                                                    type={type}
+                                                    answer={answer}
+                                                    index={index}
+                                                    handleClearAnswer={handleClearAnswer}
+                                                    handleEditAnswer={handleEditAnswer}
+                                                />
                                             );
                                         })}
                                     {!add ? (
@@ -239,8 +302,10 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                                 <span className="label-text">Đúng</span>
                                                 <input
                                                     ref={inputRightRef}
-                                                    type="radio"
+                                                    type="checkbox"
                                                     name="isCorrect"
+                                                    defaultChecked={type === 3}
+                                                    disabled={type === 3}
                                                     className="radio checked:bg-success "
                                                 />
                                             </label>
@@ -268,27 +333,22 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                         </div>
                                     )}
                                 </div>
-                                {error && (
-                                    <div className="text-center">
-                                        <h1 className="text-error">{error}</h1>
-                                    </div>
-                                )}
                                 <div className="flex justify-end mt-3 px-4">
                                     <button
                                         type="submit"
                                         name="save_button"
                                         className="text-white btn btn-info text-lg"
-                                        disabled={error !== "" || add || isLoading}
+                                        disabled={error !== "" || add || edit || isLoading}
                                     >
-                                        {add || error || isLoading ? "Loading..." : "Lưu"}
+                                        {add || edit || error || isLoading ? "Loading..." : "Lưu"}
                                     </button>
                                     <button
                                         onClick={props.handleCancelAdd}
                                         type="button"
                                         className="btn text-lg ml-2"
-                                        disabled={add || isLoading}
+                                        disabled={add || edit || error !== "" || isLoading}
                                     >
-                                        {add || isLoading ? "Loading" : "Hủy"}
+                                        {add || edit || error || isLoading ? "Loading" : "Hủy"}
                                     </button>
                                 </div>
                             </form>
