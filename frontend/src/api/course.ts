@@ -36,6 +36,11 @@ const getEnrolledCourses = async (values: SearchMyCourseEnrolledCourse) => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getAllEnrolled = async () => {
+    const path = `course/enrolled-id`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const deleteCourse = async (values: number) => {
     const path = `course/${values}`;
     const reponse = await apiCaller("DELETE", path);
@@ -114,6 +119,7 @@ const courseApis = {
     approveCourse,
     restrictCourse,
     getCourseDetailForTrialLesson,
+    getAllEnrolled,
 };
 
 export default courseApis;

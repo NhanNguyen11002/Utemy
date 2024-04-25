@@ -32,6 +32,7 @@ import ReportCard from "./Card/ReportCard";
 import DecisionCard from "./Card/DecisionCard";
 import UserToolDropdown from "./Dropdown/UserToolDropdown";
 import AllReportCard from "./Card/AllReportCard";
+import FillInQuiz from "./FillInQuiz";
 export {
     Spin,
     Navbar,
@@ -66,4 +67,5 @@ export {
     UserToolDropdown,
     AllReportCard,
     MyEnrolledCourseCard,
+    FillInQuiz,
 };

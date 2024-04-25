@@ -47,6 +47,7 @@ courseRouter.get("/top10", controllers.courseController.getTop10RateCourse);
 
 courseRouter.get("/top-enrolled", controllers.courseController.getTop10EnrolledCourse);
 
+courseRouter.get("/enrolled-id", isLogin, controllers.courseController.getAllEnrolled);
 //23. Search my course
 courseRouter.get("/my", isLogin, controllers.courseController.searchMyCourse);
 courseRouter.get("/enrolled", isLogin, controllers.courseController.searchMyEnrolledCourse);

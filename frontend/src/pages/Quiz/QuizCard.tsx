@@ -14,6 +14,7 @@ type QuizCardProps = {
 const QuizCard: React.FC<QuizCardProps> = (props) => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(!open);
+    const typeSync = "Trắc nghiệm.True/False.Điền khuyết".split(".");
     return (
         <div className="flex h-fit ">
             <>
@@ -27,7 +28,7 @@ const QuizCard: React.FC<QuizCardProps> = (props) => {
                         <h1 className="">{props.quiz.question}</h1>
                     </AccordionHeader>
                     <AccordionBody className=" flex justify-between items-center text-base font-normal">
-                        <h1 className="text-black">Loại câu hỏi: {props.quiz.type === 1 && "Trắc nghiệm"}</h1>
+                        <h1 className="text-black">Loại câu hỏi: {typeSync[props.quiz.type - 1]}</h1>
                         <h1 className="text-black">
                             Ngày chỉnh sửa gần đây: {convertStringDate(props.quiz.updated_at as string)}
                         </h1>

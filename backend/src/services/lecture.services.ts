@@ -119,11 +119,21 @@ const deleteLecture = async (req: IRequestWithId): Promise<ResponseBase> => {
                 is_delete: true,
             },
         });
-        if (isLectureExist.type === "Lesson") {
-            return LessonServices.deleteLesson(isLectureExist.id);
-        } else {
-            return TestServices.deleteTest(isLectureExist.id);
-        }
+        if (deleteLecture) {
+            const deleteProgress = await configs.db.progress.updateMany({
+                where: {
+                    lecture_id: Number(lecture_id),
+                },
+                data: {
+                    is_delete: true,
+                },
+            });
+            if (isLectureExist.type === "Lesson") {
+                return LessonServices.deleteLesson(isLectureExist.id);
+            } else {
+                return TestServices.deleteTest(isLectureExist.id);
+            }
+        } else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     } catch (error) {
         console.log(error);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);

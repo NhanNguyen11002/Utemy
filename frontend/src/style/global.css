@@ -11,7 +11,75 @@ html {
 .HoverCardContent {
     transform-origin: var(--radix-hover-card-content-transform-origin);
     animation: scaleIn 0.5s ease-out;
+    border-radius: 6px;
+    padding: 20px;
+    min-width: fit;
+    max-width: 350px;
+    height: fit;
+    background-color: white;
+    box-shadow:
+        hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+        hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+    animation-duration: 700ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
 }
+.HoverCardContent[data-side="top"] {
+    animation-name: slideDownAndFade;
+}
+.HoverCardContent[data-side="right"] {
+    animation-name: slideLeftAndFade;
+}
+.HoverCardContent[data-side="bottom"] {
+    animation-name: slideUpAndFade;
+}
+.HoverCardContent[data-side="left"] {
+    animation-name: slideRightAndFade;
+}
+@keyframes slideUpAndFade {
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideRightAndFade {
+    0% {
+        opacity: 0;
+        transform: translateX(-4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideDownAndFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideLeftAndFade {
+    0% {
+        opacity: 0;
+        transform: translateX(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 .summary-card-content {
     --max-lines: 3;
     display: -webkit-box;

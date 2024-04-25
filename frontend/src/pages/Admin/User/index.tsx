@@ -219,7 +219,7 @@ const UserAdmin = () => {
                                 <TableRow>
                                     {["Người dùng", "Loại tài khoản", "Trạng thái", "Ngày tạo", "Hành động"].map(
                                         (header) => (
-                                            <TableHead className="">{header}</TableHead>
+                                            <TableHead className="border">{header}</TableHead>
                                         ),
                                     )}
                                 </TableRow>
@@ -232,7 +232,7 @@ const UserAdmin = () => {
                                     const id = user.user_id as number;
                                     return (
                                         <TableRow>
-                                            <TableCell className="font-medium">
+                                            <TableCell className="font-medium border">
                                                 <Link to={`/admin/user-profile/${user.user_id}`}>
                                                     <div className="flex items-center gap-4">
                                                         <Avatar
@@ -258,7 +258,7 @@ const UserAdmin = () => {
                                                     </div>
                                                 </Link>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="border">
                                                 {" "}
                                                 <div
                                                     className={` text-xs font-semibold ${
@@ -270,7 +270,7 @@ const UserAdmin = () => {
                                                     {user.is_admin ? "Admin" : "User"}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="border">
                                                 <Typography
                                                     color={user.is_delete ? "red" : "blue-gray"}
                                                     className={`py-0.5 px-2 text-[11px] font-medium w-fit ${
@@ -280,7 +280,7 @@ const UserAdmin = () => {
                                                     {user.is_delete ? "Xóa" : "Hoạt động"}
                                                 </Typography>
                                             </TableCell>
-                                            <TableCell className="text-center">
+                                            <TableCell className="text-center border">
                                                 <Typography
                                                     color={"blue-gray"}
                                                     className="py-0.5 px-2 text-[11px] font-medium w-fit"
@@ -290,7 +290,7 @@ const UserAdmin = () => {
                                             </TableCell>
 
                                             {user.user_id === currentId ? (
-                                                <TableCell className="text-left">
+                                                <TableCell className="text-left border">
                                                     <Typography
                                                         as="text"
                                                         className="text-xs font-semibold  text-blue-gray-600"
@@ -299,7 +299,7 @@ const UserAdmin = () => {
                                                     </Typography>
                                                 </TableCell>
                                             ) : (
-                                                <TableCell className="text-left">
+                                                <TableCell className="text-left border">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger>
                                                             <GripIcon className="w-5 h-5" />
