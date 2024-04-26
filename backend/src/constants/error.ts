@@ -153,5 +153,17 @@ const error = {
 
     // History Spin
     ERROR_HISTORY_SPIN_NOT_FOUND: "This user doesn't have history spin for this event before",
+
+    //Comment
+    ERROR_COMMENT_NOT_FOUND: "Comment is not found",
+    //Reply
+    ERROR_REPLY_NOT_FOUND: "Reply not found",
+    //Like
+    ERROR_LIKE_ONCE_TIME: "You just like once time",
+    ERROR_LIKE_NOT_FOUND: "Reaction like not found",
+    // Dislike
+    ERROR_DISLIKE_ONCE_TIME: "You just dislike once time",
+    ERROR_DISLIKE_NOT_FOUND: "Reaction dislike not found",
+
 };
 export default error;

@@ -19,6 +19,9 @@ import DecisionServices from "./decision.services";
 import ReportServices from "./report.services";
 import EventServices from "./event.services";
 import ProgressServices from "./progress.services";
+import CommentServices from "./comment.services";
+import ReplyCommentServices from "./replycomment.services";
+import ReactionServices from "./reaction.services";
 export default {
     AuthServices,
     UserService,
@@ -41,4 +44,7 @@ export default {
     ReportServices,
     EventServices,
     ProgressServices,
+    CommentServices,
+    ReplyCommentServices,
+    ReactionServices,
 };

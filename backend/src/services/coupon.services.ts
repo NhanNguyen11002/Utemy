@@ -588,6 +588,9 @@ const getAllEventCouponByEventId = async (req: IRequestWithId): Promise<Response
                 remain_quantity: {
                     gt: 0,
                 },
+                valid_until: {
+                    gt: new Date(),
+                },
             },
             select: {
                 id: true,

@@ -18,6 +18,9 @@ import reportApis from "./report";
 import couponApis from "./coupon";
 import eventApis from "./event";
 import progressApis from "./progress";
+import reactionApis from "./reaction";
+import commentApis from "./comment";
+import replyCommentApis from "./replycomment";
 
 const apis = {
     authApis,
@@ -40,5 +43,8 @@ const apis = {
     couponApis,
     eventApis,
     progressApis,
+    reactionApis,
+    commentApis,
+    replyCommentApis,
 };
 export default apis;

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { courseActions, lectureActions, testActions, progressActions } from "../../redux/slices";
+import { courseActions, lectureActions, testActions, progressActions, commentActions } from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
 import { VideoPlayer, Spin, WatchVideoHeader, UserToolDropdown } from "../../components";
@@ -13,12 +13,20 @@ import TestGround from "./TestGround";
 import AfterTestGround from "./AfterTestGround";
 import BeforeTestGround from "./BeforeTestGround";
 import HistoryTest from "./HistoryTest";
+import CommentLectureCard from "./CommentLectureCard";
+import PopUpAddComment from "./PopupAddCommentOrReply"; // Import PopUpAddComment component
+
 const WatchVideo: React.FC = () => {
     const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
     const [getLecture, setGetLecture] = useState(false);
     const courseDetail: Course = useAppSelector((state) => state.courseSlice.courseDetail);
     const testState: number = useAppSelector((state) => state.testSlice.testState);
+    const comments = useAppSelector((state) => state.commentSlice.comments);
+    const user = useAppSelector((state) => state.authSlice.user);
+    const [pageIndex] = useState(1);
+    const [showAddCommentModal, setShowAddCommentModal] = useState(false); // State để hiển thị hộp thoại modal thêm bình luận
+
     const lecture = useAppSelector((state) => state.lectureSlice.lecture) ?? {
         lecture_id: 0,
         content: {
@@ -29,6 +37,14 @@ const WatchVideo: React.FC = () => {
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const handleChangeLesson = (lecture: Lecture) => {
         dispatch(lectureActions.setLecture(lecture));
+        dispatch(
+            commentActions.getCommentsWithPaginationByLectureId({
+                lecture_id: lecture.lecture_id,
+                values: {
+                    pageIndex: pageIndex,
+                },
+            }),
+        );
     };
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "";
 
@@ -43,7 +59,6 @@ const WatchVideo: React.FC = () => {
                 dispatch(courseActions.getRightOfCourse(response.payload?.data.course_id)).then((res) => {
                     if (res.payload && res.payload.data) {
                         if (res.payload.data.role === constants.util.ROLE_ENROLLED) {
-                            console.log(role);
                             dispatch(progressActions.getProgressByCourseSlug(slug as string));
                         }
                     }
@@ -133,6 +148,48 @@ const WatchVideo: React.FC = () => {
                             }}
                         ></div>
                     )}
+                </div>
+
+                {/* Nút "Bình luận" */}
+                <div className="button-container flex items-center justify-center">
+                    <button
+                        type="submit"
+                        className="text-white btn btn-info text-lg mr-2"
+                        onClick={() => setShowAddCommentModal(true)}
+                    >
+                        + Thêm bình luận
+                    </button>
+                </div>
+
+                {/* Hiển thị hộp thoại modal thêm bình luận */}
+                {showAddCommentModal && (
+                    <PopUpAddComment
+                        onSave={(commentContent: any) => {
+                            // Dispatch action để lưu bình luận
+                            dispatch(
+                                commentActions.createComment({
+                                    content: commentContent,
+                                    lecture_id: lecture.lecture_id,
+                                })
+                            ).then((response) => {
+                                if (response.payload && response.payload.status_code === 200) {
+                                    // Phản hồi thành công từ createComment, dispatch action mới ở đây
+                                    dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id: lecture.lecture_id, values: {
+                                        pageIndex: 1
+                                    }}));
+                                }
+                            });
+                        }}
+                        onCancel={() => setShowAddCommentModal(false)}
+                    />
+                )}
+
+                {/* Hiển thị danh sách bình luận */}
+                <div className="mt-6">
+                    <h2 className="tablet:text-2xl font-bold mb-3">Bình luận</h2>
+                    {comments.map((comment, index) => (
+                        <CommentLectureCard key={index} comment={comment} userId={user.user_id || undefined} />
+                    ))}
                 </div>
             </div>
         </>

@@ -18,6 +18,9 @@ import decisionRouter from "./decision.router";
 import reportRouter from "./report.router";
 import eventRouter from "./event.router";
 import progressRouter from "./progress.router";
+import commentRouter from "./comment.router";
+import replyCommentRouter from "./replycomment.router";
+import reactionRouter from "./reaction.router";
 
 export default {
     authRouter,
@@ -40,4 +43,7 @@ export default {
     reportRouter,
     eventRouter,
     progressRouter,
+    commentRouter,
+    replyCommentRouter,
+    reactionRouter,
 };

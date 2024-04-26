@@ -278,7 +278,7 @@ const Cart: React.FC = () => {
                                     <option value="">-- Chọn --</option>
                                     {voucherDropdown.map((voucher) => (
                                         <option key={voucher.code} value={voucher.code}>
-                                            {voucher.code} - {voucher.valid_start} - {voucher.valid_until} - {100 - voucher.discount*100}% off
+                                            {voucher.code} - {voucher.valid_start} - {voucher.valid_until} - {voucher.discount*100}% off
                                         </option>
                                     ))}
                                 </select>

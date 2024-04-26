@@ -37,7 +37,9 @@ app.use("/api/decision", routes.decisionRouter);
 app.use("/api/report", routes.reportRouter);
 app.use("/api/progress", routes.progressRouter);
 app.use("/IPN", routes.vnpayRouter);
-
+app.use("/api/comment", routes.commentRouter);
+app.use("/api/reply", routes.replyCommentRouter);
+app.use("/api/reaction", routes.reactionRouter);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

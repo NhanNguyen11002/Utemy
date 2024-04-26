@@ -18,6 +18,9 @@ import DecisionController from "./decision.controller";
 import ReportController from "./report.controller";
 import EventController from "./event.controller";
 import ProgressController from "./progress.controller";
+import CommentController from "./comment.controller";
+import ReplyCommentController from "./replycomment.controller";
+import ReactionController from "./reaction.controller";
 export default {
     authController: new AuthController(),
     sectionController: new SectionController(),
@@ -39,4 +42,7 @@ export default {
     reportController: new ReportController(),
     eventController: new EventController(),
     progressController: new ProgressController(),
+    commentController: new CommentController(),
+    replyCommentController: new ReplyCommentController(),
+    reactionController: new ReactionController(),
 };

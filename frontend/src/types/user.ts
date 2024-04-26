@@ -50,3 +50,15 @@ export type EditUser = {
     is_admin: boolean;
     id?: number;
 };
+export type OwnerComment = {
+    id: number;
+    first_name: string;
+    last_name: string;
+    url_avatar: string | undefined;
+}
+export type OwnerReply = {
+    user_id: number;
+    first_name: string;
+    last_name: string;
+    url_avatar: string | undefined;
+}
