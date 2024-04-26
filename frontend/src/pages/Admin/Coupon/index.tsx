@@ -3,12 +3,14 @@ import toast from "react-hot-toast";
 import CouponCard from "./CouponCard";
 import PopUpAddCoupon from "./PopUpAddCoupon";
 import PopUpEditCoupon from "./PopUpEditCoupon";
+import PopUpDeleteCoupon from "./PopUpDeleteCoupon";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import { couponActions } from "../../../redux/slices";
 import { Pagination } from "../../../components";
 import SearchIcon from "../../../assets/icons/SeacrchIcon";
-import { DeleteModal } from "../../../components";
+// import { DeleteModal } from "../../../components";
 import Loading from "../../Loading";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
 const CouponAdmin = () => {
     const [isOpenAddCoupon, setIsOpenAddCoupon] = useState(false);
     const [isOpenEditCoupon, setIsOpenEditCoupon] = useState(false);
@@ -18,13 +20,35 @@ const CouponAdmin = () => {
     const [searchItem, setSearchItem] = useState("");
     // const [couponCode] = useState("");
     const [couponId, setCouponId] = useState(0);
-    const [eventId, setEventId] = useState<number | null>(null);
+    const [eventId, setEventId ] = useState<number | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
     const coupons = useAppSelector((state) => state.couponSlice.coupons);
     const totalPage = useAppSelector((state) => state.couponSlice.totalPage);
     const totalRecord = useAppSelector((state) => state.couponSlice.totalRecord);
     const isGetLoading = useAppSelector((state) => state.couponSlice.isGetLoading);
+    const [selectedCoupon, setSelectedCoupon] = useState(null);
+    const [cardPosition, setCardPosition] = useState({ x: 0, y: 0 });
+    const [hoveredRow, setHoveredRow] = useState(null);
+
+    const handleMouseEnter = (index: any) => {
+        setHoveredRow(index);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredRow(null);
+    };
+
+    const handleRowClick = (coupon: any, event: any) => {
+        setSelectedCoupon(coupon);
+        // Lấy vị trí của hàng được nhấp chuột
+        const rowRect = event.target.getBoundingClientRect();
+        const newX = rowRect.left + window.scrollX;
+        const newY = rowRect.top + window.scrollY;
+
+        // Cập nhật vị trí của thẻ card
+        setCardPosition({ x: newX, y: newY });
+    };
     const handleCancelAddCoupon = () => {
         setIsOpenAddCoupon(!isOpenAddCoupon);
     };
@@ -42,6 +66,9 @@ const CouponAdmin = () => {
     };
     const handleCancelEditCoupon = () => {
         setIsOpenEditCoupon(!isOpenEditCoupon);
+    };
+    const handleClosePopupCard = () => {
+        setSelectedCoupon(null)    
     };
     const handleChangePageIndex = (pageIndex: number) => {
         if (pageIndex < 1) {
@@ -84,10 +111,10 @@ const CouponAdmin = () => {
         <>
             {isOpenAddCoupon && <PopUpAddCoupon handleCancelAddCoupon={handleCancelAddCoupon} />}
             {isOpenEditCoupon && (
-                <PopUpEditCoupon couponId={couponId} eventId={eventId} handleCancelEditCoupon={handleCancelEditCoupon}/>
+                <PopUpEditCoupon couponId={couponId} eventId={eventId} handleCancelEditCoupon={handleCancelEditCoupon} handleClosePopupCard={handleClosePopupCard}/>
             )}
             {isOpenDeleteModel && (
-                <DeleteModal handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteCoupon} />
+                <PopUpDeleteCoupon handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteCoupon} handleClosePopupCard={handleClosePopupCard}/>
             )}
             {isGetLoading && <Loading />}
             {/* minhscreen */}
@@ -131,17 +158,49 @@ const CouponAdmin = () => {
                     </p>
                 )}
                 <div className="flex-1  my-1  w-3/4 px-10 justify-start">
-                    {coupons.map((coupon, index) => {
-                        return (
-                            <div className="w-full my-1 max-w-xs tablet:max-w-full " key={index}>
+                    <Table className="border">
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-1/3">Mã coupon</TableHead>
+                                <TableHead className="w-1/3">Mức giảm giá</TableHead>
+                                <TableHead className="w-1/3">Sự kiện</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {/* Sử dụng vòng lặp map để render các hàng dữ liệu */}
+                            {coupons.map((coupon, index) => (
+                                <TableRow key={index}
+                                onMouseEnter={() => handleMouseEnter(index)}
+                                onMouseLeave={handleMouseLeave}
+                                style={{ background: hoveredRow === index ? '#f0f0f0' : 'transparent' }} 
+                                onClick={(event) => handleRowClick(coupon, event)}>
+                                    <TableCell className="w-1/3">
+                                        <p>{coupon.code}</p>
+                                    </TableCell>
+                                    <TableCell className="w-1/3">
+                                        <p>{coupon.discount * 100 + "%"}</p>
+                                    </TableCell>
+                                    <TableCell className="w-1/3">
+                                        <p>{coupon.event_name}</p>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    {selectedCoupon && (
+                        <div className="absolute top-28 right-0 z-50 w-2/5 h-max flex justify-center items-center "
+                            style={{ top: cardPosition.y, left: cardPosition.x }}>
+                            <div className="flex-1  my-1  w-1/2 px-10 justify-start">
                                 <CouponCard
-                                    coupon={coupon}
+                                    coupon={selectedCoupon}
                                     handleOpenPopupEdit={handleOpenPopupEdit}
                                     handleOpenDeleteModel={handleOpenDeleteModel}
+                                    handleClosePopupCard={handleClosePopupCard}
                                 />
                             </div>
-                        );
-                    })}
+                        </div>
+                    )}
+
                     {totalPage > 1 && (
                         <div className="flex justify-end my-4">
                             <Pagination

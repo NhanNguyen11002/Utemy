@@ -11,6 +11,7 @@ type PopUpEditCouponProps = {
     // couponCode: string,
     eventId: number | null;
     handleCancelEditCoupon(): void;
+    handleClosePopupCard(): void
 };
 
 const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
@@ -136,6 +137,7 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
                             validationSchema={editCouponValidationSchema}
                             onSubmit={handleOnSubmit}
                             innerRef={formikRef}
+                            handleClosePopupCard={props.handleClosePopupCard()} 
                         >
                             {(formik) => (
                                 <form onSubmit={formik.handleSubmit} className="p-4">

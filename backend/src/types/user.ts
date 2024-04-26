@@ -4,6 +4,12 @@ export type Author = {
     user_id: number;
     is_admin?: boolean;
 };
+export type OwnerComment = {
+    first_name: string;
+    last_name: string;
+    id: number;
+    url_avatar: string | undefined;
+};
 export type User = {
     first_name: string;
     last_name: string;

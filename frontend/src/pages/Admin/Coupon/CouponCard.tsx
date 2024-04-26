@@ -6,6 +6,7 @@ type CouponCardProps = {
     coupon: Coupon;
     handleOpenDeleteModel(id: number): void;
     handleOpenPopupEdit(id: number, event_id: number | null): void;
+    handleClosePopupCard(): void;
 };
 const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -104,6 +105,12 @@ const CouponCard: React.FC<CouponCardProps> = (props) => {
                             onClick={() => props.handleOpenDeleteModel(props.coupon.coupon_id)}
                         >
                             Xóa
+                        </button>
+                        <button
+                            className="w-full px-5 py-2 mt-2 text-white  btn btn-success hover:bg-error/70 hover:cursor-pointer rounded-2xl"
+                            onClick={() => props.handleClosePopupCard()}
+                        >
+                            Đóng
                         </button>
                     </div>
                 </div>

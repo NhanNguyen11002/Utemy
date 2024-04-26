@@ -19,3 +19,6 @@ export * as reportActions from "./report.slice";
 export * as couponActions from "./coupon.slice";
 export * as eventActions from "./event.slice";
 export * as progressActions from "./progress.slice";
+export * as reactionActions from "./reaction.slice";
+export * as commentActions from "./comment.slice";
+export * as replyCommentActions from "./replycomment.slice";

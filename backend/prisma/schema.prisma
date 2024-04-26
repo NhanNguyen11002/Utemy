@@ -38,7 +38,10 @@ model User {
   coupon_owner   CouponOwner[]
   userEvents    UserEvent[]
   progress Progress[]
-
+  commentLectures  CommentLecture[]
+  replyCommentLectures ReplyCommentLecture[]
+  likes Like[]
+  dislikes  Dislike[]
   @@index([email], name: "idx_email")
 }
 
@@ -151,6 +154,8 @@ model Lecture {
 
   report Report[]
   progress Progress[]
+  commentLectures     CommentLecture[] 
+
 }
 
 model Test {
@@ -468,4 +473,61 @@ model UserEvent {
   @@map(name: "user_event")
 
   // Thêm các mối quan hệ
+}
+model CommentLecture {
+  id            Int       @id @default(autoincrement())
+  content       String    @db.Text
+  created_at    DateTime  @default(now())
+  updatedAt DateTime @default(now())
+  user_id       Int
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  lecture_id    Int
+  lecture       Lecture   @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  likes_count   Int       @default(0)
+  liked_by      Like[]   
+  dislikes_count Int      @default(0)
+  disliked_by    Dislike[]     
+  replyCommentLectures ReplyCommentLecture[] 
+  @@map(name: "comment_lecture")
+
+}
+model ReplyCommentLecture {
+  id            Int       @id @default(autoincrement())
+  content       String    @db.Text
+  created_at    DateTime  @default(now())
+  updatedAt DateTime @default(now())
+  user_id       Int
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id    Int
+  commentLecture       CommentLecture   @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  likes_count   Int       @default(0)
+  liked_by      Like[]    
+  dislikes_count Int      @default(0)
+  disliked_by    Dislike[]    
+  @@map(name: "reply_comment_lecture")
+}
+// Model để lưu thông tin về việc người dùng thích một bình luận
+model Like {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id Int @db.Int
+  reply_id Int? @db.Int
+  commentLecture   CommentLecture  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  replyCommentLecture   ReplyCommentLecture?  @relation(fields: [reply_id], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+// Model để lưu thông tin về việc người dùng không thích một bình luận
+model Dislike {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id Int @db.Int
+  commentLecture   CommentLecture  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  reply_id Int? @db.Int
+  replyCommentLecture   ReplyCommentLecture?  @relation(fields: [reply_id], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())  
+  updatedAt DateTime @default(now())
 }
