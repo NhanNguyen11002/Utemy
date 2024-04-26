@@ -14,6 +14,8 @@ import { format } from 'date-fns';
 type CommentLectureCardProps = {
     userId: number | undefined;
     comment: Comment;
+    editmode: boolean;
+    onCommentSave(commentId: number): void
 };
 
 const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
@@ -24,6 +26,14 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
     const [showPopup, setShowPopup] = useState(false); // State để kiểm soát việc hiển thị Popup
 
     const [editedContent, setEditedContent] = useState(props.comment.content);
+    useEffect(() => {
+        setEditedContent(props.comment.content);
+    }, [props.comment.content, ]);
+    useEffect(() => {
+        // Cập nhật trạng thái chỉnh sửa khi editMode thay đổi
+        setEditMode(props.editmode);
+    }, [props.editmode]);
+
     const user = useAppSelector((state) => state.authSlice.user);
 
     const dispatch = useAppDispatch();
@@ -31,9 +41,16 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
     const toggleReplies = () => {
         setShowReplies(!showReplies);
     };
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+    
 
-    const toggleEditMode = () => {
+    const toggleEditMode = (commentId: number) => {
         setEditMode(!editMode);
+        setEditingCommentId(commentId);
+
+    };
+    const closeAllEditModes = () => {
+        setEditingCommentId(null);
     };
     const togglePopup = () => {
         setShowPopup(!showPopup); // Khi nhấn nút "Trả lời", toggle hiển thị Popup
@@ -73,7 +90,9 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                 }
             },
         );
-        toggleEditMode();
+        toggleEditMode(props.comment.comment_id);
+        props.onCommentSave(props.comment.comment_id);
+        closeAllEditModes(); // Đóng tất cả các trạng thái chỉnh sửa
     };
 
     const [liked, setLiked] = useState(false);
@@ -229,7 +248,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         </p>
                         <p className="comment-date mb-1 text-black italic">{format(new Date(props.comment.updatedAt), "HH:mm dd/MM/yyyy")}</p>
                     </div>
-                    {editMode ? (
+                    {editMode  && editingCommentId === props.comment.comment_id ? (
                         <textarea
                             value={editedContent}
                             onChange={(e) => setEditedContent(e.target.value)}
@@ -243,7 +262,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         </div>
                     )}
                     <div className="flex justify-between items-center mt-2">
-                        {editMode ? (
+                        {editMode && editingCommentId === props.comment.comment_id ? (
                             <>
                                 <button
                                     className="save-button text-green-500 hover:text-green-700 "
@@ -253,7 +272,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                 </button>
                                 <button
                                     className="cancel-button text-red-500 hover:text-red-700"
-                                    onClick={toggleEditMode}
+                                    onClick={() =>toggleEditMode(props.comment.comment_id)}
                                 >
                                     Hủy
                                 </button>
@@ -272,7 +291,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                         <div className="flex items-center ml-2">
                                             <button
                                                 className="edit-button text-blue-500 hover:text-blue-700 mr-2 focus:outline-none"
-                                                onClick={toggleEditMode}
+                                                onClick={()=>toggleEditMode(props.comment.comment_id)}
                                             >
                                                 Sửa
                                             </button>

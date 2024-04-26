@@ -90,6 +90,11 @@ const WatchVideo: React.FC = () => {
             dispatch(testActions.getTestByTestId(lecture.content.id));
         } else return;
     }, [dispatch, lecture.lecture_id]);
+    const [editModes, setEditModes] = useState<{ [key: number]: boolean }>({}); // Định nghĩa kiểu dữ liệu cho editModes
+
+    const handleCommentSave = (commentId: number) => {
+        setEditModes((prevModes) => ({ ...prevModes, [commentId]: false }));
+    };
     if (role === constants.util.ROLE_USER && !isAdmin) return <NotFound />;
     if (isNotFound) return <NotFound />;
 
@@ -188,7 +193,9 @@ const WatchVideo: React.FC = () => {
                 <div className="mt-6">
                     <h2 className="tablet:text-2xl font-bold mb-3">Bình luận</h2>
                     {comments.map((comment, index) => (
-                        <CommentLectureCard key={index} comment={comment} userId={user.user_id || undefined} />
+                        <CommentLectureCard key={index} comment={comment} userId={user.user_id || undefined} 
+                        editmode = {editModes[comment.comment_id] || false}
+                        onCommentSave={() => handleCommentSave(comment.comment_id)}/>
                     ))}
                 </div>
             </div>
