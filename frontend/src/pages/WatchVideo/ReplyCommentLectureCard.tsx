@@ -84,7 +84,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 reactionActions.createLike({ reply_id: props.replycomment.reply_id, comment_id: props.commentId }),
             ).then((response) => {
                 if (response.payload && response.payload.status_code === 200) {
-                    toast.success(response.payload.message);
+                    // toast.success(response.payload.message);
                             dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.lectureId, values: {
                                 pageIndex: 1
                             }}));
@@ -103,7 +103,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 reactionActions.deleteLike({ reply_id: props.replycomment.reply_id, comment_id: props.commentId }),
             ).then((response) => {
                 if (response.payload && response.payload.status_code === 200) {
-                    toast.success(response.payload.message);
+                    // toast.success(response.payload.message);
                     dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.lectureId, values: {
                         pageIndex: 1
                     }}));
@@ -126,7 +126,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 reactionActions.createDislike({ reply_id: props.replycomment.reply_id, comment_id: props.commentId }),
             ).then((response) => {
                 if (response.payload && response.payload.status_code === 200) {
-                    toast.success(response.payload.message);
+                    // toast.success(response.payload.message);
                     dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.lectureId, values: {
                         pageIndex: 1
                     }}));
@@ -143,7 +143,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 reactionActions.deleteDislike({ reply_id: props.replycomment.reply_id, comment_id: props.commentId }),
             ).then((response) => {
                 if (response.payload && response.payload.status_code === 200) {
-                    toast.success(response.payload.message);
+                    // toast.success(response.payload.message);
                     dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.lectureId, values: {
                         pageIndex: 1
                     }}));

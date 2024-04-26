@@ -78,5 +78,7 @@ const success = {
     SUCCESS_DELETE_DISLIKE: "Undislike successfully",
     SUCCESS_GET_DISLIKE: "Get dislike successfully",
     SUCCESS_GET_ALL_DISLIKE: "Get all dislike successfully",
+
+    SUCCESS_BUT_NO_UPDATE_PROGRESS: "Please don't skip the lesson, we will have to force you to the last progress",
 };
 export default success;

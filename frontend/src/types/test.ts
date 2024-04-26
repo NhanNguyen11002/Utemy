@@ -24,6 +24,8 @@ export type TestResultType = {
 export type TestProgressType = {
     quiz_id: number;
     quiz_answer_id: number;
+    quiz_answer_string?: string;
+    type: number;
     is_correct: boolean;
 };
 export type AfterTest = {

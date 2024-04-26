@@ -136,4 +136,8 @@ export default class CourseController {
         const response: ResponseBase = await services.CourseService.restrictCourse(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getAllEnrolled(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.getAllEnrolled(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

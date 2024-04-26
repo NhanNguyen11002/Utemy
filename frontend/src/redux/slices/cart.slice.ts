@@ -61,6 +61,7 @@ export const getCouponByCode = createAsyncThunk<Response<Coupon>, string, { reje
 );
 type CartSliceType = {
     userCart: Cart;
+    myCart: Map<number, number>;
     coupons: Coupon[];
     discount: number;
     isCourseInCart: boolean;
@@ -69,7 +70,7 @@ type CartSliceType = {
     subTotal: number;
     subTotalRetail: number;
     totalCourseInCart: number;
-    coupon: Coupon | null ;
+    coupon: Coupon | null;
 };
 
 const initialState: CartSliceType = {
@@ -92,7 +93,8 @@ const initialState: CartSliceType = {
         valid_until: "",
         max_discount_money: 0,
         remain_quantity: 0,
-    }
+    },
+    myCart: new Map<number, number>(),
 };
 
 export const cartSlice = createSlice({
@@ -100,12 +102,13 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         setIsCourseInCart: (state, action) => {
-            for (const cart_item of state.userCart.cart_items) {
-                if (cart_item.course.course_id === Number(action.payload)) {
-                    state.isCourseInCart = true;
-                    break;
-                } else state.isCourseInCart = false;
-            }
+            // for (const cart_item of state.userCart.cart_items) {
+            //     if (cart_item.course.course_id === Number(action.payload)) {
+            //         state.isCourseInCart = true;
+            //         break;
+            //     } else state.isCourseInCart = false;
+            // }
+            state.isCourseInCart = state.myCart.get(Number(action.payload)) === 1;
         },
         getDiscount: (state, action) => {
             state.coupons.forEach((coupon) => {
@@ -122,8 +125,13 @@ export const cartSlice = createSlice({
             state.isGetLoading = true;
         });
         builder.addCase(getAllCart.fulfilled, (state, action) => {
+            const map = new Map<number, number>();
             state.totalCourseInCart = action.payload.data.cart_items.length;
             state.userCart = action.payload.data as Cart;
+            action.payload.data.cart_items.forEach((element: any) => {
+                map.set(element.course.course_id, 1);
+            });
+            state.myCart = map;
             state.subTotal = getSubTotal(action.payload.data);
             state.subTotalRetail = getSubTotalRetail(action.payload.data);
             state.isGetLoading = false;

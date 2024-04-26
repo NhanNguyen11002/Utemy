@@ -19,7 +19,11 @@ export const previewImage = (image: File | null, imageRef: React.RefObject<HTMLI
         }
     }
 };
-export const previewTrailer = (video: File | null, videoRef: React.RefObject<HTMLVideoElement>, videoSource?: string) => {
+export const previewTrailer = (
+    video: File | null,
+    videoRef: React.RefObject<HTMLVideoElement>,
+    videoSource?: string,
+) => {
     if (video && video.type.includes("video/")) {
         var reader = new FileReader();
         reader.onload = function (e) {
@@ -157,7 +161,7 @@ export const checkAnswerArray = (array: QuizAnswerType[]) => {
     array.forEach((answer) => {
         if (answer.is_correct) count += 1;
     });
-    return count === 1;
+    return count;
 };
 
 export const courseSetupProgress = (course: Course) => {

@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Formik, ErrorMessage, Field, Form } from "formik";
 import { Login as LoginType } from "../../types/auth";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { authActions, cartActions } from "../../redux/slices";
+import { authActions, cartActions, courseActions } from "../../redux/slices";
 import constants from "../../constants";
 import { Spin } from "../../components";
 // import { Skeleton } from "@src/assets";
@@ -38,6 +38,7 @@ const Login: FC = () => {
                 } else {
                     toast.success(response.payload.message);
                     dispatch(cartActions.getAllCart());
+                    dispatch(courseActions.getAllEnrolled());
                     dispatch(authActions.getMe());
                 }
             } else {

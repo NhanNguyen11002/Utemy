@@ -110,7 +110,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                     reply_id: null 
                 })).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
-                        toast.success(response.payload.message);
+                        // toast.success(response.payload.message);
                         // Cập nhật số lượt thích và trạng thái nút thích
                         setLikesCount(likesCount + 1);
                         setLiked(true);
@@ -135,7 +135,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                     reply_id: null 
                 })).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
-                        toast.success(response.payload.message);
+                        // toast.success(response.payload.message);
                         // Cập nhật số lượt thích và trạng thái nút thích
                         setLikesCount(likesCount - 1);
                         setLiked(false);
@@ -167,7 +167,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                     reply_id: null 
                 })).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
-                        toast.success(response.payload.message);
+                        // toast.success(response.payload.message);
                         // Cập nhật số lượt Dislike và trạng thái nút Dislike
                         setDislikesCount(dislikesCount + 1);
                         setDisliked(true);
@@ -192,7 +192,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                     reply_id: null 
                 })).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
-                        toast.success(response.payload.message);
+                        // toast.success(response.payload.message);
                         // Cập nhật số lượt Dislike và trạng thái nút Dislike
                         setDislikesCount(dislikesCount - 1);
                         setDisliked(false);

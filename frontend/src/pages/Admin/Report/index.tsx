@@ -64,8 +64,8 @@ export function ReportAdmin() {
                         <Table className="border">
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="">Khoá học</TableHead>
-                                    <TableHead className="text-center">Ngày gửi báo cáo</TableHead>
+                                    <TableHead className="border">Khoá học</TableHead>
+                                    <TableHead className="text-center border">Ngày gửi báo cáo</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -86,7 +86,7 @@ export function ReportAdmin() {
                                                     </div>
                                                 </TableCell>
                                             </Link>
-                                            <TableCell className="text-center">
+                                            <TableCell className="text-center border">
                                                 {" "}
                                                 <p>{convertDateFormat(report.created_at.toString())}</p>
                                             </TableCell>
