@@ -4,6 +4,7 @@ import { images } from "../../assets";
 import { useAppSelector } from "../../hooks/hooks";
 import { UserCircleIcon, StarIcon } from "@heroicons/react/24/outline";
 // import { Link } from "react-router-dom";
+import "react-quill/dist/quill.snow.css";
 
 interface CategoryProps {
     lecturer: EnrolledAuthor;
@@ -62,11 +63,12 @@ const LecturerCard: React.FC<CategoryProps> = ({ lecturer }) => {
                             <StarIcon className="w-4 h-4 fill-yellow-300" />
                         </div>
                     </div>
-
-                    <div
-                        className="overflow-hidden text-ellipsis max-h-[250px]"
-                        dangerouslySetInnerHTML={{ __html: ` ${lecturer.description} ` }}
-                    ></div>
+                    <div className="ql-snow">
+                        <div
+                            className="overflow-hidden text-ellipsis max-h-[250px] ql-editor"
+                            dangerouslySetInnerHTML={{ __html: ` ${lecturer.description} ` }}
+                        ></div>
+                    </div>
                 </div>
             </div>
         </>

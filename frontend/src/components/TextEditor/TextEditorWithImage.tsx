@@ -45,9 +45,10 @@ const TextEditorWithImage: React.FC<TextEditorWithImageProps> = (props) => {
                 container: [
                     [{ header: [1, 2, 3, 4, 5, 6, false] }],
                     ["bold", "italic", "underline"],
+                    ["blockquote", "code-block"],
                     [{ list: "ordered" }, { list: "bullet" }],
                     [{ align: [] }],
-                    ["link", "image"],
+                    ["link", "image", "formula"],
                     ["clean"],
                     [{ color: [] }],
                 ],

@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { Course } from "../../types/course";
 import NotFound from "../NotFound";
 import { useNavigate } from "react-router-dom";
+import "react-quill/dist/quill.snow.css";
 
 const AuthorProfile: React.FC = () => {
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
@@ -55,10 +56,10 @@ const AuthorProfile: React.FC = () => {
                                 <p className="text-2xl text-black font-bold">{totalRating}</p>
                             </div>
                         </div>
-                        <div className="gap-5">
+                        <div className="gap-5 ql-snow">
                             <span className=" text-2xl text-black mb-5">Giới thiệu về tôi: </span>
                             <div
-                                className="description-course"
+                                className="description-courseql-editor"
                                 dangerouslySetInnerHTML={{ __html: user.description }}
                             ></div>
                         </div>

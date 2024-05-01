@@ -16,6 +16,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 import { useAppDispatch } from "../../hooks/hooks";
 import { decisionActions } from "../../redux/slices";
 import toast from "react-hot-toast";
+import "react-quill/dist/quill.snow.css";
 type DecisionCardProps = {
     decision: DecisionType;
     isAuthor: boolean;
@@ -85,9 +86,9 @@ const DecisionCard: React.FC<DecisionCardProps> = ({ decision, isAuthor }) => {
                                             </p>
                                             <p className="text-lg text-black mb-3">Nội dung:</p>
                                         </div>
-                                        <div className="my-4 description-course text-black">
+                                        <div className="my-4 description-course text-black ql-snow">
                                             <div
-                                                className=""
+                                                className="ql-editor"
                                                 dangerouslySetInnerHTML={{ __html: decision.content }}
                                             ></div>
                                         </div>

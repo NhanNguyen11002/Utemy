@@ -54,7 +54,9 @@ const MyEnrolledCourseCard: FC<MyEnrolledCourseCardProps> = ({ enrolledCourse })
                             Cập nhật gần nhất: <span className="font-normal">{convertedDate}</span>
                         </p>
                         <div className="flex flex-col items-start w-full pr-10">
-                            <p className="font-bold">Tiến độ học tập của bạn</p>
+                            <p className="font-bold">
+                                Tiến độ học tập của bạn: <span>{progress || 0}%</span>
+                            </p>
                             <Progress value={progress || 0} className="h-[10px] text-blue-400" />
                         </div>
                     </div>
