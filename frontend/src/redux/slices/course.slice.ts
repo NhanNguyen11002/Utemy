@@ -26,7 +26,7 @@ type CourseSliceType = {
     isGetLoading: boolean;
     isUpload: boolean;
     role: string;
-    myEnrolled: Map<number, object>;
+    myEnrolled: any;
 };
 
 const initialState: CourseSliceType = {
@@ -97,7 +97,7 @@ const initialState: CourseSliceType = {
     top10Enrolled: [],
     top10Sale: [],
     courses: [],
-    myEnrolled: new Map<number, object>(),
+    myEnrolled: {},
     totalPage: 0,
     totalRecord: 0,
     isLoading: false,
@@ -363,10 +363,9 @@ export const courseSlice = createSlice({
             state.isLoading = true;
         });
         builder.addCase(getAllEnrolled.fulfilled, (state, action: any) => {
-            console.log(action.payload);
-            const map = new Map<number, object>();
+            let map: any = {};
             action.payload.data?.forEach((element: any) => {
-                map.set(element.course_id, element);
+                map[element.course_id] = element;
             });
             state.myEnrolled = map;
             state.isLoading = false;

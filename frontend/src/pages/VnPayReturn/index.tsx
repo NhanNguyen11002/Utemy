@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import useQueryParams from "../../hooks/useQueryParams";
 import { useAppDispatch } from "../../hooks/hooks";
-import { vnpayActions, cartActions } from "../../redux/slices";
+import { vnpayActions, cartActions, courseActions } from "../../redux/slices";
 import { FaceSmileIcon, FaceFrownIcon } from "@heroicons/react/24/outline";
 
 const VnPayReturn = () => {
@@ -35,9 +35,13 @@ const VnPayReturn = () => {
     };
     useEffect(() => {
         dispatch(vnpayActions.vnpayIpn(data)).then((response) => {
-            if (response.payload?.status_code === 200) dispatch(cartActions.getAllCart());
+            if (response.payload?.status_code === 200) {
+                dispatch(cartActions.getAllCart());
+                dispatch(courseActions.getAllEnrolled());
+            }
         });
-    }, [dispatch]);
+    }, [dispatch, JSON.stringify(data)]);
+    //có gì bỏ cái stringify ra nếu lỗi
     const success = vnp_ResponseCode === "00" && vnp_TransactionStatus === "00";
     const invoiceId = vnp_OrderInfo.split(":")[1];
     return (

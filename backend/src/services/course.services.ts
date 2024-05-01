@@ -765,14 +765,14 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
 
         const totalPage = Math.ceil(totalRecord / take);
 
-        const courseCard: CourseInfo[] = (enrolledCourses as any).map((enroll: any) => {
+        const courseCard: CourseInfo[] = (enrolledCourses as any).map(async (enroll: any) => {
             let number_of_lecture = 0;
             enroll.course.sections.forEach((section: any) => {
                 number_of_lecture += section.Lecture.length;
             });
 
             let getOverall = 0;
-            configs.db.progress
+            await configs.db.progress
                 .count({
                     where: {
                         user_id: userId,
@@ -781,7 +781,12 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                         is_delete: false,
                     },
                 })
-                .then((result) => (getOverall = result));
+                .then((result) => {
+                    console.log("res", result);
+                    getOverall = result;
+                    console.log("get", getOverall);
+                });
+            console.log("get out", getOverall);
             return {
                 course_id: enroll.course?.id,
                 title: enroll.course?.title,
@@ -809,11 +814,11 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                 }),
             };
         });
-
+        const data = await Promise.all(courseCard);
         const responseData: PagingResponse<CourseInfo[]> = {
             total_page: totalPage,
             total_record: totalRecord,
-            data: courseCard,
+            data,
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
     } catch (error) {

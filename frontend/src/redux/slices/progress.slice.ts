@@ -4,8 +4,8 @@ import { Progress as ProgressType } from "../../types/progress";
 import apis from "../../api";
 type ProgressSliceType = {
     overallProgress: number;
-    progress: Map<number, ProgressType>;
-    progressOfSection: Map<number, number>;
+    progress: any;
+    progressOfSection: any;
     isLoading: boolean;
     isGetLoading: boolean;
 };
@@ -35,8 +35,8 @@ export const updateProgress = createAsyncThunk<Response<null>, any, { rejectValu
 
 const initialState: ProgressSliceType = {
     overallProgress: 0,
-    progress: new Map<number, ProgressType>(),
-    progressOfSection: new Map<number, number>(),
+    progress: {},
+    progressOfSection: {},
     isGetLoading: false,
     isLoading: false,
 };
@@ -60,12 +60,12 @@ export const ProgressSlice = createSlice({
             state.isGetLoading = true;
         });
         builder.addCase(getProgressByCourseSlug.fulfilled, (state, action: any) => {
-            let temp = new Map<number, ProgressType>();
-            let temp2 = new Map<number, number>();
+            let temp: any = {}; // new Map<number, ProgressType>();
+            let temp2: any = {}; //new Map<number, number>();
             action.payload.data.progress.forEach((progress: ProgressType) => {
-                temp.set(progress.lecture_id, progress);
-                const valueOfKey = temp2.get(progress.section_id);
-                temp2.set(progress.section_id, valueOfKey ? valueOfKey + 1 : 1);
+                temp[progress.lecture_id] = progress;
+                const valueOfKey = temp2[progress.section_id];
+                temp2[progress.section_id] = valueOfKey ? valueOfKey + 1 : 1;
             });
             state.progress = temp;
             state.progressOfSection = temp2;

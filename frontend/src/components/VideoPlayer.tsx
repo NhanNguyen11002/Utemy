@@ -19,8 +19,8 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [player, setPlayer] = useState<Plyr | null>(null);
     const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
-    const progress = useAppSelector((state) => state.progressSlice.progress) || new Map<number, any>();
-    const lectureProgress = progress.get(props.lectureId);
+    const progress = useAppSelector((state) => state.progressSlice.progress) || {}; //new Map<number, any>();
+    const lectureProgress = progress[props.lectureId];
     const current = lectureProgress ? lectureProgress.progress_value : 0;
     if (player) {
         // load lại progress video

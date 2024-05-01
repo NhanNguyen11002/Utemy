@@ -53,8 +53,7 @@ const CardVideoNew: React.FC<CardVideoNewProps> = (props) => {
         useAppSelector((state) => state.cartSlice.userCart.cart_items).findIndex(
             (e) => e.course.course_id === props.courseId,
         ) !== -1;
-    const isEnrolled = useAppSelector((state) => state.courseSlice.myEnrolled).get(props.courseId) !== undefined;
-    console.log(useAppSelector((state) => state.courseSlice.myEnrolled));
+    const isEnrolled = useAppSelector((state) => state.courseSlice.myEnrolled)[props.courseId] !== undefined;
     const handleGetItClick = () => {
         if (!isLogin || isInCart) {
             return;
