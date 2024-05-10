@@ -234,14 +234,14 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
     
 
     return (
-        <div>
-            <div className={`flex items-center justify-between w-full h-full rounded-lg my-0`}>
+        <div  className ={"mr-8"}>
+            <div className={`flex items-start justify-between w-full h-full rounded-lg my-0`}>
                 <div className="avatar mr-1 hover:cursor-pointer">
                     <div className={`items-center justify-between w-14 border "border-lightblue"`}>
                         <img alt="Avatar" src={(props.comment.user.url_avatar as string) || images.DefaultAvatar} />
                     </div>
                 </div>
-                <div className={`w-full py-2 px-6 h-full bg-navyhover/30 rounded-lg my-1`}>
+                <div className={`w-full py-2 px-6 h-full bg-cyan-200/50 rounded-lg my-1`}>
                     <div className="flex justify-between">
                         <p className={`comment-author mb-1 italic font-bold`}>
                             {props.comment.user.first_name} {props.comment.user.last_name}
@@ -308,7 +308,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                     <span className="mr-2">{props.comment.likes_count}</span>
                                     <button
                                         className={`like-button focus:outline-none ${
-                                            liked ? "text-bold text-white" : ""
+                                            liked ? "text-bold text-blue-600" : ""
                                         }`}
                                         onClick={handleLike}
                                     >
@@ -317,7 +317,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                     <span className="ml-2 mr-2">{props.comment.dislikes_count}</span>
                                     <button
                                         className={`dislike-button focus:outline-none ${
-                                            disliked ? "text-bold text-white" : ""
+                                            disliked ? "text-bold text-red-700" : ""
                                         }`}
                                         onClick={handleDislike}
                                     >

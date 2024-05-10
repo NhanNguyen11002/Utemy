@@ -185,7 +185,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                         <img alt="Avatar" src={(props.replycomment.user.url_avatar as string) || images.DefaultAvatar} />
                     </div>
                 </div>
-                <div className={`w-full py-2 px-6 h-full bg-navyhover/30 rounded-lg my-1`}>
+                <div className={`w-full py-2 px-6 h-full bg-cyan-200 rounded-lg my-1`}>
                     <div className="flex justify-between">
                         <p className={`comment-author mb-1 italic font-bold`}>
                             {props.replycomment.user.first_name} {props.replycomment.user.last_name}
@@ -196,7 +196,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                         <textarea
                             value={editedContent}
                             onChange={(e) => setEditedContent(e.target.value)}
-                            className="w-full py-2 px-6 h-full bg-navyhover/30 rounded-lg my-1 edit-textarea"
+                            className="w-full py-2 px-6 h-full bg-gray-50 rounded-lg my-1 edit-textarea"
                         />
                     ) : (
                         <div className="flex justify-between">
@@ -252,7 +252,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                                     <span className="mr-2">{props.replycomment.likes_count}</span>
                                     <button
                                         className={`like-button focus:outline-none ${
-                                            liked ? "text-bold text-white" : ""
+                                            liked ? "text-bold text-blue-600" : ""
                                         }`}
                                         onClick={handleLike}
                                     >
@@ -261,7 +261,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                                     <span className="ml-2 mr-2">{props.replycomment.dislikes_count}</span>
                                     <button
                                         className={`dislike-button focus:outline-none ${
-                                            disliked ? "text-bold text-white" : ""
+                                            disliked ? "text-bold text-red-700" : ""
                                         }`}
                                         onClick={handleDislike}
                                     >
