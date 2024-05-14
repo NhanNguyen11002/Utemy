@@ -4,7 +4,7 @@ import Hls from "hls.js";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import "plyr/dist/plyr.min.mjs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import _ from "lodash";
 import toast from "react-hot-toast";
 import { TriangleAlert } from "lucide-react";
@@ -19,20 +19,31 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [player, setPlayer] = useState<Plyr | null>(null);
     const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
-    const progress = useAppSelector((state) => state.progressSlice.progress) || new Map<number, any>();
-    const lectureProgress = progress.get(props.lectureId);
-    const current = lectureProgress ? lectureProgress.progress_value : 0;
+    // const progress = useAppSelector((state) => state.progressSlice.progress) || {}; //new Map<number, any>();
+    // const lectureProgress = progress[props.lectureId];
+    const progress = useAppSelector((state) => state.progressSlice.progress);
+    const lectureProgress = progress[props.lectureId];
+    const curr = lectureProgress ? lectureProgress.progress_value : 0;
+    const currentProgress = useMemo(() => {
+        return curr;
+    }, [curr]);
+    // useEffect(() => {
+    //     if (player) player.currentTime = curr;
+    // }, [curr, player]);
+    // const current = useMemo(() => {
+    //     return curr;
+    // }, [curr]);
+    // console.log("curr memo", current);
     if (player) {
         // load lại progress video
-        player?.on("loadeddata", () => {
-            console.log("ready");
-            player.currentTime = current || 0;
+        player.on("loadeddata", () => {
+            player.currentTime = curr || 0;
         });
         // gọi để update progress video
-        player?.on(
+        player.on(
             "timeupdate",
             _.throttle(() => {
-                if (player.currentTime > current) {
+                if (player.currentTime > currentProgress && player.currentTime - currentProgress <= 60) {
                     dispatch(
                         progressActions.updateProgress({
                             progress_value: Math.floor(player.currentTime),
@@ -40,14 +51,10 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                         }),
                     ).then((res: any) => {
                         if (res && res.payload && res.payload.data && res.payload.status_code === 200) {
-                            if (res.payload.data.isPass) {
+                            if (res.payload.data.is_pass) {
                                 dispatch(progressActions.getProgressByCourseSlug(slug));
-                            } else if (res.payload.data.force) {
-                                player.currentTime = res.payload.data.progress_value;
-                                toast(res.payload.message, {
-                                    icon: <TriangleAlert className="fill-yellow-400 " />,
-                                    duration: 4000,
-                                });
+                            } else {
+                                dispatch(progressActions.setUpdateProgress(res));
                             }
                         }
                     });
@@ -55,27 +62,32 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
             }, 20000),
         );
         // gọi update progress khi dừng video, chuyển sang trang khác
-        player?.on("pause", () => {
-            console.log("pause", player.currentTime);
-            if (player.currentTime > current) {
-                dispatch(
-                    progressActions.updateProgress({
-                        progress_value: Math.floor(player.currentTime),
-                        lecture_id: props.lectureId,
-                    }),
-                ).then((res: any) => {
-                    if (res && res.payload && res.payload.data && res.payload.status_code === 200) {
-                        if (res.payload.data.isPass) {
-                            dispatch(progressActions.getProgressByCourseSlug(slug));
-                        }
-                        // else if (res.payload.data.force) {
-                        //     player.currentTime = res.payload.data.progress_value;
-                        //     toast(res.payload.message, {
-                        //         icon: <TriangleAlert className="fill-yellow-400 " />,
-                        //     });
-                        // }
-                    }
+        // player.on("pause", () => {
+        //     console.log("pause", player.currentTime);
+        //     if (player.currentTime > current && player.currentTime - current <= 60) {
+        //         dispatch(
+        //             progressActions.updateProgress({
+        //                 progress_value: Math.floor(player.currentTime),
+        //                 lecture_id: props.lectureId,
+        //             }),
+        //         ).then((res: any) => {
+        //             if (res && res.payload && res.payload.data && res.payload.status_code === 200) {
+        //                 if (res.payload.data.isPass) {
+        //                     dispatch(progressActions.getProgressByCourseSlug(slug));
+        //                 }
+        //             }
+        //         });
+        //     }
+        // });
+        player.on("seeked", () => {
+            console.log("progress out", currentProgress);
+            if (player.currentTime - currentProgress > 60) {
+                toast("Don't skip video, we will have to force you back", {
+                    icon: <TriangleAlert className="fill-yellow-400 " />,
+                    duration: 4000,
                 });
+                console.log("progress in", currentProgress);
+                player.currentTime = currentProgress;
             }
         });
     }

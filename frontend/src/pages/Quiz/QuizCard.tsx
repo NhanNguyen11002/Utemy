@@ -4,6 +4,7 @@ import { ThreedotIcon, EditIcon, DeleteIcon } from "../../assets/icons";
 import { HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/solid";
 import { QuizType } from "../../types/quiz";
 import { convertStringDate } from "../../utils/helper";
+import FillInNoLogicQuiz from "./FillInNoLogicQuiz";
 // import { orderLesson } from "../../types/lesson";
 type QuizCardProps = {
     quiz: QuizType;
@@ -25,7 +26,11 @@ const QuizCard: React.FC<QuizCardProps> = (props) => {
                             open ? "text-blue-500 hover:!text-blue-700 border-b border-gray-500" : "text-black"
                         }`}
                     >
-                        <h1 className="">{props.quiz.question}</h1>
+                        {props.quiz.type === 3 ? (
+                            <FillInNoLogicQuiz quiz={props.quiz} />
+                        ) : (
+                            <h1 className="">{props.quiz.question}</h1>
+                        )}
                     </AccordionHeader>
                     <AccordionBody className=" flex justify-between items-center text-base font-normal">
                         <h1 className="text-black">Loại câu hỏi: {typeSync[props.quiz.type - 1]}</h1>

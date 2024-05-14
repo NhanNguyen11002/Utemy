@@ -15,7 +15,7 @@ import BeforeTestGround from "./BeforeTestGround";
 import HistoryTest from "./HistoryTest";
 import CommentLectureCard from "./CommentLectureCard";
 import PopUpAddComment from "./PopupAddCommentOrReply"; // Import PopUpAddComment component
-
+import "react-quill/dist/quill.snow.css";
 const WatchVideo: React.FC = () => {
     const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
@@ -146,12 +146,14 @@ const WatchVideo: React.FC = () => {
                         )}
                     </div>
                     {getLecture && lecture.content.description && (
-                        <div
-                            className=""
-                            dangerouslySetInnerHTML={{
-                                __html: lecture.lecture_id !== 0 ? lecture.content.description : "",
-                            }}
-                        ></div>
+                        <div className="ql-snow">
+                            <div
+                                className="ql-editor"
+                                dangerouslySetInnerHTML={{
+                                    __html: lecture.lecture_id !== 0 ? lecture.content.description : "",
+                                }}
+                            ></div>
+                        </div>
                     )}
                 </div>
 
@@ -175,13 +177,18 @@ const WatchVideo: React.FC = () => {
                                 commentActions.createComment({
                                     content: commentContent,
                                     lecture_id: lecture.lecture_id,
-                                })
+                                }),
                             ).then((response) => {
                                 if (response.payload && response.payload.status_code === 200) {
                                     // Phản hồi thành công từ createComment, dispatch action mới ở đây
-                                    dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id: lecture.lecture_id, values: {
-                                        pageIndex: 1
-                                    }}));
+                                    dispatch(
+                                        commentActions.getCommentsWithPaginationByLectureId({
+                                            lecture_id: lecture.lecture_id,
+                                            values: {
+                                                pageIndex: 1,
+                                            },
+                                        }),
+                                    );
                                 }
                             });
                         }}
@@ -193,9 +200,13 @@ const WatchVideo: React.FC = () => {
                 <div className="mt-6">
                     <h2 className="tablet:text-2xl font-bold mb-3">Bình luận</h2>
                     {comments.map((comment, index) => (
-                        <CommentLectureCard key={index} comment={comment} userId={user.user_id || undefined} 
-                        editmode = {editModes[comment.comment_id] || false}
-                        onCommentSave={() => handleCommentSave(comment.comment_id)}/>
+                        <CommentLectureCard
+                            key={index}
+                            comment={comment}
+                            userId={user.user_id || undefined}
+                            editmode={editModes[comment.comment_id] || false}
+                            onCommentSave={() => handleCommentSave(comment.comment_id)}
+                        />
                     ))}
                 </div>
             </div>

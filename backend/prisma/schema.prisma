@@ -256,7 +256,7 @@ model QuizGroup {
 
 model Quiz {
   id                  Int                 @id @default(autoincrement())
-  question            String              @db.VarChar(200)
+  question            String              @db.Text
   type                Int // trắc nghiệm, điền khuyết... hiện tại dùng int, trắc nghiệm - 1, t/f 2, điền khuyết - 3
   created_at          DateTime            @default(now())
   updated_at          DateTime            @updatedAt

@@ -58,60 +58,53 @@ const TestGround: React.FC = () => {
 
     return (
         <>
-            <div className="w-full h-[700px] flex items-center justify-center border-black border-2 ">
-                <div className="w-3/4 h-[90%] flex flex-col items-center justify-center bg-white round">
-                    {finishPopup && (
-                        <FinishTestPopup handleFinish={handleFinishTest} handleCancel={() => setFinishPopup(false)} />
+            <div className="relative w-full h-[700px] flex flex-col items-center justify-center bg-white border-gray-400 border">
+                {finishPopup && (
+                    <FinishTestPopup handleFinish={handleFinishTest} handleCancel={() => setFinishPopup(false)} />
+                )}
+                <div className="flex justify-between w-[90%] my-5">
+                    <QuestionCounter questionCount={questionCount} questionIndex={questionIndex} />
+                    <TimeCounter handleFinish={handleFinishTest} handleOpenFinishPopup={() => setFinishPopup(true)} />
+                </div>
+                <div className="w-4/5 h-[70%]">
+                    {nowQuestion.type === 3 ? (
+                        <FillInQuiz quiz={nowQuestion} handleFill={handleFill} testProgress={testProgress} />
+                    ) : (
+                        <h1 className="text-black font-bold text-xl mb-5 w-full">{nowQuestion.question}</h1>
                     )}
-                    <div className="flex justify-between w-[90%] my-5">
-                        <QuestionCounter questionCount={questionCount} questionIndex={questionIndex} />
-                        <TimeCounter
-                            handleFinish={handleFinishTest}
-                            handleOpenFinishPopup={() => setFinishPopup(true)}
-                        />
-                    </div>
-                    <div className="w-4/5 min-h-[250px]">
-                        {nowQuestion.type === 3 ? (
-                            <FillInQuiz quiz={nowQuestion} handleFill={handleFill} testProgress={testProgress} />
-                        ) : (
-                            <h1 className="text-black font-bold text-xl mb-5 w-full">{nowQuestion.question}</h1>
-                        )}
-                        {nowQuestion.type !== 3 && (
-                            <div className="grid grid-rows-4 gap-2 w-full h-2/3 items-center justify-items-center">
-                                {nowQuestion.quiz_answer.map((answer, index) => {
-                                    return (
-                                        <AnswerCard
-                                            quizId={nowQuestion.quiz_id}
-                                            key={answer.quiz_answer_id}
-                                            handleCheck={handleCheck}
-                                            quizAnswer={answer}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
-                    <div className="flex justify-between w-full px-5 my-3">
-                        <button
-                            type="button"
-                            onClick={handlePrevQuestion}
-                            className="btn btn-outline btn-sm text-black "
-                            disabled={questionIndex === 0}
-                        >
-                            <ArrowLeftIcon className="w-5 h-5 " />
-                            <span className="">Trước</span>
-                        </button>{" "}
-                        <button
-                            type="button"
-                            onClick={
-                                questionIndex === questionCount - 1 ? () => setFinishPopup(true) : handleNextQuestion
-                            }
-                            className="btn btn-outline btn-sm text-black"
-                        >
-                            <span className="">{questionIndex === questionCount - 1 ? "Kết thúc" : "Tiếp"}</span>
-                            <ArrowRightIcon className="w-5 h-5" />
-                        </button>
-                    </div>
+                    {nowQuestion.type !== 3 && (
+                        <div className="grid grid-rows-2 grid-cols-2 gap-2 w-full items-center justify-items-center h-[20%]">
+                            {nowQuestion.quiz_answer.map((answer, index) => {
+                                return (
+                                    <AnswerCard
+                                        quizId={nowQuestion.quiz_id}
+                                        key={answer.quiz_answer_id}
+                                        handleCheck={handleCheck}
+                                        quizAnswer={answer}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+                <div className="flex justify-between w-full px-5 my-3">
+                    <button
+                        type="button"
+                        onClick={handlePrevQuestion}
+                        className="btn btn-outline btn-sm text-black "
+                        disabled={questionIndex === 0}
+                    >
+                        <ArrowLeftIcon className="w-5 h-5 " />
+                        <span className="">Trước</span>
+                    </button>{" "}
+                    <button
+                        type="button"
+                        onClick={questionIndex === questionCount - 1 ? () => setFinishPopup(true) : handleNextQuestion}
+                        className="btn btn-outline btn-sm text-black"
+                    >
+                        <span className="">{questionIndex === questionCount - 1 ? "Kết thúc" : "Tiếp"}</span>
+                        <ArrowRightIcon className="w-5 h-5" />
+                    </button>
                 </div>
             </div>
         </>

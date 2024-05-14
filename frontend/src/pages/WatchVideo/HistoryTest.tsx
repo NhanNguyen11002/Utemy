@@ -17,38 +17,32 @@ const HistoryTest: React.FC = () => {
     }, [dispatch, testId]);
     return (
         <>
-            <div className="w-full h-[700px] flex items-center justify-center border-black border-2 ">
-                <div className="w-3/4 h-[90%] flex flex-col items-center justify-center bg-white round">
-                    <div className="flex  flex-col justify-between justify-items-start w-3/4 my-5 gap-2 border-b border-black ">
-                        <div className="flex flex-col gap-2 items-center  rounded-md p-2 w-full">
-                            <DocumentCheckIcon className="w-5 h-5 shrink-0 text-black" />
-                            <span className="text-black shrink-0 font-bold text-2xl">{testTitle}</span>
-                            <span className="text-black shrink-0 text-xl">Đây là lịch sử làm bài kiểm tra gần đây</span>
-                            <div className="flex flex-col gap-2 items-center justify-center w-full">
-                                {testHistory.length > 0 ? (
-                                    testHistory.map((history) => {
-                                        return <HistoryCard history={history} key={history.test_history_id} />;
-                                    })
-                                ) : (
-                                    <div className="flex flex-col gap-2">
-                                        <QuestionMarkCircleIcon className="w-8 h-8" />{" "}
-                                        <h1>Không có lịch sử kiểm tra gần đây</h1>
-                                    </div>
-                                )}
-                            </div>
+            <div className="w-full h-[700px] flex flex-col items-center justify-center bg-white round border-gray-400 border">
+                <div className="flex  flex-col justify-between justify-items-start w-3/4 my-5 gap-2 border-b border-black ">
+                    <div className="flex flex-col gap-2 items-center  rounded-md p-2 w-full">
+                        <DocumentCheckIcon className="w-5 h-5 shrink-0 text-black" />
+                        <span className="text-black shrink-0 font-bold text-2xl">{testTitle}</span>
+                        <span className="text-black shrink-0 text-xl">Đây là lịch sử làm bài kiểm tra gần đây</span>
+                        <div className="flex flex-col gap-2 items-center justify-center w-full">
+                            {testHistory.length > 0 ? (
+                                testHistory.map((history) => {
+                                    return <HistoryCard history={history} key={history.test_history_id} />;
+                                })
+                            ) : (
+                                <div className="flex flex-col gap-2">
+                                    <QuestionMarkCircleIcon className="w-8 h-8" />{" "}
+                                    <h1>Không có lịch sử kiểm tra gần đây</h1>
+                                </div>
+                            )}
                         </div>
                     </div>
+                </div>
 
-                    <div className="flex justify-center gap-3 w-full px-5 my-3">
-                        <button
-                            type="button"
-                            onClick={handleSetBeforeTest}
-                            className="btn btn-outline btn-sm text-black "
-                        >
-                            <BackspaceIcon className="w-5 h-5 " />
-                            <span className="">Quay lại bài kiểm tra</span>
-                        </button>{" "}
-                    </div>
+                <div className="flex justify-center gap-3 w-full px-5 my-3">
+                    <button type="button" onClick={handleSetBeforeTest} className="btn btn-outline btn-sm text-black ">
+                        <BackspaceIcon className="w-5 h-5 " />
+                        <span className="">Quay lại bài kiểm tra</span>
+                    </button>{" "}
                 </div>
             </div>
         </>

@@ -61,7 +61,7 @@ export const getCouponByCode = createAsyncThunk<Response<Coupon>, string, { reje
 );
 type CartSliceType = {
     userCart: Cart;
-    myCart: Map<number, number>;
+    myCart: any;
     coupons: Coupon[];
     discount: number;
     isCourseInCart: boolean;
@@ -94,7 +94,7 @@ const initialState: CartSliceType = {
         max_discount_money: 0,
         remain_quantity: 0,
     },
-    myCart: new Map<number, number>(),
+    myCart: {},
 };
 
 export const cartSlice = createSlice({
@@ -108,7 +108,7 @@ export const cartSlice = createSlice({
             //         break;
             //     } else state.isCourseInCart = false;
             // }
-            state.isCourseInCart = state.myCart.get(Number(action.payload)) === 1;
+            state.isCourseInCart = state.myCart[action.payload] === 1;
         },
         getDiscount: (state, action) => {
             state.coupons.forEach((coupon) => {
@@ -125,13 +125,13 @@ export const cartSlice = createSlice({
             state.isGetLoading = true;
         });
         builder.addCase(getAllCart.fulfilled, (state, action) => {
-            const map = new Map<number, number>();
+            const obj: any = {};
             state.totalCourseInCart = action.payload.data.cart_items.length;
             state.userCart = action.payload.data as Cart;
             action.payload.data.cart_items.forEach((element: any) => {
-                map.set(element.course.course_id, 1);
+                obj[element.course.course_id] = 1;
             });
-            state.myCart = map;
+            state.myCart = obj;
             state.subTotal = getSubTotal(action.payload.data);
             state.subTotalRetail = getSubTotalRetail(action.payload.data);
             state.isGetLoading = false;
