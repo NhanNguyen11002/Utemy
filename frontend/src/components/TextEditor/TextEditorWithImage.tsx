@@ -1,19 +1,32 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 //{  QuillOptions}
 import "react-quill/dist/quill.snow.css"; // Import styles
 import "react-quill/dist/quill.bubble.css"; // (Optional) Import additional styles
 import { useAppDispatch } from "../../hooks/hooks";
 import { decisionActions } from "../../redux/slices";
 import toast from "react-hot-toast";
+import ImageResize from "quill-image-resize-module-react";
+import BlotFormatter, { AlignAction, DeleteAction, ImageSpec, ResizeAction } from "quill-blot-formatter";
+
+Quill.register("modules/imageResize", ImageResize);
+Quill.register("modules/blotFormatter", BlotFormatter);
+
+class CustomImageSpec extends ImageSpec {
+    getActions() {
+        return [AlignAction, DeleteAction, ResizeAction];
+    }
+}
+
 type TextEditorWithImageProps = {
+    propRef?: React.MutableRefObject<any>;
     content?: string;
     handleChangeContent(content: string): void;
 };
 const TextEditorWithImage: React.FC<TextEditorWithImageProps> = (props) => {
     const [display, setDisplay] = useState<string>("");
     const dispatch = useAppDispatch();
-    const quillObj = useRef<any>();
+    let quillObj = useRef<any>();
     const imageHandler = async (img: any) => {
         const input = document.createElement("input");
 
@@ -56,6 +69,17 @@ const TextEditorWithImage: React.FC<TextEditorWithImageProps> = (props) => {
                     image: imageHandler,
                 },
             },
+            blotFormatter: {
+                specs: [CustomImageSpec],
+                overlay: {
+                    className: "blot-formatter__overlay",
+                    style: {
+                        position: "absolute",
+                        boxSizing: "border-box",
+                        border: "1px dashed #444",
+                    },
+                },
+            },
         }),
         [],
     );
@@ -69,7 +93,10 @@ const TextEditorWithImage: React.FC<TextEditorWithImageProps> = (props) => {
     return (
         <div>
             <ReactQuill
-                ref={quillObj}
+                ref={(el) => {
+                    quillObj.current = el;
+                    if (props.propRef) props.propRef.current = el;
+                }}
                 theme="snow"
                 value={display}
                 modules={modules}

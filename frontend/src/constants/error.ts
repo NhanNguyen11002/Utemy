@@ -137,20 +137,18 @@ const error = {
     ERROR_GET_COURSE_FAILED: "Get course failed",
     ERROR_TYPE_REQUIRED: "Type is required",
 
-
     //coupon
     ERROR_CODE_REQUIRED: "Code is required",
     ERROR_CODE_MAX: "Code must be under than 30 chars",
     ERROR_CODE_MIN: "Code must be upper than 8 chars",
-    ERROR_DISCOUNT_MAX:"Discount must less than 100",
-    ERROR_DISCOUNT_MIN:"Discount must more than 0",
+    ERROR_DISCOUNT_MAX: "Discount must less than 100",
+    ERROR_DISCOUNT_MIN: "Discount must more than 0",
     ERROR_DISCOUNT_REQUIRED: "Discount is required",
     ERROR_REMAIN_QUANTITY_REQUIRED: "Remain_quantity is required",
     ERROR_VALID_UNTIL_LATER_VALID_START: "Valid until must be later than Valid start",
     ERROR_VALID_START_EARLIER_VALID_UNTIL: "Valid until must be later than Valid start",
     ERROR_VALID_START_REQUIRED: "Valid start is required",
     ERROR_VALID_UNTIL_REQUIRED: "Valid until is required",
-
 
     //event
     ERROR_NAME_REQUIRED: "Name is required",
@@ -163,7 +161,7 @@ const error = {
     ERROR_START_DATE_REQUIRED: "Start date is required",
     ERROR_END_DATE_REQUIRED: "End date is required",
 
-
-
+    //
+    ERROR_QUESTION_REQUIRED: "Question is required",
 };
 export default error;

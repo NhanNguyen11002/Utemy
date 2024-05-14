@@ -782,11 +782,8 @@ const searchMyEnrolledCourse = async (req: IRequestWithId): Promise<ResponseBase
                     },
                 })
                 .then((result) => {
-                    console.log("res", result);
                     getOverall = result;
-                    console.log("get", getOverall);
                 });
-            console.log("get out", getOverall);
             return {
                 course_id: enroll.course?.id,
                 title: enroll.course?.title,

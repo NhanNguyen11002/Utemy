@@ -46,12 +46,23 @@ export const ProgressSlice = createSlice({
     initialState,
     reducers: {
         setUpdateProgress: (state, action) => {
-            const currentState = state.progress.get(action.payload);
-            if (currentState) {
-                const updateState: ProgressType = { ...currentState, is_pass: true } as ProgressType;
-                state.progress.set(action.payload, updateState);
-                const temp = state.progressOfSection.get(currentState?.section_id as number);
-                state.progressOfSection.set(currentState?.section_id, temp ? temp + 1 : 1);
+            if (action.payload.message === "Create data successfully") {
+                const data = action.payload.data as ProgressType;
+                state.progress[data.lecture_id] = data;
+                if (data.is_pass) {
+                    const valueOfKey = state.progressOfSection[data.section_id];
+                    state.progressOfSection[data.section_id] = valueOfKey ? valueOfKey + 1 : 1;
+                }
+            }
+            if (action.payload.message === "Update data successfully") {
+                const data = action.payload.data as ProgressType;
+                state.progress[data.lecture_id].progress_percent = data.progress_percent;
+                state.progress[data.lecture_id].progress_value = data.progress_value;
+                if (data.is_pass) {
+                    state.progress[data.lecture_id].is_pass = data.is_pass;
+                    const valueOfKey = state.progressOfSection[data.section_id];
+                    state.progressOfSection[data.section_id] = valueOfKey ? valueOfKey + 1 : 1;
+                }
             }
         },
     },
@@ -64,8 +75,10 @@ export const ProgressSlice = createSlice({
             let temp2: any = {}; //new Map<number, number>();
             action.payload.data.progress.forEach((progress: ProgressType) => {
                 temp[progress.lecture_id] = progress;
-                const valueOfKey = temp2[progress.section_id];
-                temp2[progress.section_id] = valueOfKey ? valueOfKey + 1 : 1;
+                if (progress.is_pass) {
+                    const valueOfKey = temp2[progress.section_id];
+                    temp2[progress.section_id] = valueOfKey ? valueOfKey + 1 : 1;
+                }
             });
             state.progress = temp;
             state.progressOfSection = temp2;
@@ -80,6 +93,26 @@ export const ProgressSlice = createSlice({
         });
         builder.addCase(updateProgress.fulfilled, (state, action: any) => {
             state.isLoading = false;
+            if (action.payload.status_code === 200) {
+                if (action.payload.message === "Create data successfully") {
+                    const data = action.payload.data as ProgressType;
+                    state.progress[data.lecture_id] = data;
+                    if (data.is_pass) {
+                        const valueOfKey = state.progressOfSection[data.section_id];
+                        state.progressOfSection[data.section_id] = valueOfKey ? valueOfKey + 1 : 1;
+                    }
+                }
+                if (action.payload.message === "Update data successfully") {
+                    const data = action.payload.data as ProgressType;
+                    state.progress[data.lecture_id].progress_percent = data.progress_percent;
+                    state.progress[data.lecture_id].progress_value = data.progress_value;
+                    if (data.is_pass) {
+                        state.progress[data.lecture_id].is_pass = data.is_pass;
+                        const valueOfKey = state.progressOfSection[data.section_id];
+                        state.progressOfSection[data.section_id] = valueOfKey ? valueOfKey + 1 : 1;
+                    }
+                }
+            }
         });
         builder.addCase(updateProgress.rejected, (state) => {
             state.isLoading = false;
