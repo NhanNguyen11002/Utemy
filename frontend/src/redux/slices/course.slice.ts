@@ -27,6 +27,7 @@ type CourseSliceType = {
     isUpload: boolean;
     role: string;
     myEnrolled: any;
+    currentCertificate: string;
 };
 
 const initialState: CourseSliceType = {
@@ -103,6 +104,7 @@ const initialState: CourseSliceType = {
     isLoading: false,
     isGetLoading: false,
     isUpload: false,
+    currentCertificate: "",
 };
 export const createCourses = createAsyncThunk<Response<null>, FormData, { rejectValue: Response<null> }>(
     "course/create",
@@ -317,6 +319,17 @@ export const restrictCourse = createAsyncThunk<Response<null>, number, { rejectV
         }
     },
 );
+export const getCertificate = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "course/certificate",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.getCertificate(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 export const courseSlice = createSlice({
     name: "course",
     initialState,
@@ -332,6 +345,9 @@ export const courseSlice = createSlice({
         setApprovalCourseDetail: (state, action) => {
             const approval = state.courseDetail.approval as Approval[];
             state.courseDetail.approval = [...approval, action.payload];
+        },
+        setCurrentCertificate: (state, action) => {
+            state.currentCertificate = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -511,9 +527,20 @@ export const courseSlice = createSlice({
         builder.addCase(restrictCourse.rejected, (state) => {
             state.isLoading = false;
         });
+        builder.addCase(getCertificate.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(getCertificate.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.currentCertificate = action.payload.data.public_id;
+        });
+        builder.addCase(getCertificate.rejected, (state) => {
+            state.isLoading = false;
+        });
     },
 });
 
-export const { setStudyAndRequirement, setSalePriceAndDate, setApprovalCourseDetail } = courseSlice.actions;
+export const { setStudyAndRequirement, setSalePriceAndDate, setApprovalCourseDetail, setCurrentCertificate } =
+    courseSlice.actions;
 
 export default courseSlice.reducer;

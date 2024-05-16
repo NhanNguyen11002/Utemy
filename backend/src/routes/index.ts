@@ -21,6 +21,7 @@ import progressRouter from "./progress.router";
 import commentRouter from "./comment.router";
 import replyCommentRouter from "./replycomment.router";
 import reactionRouter from "./reaction.router";
+import certifierRouter from "./certifier.router";
 
 export default {
     authRouter,
@@ -46,4 +47,5 @@ export default {
     commentRouter,
     replyCommentRouter,
     reactionRouter,
+    certifierRouter,
 };

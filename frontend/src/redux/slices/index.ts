@@ -22,3 +22,4 @@ export * as progressActions from "./progress.slice";
 export * as reactionActions from "./reaction.slice";
 export * as commentActions from "./comment.slice";
 export * as replyCommentActions from "./replycomment.slice";
+export * as certifierActions from "./certifier.slice";

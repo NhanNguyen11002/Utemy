@@ -140,4 +140,8 @@ export default class CourseController {
         const response: ResponseBase = await services.CourseService.getAllEnrolled(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getCertificate(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.getCertificate(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

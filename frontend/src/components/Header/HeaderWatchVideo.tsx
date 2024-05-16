@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { images } from "../../assets";
 import UserDropDown from "../Dropdown/UserDropDown";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { categoryActions } from "../../redux/slices";
+import { certifierActions, courseActions } from "../../redux/slices";
 import { Course } from "../../types/course";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -22,13 +22,36 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
     const overallProgress = useAppSelector((state) => state.progressSlice.overallProgress) || 0;
     const number_of_lecture = useAppSelector((state) => state.courseSlice.courseDetail.number_of_lecture) || 1;
     const [isDisplayUserDrawer, setIsDisplayUserDrawer] = useState<boolean>(false);
-
+    const courseId = useAppSelector((state) => state.courseSlice.courseDetail.course_id);
+    const myEnrolleDetail = useAppSelector((state) => state.courseSlice.myEnrolled[courseId]);
+    const isDone = myEnrolleDetail ? myEnrolleDetail.is_done : false;
+    const userId = useAppSelector((state) => state.authSlice.user.user_id) || 0;
+    console.log(
+        "my enrolled",
+        useAppSelector((state) => state.courseSlice.myEnrolled[courseId]),
+    );
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(categoryActions.getCategories());
-    }, [dispatch]);
-
+        //hoc xong, luc isDone
+        if (overallProgress === number_of_lecture && !isDone) {
+            console.log("overall progress=number of lecture");
+            // dispatch send certifier then get all enrolled
+            dispatch(certifierActions.sendCertifier(courseId)).then((res) => {
+                if (res.payload?.status_code === 200) {
+                    toast("Chúc mừng bạn đã hoàn thành khoá học, chúng tôi sẽ gửi chứng chỉ về địa chỉ mail của bạn", {
+                        icon: "🥳\n🥳\n🥳",
+                        duration: 10000,
+                    });
+                    dispatch(courseActions.getAllEnrolled());
+                    dispatch(courseActions.setCurrentCertificate(res.payload.data.public_id));
+                }
+            });
+        }
+    }, [dispatch, overallProgress, courseId]);
+    useEffect(() => {
+        dispatch(courseActions.getAllEnrolled());
+    }, [dispatch, userId]);
     return (
         <>
             <header className="w-full h-[70px] max-w-full bg-[#2D2F31] shadow-xl fixed top-0 left-0 z-[10]">
