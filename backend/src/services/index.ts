@@ -22,6 +22,7 @@ import ProgressServices from "./progress.services";
 import CommentServices from "./comment.services";
 import ReplyCommentServices from "./replycomment.services";
 import ReactionServices from "./reaction.services";
+import CertifierServices from "./certifier.services";
 export default {
     AuthServices,
     UserService,
@@ -47,4 +48,5 @@ export default {
     CommentServices,
     ReplyCommentServices,
     ReactionServices,
+    CertifierServices,
 };

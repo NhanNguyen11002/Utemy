@@ -1614,6 +1614,7 @@ const getProgressByCourseSlug = async (req: IRequestWithId): Promise<ResponseBas
                 },
             },
         });
+
         const getOverall = await configs.db.progress.count({
             where: {
                 course_id: Number(isFoundCourse.id),
@@ -1622,7 +1623,7 @@ const getProgressByCourseSlug = async (req: IRequestWithId): Promise<ResponseBas
                 is_delete: false,
             },
         });
-        if (!getProgress || !getOverall) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        if (!getProgress) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         const progressData = getProgress.map((progress) => {
             const duration =
                 progress.lecture.type === "Lesson"
@@ -1788,6 +1789,37 @@ const getAllEnrolled = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getCertificate = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const userId = Number(req.user_id);
+        const courseId = Number(req.params.course_id);
+
+        const isEnrolleDone = await configs.db.enrolled.findFirst({
+            where: {
+                user_id: userId,
+                course_id: courseId,
+                is_done: true,
+            },
+        });
+        if (!isEnrolleDone) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const getCertificate = await configs.db.certificate.findFirst({
+            where: {
+                recipient_id: userId,
+                course_id: courseId,
+            },
+        });
+        if (!getCertificate) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, {
+            public_id: getCertificate.public_id,
+        });
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const CourseServices = {
     getRightOfCourse,
     createCourse,
@@ -1814,6 +1846,7 @@ const CourseServices = {
     getProgressByCourseSlug,
     getCourseDetailForTrialLesson,
     getAllEnrolled,
+    getCertificate,
 };
 
 export default CourseServices;

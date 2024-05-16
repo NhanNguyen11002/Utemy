@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Cookies from "js-cookie";
-import { authActions } from "./redux/slices";
+import { authActions, cartActions, courseActions } from "./redux/slices";
 import { useAppDispatch, useAppSelector } from "./hooks/hooks";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
@@ -57,7 +57,10 @@ function App() {
     useEffect(() => {
         const accessToken = Cookies.get("accessToken");
         if (accessToken) {
-            dispatch(authActions.getMe());
+            dispatch(authActions.getMe()).then((res) => {
+                dispatch(courseActions.getAllEnrolled());
+                dispatch(cartActions.getAllCart());
+            });
         }
     }, [dispatch]);
     return (
@@ -128,7 +131,6 @@ function App() {
                         <Route path="course-detail/:slug/watch" element={<UserWatchVideoLayout />}>
                             <Route index element={<WatchVideo />}></Route>
                         </Route>
-                        
                     </Routes>
                 </div>
             </BrowserRouter>

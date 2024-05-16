@@ -33,9 +33,12 @@ const WatchVideo: React.FC = () => {
             description: "",
         },
     };
+    const [key, setKey] = useState(0);
+    console.log(key);
 
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const handleChangeLesson = (lecture: Lecture) => {
+        setKey((prevKey) => prevKey + 1);
         dispatch(lectureActions.setLecture(lecture));
         dispatch(
             commentActions.getCommentsWithPaginationByLectureId({
@@ -109,6 +112,7 @@ const WatchVideo: React.FC = () => {
                         {lecture.type === "Lesson" ? (
                             <>
                                 <VideoPlayer
+                                    key={key}
                                     source={lecture.content.url_video ? lecture.content.url_video : ""}
                                     lectureId={lecture.lecture_id}
                                 />

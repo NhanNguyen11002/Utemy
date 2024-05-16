@@ -21,6 +21,7 @@ import progressApis from "./progress";
 import reactionApis from "./reaction";
 import commentApis from "./comment";
 import replyCommentApis from "./replycomment";
+import certifierApis from "./certifier";
 
 const apis = {
     authApis,
@@ -46,5 +47,6 @@ const apis = {
     reactionApis,
     commentApis,
     replyCommentApis,
+    certifierApis,
 };
 export default apis;
