@@ -11,6 +11,9 @@ couponRouter.post("/", isLogin, controllers.couponController.createCoupon);
 couponRouter.patch("/:coupon_id", isLogin, controllers.couponController.updateCoupon);
 couponRouter.delete("/:coupon_id", isLogin, controllers.couponController.deleteCoupon);
 couponRouter.get("/:code", isLogin, controllers.couponController.getCouponByCode);
+couponRouter.post("/ratio/", isLogin, controllers.couponController.createRatio);
+couponRouter.patch("/ratio/update", isLogin, controllers.couponController.updateRatio);
+couponRouter.delete("/ratio/delete", isLogin, controllers.couponController.deleteRatio);
 
 // coupon_history
 // couponRouter.post("/history/:coupon_id", isLogin, controllers.couponController.createCouponHistory);

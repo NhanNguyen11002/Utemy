@@ -10,7 +10,13 @@ import { DeleteModal } from "../../components";
 import { HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/outline";
 import PopUpAddCommentOrReply from "./PopupAddCommentOrReply";
 import { format } from 'date-fns';
-
+// import { Button } from "../../components/ui/button"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../../components/ui/hover-card"
+import ReactionInfoCard from "./ReactionInfoCard";
 type CommentLectureCardProps = {
     userId: number | undefined;
     comment: Comment;
@@ -232,6 +238,10 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         }
     };
     
+    // const reactions = [
+    //     ...props.comment.likes.map((like) => ({ id: like.like_id, ...like })),
+    //     ...props.comment.dislikes.map((dislike) => ({ id: dislike.dislike_id, ...dislike })),
+    // ];
 
     return (
         <div  className ={"mr-8"}>
@@ -304,7 +314,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="flex items-center ml-auto">
+                                {/* <div className="flex items-center ml-auto">
                                     <span className="mr-2">{props.comment.likes_count}</span>
                                     <button
                                         className={`like-button focus:outline-none ${
@@ -319,6 +329,44 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                         className={`dislike-button focus:outline-none ${
                                             disliked ? "text-bold text-red-700" : ""
                                         }`}
+                                        onClick={handleDislike}
+                                    >
+                                        <HandThumbDownIcon className="w-6 h-6 shrink-0" />
+                                    </button>
+                                </div> */}
+                                <div className="flex items-center ml-auto">
+                                    <HoverCard>
+                                        <HoverCardTrigger asChild>
+                                            <span className="mr-2">{props.comment.likes_count}</span>
+                                        </HoverCardTrigger>
+                                        <HoverCardContent className="w-80">
+                                        {props.comment.likes
+                                            .filter(like => like.reply_id === null) // Lọc các likes có reply_id bằng null
+                                            .map(like => (
+                                            <ReactionInfoCard key={like.like_id} reaction={{ id: like.like_id, ...like }} handleClick={handleCancel} />
+                                        ))}
+                                        </HoverCardContent>
+                                    </HoverCard>
+                                    <button
+                                        className={`like-button focus:outline-none ${liked ? "text-bold text-blue-600" : ""}`}
+                                        onClick={handleLike}
+                                    >
+                                        <HandThumbUpIcon className="w-6 h-6 shrink-0" />
+                                    </button>
+                                    <HoverCard>
+                                        <HoverCardTrigger asChild>
+                                            <span className="ml-2 mr-2">{props.comment.dislikes_count}</span>
+                                        </HoverCardTrigger>
+                                        <HoverCardContent className="w-80">
+                                        {props.comment.dislikes
+                                            .filter(dislike => dislike.reply_id === null) // Lọc các dislikes có reply_id bằng null
+                                            .map(dislike => (
+                                            <ReactionInfoCard key={dislike.dislike_id} reaction={{ id: dislike.dislike_id, ...dislike }} handleClick={handleCancel} />
+                                        ))}
+                                        </HoverCardContent>
+                                    </HoverCard>
+                                    <button
+                                        className={`dislike-button focus:outline-none ${disliked ? "text-bold text-red-700" : ""}`}
                                         onClick={handleDislike}
                                     >
                                         <HandThumbDownIcon className="w-6 h-6 shrink-0" />

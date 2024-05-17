@@ -11,12 +11,15 @@ type AccordionSectionType = {
     isDisplayProgress: boolean;
     lectureId?: number;
     redirectToWatchVideo?: boolean;
+    commonLectures?: any[];
     handleDisplayDeleteModal?: (id: number, isDeleteSection: boolean) => void;
     handleDisplayEditModal?: (id: number, title: string) => void;
     handleDisplayAddLectureModal?: (id: number) => void;
     handleDisplayEditLecture?: (lectureId: number, type: string) => void;
     handleChangeLesson?: (lecture: Lecture) => void;
     handleDeleteSection?: (id: number) => void;
+    handleShowVideoDialog?: (url_video: string, description: string) => void;
+
 };
 
 const AccordionSection: React.FC<AccordionSectionType> = (props) => {
@@ -103,6 +106,11 @@ const AccordionSection: React.FC<AccordionSectionType> = (props) => {
                                             handleDisplayDeleteModal={props.handleDisplayDeleteModal}
                                             handleDisplayEditLecture={props.handleDisplayEditLecture}
                                             handleChangeLesson={props.handleChangeLesson}
+                                            // showWatchVideoButton={props.commonLectures && props.commonLectures.some(commonLecture => commonLecture.lecture_id === lecture.lecture_id)}
+                                            handleShowVideoDialog={props.handleShowVideoDialog}
+                                            commonLectures={props.commonLectures || []}
+
+
                                         />
                                     </div>
                                 ))

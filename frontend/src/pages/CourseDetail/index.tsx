@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DeleteModal, Spin, TotalRating, Pagination, UserToolDropdown, VideoPlayerForTrailerTrial } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
-import AccordionSectionForTrial from "../../components/Accordion/AccordionSectionForTrial";
+// import AccordionSectionForTrial from "../../components/Accordion/AccordionSectionForTrial";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { Section } from "../../types/section";
@@ -195,7 +195,23 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     if (isNotFound) return <NotFound />;
+// Hàm tiện ích để lấy các bài giảng chung
+    function getCommonLectures(apiData1: any, apiData2: any) {
+        const lectures1 = apiData1.sections.flatMap((section: any) => section.lecture);
+        const lectures2 = apiData2.sections.flatMap((section: any) => section.lecture);
+        
+        const lectureMap = new Map();
+        lectures1.forEach((lecture: any) => {
+            lectureMap.set(lecture.lecture_id, lecture);
+        });
 
+        const commonLectures = lectures2.filter((lecture: any) => lectureMap.has(lecture.lecture_id));
+        // console.log("Common lecture: ", commonLectures);
+
+        return commonLectures;
+    }
+    const commonLectures = getCommonLectures(courseDetail, courseDetailForTrial);
+    console.log("abc: ",commonLectures);
     return (
         <>
             {isOpenPopupRating && (
@@ -409,7 +425,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     >
                                         Đánh giá
                                     </Tab>
-                                    {(!isLogin || (isLogin && role !== constants.util.ROLE_ENROLLED && role !== constants.util.ROLE_AUTHOR)) && (
+                                    {/* {(!isLogin || (isLogin && role !== constants.util.ROLE_ENROLLED && role !== constants.util.ROLE_AUTHOR)) && (
                                         <Tab
                                             key={"Trial"}
                                             value={"Trial"}
@@ -418,7 +434,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         >
                                             Học thử
                                         </Tab>
-                                    )}
+                                    )} */}
 
                                 </TabsHeader>
                                 <div className="h-px w-full bg-gray-300"></div>
@@ -485,10 +501,21 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                                     redirectToWatchVideo={
                                                                         isLogin && !(role === constants.util.ROLE_USER)
                                                                     }
+                                                                    handleShowVideoDialog={handleShowVideoDialog}
+                                                                    commonLectures={commonLectures}
                                                                 />
                                                             </div>
                                                         );
                                                     })}
+                                                    {showDialog && (
+                                                        <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
+                                                            <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
+                                                                <DialogTitle className ="text-center">{descriptionVideo.replace(/<[^>]+>/g, '')}</DialogTitle>
+                                                                <VideoPlayerForTrailerTrial source={videoUrl} />
+                                                            </DialogContent>
+                                                            
+                                                        </Dialog>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="w-1/2 ">
@@ -569,7 +596,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             )}
                                         </div>
                                     </TabPanel>
-                                    <TabPanel key="Trial" value="Trial">
+                                    {/* <TabPanel key="Trial" value="Trial">
                                         <div className="w-full flex gap-10">
                                             <div className="w-1/2">
                                                 <div className="table-of-content my-4">
@@ -611,7 +638,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             <div className="w-1/2 ">
                                             </div>
                                         </div>
-                                    </TabPanel>
+                                    </TabPanel> */}
                                 </TabsBody>
                             </Tabs>
                         </div>

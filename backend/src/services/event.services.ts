@@ -304,6 +304,9 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
                     where: {
                         is_delete: false,
                     },
+                    include: {
+                        ratio: true,
+                    },
                 },
             },
         });
@@ -334,6 +337,7 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
                         remain_quantity: cp.remain_quantity,
                         is_event: cp.is_event,
                         max_discount_money: cp.max_discount_money,
+                        ratio: cp.ratio,
                     };
                 }),
             };

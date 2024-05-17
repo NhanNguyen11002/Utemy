@@ -68,6 +68,21 @@ const getVoucherBySpin = async () => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const createRatio = async( coupon_id: number, ratio: number )=> {
+    const path =`coupon/ratio/`;
+    const reponse = await apiCaller("POST", path, { coupon_id, ratio });
+    return reponse;
+};
+const updateRatio = async( coupon_id: number, ratio: number )=> {
+    const path =`coupon/ratio/update`;
+    const reponse = await apiCaller("PATCH", path, { coupon_id, ratio });
+    return reponse;
+};
+const deleteRatio = async( coupon_id: number )=> {
+    const path =`coupon/ratio/delete`;
+    const reponse = await apiCaller("DELETE", path, { coupon_id });
+    return reponse;
+};
 const couponApis = {
     getCouponByCode,
     getAllEventCoupon,
@@ -81,6 +96,9 @@ const couponApis = {
     getAllEventCouponByEventId,
     getHistorySpinOfUserForAEvent,
     getVoucherBySpin,
+    createRatio,
+    updateRatio,
+    deleteRatio,
 };
 
 export default couponApis;
