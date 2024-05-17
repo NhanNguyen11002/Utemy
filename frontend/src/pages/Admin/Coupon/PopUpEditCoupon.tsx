@@ -87,6 +87,9 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
         formData.append("event_id", selectedEventId); // Đây là trường ẩn chứa event_id được chọn từ select
         console.log(formData);
 
+        if (!selectedEventId) {
+            dispatch(couponActions.deleteRatio({ coupon_id: props.couponId }));
+        }
         dispatch(couponActions.updateCoupon({ coupon_id: props.couponId, body: formData })).then((response: any) => {
             if (response.payload && response.payload.status_code === 200) {
                 toast.success(response.payload.message);

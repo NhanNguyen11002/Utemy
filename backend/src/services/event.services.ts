@@ -303,6 +303,9 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
                 coupons: {
                     where: {
                         is_delete: false,
+                        remain_quantity: {
+                            gt: 0,
+                        }
                     },
                     include: {
                         ratio: true,
