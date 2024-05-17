@@ -30,7 +30,7 @@ const AccordionSection: React.FC<AccordionSectionType> = (props) => {
         : "";
     const lectureCount = props.section.lecture ? props.section.lecture.length : "0";
     const progressOfSection = useAppSelector((state) => state.progressSlice.progressOfSection);
-    const passLecture = progressOfSection.get(props.section.id) || 0;
+    const passLecture = progressOfSection[props.section.id] || 0;
     const totalDuration: number =
         (props.section.lecture &&
             props.section.lecture?.reduce((acc: number, curr: any) => {

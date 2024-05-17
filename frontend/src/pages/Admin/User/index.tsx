@@ -218,8 +218,12 @@ const UserAdmin = () => {
                             <TableHeader>
                                 <TableRow>
                                     {["Người dùng", "Loại tài khoản", "Trạng thái", "Ngày tạo", "Hành động"].map(
-                                        (header) => (
-                                            <TableHead className="border">{header}</TableHead>
+                                        (header, index) => (
+                                            <TableHead
+                                                className={`border ${index === 0 ? "text-left" : index === 4 ? "text-right" : "text-center"}`}
+                                            >
+                                                {header}
+                                            </TableHead>
                                         ),
                                     )}
                                 </TableRow>
@@ -258,7 +262,7 @@ const UserAdmin = () => {
                                                     </div>
                                                 </Link>
                                             </TableCell>
-                                            <TableCell className="border">
+                                            <TableCell className="border text-center">
                                                 {" "}
                                                 <div
                                                     className={` text-xs font-semibold ${
@@ -270,36 +274,23 @@ const UserAdmin = () => {
                                                     {user.is_admin ? "Admin" : "User"}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="border">
-                                                <Typography
-                                                    color={user.is_delete ? "red" : "blue-gray"}
-                                                    className={`py-0.5 px-2 text-[11px] font-medium w-fit ${
-                                                        user.is_delete ? "text-red-700" : "text-green-700"
-                                                    }`}
-                                                >
-                                                    {user.is_delete ? "Xóa" : "Hoạt động"}
-                                                </Typography>
+                                            <TableCell
+                                                className={`border text-center text-[11px] font-medium ${
+                                                    user.is_delete ? "text-red-700" : "text-green-700"
+                                                }`}
+                                            >
+                                                {user.is_delete ? "Xóa" : "Hoạt động"}
                                             </TableCell>
-                                            <TableCell className="text-center border">
-                                                <Typography
-                                                    color={"blue-gray"}
-                                                    className="py-0.5 px-2 text-[11px] font-medium w-fit"
-                                                >
-                                                    {date![1] + " " + date![2] + " " + date![3]}
-                                                </Typography>
+                                            <TableCell className="text-red-400 border text-center font-medium text-[11px] ">
+                                                {date![1] + " " + date![2] + " " + date![3]}
                                             </TableCell>
 
                                             {user.user_id === currentId ? (
-                                                <TableCell className="text-left border">
-                                                    <Typography
-                                                        as="text"
-                                                        className="text-xs font-semibold  text-blue-gray-600"
-                                                    >
-                                                        None
-                                                    </Typography>
+                                                <TableCell className="text-right text-xs font-semibold border">
+                                                    None
                                                 </TableCell>
                                             ) : (
-                                                <TableCell className="text-left border">
+                                                <TableCell className="text-right border items-center">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger>
                                                             <GripIcon className="w-5 h-5" />

@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { DeleteModal, Spin, TotalRating, Pagination, UserToolDropdown, VideoPlayerForTrailerTrial } from "../../components";
+import {
+    DeleteModal,
+    Spin,
+    TotalRating,
+    Pagination,
+    UserToolDropdown,
+    VideoPlayerForTrailerTrial,
+} from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 // import AccordionSectionForTrial from "../../components/Accordion/AccordionSectionForTrial";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -21,6 +28,7 @@ import constants from "../../constants";
 import { calDayRemains, getCourseIncludes, convertStringDate } from "../../utils/helper";
 // import { orderLesson } from "../../types/lesson";
 import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
+import "react-quill/dist/quill.snow.css";
 
 import { Tabs, TabsHeader, TabsBody, Tab, TabPanel } from "@material-tailwind/react";
 import {
@@ -55,7 +63,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const navigate = useNavigate();
     const courseDetail: CourseDetailType = useAppSelector((state) => state.courseSlice.courseDetail) ?? {};
-    const courseDetailForTrial: CourseDetailType = useAppSelector((state) => state.courseSlice.courseDetailForTrial) ?? {};
+    const courseDetailForTrial: CourseDetailType =
+        useAppSelector((state) => state.courseSlice.courseDetailForTrial) ?? {};
     const ratings: RatingType[] = useAppSelector((state) => state.ratingSlice.ratings) ?? [];
     const totalRatingPage: number = useAppSelector((state) => state.ratingSlice.totalPage) ?? Number(1);
     const [activeTab, setActiveTab] = useState("Description");
@@ -121,8 +130,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     };
     // const [videoDialog, setVideoDialog] = useState<React.ReactNode | null>(null);
     const [showDialog, setShowDialog] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('');
-    const [descriptionVideo, setDescriptionVideo] = useState('');
+    const [videoUrl, setVideoUrl] = useState("");
+    const [descriptionVideo, setDescriptionVideo] = useState("");
 
     const handleShowVideoDialog = (urlVideo: string, descriptionVideo: string) => {
         setVideoUrl(urlVideo);
@@ -259,16 +268,16 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                             <div className="flex justify-center items-center w-full h-full">
                                 <div className=" flex-1 w-full laptop:max-w-[600px] max-h-[400px] bg-gray-600 rounded-lg relative">
                                     <div className="overflow-hidden">
-                                    <img
-                                        src={courseDetail.thumbnail}
-                                        alt="Thumbnail"
-                                        className={`h-[300px] w-full m-auto rounded-lg tablet:h-[400px] object-contain transition-transform ${isHovered ? "scale-110" : ""}`}
-                                        // style={{maxHeight: "380px", marginTop: "10px" }}
-                                        onMouseEnter={() => setIsHovered(true)}
-                                        onMouseLeave={() => setIsHovered(false)}
-                                    />
+                                        <img
+                                            src={courseDetail.thumbnail}
+                                            alt="Thumbnail"
+                                            className={`h-[300px] w-full m-auto rounded-lg tablet:h-[400px] object-contain transition-transform ${isHovered ? "scale-110" : ""}`}
+                                            // style={{maxHeight: "380px", marginTop: "10px" }}
+                                            onMouseEnter={() => setIsHovered(true)}
+                                            onMouseLeave={() => setIsHovered(false)}
+                                        />
                                     </div>
-                                    
+
                                     <Dialog>
                                         <DialogTrigger>
                                             <div className="flex items-center justify-center absolute top-0 left-0 w-full h-full">
@@ -282,8 +291,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             </div>
                                         </DialogTrigger>
                                         <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
-                                            <DialogTitle className={"text-center"}>This is introduce video about this course</DialogTitle>
-                                            <VideoPlayerForTrailerTrial source={courseDetail.url_trailer}/>
+                                            <DialogTitle className={"text-center"}>
+                                                This is introduce video about this course
+                                            </DialogTitle>
+                                            <VideoPlayerForTrailerTrial source={courseDetail.url_trailer} />
                                         </DialogContent>
                                     </Dialog>
                                 </div>
@@ -470,10 +481,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                             })}
                                                     </ul>
                                                 </div>
-                                                <div className="my-4 description-course">
+                                                <div className="my-4 description-course ql-snow">
                                                     <h2 className=" tablet:text-2xl font-bold mb-3">Mô tả</h2>
                                                     <div
-                                                        className=""
+                                                        className="ql-editor"
                                                         dangerouslySetInnerHTML={{ __html: courseDetail.description }}
                                                     ></div>
                                                 </div>
@@ -604,39 +615,49 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                         Bạn có thể học thử khóa học này dưới đây
                                                     </h2>
                                                     <span className="w-[60px] h-1 bg-black block mb-4"></span>
-                                                    {!courseDetailForTrial.sections || 
-                                                        (courseDetailForTrial.sections.every(section => section.lecture !== undefined && section.lecture.length === 0) && (
+                                                    {!courseDetailForTrial.sections ||
+                                                        (courseDetailForTrial.sections.every(
+                                                            (section) =>
+                                                                section.lecture !== undefined &&
+                                                                section.lecture.length === 0,
+                                                        ) && (
                                                             <p className="mt-4 text-xl text-center text-lightblue font-bold">
-                                                            Khóa học này chưa có nội dung để học thử
-                                                        </p>
-                                                    ))}
-                                                    {courseDetailForTrial.sections?.map((section: Section, index: number) => (
-                                                        <div key={index}>
-                                                            <AccordionSectionForTrial
-                                                                key={section.id * index}
-                                                                isDisplayEdit={false}
-                                                                isDisplayProgress={role === constants.util.ROLE_ENROLLED}
-                                                                section={section}
-                                                                // redirectToWatchVideo={isLogin}
-                                                                handleShowVideoDialog={handleShowVideoDialog}
-                                                            />
-                                                        </div>
-                                                        
-                                                    ))}
+                                                                Khóa học này chưa có nội dung để học thử
+                                                            </p>
+                                                        ))}
+                                                    {courseDetailForTrial.sections?.map(
+                                                        (section: Section, index: number) => (
+                                                            <div key={index}>
+                                                                <AccordionSectionForTrial
+                                                                    key={section.id * index}
+                                                                    isDisplayEdit={false}
+                                                                    isDisplayProgress={
+                                                                        role === constants.util.ROLE_ENROLLED
+                                                                    }
+                                                                    section={section}
+                                                                    // redirectToWatchVideo={isLogin}
+                                                                    handleShowVideoDialog={handleShowVideoDialog}
+                                                                />
+                                                            </div>
+                                                        ),
+                                                    )}
                                                     {showDialog && isLogin && (
                                                         <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
-                                                            <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
-                                                                <DialogTitle className ="text-center">{descriptionVideo.replace(/<[^>]+>/g, '')}</DialogTitle>
+                                                            <DialogContent
+                                                                className={
+                                                                    "lg:max-w-screen-lg overflow-y-scroll max-h-screen"
+                                                                }
+                                                            >
+                                                                <DialogTitle className="text-center">
+                                                                    {descriptionVideo.replace(/<[^>]+>/g, "")}
+                                                                </DialogTitle>
                                                                 <VideoPlayerForTrailerTrial source={videoUrl} />
                                                             </DialogContent>
-                                                            
                                                         </Dialog>
                                                     )}
-                                                    
                                                 </div>
                                             </div>
-                                            <div className="w-1/2 ">
-                                            </div>
+                                            <div className="w-1/2 "></div>
                                         </div>
                                     </TabPanel> */}
                                 </TabsBody>

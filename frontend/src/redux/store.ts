@@ -23,6 +23,7 @@ import progressSlice from "./slices/progress.slice";
 import reactionSlice from "./slices/reaction.slice";
 import commentSlice from "./slices/comment.slice";
 import replyCommentSlice from "./slices/replycomment.slice";
+import certifierSlice from "./slices/certifier.slice";
 
 // import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
 // import { composeWithDevTools } from "redux-devtools-extension";
@@ -53,6 +54,7 @@ const store = configureStore({
         reactionSlice,
         commentSlice,
         replyCommentSlice,
+        certifierSlice,
         // fileStorageSlice: fileStorageSlice,
     },
     middleware: (getDefaultMiddleware) =>

@@ -8,5 +8,6 @@ declare global {
         myBar: Chart;
         myLine: Chart;
         google: any;
+        katex: any;
     }
 }

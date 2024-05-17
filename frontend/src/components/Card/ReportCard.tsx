@@ -17,6 +17,8 @@ import { useAppDispatch } from "../../hooks/hooks";
 import { reportActions } from "../../redux/slices";
 import toast from "react-hot-toast";
 import { ReportType } from "../../types/report";
+import "react-quill/dist/quill.snow.css";
+
 type ReportCardProps = {
     report: ReportType;
 };
@@ -95,9 +97,9 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
                                             <p className="text-lg text-black">Tiêu đề: {report.title}</p>
                                             <p className="text-lg text-black mb-3">Nội dung:</p>
                                         </div>
-                                        <div className="my-4 description-course text-black">
+                                        <div className="my-4 description-course text-black ql-snow">
                                             <div
-                                                className=""
+                                                className="ql-editor"
                                                 dangerouslySetInnerHTML={{ __html: report.content }}
                                             ></div>
                                         </div>

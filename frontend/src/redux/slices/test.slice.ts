@@ -143,7 +143,7 @@ export const testSlice = createSlice({
         },
         setStopTest: (state) => {
             state.testState = 2;
-            const type3Data = processType3Data(state.testResult.test_progress);
+            const type3Data = processType3Data(state.questionList, state.testResult.test_progress);
             const format_test_progress = state.testResult.test_progress
                 .filter((e) => e.type !== 3)
                 .concat(type3Data.length > 0 ? type3Data : []);
@@ -227,7 +227,7 @@ const getQuestionRightCount = (testProgress: TestProgressType[]) => {
     return count;
 };
 
-function processType3Data(data: TestProgressType[]): TestProgressType[] {
+function processType3Data(testDetail: TestDetail[], data: TestProgressType[]): TestProgressType[] {
     if (data.length === 0) return [];
     const type3Data = data.filter((item) => item.type === 3);
     if (type3Data.length === 0) return [];
@@ -243,9 +243,9 @@ function processType3Data(data: TestProgressType[]): TestProgressType[] {
     }, new Map<number, TestProgressType[]>());
 
     const processedData = Array.from(groupedData).map(([quizId, group]) => {
-        console.log(group);
+        const numberAns = testDetail.find((e) => e.quiz_id === quizId)?.quiz_answer.length || 0;
         const totalCorrect = group.reduce((acc, cur) => acc + (cur.is_correct ? 1 : 0), 0);
-        const averageCorrect = totalCorrect / group.length;
+        const averageCorrect = totalCorrect / numberAns;
         const isCorrect = averageCorrect >= 0.5 ? true : false;
         const quizAnswerString = group
             .map((item) => `${item.quiz_answer_string}:${item.is_correct ? "t" : "f"}`)
@@ -262,10 +262,5 @@ function processType3Data(data: TestProgressType[]): TestProgressType[] {
     return processedData.length > 0 ? processedData : [];
 }
 const shuffle = (array: any[]) => {
-    // for (let i = array.length - 1; i > 0; i--) {
-    //     const j = Math.floor(Math.random() * (i + 1));
-    //     [array[i], array[j]] = [array[j], array[i]];
-    // }
-    // return array;
     return array.sort(() => Math.random() - 0.5);
 };

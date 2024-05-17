@@ -23,8 +23,8 @@ type LectureCardType = {
 };
 
 const LectureCard: React.FC<LectureCardType> = (props) => {
-    const progress = useAppSelector((state) => state.progressSlice.progress) || new Map<number, any>();
-    const lectureProgress = progress.get(props.lecture.lecture_id);
+    const progress = useAppSelector((state) => state.progressSlice.progress) || {}; //new Map<number, any>();
+    const lectureProgress = progress[props.lecture.lecture_id];
     const check = lectureProgress ? lectureProgress.is_pass : false;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();

@@ -307,20 +307,17 @@ const Cart: React.FC = () => {
                                 </select>
                             </div> */}
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <CreatableSelect
-                                isClearable
-                                value={selectedVoucher}
-                                onChange={(selectedVoucher) =>handleVoucherChange(selectedVoucher)}
-                                inputValue={couponValue} // Truyền giá trị cho ô nhập
-                                onInputChange={(inputValue) => { setCouponValue(inputValue.toUpperCase()) }}
-                                options={formattedOptions}
-                                className="max-w-xs"
-                            />
+                                <CreatableSelect
+                                    isClearable
+                                    value={selectedVoucher}
+                                    onChange={(selectedVoucher) =>handleVoucherChange(selectedVoucher)}
+                                    inputValue={couponValue} // Truyền giá trị cho ô nhập
+                                    onInputChange={(inputValue) => { setCouponValue(inputValue.toUpperCase()) }}
+                                    options={formattedOptions}
+                                    className="max-w-xs"
 
+                                />
                             </div>
-
-
-
                             <button
                                 className="transition-colors text-center text-sm bg-bluelogo hover:bg-background hover:text-bluelogo hover:border-bluelogo hover:border p-2 rounded-sm w-40 text-white text-hover shadow-md"
                                 style={{ width: '120px' }}

@@ -100,6 +100,11 @@ const restrictCourse = async (values: number) => {
     const reponse = await apiCaller("PATCH", path);
     return reponse;
 };
+const getCertificate = async (values: number) => {
+    const path = `course/${values}/certificate`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const courseApis = {
     createCourse,
     getMyCourses,
@@ -120,6 +125,7 @@ const courseApis = {
     restrictCourse,
     getCourseDetailForTrialLesson,
     getAllEnrolled,
+    getCertificate,
 };
 
 export default courseApis;

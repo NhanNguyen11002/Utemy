@@ -234,7 +234,7 @@ const getTestByTestId = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, JSON.stringify(error), false);
     }
 };
-function processType3Data(data: TestProgressType[]): TestProgressType[] {
+const processType3Data = (data: TestProgressType[]): Promise<TestProgressType>[] => {
     if (data.length === 0) return [];
     const type3Data = data.filter((item) => item.type === 3);
     if (type3Data.length === 0) return [];
@@ -249,9 +249,14 @@ function processType3Data(data: TestProgressType[]): TestProgressType[] {
         return acc;
     }, new Map<number, TestProgressType[]>());
 
-    const processedData = Array.from(groupedData).map(([quizId, group]) => {
+    const processedData = Array.from(groupedData).map(async ([quizId, group]) => {
+        const numAns = await configs.db.quizAnswer.count({
+            where: {
+                quiz_id: quizId,
+            },
+        });
         const totalCorrect = group.reduce((acc, cur) => acc + (cur.is_correct ? 1 : 0), 0);
-        const averageCorrect = totalCorrect / group.length;
+        const averageCorrect = totalCorrect / numAns;
         const isCorrect = averageCorrect >= 0.5 ? true : false;
         const quizAnswerString = group
             .map((item) => `${item.quiz_answer_string}:${item.is_correct ? "t" : "f"}`)
@@ -262,16 +267,15 @@ function processType3Data(data: TestProgressType[]): TestProgressType[] {
             quiz_answer_id: id,
             is_correct: isCorrect,
             type: 3,
-        };
+        } as TestProgressType;
     });
-
-    return processedData.length > 0 ? processedData : [];
-}
+    return processedData;
+};
 const createTestHistory = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const test_id = Number(req.body.test_id);
         const test_progress: TestProgressType[] = req.body.test_progress;
-        const type3Data = processType3Data(test_progress);
+        const type3Data = await Promise.all(processType3Data(test_progress));
         const format_test_progress = test_progress
             .filter((e) => e.type !== 3)
             .concat(type3Data.length > 0 ? type3Data : []);

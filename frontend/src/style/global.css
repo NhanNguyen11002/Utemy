@@ -7,7 +7,9 @@
 html {
     scroll-behavior: smooth;
 }
-
+.ql-tooltip {
+    left: 0 !important;
+}
 .HoverCardContent {
     transform-origin: var(--radix-hover-card-content-transform-origin);
     animation: scaleIn 0.5s ease-out;
@@ -102,6 +104,11 @@ html {
 }
 .description-course h3 {
     @apply text-2xl; /* You can adjust this size as needed */
+}
+.ql-editor img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
 }
 @layer base {
     :root {

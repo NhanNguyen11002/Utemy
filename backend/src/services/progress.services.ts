@@ -31,57 +31,53 @@ const updateProgress = async (req: IRequestWithId): Promise<ResponseBase> => {
     });
     const progressPercent = progressValue / Number(isLectureExist.lesson?.duration);
     const isPass = progressPercent >= 0.85;
+
     if (isProgressExist) {
-        const progressGap = progressValue - Number(isProgressExist.progress_value);
-        if (progressGap <= 45 && progressGap >= 0) {
-            const data = {
-                progress_value: progressValue,
-                progress_percent: progressPercent,
-            };
-            if (!isProgressExist.pass) {
-                const updateProgress = await configs.db.progress.update({
-                    where: {
-                        id: isProgressExist.id,
-                    },
-                    data: {
-                        ...data,
-                        pass: isPass,
-                    },
-                });
-                if (updateProgress) {
-                    return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, {
-                        progressPercent,
-                        progressValue,
-                        isPass,
-                    });
-                } else {
-                    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
-                }
-            } else {
-                const updateProgress = await configs.db.progress.update({
-                    where: {
-                        id: isProgressExist.id,
-                    },
-                    data: {
-                        ...data,
-                    },
-                });
-                if (updateProgress) {
-                    return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, {
-                        progressPercent,
-                        progressValue,
-                    });
-                } else {
-                    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
-                }
-            }
-        } else if (progressGap > 45) {
-            return new ResponseSuccess(200, constants.success.SUCCESS_BUT_NO_UPDATE_PROGRESS, true, {
-                force: true,
-                progress_value: Number(isProgressExist.progress_value),
-            });
-        } else {
+        // console.log("??", isProgressExist.id, isProgressExist.progress_value, progressValue);
+        if (isProgressExist.progress_value > progressValue)
             return new ResponseSuccess(200, constants.success.SUCCESS_BUT_NO_UPDATE_PROGRESS, true);
+        const data = {
+            progress_value: progressValue,
+            progress_percent: progressPercent,
+        };
+        if (!isProgressExist.pass) {
+            const updateProgress = await configs.db.progress.update({
+                where: {
+                    id: isProgressExist.id,
+                },
+                data: {
+                    ...data,
+                    pass: isPass,
+                },
+            });
+            if (updateProgress) {
+                return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, {
+                    lecture_id: isProgressExist.lecture_id,
+                    progress_percent: progressPercent,
+                    progress_value: progressValue,
+                    is_pass: isPass,
+                });
+            } else {
+                return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+            }
+        } else {
+            const updateProgress = await configs.db.progress.update({
+                where: {
+                    id: isProgressExist.id,
+                },
+                data: {
+                    ...data,
+                },
+            });
+            if (updateProgress) {
+                return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, {
+                    lecture_id: isProgressExist.lecture_id,
+                    progress_percent: progressPercent,
+                    progress_value: progressValue,
+                });
+            } else {
+                return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+            }
         }
     } else {
         const createProgress = await configs.db.progress.create({
@@ -95,11 +91,36 @@ const updateProgress = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
         });
         if (createProgress) {
-            return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true, {
-                progressPercent,
-                progressValue,
-                isPass,
+            const getProgress = await configs.db.progress.findFirst({
+                where: {
+                    id: createProgress.id,
+                },
+                include: {
+                    lecture: {
+                        select: {
+                            section_id: true,
+                            lesson: true,
+                            test: true,
+                            type: true,
+                        },
+                    },
+                },
             });
+            if (!getProgress) return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+            const duration =
+                getProgress.lecture.type === "Lesson"
+                    ? getProgress.lecture.lesson?.duration
+                    : getProgress.lecture.test?.duration;
+            const temp = {
+                progress_id: getProgress.id,
+                lecture_id: getProgress.lecture_id,
+                section_id: getProgress.lecture.section_id,
+                is_pass: getProgress.pass,
+                duration,
+                progress_value: getProgress.progress_value,
+                progress_percent: getProgress.progress_percent,
+            };
+            return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true, temp);
         } else {
             return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
         }

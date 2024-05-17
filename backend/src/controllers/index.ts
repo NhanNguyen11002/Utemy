@@ -21,6 +21,7 @@ import ProgressController from "./progress.controller";
 import CommentController from "./comment.controller";
 import ReplyCommentController from "./replycomment.controller";
 import ReactionController from "./reaction.controller";
+import CertifierController from "./certifier.controller";
 export default {
     authController: new AuthController(),
     sectionController: new SectionController(),
@@ -45,4 +46,5 @@ export default {
     commentController: new CommentController(),
     replyCommentController: new ReplyCommentController(),
     reactionController: new ReactionController(),
+    certifierController: new CertifierController(),
 };

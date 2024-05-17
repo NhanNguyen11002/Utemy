@@ -9,6 +9,7 @@ import { quizActions } from "../../redux/slices";
 import { addQuizValidationSchema } from "../../validations/quiz";
 import { checkAnswerArray } from "../../utils/helper";
 import AnswerCardInPopup from "./AnswerCardInPopup";
+import { TextEditorWithImage } from "../../components";
 // import { orderLesson } from "../../types/lesson";
 // trc khi thêm answer mới thì xóa hết anwser cũ
 type QuizEditPopupProps = {
@@ -54,7 +55,7 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
         },
     ];
     const [error, setError] = useState("");
-    const quizRef = useRef<HTMLInputElement>(null);
+    const quizRef = useRef<any>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const inputRightRef = useRef<HTMLInputElement>(null);
     const [add, setAdd] = useState(false);
@@ -62,10 +63,15 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
     const formikRef = useRef(null);
     const [answer, setAnswer] = useState<QuizAnswerType[]>(props.quiz.quiz_answer);
     const [type, setType] = useState(props.quiz.type);
-    const [blank, setBlank] = useState(0);
+    const [content, setContent] = useState(props.quiz.question);
     const initialValue = {
         question: props.quiz.question,
         type: props.quiz.type,
+    };
+    const handleContentChange = (content: string, formik: any) => {
+        const str = content.replace("p>", "span>");
+        formik.setFieldValue("question", str);
+        setContent(str);
     };
     const handleOnSubmit = (values: any) => {
         const data: QuizType = {
@@ -101,7 +107,7 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
                 displayError("Loại câu hỏi điền khuyết yêu cầu ít nhất 1 câu trả lời");
                 return;
             }
-            if (checkAnswerArray(answer) !== blank) {
+            if (checkAnswerArray(answer) !== checkBlankCount()) {
                 displayError("Số lượng câu trả lời đúng phải bằng số lượng khuyết");
                 return;
             }
@@ -163,21 +169,18 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
             const matches = quizRef.current.value.match(regex);
             if (matches) {
                 const num = matches.length;
-                console.log(num);
-                setBlank(num);
-            } else setBlank(0);
+
+                return num;
+            } else return 0;
         }
     };
     const onAddBlank = (formik: any) => {
         if (quizRef.current) {
-            const startPos = quizRef.current.selectionStart;
-            const endPos = quizRef.current.selectionEnd;
-            if (startPos && endPos) {
-                const newValue =
-                    quizRef.current.value.substring(0, startPos) +
-                    "$[...]$" +
-                    quizRef.current.value.substring(endPos, quizRef.current.value.length);
-                quizRef.current.value = newValue;
+            console.log("quizRef", quizRef.current.getEditor());
+            const position = quizRef.current.selection;
+            if (position) {
+                quizRef.current.getEditor().insertText(position, "$[...]$");
+                const newValue = quizRef.current.value;
                 formik.setFieldValue("question", newValue);
             }
         }
@@ -247,17 +250,22 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
                                             Thêm
                                         </button>
                                     </div>
-                                    <Field
-                                        as="textarea"
-                                        innerRef={quizRef}
-                                        onBlur={checkBlankCount}
-                                        name="question"
-                                        placeholder="Tên câu hỏi..."
-                                        className={`w-full px-2 py-2 rounded-lg border-[1px] text-sm outline-none ${
-                                            formik.errors.question && formik.touched.question && "border-error"
-                                        } `}
-                                    />
-                                    <br />
+                                    <div className="mb-12">
+                                        <Field
+                                            component={TextEditorWithImage}
+                                            propRef={quizRef}
+                                            content={content}
+                                            onBlur={checkBlankCount}
+                                            handleChangeContent={(content: string) =>
+                                                handleContentChange(content, formik)
+                                            }
+                                            name="question"
+                                            placeholder="Tên câu hỏi..."
+                                            className={`w-full px-2 py-2 rounded-lg border-[1px] text-sm outline-none ${
+                                                formik.errors.question && formik.touched.question && "border-error"
+                                            } `}
+                                        />
+                                    </div>
                                     <ErrorMessage
                                         name="question"
                                         component="span"

@@ -52,7 +52,7 @@ const success = {
     //report
     SUCCESS_CREATE_REPORT: "Create report successfully",
     SUCCESS_HANDLE_REPORT: "Handle report successfully",
-    
+
     //comment lecture
     SUCCESS_CREATE_COMMENT_LECTURE: "Create comment lecture successfully",
     SUCCESS_UPDATE_COMMENT_LECTURE: "Update comment lecture successfully",
@@ -79,6 +79,6 @@ const success = {
     SUCCESS_GET_DISLIKE: "Get dislike successfully",
     SUCCESS_GET_ALL_DISLIKE: "Get all dislike successfully",
 
-    SUCCESS_BUT_NO_UPDATE_PROGRESS: "Please don't skip the lesson, we will have to force you to the last progress",
+    SUCCESS_BUT_NO_UPDATE_PROGRESS: "No update progresss",
 };
 export default success;

@@ -38,6 +38,8 @@ courseRouter.get("/:slug/rating", controllers.courseController.getListRatingOfCo
 
 courseRouter.get("/:slug/progress", isLogin, controllers.courseController.getProgressByCourseSlug);
 
+courseRouter.get("/:course_id/certificate", isLogin, controllers.courseController.getCertificate);
+
 courseRouter.get("/percent/:slug", controllers.courseController.getRatingPercentOfCourse);
 
 //21. Get user's rating of course
@@ -55,5 +57,6 @@ courseRouter.get("/detail/:course_id", isLogin, isAuthor, controllers.courseCont
 courseRouter.get("/all", controllers.courseController.getAllCourse);
 courseRouter.post("/thumbnail", isLogin, uploadAvatar, controllers.courseController.changeThumbnail);
 courseRouter.get("/:slug", controllers.courseController.getCourseDetail);
+
 courseRouter.get("/trial/:slug", controllers.courseController.getCourseDetailForTrialLesson);
 export default courseRouter;
