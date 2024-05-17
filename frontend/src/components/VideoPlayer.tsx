@@ -21,7 +21,6 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
     const progress = useAppSelector((state) => state.progressSlice.progress);
     const lectureProgress = progress[props.lectureId];
-    const [firstLoad, setFirstLoad] = useState(true);
 
     useEffect(() => {
         if (player) {
@@ -60,10 +59,6 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                 } else return;
             });
             player.on("seeked", () => {
-                if (firstLoad) {
-                    setFirstLoad(false);
-                    return;
-                }
                 if (player.currentTime - lectureProgress.progress_value > 60) {
                     toast("Don't skip video, we will have to force you back", {
                         icon: <TriangleAlert className="fill-yellow-400 " />,
@@ -90,7 +85,6 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     };
 
     useEffect(() => {
-        setFirstLoad(true);
         const videoElement = videoRef.current;
         if (videoElement) {
             videoElement.addEventListener("loadeddata", () => {

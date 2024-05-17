@@ -21,7 +21,8 @@ type SubscribeUserButtonProps = {
 const SubscribeUserButton: React.FC<SubscribeUserButtonProps> = (props) => {
     const dispatch = useAppDispatch();
     const courseId = props.courseDetail.course_id;
-    const isDone = useAppSelector((state) => state.courseSlice.myEnrolled[courseId].is_done) || false;
+    const myEnrolled = useAppSelector((state) => state.courseSlice.myEnrolled[courseId]);
+    const isDone = myEnrolled ? myEnrolled.is_done : false;
     const currentCertificate = useAppSelector((state) => state.courseSlice.currentCertificate);
     console.log(currentCertificate);
     useEffect(() => {
