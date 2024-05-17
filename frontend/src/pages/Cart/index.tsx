@@ -7,6 +7,7 @@ import { cartActions, couponActions, invoiceActions } from "../../redux/slices";
 import { toast } from "react-hot-toast";
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
 import ReCAPTCHA from "react-google-recaptcha";
+import CreatableSelect from 'react-select/creatable';
 
 const getPercentDiscount = (subTotal: number, subTotalRetail: number) => {
     return 100 - Math.ceil((subTotal / subTotalRetail) * 100);
@@ -14,13 +15,22 @@ const getPercentDiscount = (subTotal: number, subTotalRetail: number) => {
 const Cart: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    type OptionType = {
+        value: string;
+        label: string;
+    };
+    const voucherDropdown = useAppSelector((state) => state.couponSlice.voucherDropdown);
+    const formattedOptions: OptionType[] = voucherDropdown.map((voucher) => ({
+        value: voucher.code,
+        label: `${voucher.code} - ${voucher.valid_start} - ${voucher.valid_until} - ${voucher.discount * 100}% off`
+    }));
     const [discountInfo, setDiscountInfo] = useState<{ discount: number, id: number | null } | null>(null);// State để lưu thông tin giảm giá từ server
     const [maxDiscountMoneyInfo, setMaxDiscountMoneyInfo] = useState<{ max_discount_money: number, id: number | null } | null>(null);// State để lưu thông tin giá giảm tối đa từ server
     const [couponError,setCouponError] = useState<string | null>(null);
     const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
     const [couponValue, setCouponValue] = useState("");
     const [showRecaptcha, setShowRecaptcha] = useState(false);
-    const [selectedVoucher, setSelectedVoucher] = useState('');
+    const [selectedVoucher, setSelectedVoucher] = useState(formattedOptions[0]);
 
 
 
@@ -29,7 +39,6 @@ const Cart: React.FC = () => {
     const subTotalRetail = useAppSelector((state) => state.cartSlice.subTotalRetail);
     const isGetLoading = useAppSelector((state) => state.cartSlice.isGetLoading);
 
-    const voucherDropdown = useAppSelector((state) => state.couponSlice.voucherDropdown);
 
         // const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -72,7 +81,7 @@ const Cart: React.FC = () => {
     };
     const handleCheckCoupon = () => {
         // Check if couponValue is empty
-        if (!couponValue.trim()) {
+        if (!selectedVoucher.value.trim()) {
             // Display error toast message if couponValue is empty
             toast.error("Hãy nhập mã trước khi nhấn nút kiểm tra.");
             return;
@@ -82,11 +91,24 @@ const Cart: React.FC = () => {
         // Hiển thị ReCAPTCHA
         setShowRecaptcha(true);
     };
-    const handleVoucherChange = (e: any) => {
-        // Update selected voucher when dropdown value changes
-        setSelectedVoucher(e.target.value);
-        setCouponValue(e.target.value);
+    // const handleVoucherChange = (e: any) => {
+    //     // Update selected voucher when dropdown value changes
+    //     setSelectedVoucher(e.target.value);
+    //     setCouponValue(e.target.value);
+    // };
+    const handleVoucherChange = (selectedOption: OptionType | null) => {
+        if (selectedOption !== null) {
+            setSelectedVoucher(selectedOption);
+            setCouponValue(selectedOption.value);
+            console.log("giá trị:", selectedOption.value)
+        } else {
+            // setSelectedVoucher({ value: '', label: '' });
+            // setCouponValue("");
+        }
     };
+    
+    
+    
     const applyCouponCode = (code: string) => {
             
         // Reset previous error message
@@ -174,6 +196,7 @@ const Cart: React.FC = () => {
         
       },[]);
     let count = 0;
+   
     return (
         <>
             <div className="hidden  w-full h-[80px] bg-background mt-[100px] laptop:flex"></div>
@@ -256,7 +279,7 @@ const Cart: React.FC = () => {
 
                         <div className="flex flex-row items-center justify-between">
                             <p className="text-gray-600">Mã giảm giá</p>
-                            <input
+                            {/* <input
                                 type="text"
                                 value={couponValue}
                                 onChange={(e) => {
@@ -282,6 +305,18 @@ const Cart: React.FC = () => {
                                         </option>
                                     ))}
                                 </select>
+                            </div> */}
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <CreatableSelect
+                                    isClearable
+                                    value={selectedVoucher}
+                                    onChange={(selectedVoucher) =>handleVoucherChange(selectedVoucher)}
+                                    inputValue={couponValue} // Truyền giá trị cho ô nhập
+                                    onInputChange={(inputValue) => { setCouponValue(inputValue.toUpperCase()) }}
+                                    options={formattedOptions}
+                                    className="max-w-xs"
+
+                                />
                             </div>
                             <button
                                 className="transition-colors text-center text-sm bg-bluelogo hover:bg-background hover:text-bluelogo hover:border-bluelogo hover:border p-2 rounded-sm w-40 text-white text-hover shadow-md"
@@ -298,7 +333,7 @@ const Cart: React.FC = () => {
                                     sitekey="6Ldix7QpAAAAAISxU5qJ7Jh4wGTNao6CR50YzCP3"
                                     onChange={(token) => {
                                         console.log('ReCAPTCHA verified, token:', token);
-                                        applyCouponCode(couponValue);
+                                        applyCouponCode(selectedVoucher.value);
                                         setShowRecaptcha(false); // Ẩn ReCAPTCHA sau khi được xác nhận
                                         document.querySelectorAll('iframe[src*=recaptcha]').forEach(a => a.remove());                                    }}
                                 />

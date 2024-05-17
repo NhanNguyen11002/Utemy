@@ -407,6 +407,8 @@ model Coupon {
   invoices Invoice[]
   event_id      Int? @db.Int
   event         Event? @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  ratio  Ratio?  
+
 }
 
 model CouponHistory {
@@ -546,4 +548,11 @@ model Dislike {
   replyCommentLecture   ReplyCommentLecture?  @relation(fields: [reply_id], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())  
   updatedAt DateTime @default(now())
+}
+
+model Ratio {
+  id        Int     @id @default(autoincrement())
+  coupon_id Int     @unique
+  coupon    Coupon  @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
+  ratio     Float?  @db.Float
 }

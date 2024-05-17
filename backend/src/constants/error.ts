@@ -165,5 +165,8 @@ const error = {
     ERROR_DISLIKE_ONCE_TIME: "You just dislike once time",
     ERROR_DISLIKE_NOT_FOUND: "Reaction dislike not found",
 
+    // Coupon
+    ERROR_COUPON_NOT_FOUND: "Coupon for event not found",
+
 };
 export default error;

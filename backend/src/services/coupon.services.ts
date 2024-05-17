@@ -504,6 +504,7 @@ const createCouponOwner = async (req: IRequestWithId, coupon_id: number, event_i
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }
+        console.log(error);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
@@ -598,6 +599,7 @@ const getAllEventCouponByEventId = async (req: IRequestWithId): Promise<Response
                 discount: true,
                 valid_until: true,
                 event_id: true,
+                ratio: true,
             },
         });
         if (!getAllEventCouponByEventId) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
@@ -625,6 +627,9 @@ const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
                     gt: -1,
                 },
             },
+            include: {
+                ratio: true,
+            }
         });
         if (isCouponExist) {
             const isCouponUse = await configs.db.couponHistory.findFirst({
@@ -707,6 +712,123 @@ const getVoucherBySpin = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const createRatio = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: user_id,
+                is_admin: true,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+        const { coupon_id, ratio } = req.body;
+        const isExistCoupon = await configs.db.coupon.findFirst({
+            where: {
+                id: coupon_id,
+                event_id: {
+                    not: null,
+                },
+            },
+        });
+        if (!isExistCoupon) return new ResponseError(400, constants.error.ERROR_COUPON_NOT_FOUND, false);
+        const createRatio = await configs.db.ratio.create({
+            data: {
+                coupon_id: Number(coupon_id),
+                ratio: ratio,
+            },
+        });
+        if (!createRatio) return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true, createRatio);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+
+const updateRatio = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const { ratio, coupon_id } = req.body;
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: user_id,
+                is_admin: true,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+        const isExistCoupon = await configs.db.coupon.findFirst({
+            where: {
+                id: coupon_id,
+                event_id: {
+                    not: null,
+                },
+            },
+        });
+
+        if (!isExistCoupon) {
+            return new ResponseError(400, constants.error.ERROR_COUPON_NOT_FOUND, false);
+        }
+
+        // const isRatioExist = await configs.db.ratio.findUnique({
+        //     where: {
+        //         id: Number(ratio_id),
+        //     },
+        // });
+        // if (!isRatioExist) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const updateRatio = await configs.db.ratio.update({
+            data: {
+                ratio: ratio,
+            },
+            where: {
+                coupon_id: Number(coupon_id),
+            },
+        });
+        if (!updateRatio) return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true, updateRatio);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const deleteRatio = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const { coupon_id } = req.body;
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: user_id,
+                is_admin: true,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+        const isCouponRatioExist = await configs.db.ratio.findUnique({
+            where: {
+                coupon_id: Number(coupon_id),
+            },
+        });
+        if (!isCouponRatioExist) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const deleteRatio = await configs.db.ratio.delete({
+            where: {
+                coupon_id: Number(coupon_id),
+            },
+        });
+        if (!deleteRatio) return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        return new ResponseSuccess(200, constants.success.SUCCESS_DELETE_DATA, true, deleteRatio);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const couponService = {
     createCoupon,
     updateCoupon,
@@ -722,5 +844,8 @@ const couponService = {
     getHistorySpinOfUserForAEvent,
     getVoucherBySpin,
     createHistoryForGoodLuckNextTime,
+    createRatio,
+    updateRatio,
+    deleteRatio,
 };
 export default couponService;

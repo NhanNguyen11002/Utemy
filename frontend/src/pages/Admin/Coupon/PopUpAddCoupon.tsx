@@ -15,6 +15,8 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
     const formikRef = useRef(null);
     const isLoading = useAppSelector((state) => state.couponSlice.isLoading);
     const events = useAppSelector((state) => state.eventSlice.events);
+    const coupons = useAppSelector((state) => state.couponSlice.coupons);
+
     const isGetLoading = useAppSelector((state) => state.couponSlice.isGetLoading);
     const [isChecked, setIsChecked] = useState(false); // State để theo dõi trạng thái của checkbox
     const [selectedEventId, setSelectedEventId] = useState(events.length > 0 ? events[0].event_id : '');
@@ -82,6 +84,13 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
             });
     
             const response = await dispatch(couponActions.createCoupon(formData));
+            if (selectedEventId) {
+                coupons.forEach(coupon => {
+                    if (coupon.event_id === Number(selectedEventId)) {
+                        dispatch(couponActions.deleteRatio({ coupon_id: coupon.coupon_id }));
+                    }
+                });
+            }
     
             if (response.payload && response.payload.status_code === 200) {
                 dispatch(couponActions.getCouponsWithPagination({ searchItem: "", pageIndex: 1 }));
@@ -314,6 +323,13 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                                 ))}
                                             </select>
                                             )}
+                                            <div className="px-6 py-4 whitespace-nowrap text-sm text-red-500">
+                                                Lưu ý: Khi tick chọn sự kiện cho coupon và thêm thành công, toàn bộ tỉ lệ quay từ
+                                                <br />
+                                                các coupon khác của sự kiện tương ứng đều sẽ được reset lại
+                                                <br />
+                                                
+                                            </div>
                                         </div>
                                     </div>
 

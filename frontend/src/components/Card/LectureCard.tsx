@@ -5,16 +5,21 @@ import { Checkbox } from "../ui/checkbox";
 import { lectureActions } from "../../redux/slices";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import constants from "../../constants";
 
 type LectureCardType = {
     lecture: Lecture;
+    commonLectures: any[];
     handleChangeLesson?: (lecture: Lecture) => void;
     handleDisplayDeleteModal?: (id: number, isDeleteSection: boolean) => void;
     handleDisplayEditLecture?: (lectureId: number, type: string) => void;
     redirectToWatchVideo?: boolean;
+    // showWatchVideoButton?:boolean;
     lectureId?: number;
     isDisplayEdit: boolean;
     isDisplayProgress: boolean;
+    handleShowVideoDialog?: (url_video: string, description: string) => void;
+
 };
 
 const LectureCard: React.FC<LectureCardType> = (props) => {
@@ -24,6 +29,11 @@ const LectureCard: React.FC<LectureCardType> = (props) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const slug: string = useAppSelector((state) => state.courseSlice.courseDetail.slug) ?? {};
+    const isCommonLecture = props.commonLectures.some(
+        (commonLecture) => commonLecture.lecture_id === props.lecture.lecture_id
+    );
+    const role: string = useAppSelector((state) => state.courseSlice.role) ?? "Unenrolled";
+
     return (
         <div
             className={`flex w-full border-y ${
@@ -37,6 +47,18 @@ const LectureCard: React.FC<LectureCardType> = (props) => {
                     dispatch(lectureActions.setLecture(props.lecture));
                     navigate(`/course-detail/${slug}/watch`);
                 }
+                
+                if (props.handleShowVideoDialog && props.commonLectures) {
+                    props.commonLectures.forEach((lecture: any) => {
+                        if (lecture.lecture_id === props.lecture.lecture_id) {
+                            if (props.handleShowVideoDialog) {
+                                props.handleShowVideoDialog(lecture.content.url_video, lecture.content.description);
+                            }
+                        }
+                    });
+                }
+                
+                
             }}
             key={`${props.lecture.lecture_id}`}
         >
@@ -69,6 +91,11 @@ const LectureCard: React.FC<LectureCardType> = (props) => {
                             </>
                         )}
                     </div>
+                    {isCommonLecture && role !== constants.util.ROLE_ENROLLED && (
+                        <p className="text-sm text-blue-500 cursor-pointer">
+                            Học thử tại đây
+                        </p>
+                    )}
                 </div>
                 {props.isDisplayEdit && (
                     <div className="flex gap-2 items-center pr-6">

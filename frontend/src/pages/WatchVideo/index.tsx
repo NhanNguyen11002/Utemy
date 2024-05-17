@@ -201,7 +201,7 @@ const WatchVideo: React.FC = () => {
                 )}
 
                 {/* Hiển thị danh sách bình luận */}
-                <div className="mt-6">
+                <div className="mt-6  ml-16 mr-8">
                     <h2 className="tablet:text-2xl font-bold mb-3">Bình luận</h2>
                     {comments.map((comment, index) => (
                         <CommentLectureCard

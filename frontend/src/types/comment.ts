@@ -32,3 +32,4 @@ export type CreateUpdateComment = {
     likes_count: number;
     dislikes_count: number;
 }
+

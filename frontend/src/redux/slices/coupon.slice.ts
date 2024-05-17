@@ -151,6 +151,40 @@ export const getCouponsWithPagination = createAsyncThunk<
         return ThunkAPI.rejectWithValue(error.data as Response<null>);
     }
 });
+
+export const createRatio = createAsyncThunk<Response<null>, { coupon_id: number, ratio: number }, { rejectValue: Response<null> }>(
+  "coupon/ratio/create",
+  async ({ coupon_id, ratio }, thunkAPI) => { // Change the parameter to underscore (_) to indicate it's unused
+    try {
+      const response = await apis.couponApis.createRatio(coupon_id, ratio);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.data);
+    }
+  },
+);
+export const updateRatio = createAsyncThunk<Response<null>, { coupon_id: number, ratio: number }, { rejectValue: Response<null> }>(
+  "coupon/ratio/update",
+  async ({ coupon_id, ratio }, thunkAPI) => { // Change the parameter to underscore (_) to indicate it's unused
+    try {
+      const response = await apis.couponApis.updateRatio(coupon_id, ratio);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.data);
+    }
+  },
+);
+export const deleteRatio = createAsyncThunk<Response<null>, { coupon_id: number }, { rejectValue: Response<null> }>(
+  "coupon/ratio/delete",
+  async ({ coupon_id }, thunkAPI) => { // Change the parameter to underscore (_) to indicate it's unused
+    try {
+      const response = await apis.couponApis.deleteRatio(coupon_id);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.data);
+    }
+  },
+);
 type CouponSliceType = {
   coupon: Coupon;
   coupons: Coupon[];
@@ -158,7 +192,8 @@ type CouponSliceType = {
   totalRecord: number;
   isLoading: boolean;
   isGetLoading: boolean;
-  eventCoupons: Coupon[]
+  eventCoupons: Coupon[];
+  eventCPRatio: Coupon[];
   voucherDropdown: VoucherDropdown[]
 };
 const initialState: CouponSliceType = {
@@ -175,12 +210,14 @@ const initialState: CouponSliceType = {
     is_event: false,
     max_discount_money: 0,
     event_id: null,
-    event_name: null
+    event_name: null,
+    ratio: null
   },
   coupons: [],
   totalPage: 0,
   totalRecord: 0,
-  voucherDropdown: []
+  voucherDropdown: [],
+  eventCPRatio: []
 };
 
 const couponSlice = createSlice({
@@ -201,6 +238,17 @@ const couponSlice = createSlice({
         state.eventCoupons = action.payload;
       })
       .addCase(getAllEventCoupon.rejected, (state) => {
+        state.isLoading = false;
+        // Handle rejection if needed
+      })
+      .addCase(getAllEventCouponByEventId.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllEventCouponByEventId.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.eventCPRatio = action.payload;
+      })
+      .addCase(getAllEventCouponByEventId.rejected, (state) => {
         state.isLoading = false;
         // Handle rejection if needed
       })
@@ -302,7 +350,34 @@ const couponSlice = createSlice({
       })
       .addCase(getVoucherBySpin.rejected, (state) => {
         state.isLoading = false;
-      });
+      })
+      .addCase(createRatio.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createRatio.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(createRatio.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(updateRatio.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateRatio.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(updateRatio.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(deleteRatio.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteRatio.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(deleteRatio.rejected, (state) => {
+        state.isLoading = false;
+      })
   },
 });
 
