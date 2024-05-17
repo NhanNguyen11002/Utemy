@@ -104,4 +104,16 @@ export default class CouponController {
         const response: ResponseBase = await services.CouponServices.getVoucherBySpin(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async createRatio(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.createRatio(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async updateRatio(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.updateRatio(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async deleteRatio(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.deleteRatio(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

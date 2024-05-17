@@ -294,7 +294,7 @@ const HuntCoupon = () => {
           <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={30} className="border-red-500" style ={{backgroundImage: `url(${images.QuillLetterReflect})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
           <div className="flex h-full items-center justify-center ">
-              <div style={{ marginRight: '300px',marginLeft: '100px', marginTop: '-100px', fontSize: '1.2rem', fontFamily:'monospace' }}>
+              <div style={{ marginRight: '300px',marginLeft: '100px', marginTop: '-100px', fontSize: '0.8rem', fontFamily:'monospace' }}>
                 {eventForSpin.description}
               </div>              
               </div>
@@ -313,7 +313,7 @@ const HuntCoupon = () => {
             {/* <ResizableHandle /> */}
             <ResizablePanel defaultSize={30} className="border-red-500" style ={{backgroundImage: `url(${images.QuillLetter})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
             <div className="flex h-full items-center justify-center ">
-              <div style={{ marginRight: '100px',marginLeft: '300px', marginTop: '-100px', fontSize: '0.9rem', fontFamily:'monospace' }}>
+              <div style={{ marginRight: '100px',marginLeft: '300px', marginTop: '-100px', fontSize: '0.8rem', fontFamily:'monospace' }}>
                 <h2>Danh sách phần thưởng:</h2>
                 <ul>
                   {discounts.map((discount, index) => (

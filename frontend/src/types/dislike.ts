@@ -7,3 +7,10 @@ export type Dislike = {
     reply_id: number | null;
     updatedAt: string;
 }
+export type Reaction = {
+    id: number;
+    user: OwnerReply;
+    comment_id: number;
+    reply_id: number | null;
+    updatedAt: string;
+};

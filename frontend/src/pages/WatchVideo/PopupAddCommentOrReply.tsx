@@ -17,7 +17,7 @@ const PopUpAddCommentOrReply: React.FC<PopUpAddCommentOrReplyProps> = ({ onSave,
 
     return (
         <div className="flex items-center justify-between w-full h-full rounded-lg my-0">
-            <div className="w-full py-2 px-6 h-full bg-navyhover/30 rounded-lg my-1">
+            <div className="w-full py-2 px-6 h-full bg-white rounded-lg my-1 border border-gray-300">
                 <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
