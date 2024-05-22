@@ -30,7 +30,9 @@ export type Course = {
     sections?: Section[];
     requirement?: any;
     study?: any;
+    test?: any;
     approval?: Approval[];
+    final_test_id?: number | null;
     url_trailer: string;
 };
 export type PagingCourse = {

@@ -22,13 +22,12 @@ const SubscribeUserButton: React.FC<SubscribeUserButtonProps> = (props) => {
     const dispatch = useAppDispatch();
     const courseId = props.courseDetail.course_id;
     const myEnrolled = useAppSelector((state) => state.courseSlice.myEnrolled[courseId]);
-    const isDone = myEnrolled ? myEnrolled.is_done : false;
+    const isPass = myEnrolled ? myEnrolled.is_pass : false;
     const currentCertificate = useAppSelector((state) => state.courseSlice.currentCertificate);
-    console.log(currentCertificate);
     useEffect(() => {
         // dispatch get certificate public id
-        if (isDone) dispatch(courseActions.getCertificate(courseId));
-    }, [dispatch, isDone, courseId]);
+        if (isPass) dispatch(courseActions.getCertificate(courseId));
+    }, [dispatch, isPass, courseId]);
 
     const handleViewCertificate = () => {
         console.log(currentCertificate);
@@ -44,7 +43,7 @@ const SubscribeUserButton: React.FC<SubscribeUserButtonProps> = (props) => {
                             <span className="text-white">Chuyển đến khóa học</span>
                         </Link>
                     </button>
-                    {isDone && (
+                    {isPass && (
                         <Dialog>
                             <DialogTrigger asChild>
                                 <button type="button" className=" btn btn-sm bg-green-400 text-white  ">

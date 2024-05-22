@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ArrowPathIcon, DocumentCheckIcon, FaceSmileIcon, FaceFrownIcon } from "@heroicons/react/24/outline";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { testActions } from "../../redux/slices";
+import { testActions, courseActions } from "../../redux/slices";
+import constants from "../../constants";
 const AfterTestGround: React.FC = () => {
     const dispatch = useAppDispatch();
     const afterTest = useAppSelector((state) => state.testSlice.afterTest);
     const passPercent = useAppSelector((state) => state.testSlice.test.pass_percent);
     const questionCount = useAppSelector((state) => state.testSlice.questionCount);
     const testId = useAppSelector((state) => state.testSlice.test.test_id);
+    const courseId = useAppSelector((state) => state.courseSlice.courseDetail.course_id);
+    const lecture = useAppSelector((state) => state.lectureSlice.lecture);
+    const role = useAppSelector((state) => state.courseSlice.role) || "Unerolled";
+    console.log("type", lecture.type);
+    useEffect(() => {
+        if (
+            afterTest.totalPercent >= passPercent &&
+            lecture.type === "Final Test" &&
+            role === constants.util.ROLE_ENROLLED
+        )
+            dispatch(courseActions.setPassCourse(courseId));
+    }, [dispatch, courseId]);
     return (
         <>
             <div className="w-full h-[700px] flex flex-col items-center justify-center bg-white round border-gray-400 border">

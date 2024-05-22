@@ -29,6 +29,8 @@ export type CourseDetail = {
     requirement?: Prisma.JsonValue;
     study?: Prisma.JsonValue;
     approval?: Approval[];
+    final_test_id?: number | null;
+    test?: any;
 };
 
 export type CourseInfo = {

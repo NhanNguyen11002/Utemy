@@ -1,3 +1,4 @@
+import { CreateTestType } from "../types/test";
 import apiCaller from "../api-config/apiCaller";
 import { AddPromotion, SearchMyCourseEnrolledCourse, SearchAllCourses, UpdateTargetCourse } from "../types/course";
 
@@ -105,6 +106,31 @@ const getCertificate = async (values: number) => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const createFinalTest = async (values: CreateTestType) => {
+    const path = `course/final`;
+    const reponse = await apiCaller("POST", path, values);
+    return reponse;
+};
+const updateFinalTest = async (values: CreateTestType) => {
+    const path = `course/final/${values.course_id}`;
+    const reponse = await apiCaller("PATCH", path, values);
+    return reponse;
+};
+const deleteFinalTest = async (values: number) => {
+    const path = `course/final/${values}`;
+    const reponse = await apiCaller("DELETE", path);
+    return reponse;
+};
+const setDoneCourse = async (values: number) => {
+    const path = `course/done/${values}`;
+    const reponse = await apiCaller("PATCH", path);
+    return reponse;
+};
+const getFinalTestByCourseId = async (values: number) => {
+    const path = `course/final/${values}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const courseApis = {
     createCourse,
     getMyCourses,
@@ -126,6 +152,11 @@ const courseApis = {
     getCourseDetailForTrialLesson,
     getAllEnrolled,
     getCertificate,
+    createFinalTest,
+    updateFinalTest,
+    deleteFinalTest,
+    setDoneCourse,
+    getFinalTestByCourseId,
 };
 
 export default courseApis;

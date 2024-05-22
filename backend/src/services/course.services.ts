@@ -1002,6 +1002,7 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                         id: true,
                     },
                 },
+                test: true,
             },
         });
 
@@ -1041,6 +1042,19 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     number_of_section += 1;
                     number_of_lecture += section.lecture.length;
                 });
+                let test;
+                if (course.test)
+                    test = {
+                        test_id: course.test.id,
+                        title: course.test.title,
+                        description: course.test.description,
+                        is_time_limit: course.test.is_time_limit,
+                        duration: course.test.duration,
+                        pass_percent: course.test.pass_percent,
+                        quiz_group_id: course.test.quiz_group_id,
+                        number_of_question: course.test.number_of_question,
+                    };
+                else test = null;
                 const courseData: CourseDetail = {
                     course_id: course.id,
                     title: course.title,
@@ -1061,6 +1075,8 @@ const getCourseDetail = async (req: IRequestWithId): Promise<ResponseBase> => {
                     sale_price: course.sale_price,
                     sale_until: course.sale_until,
                     slug: course.slug,
+                    final_test_id: course.final_test_id,
+                    test,
                     updated_at: course.updated_at.toString(),
                     requirement: JSON.parse(course.requirement as string),
                     study: JSON.parse(course.study as string),
@@ -1129,6 +1145,7 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                         is_handle: false,
                     },
                 },
+                test: true,
             },
         });
 
@@ -1170,6 +1187,18 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                     };
                     return temp;
                 });
+                let test;
+                if (course.test)
+                    test = {
+                        test_id: course.test.id,
+                        title: course.test.title,
+                        description: course.test.description,
+                        is_time_limit: course.test.is_time_limit,
+                        duration: course.test.duration,
+                        pass_percent: course.test.pass_percent,
+                        quiz_group_id: course.test.quiz_group_id,
+                    };
+                else test = null;
                 const courseData: CourseDetail = {
                     course_id: course.id,
                     title: course.title,
@@ -1189,6 +1218,8 @@ const getCourseDetailById = async (req: IRequestWithId): Promise<ResponseBase> =
                     sale_price: course.sale_price,
                     sale_until: course.sale_until,
                     slug: course.slug,
+                    final_test_id: course.final_test_id,
+                    test,
                     requirement: JSON.parse(course.requirement as string),
                     study: JSON.parse(course.study as string),
                 };
@@ -1758,6 +1789,7 @@ const getCourseDetailForTrialLesson = async (req: IRequestWithId): Promise<Respo
                     sale_price: course.sale_price,
                     sale_until: course.sale_until,
                     slug: course.slug,
+                    final_test_id: course.final_test_id,
                     updated_at: course.updated_at.toString(),
                     requirement: JSON.parse(course.requirement as string),
                     study: JSON.parse(course.study as string),
@@ -1820,6 +1852,247 @@ const getCertificate = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const createFinalTest = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const content = req.body;
+        const courseId = Number(content.course_id);
+        const title = content.title;
+        const duration = Number(content.duration) * 60;
+        const description = content.description;
+        const pass_percent = Number((Number(content.pass_percent) / 100).toFixed(2));
+        const quiz_group_id = Number(content.quiz_group_id);
+        const is_time_limit = content.is_time_limit === "true" ? true : false;
+        const quizList = await configs.db.quiz.findMany({
+            where: {
+                quiz_group_id,
+                is_delete: false,
+            },
+        });
+        const isCourseExist = await configs.db.course.findFirst({
+            where: {
+                id: courseId,
+            },
+        });
+        if (!isCourseExist) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const createTest = await configs.db.test.create({
+            data: {
+                title,
+                duration: duration.toString(),
+                description,
+                pass_percent,
+                quiz_group_id,
+                number_of_question: quizList.length,
+                is_time_limit,
+            },
+        });
+        const updateCourse = await configs.db.course.update({
+            where: {
+                id: courseId,
+            },
+            data: {
+                final_test_id: createTest.id,
+            },
+        });
+        const createTestDetailData = quizList.map((quiz) => {
+            const temp = {
+                test_id: createTest.id,
+                quiz_id: quiz.id,
+            };
+            return temp;
+        });
+        const createTestDetail = await configs.db.testDetail.createMany({
+            data: createTestDetailData,
+        });
+        if (!createTestDetail) {
+            return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        } else {
+            return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
+        }
+    } catch (error) {
+        return new ResponseError(500, JSON.stringify(error), false);
+    }
+};
+const updateFinalTest = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const content = req.body;
+        const courseId = Number(req.params.course_id);
+        const title = content.title;
+        const duration = Number(content.duration) * 60;
+        const description = content.description;
+        const pass_percent = Number((Number(content.pass_percent) / 100).toFixed(2));
+        const quiz_group_id = Number(content.quiz_group_id);
+        const is_time_limit = content.is_time_limit === "true" ? true : false;
+        const quizList = await configs.db.quiz.findMany({
+            where: {
+                quiz_group_id,
+                is_delete: false,
+            },
+        });
+        const isExistCourse = await configs.db.course.findUnique({
+            where: {
+                id: courseId,
+            },
+        });
+        if (!isExistCourse || !isExistCourse.final_test_id)
+            return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const isExistTest = await configs.db.test.findFirst({
+            where: {
+                id: isExistCourse.final_test_id,
+                is_delete: false,
+            },
+        });
+        if (!isExistTest) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const updateTest = await configs.db.test.update({
+            data: {
+                title,
+                duration: duration.toString(),
+                description,
+                pass_percent,
+                quiz_group_id,
+                number_of_question: quizList.length,
+                is_time_limit,
+            },
+            where: {
+                id: isExistTest.id,
+            },
+        });
+        if (!updateTest) return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        if (quiz_group_id !== isExistTest?.quiz_group_id) {
+            const createTestDetailData = quizList.map((quiz) => {
+                const temp = {
+                    test_id: updateTest.id,
+                    quiz_id: quiz.id,
+                };
+                return temp;
+            });
+            const clearOldTestDetail = await configs.db.testDetail.deleteMany({
+                where: {
+                    test_id: isExistTest.id,
+                },
+            });
+            const createTestDetail = await configs.db.testDetail.createMany({
+                data: createTestDetailData,
+            });
+            if (!createTestDetail) {
+                return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+            } else {
+                return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+            }
+        }
+        return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+    } catch (error) {
+        return new ResponseError(500, JSON.stringify(error), false);
+    }
+};
+const deleteFinalTest = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const courseId = Number(req.params.course_id);
+        const isExistCourse = await configs.db.course.findFirst({
+            where: {
+                id: courseId,
+                is_delete: false,
+            },
+        });
+        if (!isExistCourse) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        if (!isExistCourse.final_test_id) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const isExistTest = await configs.db.test.findFirst({
+            where: {
+                id: isExistCourse.final_test_id,
+            },
+        });
+        if (!isExistTest) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const deleteTest = await configs.db.test.update({
+            where: {
+                id: isExistTest.id,
+            },
+            data: {
+                is_delete: true,
+            },
+        });
+
+        if (deleteTest) {
+            const updateCourse = await configs.db.course.update({
+                where: {
+                    id: isExistCourse.id,
+                },
+                data: {
+                    final_test_id: null,
+                },
+            });
+            const deleteTestDetail = await configs.db.testDetail.deleteMany({
+                where: {
+                    test_id: deleteTest.id,
+                },
+            });
+            return new ResponseSuccess(200, constants.success.SUCCESS_DELETE_DATA, true);
+        } else {
+            return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        }
+    } catch (error) {
+        return new ResponseError(500, JSON.stringify(error), false);
+    }
+};
+const getFinalTestByCourseId = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const courseId = Number(req.params.course_id);
+        const isExistCourse = await configs.db.course.findFirst({
+            where: {
+                id: courseId,
+                is_delete: false,
+            },
+        });
+        if (!isExistCourse) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        if (!isExistCourse.final_test_id) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const isExistTest = await configs.db.test.findFirst({
+            where: {
+                id: isExistCourse.final_test_id,
+            },
+        });
+        if (!isExistTest) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const data = {
+            test_id: isExistTest.id,
+            title: isExistTest.title,
+            description: isExistTest.description,
+            is_time_limit: isExistTest.is_time_limit,
+            duration: isExistTest.duration,
+            pass_percent: isExistTest.pass_percent,
+            quiz_group_id: isExistTest.quiz_group_id,
+        };
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
+    } catch (error) {
+        return new ResponseError(500, JSON.stringify(error), false);
+    }
+};
+const setDoneCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const courseId = Number(req.params.course_id);
+        const userId = Number(req.user_id);
+        const isExistEnrolled = await configs.db.enrolled.findFirst({
+            where: {
+                course_id: courseId,
+                user_id: userId,
+                is_done: false,
+            },
+        });
+        if (!isExistEnrolled) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const setDoneCourse = await configs.db.enrolled.update({
+            where: {
+                id: isExistEnrolled.id,
+            },
+            data: {
+                is_done: true,
+            },
+        });
+
+        if (setDoneCourse) {
+            return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+        } else {
+            return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        }
+    } catch (error) {
+        return new ResponseError(500, JSON.stringify(error), false);
+    }
+};
 const CourseServices = {
     getRightOfCourse,
     createCourse,
@@ -1847,6 +2120,11 @@ const CourseServices = {
     getCourseDetailForTrialLesson,
     getAllEnrolled,
     getCertificate,
+    createFinalTest,
+    updateFinalTest,
+    deleteFinalTest,
+    setDoneCourse,
+    getFinalTestByCourseId,
 };
 
 export default CourseServices;

@@ -12,6 +12,7 @@ import {
 } from "../../types/course";
 import apis from "../../api";
 import { Approval } from "../../types/approval";
+import { CreateTestType } from "../../types/test";
 
 type CourseSliceType = {
     courseDetail: Course;
@@ -28,6 +29,7 @@ type CourseSliceType = {
     role: string;
     myEnrolled: any;
     currentCertificate: string;
+    isFirstPass: boolean;
 };
 
 const initialState: CourseSliceType = {
@@ -61,6 +63,8 @@ const initialState: CourseSliceType = {
         study: "",
         approval: [],
         url_trailer: "",
+        final_test_id: null,
+        test: null,
     },
     courseDetailForTrial: {
         course_id: 0,
@@ -105,6 +109,7 @@ const initialState: CourseSliceType = {
     isGetLoading: false,
     isUpload: false,
     currentCertificate: "",
+    isFirstPass: false,
 };
 export const createCourses = createAsyncThunk<Response<null>, FormData, { rejectValue: Response<null> }>(
     "course/create",
@@ -330,6 +335,61 @@ export const getCertificate = createAsyncThunk<Response<any>, number, { rejectVa
         }
     },
 );
+export const createFinalTest = createAsyncThunk<Response<any>, CreateTestType, { rejectValue: Response<null> }>(
+    "course/final/create",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.createFinalTest(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const updateFinalTest = createAsyncThunk<Response<any>, CreateTestType, { rejectValue: Response<null> }>(
+    "course/final/update",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.updateFinalTest(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const deleteFinalTest = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "course/final/delete",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.deleteFinalTest(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const setDoneCourse = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "course/done",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.setDoneCourse(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getFinalTestByCourseId = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "course/final/get",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.getFinalTestByCourseId(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 export const courseSlice = createSlice({
     name: "course",
     initialState,
@@ -348,6 +408,20 @@ export const courseSlice = createSlice({
         },
         setCurrentCertificate: (state, action) => {
             state.currentCertificate = action.payload;
+        },
+        setIsFirstPass: (state, action) => {
+            state.isFirstPass = action.payload;
+        },
+        setClearFinalTest: (state) => {
+            state.courseDetail.test = null;
+            state.courseDetail.final_test_id = null;
+        },
+        setPassCourse: (state, action) => {
+            const courseId = action.payload;
+            const currState = state.myEnrolled[courseId];
+            if (!currState) return;
+            const copy = { ...currState, is_pass: true };
+            state.myEnrolled[courseId] = copy;
         },
     },
     extraReducers: (builder) => {
@@ -394,6 +468,11 @@ export const courseSlice = createSlice({
         });
         builder.addCase(getCourseDetail.fulfilled, (state, action) => {
             state.courseDetail = action.payload.data as Course;
+            const courseId = action.payload.data?.course_id;
+            if (courseId) {
+                const isFirstPass = state.myEnrolled[courseId] ? !state.myEnrolled[courseId].is_pass : false;
+                state.isFirstPass = isFirstPass;
+            }
             state.isGetLoading = false;
         });
         builder.addCase(getCourseDetail.rejected, (state) => {
@@ -537,10 +616,63 @@ export const courseSlice = createSlice({
         builder.addCase(getCertificate.rejected, (state) => {
             state.isLoading = false;
         });
+        builder.addCase(createFinalTest.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(createFinalTest.fulfilled, (state, action) => {
+            state.isLoading = false;
+        });
+        builder.addCase(createFinalTest.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(updateFinalTest.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(updateFinalTest.fulfilled, (state, action) => {
+            state.isLoading = false;
+        });
+        builder.addCase(updateFinalTest.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(deleteFinalTest.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(deleteFinalTest.fulfilled, (state, action) => {
+            state.isLoading = false;
+        });
+        builder.addCase(deleteFinalTest.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(setDoneCourse.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(setDoneCourse.fulfilled, (state, action) => {
+            state.isLoading = false;
+        });
+        builder.addCase(setDoneCourse.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(getFinalTestByCourseId.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(getFinalTestByCourseId.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.courseDetail.test = action.payload.data;
+        });
+        builder.addCase(getFinalTestByCourseId.rejected, (state) => {
+            state.isLoading = false;
+        });
     },
 });
 
-export const { setStudyAndRequirement, setSalePriceAndDate, setApprovalCourseDetail, setCurrentCertificate } =
-    courseSlice.actions;
+export const {
+    setStudyAndRequirement,
+    setSalePriceAndDate,
+    setApprovalCourseDetail,
+    setCurrentCertificate,
+    setIsFirstPass,
+    setClearFinalTest,
+    setPassCourse,
+} = courseSlice.actions;
 
 export default courseSlice.reducer;

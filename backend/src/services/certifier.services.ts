@@ -30,7 +30,8 @@ const sendCertifier = async (req: IRequestWithId): Promise<ResponseBase> => {
         where: {
             course_id: courseId,
             user_id: userId,
-            is_done: false,
+            is_done: true,
+            is_pass: false,
         },
     });
     if (!isEnrolled) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
@@ -57,7 +58,7 @@ const sendCertifier = async (req: IRequestWithId): Promise<ResponseBase> => {
         console.log("error created", createCertificate.data.error.message);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
-    console.log("created data", createCertificate.data);
+    // console.log("created data", createCertificate.data);
 
     const uniqueId = createCertificate.data.id;
     const publicId = createCertificate.data.publicId;
