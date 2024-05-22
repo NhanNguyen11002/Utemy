@@ -4,7 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { images } from "../../assets";
 import UserDropDown from "../Dropdown/UserDropDown";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { certifierActions, courseActions } from "../../redux/slices";
+import { courseActions, certifierActions } from "../../redux/slices";
 import { Course } from "../../types/course";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -25,31 +25,51 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
     const courseId = useAppSelector((state) => state.courseSlice.courseDetail.course_id);
     const myEnrolleDetail = useAppSelector((state) => state.courseSlice.myEnrolled[courseId]);
     const isDone = myEnrolleDetail ? myEnrolleDetail.is_done : false;
+    const isPass = myEnrolleDetail ? myEnrolleDetail.is_pass : false;
+    const isFirstPass = useAppSelector((state) => state.courseSlice.isFirstPass);
     const userId = useAppSelector((state) => state.authSlice.user.user_id) || 0;
-    console.log(
-        "my enrolled",
-        useAppSelector((state) => state.courseSlice.myEnrolled[courseId]),
-    );
+
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+        if (role !== constants.util.ROLE_ENROLLED) return;
         //hoc xong, luc isDone
         if (overallProgress === number_of_lecture && !isDone) {
-            console.log("overall progress=number of lecture");
-            // dispatch send certifier then get all enrolled
-            dispatch(certifierActions.sendCertifier(courseId)).then((res) => {
+            dispatch(courseActions.setDoneCourse(courseId)).then((res) => {
                 if (res.payload?.status_code === 200) {
-                    toast("Chúc mừng bạn đã hoàn thành khoá học, chúng tôi sẽ gửi chứng chỉ về địa chỉ mail của bạn", {
-                        icon: "🥳\n🥳\n🥳",
-                        duration: 10000,
-                    });
+                    toast(
+                        "Bạn đã hoàn thành khoá học, bài kiểm tra toàn khoá học đã được mở, hoàn thành ngay để nhận chứng chỉ",
+                        {
+                            icon: "🤓",
+                            duration: 10000,
+                        },
+                    );
                     dispatch(courseActions.getAllEnrolled());
-                    dispatch(courseActions.setCurrentCertificate(res.payload.data.public_id));
                 }
             });
         }
     }, [dispatch, overallProgress, courseId]);
     useEffect(() => {
+        if (role !== constants.util.ROLE_ENROLLED) return;
+        if (isFirstPass && isPass) {
+            dispatch(certifierActions.sendCertifier(courseId)).then((res) => {
+                if (res.payload?.status_code === 200) {
+                    toast(
+                        "Chúc mừng bạn đã vượt qua bài kiểm tra cuối khoá, sẽ có một bản chứng chỉ được gửi đến email của bạn",
+                        {
+                            icon: "🥳",
+                            duration: 10000,
+                        },
+                    );
+                    dispatch(courseActions.getAllEnrolled());
+                    dispatch(courseActions.setCurrentCertificate(res.payload.data.public_id));
+                    dispatch(courseActions.setIsFirstPass(false));
+                }
+            });
+        }
+    }, [dispatch, isPass]);
+    useEffect(() => {
+        if (role !== constants.util.ROLE_ENROLLED) return;
         dispatch(courseActions.getAllEnrolled());
     }, [dispatch, userId]);
     return (

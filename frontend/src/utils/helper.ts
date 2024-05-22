@@ -191,6 +191,12 @@ export const courseSetupProgress = (course: Course) => {
             denominator++;
         }
     }
+    if (!course.final_test_id) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
     const ob = getCourseIncludes(course);
     if (ob.lessonCount === 0) {
         denominator++;

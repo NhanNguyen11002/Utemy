@@ -88,6 +88,8 @@ model Course {
   requirement        Json?
   url_trailer        String   @db.Text
 
+  final_test_id Int? @unique
+  test Test? @relation(fields: [final_test_id], references: [id], onDelete: SetNull)
   
 
   user User @relation(fields: [author_id], references: [id])
@@ -186,7 +188,8 @@ model Test {
   updated_at         DateTime      @updatedAt
   lecture_id         Int?          @unique
   lecture            Lecture?      @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
-  quiz_group         QuizGroup     @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade)
+  quiz_group         QuizGroup     @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade) 
+  course Course? 
   test_detail        TestDetail[]
   test_history       TestHistory[]
 }
@@ -314,6 +317,7 @@ model Enrolled {
   user_id    Int
   course_id  Int
   is_done Boolean @default(false)
+  is_pass Boolean @default(false)
   course     Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

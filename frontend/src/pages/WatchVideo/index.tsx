@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { courseActions, lectureActions, testActions, progressActions, commentActions } from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
-import { VideoPlayer, Spin, WatchVideoHeader, UserToolDropdown } from "../../components";
+import { VideoPlayer, Spin, WatchVideoHeader, UserToolDropdown, FinalTestCard } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 import { Section } from "../../types/section";
 import constants from "../../constants";
@@ -16,6 +16,7 @@ import HistoryTest from "./HistoryTest";
 import CommentLectureCard from "./CommentLectureCard";
 import PopUpAddComment from "./PopupAddCommentOrReply"; // Import PopUpAddComment component
 import "react-quill/dist/quill.snow.css";
+
 const WatchVideo: React.FC = () => {
     const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
@@ -26,6 +27,9 @@ const WatchVideo: React.FC = () => {
     const user = useAppSelector((state) => state.authSlice.user);
     const [pageIndex] = useState(1);
     const [showAddCommentModal, setShowAddCommentModal] = useState(false); // State để hiển thị hộp thoại modal thêm bình luận
+    const finalTest = courseDetail.test;
+    const courseProgress = useAppSelector((state) => state.courseSlice.myEnrolled[courseDetail.course_id]);
+    const isDone = courseProgress ? courseProgress.is_done : false;
 
     const lecture = useAppSelector((state) => state.lectureSlice.lecture) ?? {
         lecture_id: 0,
@@ -34,7 +38,6 @@ const WatchVideo: React.FC = () => {
         },
     };
     const [key, setKey] = useState(0);
-    console.log(key);
 
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const handleChangeLesson = (lecture: Lecture) => {
@@ -49,6 +52,22 @@ const WatchVideo: React.FC = () => {
             }),
         );
     };
+    //có lỗi thì chắc là từ cái gán lecture id ở dưới
+    const handleToFinalTest = () => {
+        if (finalTest) {
+            dispatch(
+                lectureActions.setLecture({
+                    ...lecture,
+                    lecture_id: 0,
+                    type: "Final Test",
+                    content: { ...lecture.content, ...finalTest },
+                }),
+            );
+            dispatch(testActions.setBeforeTest());
+            dispatch(testActions.getTestByTestId(finalTest.test_id));
+        }
+    };
+
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "";
 
     const dispatch = useAppDispatch();
@@ -88,6 +107,7 @@ const WatchVideo: React.FC = () => {
         });
     }, [dispatch, slug]);
     useEffect(() => {
+        dispatch(testActions.setInitialTestSlice());
         if (lecture.type === "Test") {
             dispatch(testActions.setBeforeTest());
             dispatch(testActions.getTestByTestId(lecture.content.id));
@@ -160,6 +180,20 @@ const WatchVideo: React.FC = () => {
                         </div>
                     )}
                 </div>
+                {finalTest && (
+                    <div className="my-4 ml-10 w-1/2 ">
+                        <h2 className=" tablet:text-2xl font-bold mb-3">Bài kiểm tra cuối khoá</h2>
+                        <div className="w-1/2">
+                            <FinalTestCard
+                                role={role}
+                                isDoneCourse={isDone}
+                                isDisplayEdit={false}
+                                finalTest={finalTest}
+                                handleToFinalTest={handleToFinalTest}
+                            />
+                        </div>
+                    </div>
+                )}
 
                 {/* Nút "Bình luận" */}
                 <div className="button-container flex items-center justify-center">

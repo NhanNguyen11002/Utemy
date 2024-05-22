@@ -42,6 +42,13 @@ courseRouter.get("/:course_id/certificate", isLogin, controllers.courseControlle
 
 courseRouter.get("/percent/:slug", controllers.courseController.getRatingPercentOfCourse);
 
+courseRouter.post("/final/", isLogin, isAuthor, controllers.courseController.createFinalTest);
+courseRouter.get("/final/:course_id", isLogin, controllers.courseController.getFinalTestByCourseId);
+courseRouter.patch("/final/:course_id", isLogin, isAuthor, controllers.courseController.updateFinalTest);
+courseRouter.delete("/final/:course_id", isLogin, isAuthor, controllers.courseController.deleteFinalTest);
+
+courseRouter.patch("/done/:course_id", isLogin, controllers.courseController.setDoneCourse);
+
 //21. Get user's rating of course
 
 //22. Get top 10 hightest rate courses

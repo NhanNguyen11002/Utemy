@@ -21,16 +21,16 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
     const progress = useAppSelector((state) => state.progressSlice.progress);
     const lectureProgress = progress[props.lectureId];
-    const [firstLoad, setFirstLoad] = useState(true);
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin);
+    const userId = useAppSelector((state) => state.authSlice.user.user_id) || 0;
+    const isAuthor = useAppSelector((state) => state.courseSlice.courseDetail.author?.user_id) === userId;
 
     useEffect(() => {
-        if (player) {
+        if (player && !(isAuthor || isAdmin)) {
             player.on(
                 "timeupdate",
                 _.throttle(() => {
-                    console.log("update");
-                    console.log("progress", lectureProgress);
-                    if (player.currentTime > lectureProgress.progress_value) {
+                    if (player.currentTime > (lectureProgress ? lectureProgress.progress_value : 0)) {
                         dispatch(
                             progressActions.updateProgress({
                                 progress_value: Math.floor(player.currentTime),
@@ -45,8 +45,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                 }, 20000),
             );
             player.on("ended", () => {
-                console.log(lectureProgress);
-                if (player.currentTime > lectureProgress.progress_value) {
+                if (player.currentTime > (lectureProgress ? lectureProgress.progress_value : 0)) {
                     dispatch(
                         progressActions.updateProgress({
                             progress_value: Math.floor(player.currentTime),
@@ -60,23 +59,20 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                 } else return;
             });
             player.on("seeked", () => {
-                if (firstLoad) {
-                    setFirstLoad(false);
-                    return;
-                }
-                if (player.currentTime - lectureProgress.progress_value > 60) {
+                if (player.currentTime - (lectureProgress ? lectureProgress.progress_value : 0) > 60) {
                     toast("Don't skip video, we will have to force you back", {
                         icon: <TriangleAlert className="fill-yellow-400 " />,
                         duration: 4000,
                     });
-                    player.currentTime = lectureProgress.progress_value;
+                    player.currentTime = lectureProgress ? lectureProgress.progress_value : 0;
                 }
             });
         }
-
-        player?.off("seeked", () => {});
-        player?.off("timeupdate", () => {});
-        player?.off("ended", () => {});
+        return () => {
+            player?.off("seeked", () => {});
+            player?.off("timeupdate", () => {});
+            player?.off("ended", () => {});
+        };
     }, [player]);
 
     const updateQuality = (newQuality: any) => {
@@ -90,15 +86,17 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
     };
 
     useEffect(() => {
-        setFirstLoad(true);
         const videoElement = videoRef.current;
         if (videoElement) {
             videoElement.addEventListener("loadeddata", () => {
-                console.log("loaded", lectureProgress.duration);
                 videoElement.currentTime =
-                    lectureProgress.progress_value >= lectureProgress.duration
-                        ? lectureProgress.progress_value * 0.85
-                        : lectureProgress.progress_value || 0;
+                    isAuthor || isAdmin
+                        ? 0
+                        : lectureProgress
+                          ? lectureProgress.progress_value >= lectureProgress.duration
+                              ? lectureProgress.progress_value * 0.85
+                              : lectureProgress.progress_value
+                          : 0;
             });
             if (Hls.isSupported()) {
                 const hls = new Hls();

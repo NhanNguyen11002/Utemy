@@ -144,4 +144,24 @@ export default class CourseController {
         const response: ResponseBase = await services.CourseService.getCertificate(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async createFinalTest(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.createFinalTest(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async updateFinalTest(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.updateFinalTest(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async deleteFinalTest(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.deleteFinalTest(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async setDoneCourse(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.setDoneCourse(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getFinalTestByCourseId(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.getFinalTestByCourseId(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

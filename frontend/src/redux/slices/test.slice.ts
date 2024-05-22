@@ -154,6 +154,13 @@ export const testSlice = createSlice({
         setProgress: (state, action) => {
             state.testResult.test_progress = action.payload;
         },
+        setInitialTestSlice: (state) => {
+            state.testResult.test_progress = [];
+            state.afterTest = {
+                totalPercent: 0,
+                totalQuestionRight: 0,
+            };
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getTestByTestId.pending, (state) => {
@@ -173,6 +180,7 @@ export const testSlice = createSlice({
             });
             state.duration = Number(action.payload.data.duration);
             state.testResult.test_id = action.payload.data.test_id;
+            state.testResult.test_progress = [];
             state.isGetLoading = false;
         });
         builder.addCase(getTestByTestId.rejected, (state) => {
@@ -211,6 +219,7 @@ export const {
     setProgress,
     setBeforeTest,
     setHistoryTest,
+    setInitialTestSlice,
 } = testSlice.actions;
 
 export default testSlice.reducer;

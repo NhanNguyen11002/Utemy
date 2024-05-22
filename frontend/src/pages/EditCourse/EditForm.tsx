@@ -80,7 +80,7 @@ const EditForm: React.FC<props> = (props) => {
         slug: courseDetail.slug,
         price: Number(courseDetail.price),
         thumbnail: null,
-        trailer: null
+        trailer: null,
     };
     const dispatch = useAppDispatch();
     useEffect(() => {
@@ -176,8 +176,7 @@ const EditForm: React.FC<props> = (props) => {
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
-        if (trailer)
-            formData.append("trailer", trailer as File);
+        if (trailer) formData.append("trailer", trailer as File);
 
         dispatch(courseActions.editCourse(formData)).then((response) => {
             if (response.payload?.status_code === 200) {
@@ -206,11 +205,13 @@ const EditForm: React.FC<props> = (props) => {
                                 Khi bạn hoàn thành phần này, hãy nghĩ đến việc tạo Trang tổng quan khóa học hấp dẫn thể
                                 hiện lý do ai đó muốn ghi danh khóa học của bạn.
                             </p>
-                            <div className="flex justify-center items-center gap-4 laptop:items-start laptop:justify-start my-4">
-                                <div className="">
+                            <div className="flex justify-center items-center gap-10 laptop:items-start laptop:justify-start my-4">
+                                <div className="flex flex-col gap-5">
                                     <div className="flex flex-col gap-3">
                                         <div className="text-center tablet:text-start">
-                                            <p className="text-lg font-medium">Tải lên hình ảnh bìa của khoá học tại đây</p>
+                                            <p className="text-lg font-medium">
+                                                Tải lên hình ảnh bìa của khoá học tại đây
+                                            </p>
                                             <p className={`${errorImage ? "text-red-500" : ""}  italic`}>
                                                 Lưu ý: Kích cỡ nhỏ hơn 4MB, phải là file .jpg .jpeg .png
                                             </p>
@@ -232,8 +233,8 @@ const EditForm: React.FC<props> = (props) => {
                                         className="w-60 h-60 rounded-lg outline-none border border-dashed border-black tablet:w-80 tablet:h-80 laptop:h-96 laptop:w-96"
                                     />
                                 </div>
-                                
-                                <div className="flex flex-col gap-3" style={{ marginLeft: '250px' }}>
+
+                                <div className="flex flex-col gap-3" style={{ marginLeft: "0px" }}>
                                     <div className="text-center tablet:text-start">
                                         <p className="text-lg font-medium">Chọn video trailer</p>
                                         <p className={`${errorTrailer ? "text-red-500" : ""}  italic`}>
@@ -251,12 +252,16 @@ const EditForm: React.FC<props> = (props) => {
                                     />
 
                                     {/* Video player */}
-                                    {courseDetail.url_trailer!= null && (
+                                    {courseDetail.url_trailer != null && (
                                         <video ref={trailerRef} controls className="mt-2" width="640" height="480">
                                             {["video/mp4", "video/x-matroska", "video/mov"].map((type, index) => (
-                                                <source key={index} src={courseDetail.url_trailer ? courseDetail.url_trailer : ""} type={type} />
+                                                <source
+                                                    key={index}
+                                                    src={courseDetail.url_trailer ? courseDetail.url_trailer : ""}
+                                                    type={type}
+                                                />
                                             ))}
-                                        Your browser does not support the video tag.
+                                            Your browser does not support the video tag.
                                         </video>
                                     )}
                                 </div>
