@@ -28,7 +28,8 @@ const WatchVideo: React.FC = () => {
     const [pageIndex] = useState(1);
     const [showAddCommentModal, setShowAddCommentModal] = useState(false); // State để hiển thị hộp thoại modal thêm bình luận
     const finalTest = courseDetail.test;
-    const isDone = useAppSelector((state) => state.courseSlice.myEnrolled[courseDetail.course_id]).is_done || false;
+    const courseProgress = useAppSelector((state) => state.courseSlice.myEnrolled[courseDetail.course_id]);
+    const isDone = courseProgress ? courseProgress.is_done : false;
 
     const lecture = useAppSelector((state) => state.lectureSlice.lecture) ?? {
         lecture_id: 0,

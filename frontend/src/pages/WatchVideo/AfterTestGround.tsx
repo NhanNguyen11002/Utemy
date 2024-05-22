@@ -12,7 +12,6 @@ const AfterTestGround: React.FC = () => {
     const courseId = useAppSelector((state) => state.courseSlice.courseDetail.course_id);
     const lecture = useAppSelector((state) => state.lectureSlice.lecture);
     const role = useAppSelector((state) => state.courseSlice.role) || "Unerolled";
-    console.log("type", lecture.type);
     useEffect(() => {
         if (
             afterTest.totalPercent >= passPercent &&
