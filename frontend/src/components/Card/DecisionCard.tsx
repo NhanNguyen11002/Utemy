@@ -28,7 +28,6 @@ const DecisionCard: React.FC<DecisionCardProps> = ({ decision, isAuthor }) => {
         dispatch(decisionActions.handleDecision(decision.decision_id)).then((res) => {
             if (res && res.payload) {
                 if (res.payload.status_code === 200) {
-                    console.log("ez");
                     toast.success(res.payload.message);
                     dispatch(decisionActions.setHandleDecision(decision.decision_id));
                 } else {

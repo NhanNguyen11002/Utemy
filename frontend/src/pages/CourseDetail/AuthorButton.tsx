@@ -5,7 +5,6 @@ import { Course as CourseDetailType } from "../../types/course";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { lectureActions } from "../../redux/slices";
 type AuthorButtonProps = {
-    handleTogglePromotion(): void;
     handleDelete(): void;
     courseDetail: CourseDetailType;
 };

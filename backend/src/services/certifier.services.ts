@@ -58,7 +58,6 @@ const sendCertifier = async (req: IRequestWithId): Promise<ResponseBase> => {
         console.log("error created", createCertificate.data.error.message);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
-    // console.log("created data", createCertificate.data);
 
     const uniqueId = createCertificate.data.id;
     const publicId = createCertificate.data.publicId;

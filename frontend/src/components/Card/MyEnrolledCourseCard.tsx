@@ -13,7 +13,6 @@ const MyEnrolledCourseCard: FC<MyEnrolledCourseCardProps> = ({ enrolledCourse })
         enrolledCourse.overall_progress &&
         enrolledCourse.number_of_lecture &&
         (enrolledCourse.overall_progress / enrolledCourse.number_of_lecture) * 100;
-    console.log("overall /number", enrolledCourse.overall_progress, enrolledCourse.number_of_lecture, enrolledCourse);
     return (
         <div className="py-2">
             <div className="flex flex-col gap-2 tablet:gap-4 tablet:flex-row rounded-2xl hover:bg-lightblue/25 transition ease-in-out hover:shadow-lg duration-200 shadow-lg">

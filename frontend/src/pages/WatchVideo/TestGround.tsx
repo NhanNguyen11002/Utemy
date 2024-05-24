@@ -7,7 +7,7 @@ import { testActions, progressActions } from "../../redux/slices";
 import { TestProgressType, TestResultType } from "../../types/test";
 import FinishTestPopup from "./FinishTestPopup";
 import QuestionCounter from "./QuestionCounter";
-import { FillInQuiz } from "../../components";
+import { FillInQuiz, FillInNoLogicQuiz } from "../../components";
 const TestGround: React.FC = () => {
     const dispatch = useAppDispatch();
     const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
@@ -70,7 +70,7 @@ const TestGround: React.FC = () => {
                     {nowQuestion.type === 3 ? (
                         <FillInQuiz quiz={nowQuestion} handleFill={handleFill} testProgress={testProgress} />
                     ) : (
-                        <h1 className="text-black font-bold text-xl mb-5 w-full">{nowQuestion.question}</h1>
+                        <FillInNoLogicQuiz quiz={nowQuestion} />
                     )}
                     {nowQuestion.type !== 3 && (
                         <div className="grid grid-rows-2 grid-cols-2 gap-2 w-full items-center justify-items-center h-[20%]">

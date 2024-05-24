@@ -7,8 +7,6 @@ type TransactionCardProps = {
 };
 
 const TransactionCard: React.FC<TransactionCardProps> = ({ historyTran }) => {
-    console.log("historyTran in TransactionCard:", historyTran);
-
     const [isTableVisible, setIsTableVisible] = useState(false);
 
     const toggleTableVisibility = () => {

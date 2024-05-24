@@ -92,7 +92,7 @@ export type RightOfCourse = {
 // };
 export type AddPromotion = {
     sale_price: number;
-    sale_until: Date;
+    sale_until: string;
     course_id: number;
 };
 export type UpdateTargetCourse = {

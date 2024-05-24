@@ -73,15 +73,12 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
                 };
                 return temp;
             });
-            // console.log("create enrolled data", createEnrolledData);
             const updateCourseEnrolledData = boughtCourses.map((course) => {
                 return course.course_id;
             });
-            // console.log("update data", updateCourseEnrolledData);
             const createEnrolled = await configs.db.enrolled.createMany({
                 data: createEnrolledData,
             });
-            // console.log("createEnrolled", createEnrolled);
             const updateCourseEnrolled = await configs.db.course.updateMany({
                 where: {
                     id: {
@@ -94,7 +91,6 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
                     },
                 },
             });
-            // console.log("update enrolled", updateCourseEnrolled);
             const clearCart = await configs.db.cartDetail.deleteMany({
                 where: {
                     cart_id: cartDetail.id,
@@ -155,7 +151,7 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
                         user_id: invoiceDetail.user_id,
                     },
                 });
-            
+
                 // Kiểm tra mã coupon_id có tồn tại trong bảng coupon_owner không
                 const couponOwner = await configs.db.couponOwner.findFirst({
                     where: {

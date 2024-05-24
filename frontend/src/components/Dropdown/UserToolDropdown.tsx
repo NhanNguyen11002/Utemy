@@ -53,6 +53,7 @@ const UserToolDropdown: React.FC<UserToolDropdownProps> = (props) => {
         });
     };
     const handleContentChange = (content: string, formik: any) => {
+        console.log(content);
         formik.setFieldValue("content", content);
         setContent(content);
     };

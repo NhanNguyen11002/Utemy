@@ -183,6 +183,9 @@ const WatchVideo: React.FC = () => {
                 {finalTest && (
                     <div className="my-4 ml-10 w-1/2 ">
                         <h2 className=" tablet:text-2xl font-bold mb-3">Bài kiểm tra cuối khoá</h2>
+                        <h2 className=" tablet:text-xl mb-3">
+                            Bạn sẽ cần phải hoàn thành khoá học để có thể làm được bài kiểm tra này
+                        </h2>
                         <div className="w-1/2">
                             <FinalTestCard
                                 role={role}

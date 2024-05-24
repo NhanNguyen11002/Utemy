@@ -62,9 +62,8 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
     const [type, setType] = useState(0);
     const [content, setContent] = useState("");
     const handleContentChange = (content: string, formik: any) => {
-        const str = content.replace("p>", "span>");
-        formik.setFieldValue("question", str);
-        setContent(str);
+        formik.setFieldValue("question", content);
+        setContent(content);
     };
     const initialValue = {
         question: "",
@@ -75,10 +74,12 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
             toast.error("Please choose group before add quiz");
             return;
         }
+        const str = values.question.replaceAll("p>", "span>").replaceAll("<span><br></span>", "<p><br></p");
         const data: QuizType = {
             ...values,
             quiz_group_id: props.groupId,
             quiz_answer: answer,
+            question: str,
         };
         if (type === 0) {
             displayError("Vui lòng chọn loại câu hỏi");
@@ -176,7 +177,6 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
     };
     const onAddBlank = (formik: any) => {
         if (quizRef.current) {
-            console.log("quizRef", quizRef.current.getEditor());
             const position = quizRef.current.selection;
             if (position) {
                 quizRef.current.getEditor().insertText(position, "$[...]$");

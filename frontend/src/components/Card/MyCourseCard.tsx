@@ -65,7 +65,7 @@ const MyCourseCard: FC<MyCourseCardProps> = ({ course }) => {
                                 Số học viên: <span className="font-normal">{course.number_of_enrolled}</span>
                             </p>
                             <div className="flex flex-col items-start w-full mr-2">
-                                <p>Mức độ hoàn thiện</p>
+                                <p className="font-bold">Mức độ hoàn thiện: {progress}%</p>
                                 <Progress value={progress} className="h-[10px] text-blue-400" />
                             </div>
                         </div>

@@ -1,36 +1,38 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Formik, Field, ErrorMessage } from "formik";
 import { AddPromotion, Course } from "../../types/course";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { courseActions } from "../../redux/slices";
 import toast from "react-hot-toast";
-import DatePicker from "tailwind-datepicker-react";
-import { IOptions } from "tailwind-datepicker-react/types/Options";
+// import DatePicker from "tailwind-datepicker-react";
+// import { IOptions } from "tailwind-datepicker-react/types/Options";
 import { addPromotionValidationSchema } from "../../validations/course";
 type PromotionTabProps = {};
+const formatDateTime = (date: Date): string => {
+    const pad = (n: number) => (n < 10 ? "0" + n : n);
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
 
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
 const PromotionTab: React.FC<PromotionTabProps> = () => {
-    const [show, setShow] = useState<boolean>(false);
-    const handleShow = () => {
-        setShow(!show);
-    };
     const course: Course = useAppSelector((state) => state.courseSlice.courseDetail);
     const course_id = course.course_id;
     let sale_until: Date;
     if (course.sale_until) sale_until = new Date(course.sale_until);
     else sale_until = new Date();
-    const formikRef = useRef(null);
+    const formikRef = useRef<any>(null);
     const dispatch = useAppDispatch();
     const initialValue: AddPromotion = {
         sale_price: course.sale_price || 0,
-        sale_until: sale_until,
+        sale_until: formatDateTime(sale_until),
         course_id: course_id,
     };
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
-    const handleChangeDate = (event: any, formik: any) => {
-        sale_until = event;
-        formik.setFieldValue("sale_until", event as Date);
-    };
+
     const handleOnSubmit = (values: any) => {
         const data: AddPromotion = {
             ...values,
@@ -54,31 +56,31 @@ const PromotionTab: React.FC<PromotionTabProps> = () => {
             }
         });
     };
-    const options: IOptions = {
-        title: "Sale until date",
-        autoHide: true,
-        todayBtn: false,
-        clearBtn: false,
-        clearBtnText: "Clear",
-        maxDate: new Date("2030-01-01"),
-        minDate: new Date("2020-01-01"),
-        datepickerClassNames: "top-12",
-        defaultDate: new Date(sale_until),
-        language: "en",
-        disabledDates: [],
-        weekDays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
-        inputNameProp: "date",
-        inputIdProp: "date",
-        inputPlaceholderProp: "Select Date",
-        inputDateFormatProp: {
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-        },
-    };
+    // const options: IOptions = {
+    //     title: "Sale until date",
+    //     autoHide: true,
+    //     todayBtn: false,
+    //     clearBtn: false,
+    //     clearBtnText: "Clear",
+    //     maxDate: new Date("2030-01-01"),
+    //     minDate: new Date("2020-01-01"),
+    //     datepickerClassNames: "top-12",
+    //     defaultDate: new Date(sale_until),
+    //     language: "en",
+    //     disabledDates: [],
+    //     weekDays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+    //     inputNameProp: "date",
+    //     inputIdProp: "date",
+    //     inputPlaceholderProp: "Select Date",
+    //     inputDateFormatProp: {
+    //         hour: "numeric",
+    //         minute: "numeric",
+    //         second: "numeric",
+    //         day: "numeric",
+    //         month: "long",
+    //         year: "numeric",
+    //     },
+    // };
     return (
         <div className="w-full border min-h-[450px] shadow-md">
             <div className="border-b border-gray">
@@ -87,7 +89,7 @@ const PromotionTab: React.FC<PromotionTabProps> = () => {
             <p className="text-lg px-5 py-3">
                 Bạn có thể đưa ra quyết định giảm giá khoá học trong một khoảng thời gian mong muốn ngay tại đây
             </p>
-            <p className="text-xl font-normal px-5">Giá gốc: {course.price} (VNĐ)</p>
+            <p className="text-xl font-normal px-5">Giá gốc: {course.price?.toLocaleString()} (VNĐ)</p>
             <div>
                 <Formik
                     validationSchema={addPromotionValidationSchema}
@@ -124,12 +126,13 @@ const PromotionTab: React.FC<PromotionTabProps> = () => {
                                 </label>
                                 <br />
                                 <Field
+                                    type="datetime-local"
                                     placeholder="Sale price here..."
-                                    component={DatePicker}
-                                    options={options}
-                                    onChange={(e: any) => handleChangeDate(e, formik)}
-                                    show={show}
-                                    setShow={handleShow}
+                                    // component={DatePicker}
+                                    // options={options}
+                                    // onChange={(e: any) => handleChangeDate(e, formik)}
+                                    // show={show}
+                                    // setShow={handleShow}
                                     id="sale_until"
                                     name="sale_until"
                                     className={` w-full px-2 py-2 hover:cursor-pointer rounded-lg border-[1px] outline-none ${

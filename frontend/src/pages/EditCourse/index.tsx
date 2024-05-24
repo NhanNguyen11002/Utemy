@@ -48,6 +48,7 @@ const EditCourse: React.FC = () => {
     const [itemTitle, setItemTitle] = useState<string>("");
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
+    const [key, setKey] = useState(0);
 
     //final test
     const finalTest = useAppSelector((state) => state.courseSlice.courseDetail.test);
@@ -213,6 +214,7 @@ const EditCourse: React.FC = () => {
     };
     //lecture
     const handleDisplayEditLecture = (lectureId: number, type: string) => {
+        setKey((prev) => prev + 1);
         setSectionId(lectureId);
         setType(type);
         setIsDisplayEditLectureModal(!isDisplayEditLectureModal);
@@ -496,6 +498,7 @@ const EditCourse: React.FC = () => {
                         ) : (
                             <>
                                 <PopupUpdateTest
+                                    key={key}
                                     handleRerender={handleRerender}
                                     handleCancel={handleCancelModalEditLecture}
                                     lectureId={sectionId}

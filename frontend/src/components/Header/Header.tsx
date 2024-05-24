@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
 
     return (
         <>
-            <header className="w-full h-[70px] max-w-full bg-background shadow-xl fixed top-0 left-0 z-[10]">
+            <header className="w-full h-[70px] max-w-full bg-background shadow-xl fixed top-0 left-0 z-[30]">
                 <Toaster />
                 <div className="w-full h-full flex items-center py-[10px] px-4 tablet:px-[60px]">
                     <div className="flex-1 flex gap-4 laptop:gap-[120px] items-center">
