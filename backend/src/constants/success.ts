@@ -80,5 +80,14 @@ const success = {
     SUCCESS_GET_ALL_DISLIKE: "Get all dislike successfully",
 
     SUCCESS_BUT_NO_UPDATE_PROGRESS: "No update progresss",
+
+    //comment blog
+    SUCCESS_CREATE_COMMENT_BLOG: "Create comment for blog successfully",
+    SUCCESS_UPDATE_COMMENT_BLOG: "Update comment for blog successfully",
+    SUCCESS_DELETE_COMMENT_BLOG: "Delete comment for blog successfully",
+
+    //reaction comment blog
+    SUCCESS_CREATE_REACTION: "Create reaction successfully",
+    
 };
 export default success;

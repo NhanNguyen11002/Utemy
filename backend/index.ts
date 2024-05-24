@@ -41,6 +41,10 @@ app.use("/api/comment", routes.commentRouter);
 app.use("/api/reply", routes.replyCommentRouter);
 app.use("/api/reaction", routes.reactionRouter);
 app.use("/api/certifier", routes.certifierRouter);
+app.use("/api/blog", routes.blogRouter);
+app.use("/api/commentblog", routes.commentBlogRouter);
+app.use("/api/reactioncommentblog", routes.reactionCommentBlogRouter);
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

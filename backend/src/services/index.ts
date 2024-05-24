@@ -23,6 +23,9 @@ import CommentServices from "./comment.services";
 import ReplyCommentServices from "./replycomment.services";
 import ReactionServices from "./reaction.services";
 import CertifierServices from "./certifier.services";
+import BlogService from "./blog.services";
+import CommentBlogService from "./commentblog.services";
+import ReactionCommentBlogServices from "./reactioncommentblog.services";
 export default {
     AuthServices,
     UserService,
@@ -49,4 +52,7 @@ export default {
     ReplyCommentServices,
     ReactionServices,
     CertifierServices,
+    BlogService,
+    CommentBlogService,
+    ReactionCommentBlogServices,
 };

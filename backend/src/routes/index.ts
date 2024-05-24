@@ -22,7 +22,9 @@ import commentRouter from "./comment.router";
 import replyCommentRouter from "./replycomment.router";
 import reactionRouter from "./reaction.router";
 import certifierRouter from "./certifier.router";
-
+import blogRouter from "./blog.router";
+import commentBlogRouter from "./commentblog.router";
+import reactionCommentBlogRouter from "./reactioncommentblog.router";
 export default {
     authRouter,
     userRouter,
@@ -48,4 +50,7 @@ export default {
     replyCommentRouter,
     reactionRouter,
     certifierRouter,
+    blogRouter,
+    commentBlogRouter,
+    reactionCommentBlogRouter,
 };

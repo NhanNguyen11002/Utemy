@@ -19,6 +19,14 @@ const storageThumbnail = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname));
     },
 });
+const storageImageBlog = multer.diskStorage({
+    destination: (req, res, cb) => {
+        cb(null, `${configs.general.PATH_TO_IMAGES}/blog`);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    },
+});
 const storageCategory = multer.diskStorage({
     destination: (req, res, cb) => {
         cb(null, `${configs.general.PATH_TO_IMAGES}/category`);
@@ -70,6 +78,23 @@ const uploadThumbnail = multer({
         }
     },
 }).single("thumbnail");
+const uploadImageBlog = multer({
+    storage: storageImageBlog,
+    limits: {
+        fileSize: 1024 * 1024 * 4,
+    },
+    fileFilter(req, file, cb) {
+        if (file.mimetype === "image/png") {
+            cb(null, true);
+        } else if (file.mimetype === "image/jpeg") {
+            cb(null, true);
+        } else if (file.mimetype === "image/jpg") {
+            cb(null, true);
+        } else {
+            return cb(new Error("Invalid file type: Only .png, .jpeg or .jpg is allowed"));
+        }
+    },
+}).single("image_blog");
 const uploadCategory = multer({
     storage: storageCategory,
     limits: {
@@ -196,6 +221,7 @@ export default {
     uploadAvatar,
     uploadCategory,
     uploadThumbnail,
+    uploadImageBlog,
     uploadEvidence,
     uploadVideo,
     uploadTrailer,
