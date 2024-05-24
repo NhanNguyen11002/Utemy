@@ -66,7 +66,6 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
     };
     const dispatch = useAppDispatch();
     const handleOnSubmit = (values: any) => {
-        console.log("submit", values);
         const data = { ...values, course_id: props.courseId };
         dispatch(courseActions.createFinalTest(data)).then((response) => {
             if (response.payload?.status_code === 200) {

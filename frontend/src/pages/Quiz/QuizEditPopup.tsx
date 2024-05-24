@@ -69,16 +69,17 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
         type: props.quiz.type,
     };
     const handleContentChange = (content: string, formik: any) => {
-        const str = content.replace("p>", "span>");
-        formik.setFieldValue("question", str);
-        setContent(str);
+        formik.setFieldValue("question", content);
+        setContent(content);
     };
     const handleOnSubmit = (values: any) => {
+        const str = values.question.replaceAll("p>", "span>").replaceAll("<span><br></span>", "<p><br></p");
         const data: QuizType = {
             ...values,
             quiz_group_id: props.quiz.quiz_group_id,
             quiz_answer: answer,
             quiz_id: props.quiz.quiz_id,
+            question: str,
         };
         if (type === 0) {
             displayError("Vui lòng chọn loại câu hỏi");
@@ -176,7 +177,6 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
     };
     const onAddBlank = (formik: any) => {
         if (quizRef.current) {
-            console.log("quizRef", quizRef.current.getEditor());
             const position = quizRef.current.selection;
             if (position) {
                 quizRef.current.getEditor().insertText(position, "$[...]$");
@@ -194,14 +194,13 @@ const QuizEditPopup: React.FC<QuizEditPopupProps> = (props) => {
         }, 3000);
     };
     useEffect(() => {
-        console.log("z");
         checkBlankCount();
     }, [props.quiz.question]);
     return (
         <div className="fixed z-50 top-0 left-0 right-0 bottom-0 bg-black/50 flex items-center justify-center">
             <Toaster />
             <div className="  max-w-[360px] tablet:max-w-[750px] max-h-[700px] overflow-auto  rounded-[12px] bg-background p-3 flex-1">
-                <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">Tạo câu hỏi mới</h1>
+                <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">Chỉnh sửa câu hỏi</h1>
                 <div className="w-full p-[12px]">
                     <Formik
                         validationSchema={addQuizValidationSchema}

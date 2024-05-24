@@ -37,6 +37,7 @@ import UserToolDropdown from "./Dropdown/UserToolDropdown";
 import AllReportCard from "./Card/AllReportCard";
 import FillInQuiz from "./FillInQuiz";
 import FinalTestCard from "./Card/FinalTestCard";
+import FillInNoLogicQuiz from "./FillInNoLogicQuiz";
 
 export {
     Spin,
@@ -77,4 +78,5 @@ export {
     PopupUpdateTest,
     PopupAddFinalTest,
     PopupUpdateFinalTest,
+    FillInNoLogicQuiz,
 };

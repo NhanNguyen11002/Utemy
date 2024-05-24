@@ -94,6 +94,5 @@ const getSortedQuizAnswerStrings = (quiz: TestDetail, testProgress: TestProgress
         // expectedAnswerId++;
         result[currentItem.quiz_answer_id] = currentItem.quiz_answer_string as string;
     }
-    console.log("res of quiz id", quizId, result);
     return result;
 };

@@ -5,6 +5,8 @@ import { QuizType } from "../../types/quiz";
 import { quizActions } from "../../redux/slices";
 import toast from "react-hot-toast";
 
+import FillInNoLogicQuiz from "../../components/FillInNoLogicQuiz";
+
 type DeleteQuizModalProps = {
     quiz: QuizType;
     handleCancel: () => void;
@@ -38,7 +40,7 @@ const DeleteQuizModal: React.FC<DeleteQuizModalProps> = (props: DeleteQuizModalP
                     </div>
                     <div className="mb-2 text-center flex-col flex">
                         <p className="text-2xl mb-1 font-medium">Bạn chắc chắn muốn xóa câu hỏi</p>
-                        <span className=" text-lg font-bold text-black">{props.quiz.question}</span>
+                        <FillInNoLogicQuiz quiz={props.quiz} />
                         <span className="text-xl">Hành động này không thể hoàn tác</span>
                     </div>
                     <div className="">

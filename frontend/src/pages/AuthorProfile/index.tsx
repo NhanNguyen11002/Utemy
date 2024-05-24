@@ -65,7 +65,7 @@ const AuthorProfile: React.FC = () => {
                         </div>
                     </div>
                     <h1 className="text-2xl text-black self-start">Các khóa học của tôi ({courseList.length})</h1>
-                    <div className="grid grid-cols-2 gap-7  place-self-start my-3 w-2/3">
+                    <div className="grid grid-cols-2 gap-5  place-self-start my-3 ">
                         {courseList.length > 0 &&
                             courseList.map((course: Course, index) => {
                                 return (
@@ -93,7 +93,7 @@ const AuthorProfile: React.FC = () => {
                     </div>
                 </div>
                 <div className="px-4 tablet:px-[60px] flex flex-col items-center gap-4  p-4 rounded-lg w-1/3 mt-[50px]">
-                    <div className="w-50 h-50 rounded-full border">
+                    <div className=" w-64 h-64 rounded-full border">
                         <img
                             src={user.url_avatar || DefaultAvatar}
                             alt="Avatar"

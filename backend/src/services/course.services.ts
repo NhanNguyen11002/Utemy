@@ -72,7 +72,7 @@ const addPromotion = async (req: IRequestWithId): Promise<ResponseBase> => {
             const isAddPromotion = await configs.db.course.update({
                 data: {
                     sale_price: Number(sale_price),
-                    sale_until,
+                    sale_until: new Date(sale_until),
                 },
                 where: {
                     id: isFoundCourse.id,
@@ -677,6 +677,7 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 slug: data.slug,
                 study: JSON.stringify(data.study),
                 requirement: JSON.stringify(data.requirement),
+                final_test_id: data.final_test_id,
                 sections,
                 description: data.description,
             };

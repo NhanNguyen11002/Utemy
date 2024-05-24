@@ -1,8 +1,9 @@
 import { QuizType } from "@/types/quiz";
+import { TestDetail } from "@/types/test";
 // import { us } from "react";
 
 type FillInNoLogicQuizProps = {
-    quiz: QuizType;
+    quiz: QuizType | TestDetail;
     className?: string;
 };
 const FillInNoLogicQuiz: React.FC<FillInNoLogicQuizProps> = (props) => {
