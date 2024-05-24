@@ -3,8 +3,4 @@
 package-lock.json
 .env
 
-/public/images/avatar
-/public/images/category
-/public/images/evidence
-/public/images/thumbnail
-/public/videos/
+/public
