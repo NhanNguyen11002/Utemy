@@ -168,5 +168,33 @@ const error = {
     // Coupon
     ERROR_COUPON_NOT_FOUND: "Coupon for event not found",
 
+    //blog
+    ERROR_BLOG_NOT_FOUND: "Blog not found",
+    ERROR_BLOG_TITLE_REQUIRED: "Blog's title is required",
+    ERROR_BLOG_TITLE_STRING: "Blog's title must be string",
+    ERROR_BLOG_TITLE_TOO_LONG: "Blog's title is too long",
+    ERROR_BLOG_CONTENT_REQUIRED: "Blog's content is required",
+    ERROR_BLOG_CONTENT_STRING: "Blog's content must be string",
+    ERROR_CREATE_BLOG_FAILED: "Create blog failed",
+    ERROR_GET_BLOG_FAILED: "Get blog failed",
+    ERROR_BLOG_ALREADY_EXISTS: "Blog's title already exist",
+
+    ERROR_BLOG_ID_NUMBER: "Blog id must be an integer",
+    ERROR_BLOG_ID_REQUIRED: "Blog id is required",
+    ERROR_TITLE_BLOG_STRING: "Title must be string",
+    ERROR_TITLE_BLOG_REQUIRED: "Title is required",
+    ERROR_TITLE_BLOG_MAX: "Title must be under 50 chars",
+    ERROR_CONTENT_BLOG_STRING: "Content must be string",
+    ERROR_CONTENT_BLOG_REQUIRED: "Content is required",
+    ERROR_CONTENT_BLOG_MAX: "Content must be under 1000 chars",
+    ERROR_CONTENT_BLOG_SHORT: "Content must be up 100 chars",
+    ERROR_BLOG_CATEGORIES_REQUIRED: "Blog's categories is required",
+    ERROR_IS_PUBLISHED_BOOLEAN: "Is Published must be boolean",
+
+    // comment blog
+    ERROR_DUPLICATE_BETWEEN_COMMENTBLOGID_REPLYBLOGID: "Duplicate between comment id and parent_id",
+    ERROR_COMMENT_BLOG_NOT_FOUND: "Comment for blog not found",
+    ERROR_REACTION_ONCE_TIME: "Reaction just once time",
+
 };
 export default error;

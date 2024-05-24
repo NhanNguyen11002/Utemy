@@ -20,9 +20,18 @@ const Cart: React.FC = () => {
         label: string;
     };
     const voucherDropdown = useAppSelector((state) => state.couponSlice.voucherDropdown);
+    const formatDate = (dateString: any) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    };
     const formattedOptions: OptionType[] = voucherDropdown.map((voucher) => ({
         value: voucher.code,
-        label: `${voucher.code} - ${voucher.valid_start} - ${voucher.valid_until} - ${voucher.discount * 100}% off`
+        label: `${voucher.code} - ${formatDate(voucher.valid_start)} - ${formatDate(voucher.valid_until)} - ${voucher.discount * 100}% off`
     }));
     const [discountInfo, setDiscountInfo] = useState<{ discount: number, id: number | null } | null>(null);// State để lưu thông tin giảm giá từ server
     const [maxDiscountMoneyInfo, setMaxDiscountMoneyInfo] = useState<{ max_discount_money: number, id: number | null } | null>(null);// State để lưu thông tin giá giảm tối đa từ server
@@ -32,6 +41,7 @@ const Cart: React.FC = () => {
     const [showRecaptcha, setShowRecaptcha] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState(formattedOptions[0]);
 
+    const [options, setOptions] = useState(formattedOptions);
 
 
     const carts = useAppSelector((state) => state.cartSlice.userCart);
@@ -81,7 +91,7 @@ const Cart: React.FC = () => {
     };
     const handleCheckCoupon = () => {
         // Check if couponValue is empty
-        if (!selectedVoucher.value.trim()) {
+        if (!selectedVoucher || !selectedVoucher.value.trim()) {
             // Display error toast message if couponValue is empty
             toast.error("Hãy nhập mã trước khi nhấn nút kiểm tra.");
             return;
@@ -102,11 +112,17 @@ const Cart: React.FC = () => {
             setCouponValue(selectedOption.value);
             console.log("giá trị:", selectedOption.value)
         } else {
-            // setSelectedVoucher({ value: '', label: '' });
-            // setCouponValue("");
+            setSelectedVoucher({ value: '', label: '' });
+            setCouponValue("");
         }
     };
     
+    const handleCreateOption = (inputValue: string) => {
+        const newOption = { value: inputValue, label: inputValue };
+        setOptions([...options, newOption]);
+        setSelectedVoucher(newOption);
+        setCouponValue(inputValue);
+      };
     
     
     const applyCouponCode = (code: string) => {
@@ -314,7 +330,18 @@ const Cart: React.FC = () => {
                                     inputValue={couponValue} // Truyền giá trị cho ô nhập
                                     onInputChange={(inputValue) => { setCouponValue(inputValue.toUpperCase()) }}
                                     options={formattedOptions}
-                                    className="max-w-xs"
+                                    onCreateOption={handleCreateOption}
+                                    className="max-w-md"
+                                    styles={{
+                                        container: (provided) => ({
+                                          ...provided,
+                                          width: 400, // Chiều rộng cố định cho container
+                                        }),
+                                        input: (provided) => ({
+                                          ...provided,
+                                          width: 400, // Chiều rộng cố định cho input
+                                        }),
+                                      }}
 
                                 />
                             </div>

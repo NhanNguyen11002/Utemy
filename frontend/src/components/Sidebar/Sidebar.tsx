@@ -11,7 +11,8 @@ import {
     LockClosedIcon,
     ReceiptPercentIcon,
     InformationCircleIcon,
-    CalendarDaysIcon
+    CalendarDaysIcon,
+    PencilSquareIcon
 } from "@heroicons/react/24/outline";
 // import { LogoutIcon } from "../../assets/icons";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -192,6 +193,21 @@ export function Sidebar() {
                                 <CalendarDaysIcon className="w-6 h-6 shrink-0 text-white" />
                                 <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
                                     Sự kiện
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
+                    <li key={"admin/blog"}>
+                        <NavLink to="/admin/blog">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "blog" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("blog")}
+                            >
+                                <PencilSquareIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Blog
                                 </p>
                             </button>
                         </NavLink>

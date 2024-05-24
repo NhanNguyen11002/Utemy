@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 interface PopUpAddCommentOrReplyProps {
     onSave: (content: string) => void;
@@ -9,10 +10,15 @@ const PopUpAddCommentOrReply: React.FC<PopUpAddCommentOrReplyProps> = ({ onSave,
     const [content, setContent] = useState("");
 
     const handleSave = () => {
-        onSave(content);
-        // Sau khi lưu, clear nội dung và đóng hộp thoại
-        setContent("");
-        onCancel();
+        if (content===""){
+            toast.error("Bình luận không được để trống")
+        }
+        else {
+            onSave(content);
+            // Sau khi lưu, clear nội dung và đóng hộp thoại
+            setContent("");
+            onCancel();
+        }
     };
 
     return (
@@ -22,6 +28,7 @@ const PopUpAddCommentOrReply: React.FC<PopUpAddCommentOrReplyProps> = ({ onSave,
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     className="edit-textarea bg-transparent w-full py-2 px-6 rounded-lg my-1"
+                    style={{ height: '200px' }}
                     placeholder="Nhập nội dung bình luận..."
                 />
                 <div className="button-container flex justify-end">

@@ -17,8 +17,8 @@ const PopupEditCommentOrReply: React.FC<EditPopupProps> = (props) => {
                 </div>
                 <div className="w-full mb-4">
                     <textarea
-                        className="w-full p-2 border rounded-md focus:outline-none"
-                        rows={4}
+                        className="edit-textarea bg-transparent w-full py-2 px-6 rounded-lg my-1"
+                        style={{ height: '200px' }}
                         placeholder={props.content}
                         defaultValue="" // Đặt giá trị mặc định của text area tại đây nếu cần thiết
                     ></textarea>

@@ -22,6 +22,7 @@ import reactionApis from "./reaction";
 import commentApis from "./comment";
 import replyCommentApis from "./replycomment";
 import certifierApis from "./certifier";
+import blogApis from "./blog";
 
 const apis = {
     authApis,
@@ -48,5 +49,6 @@ const apis = {
     commentApis,
     replyCommentApis,
     certifierApis,
+    blogApis,
 };
 export default apis;

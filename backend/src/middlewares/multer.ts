@@ -45,6 +45,20 @@ export const uploadThumbnail = async (req: IRequestWithId, res: Response, next: 
         next();
     });
 };
+export const uploadImageBlog = async (req: IRequestWithId, res: Response, next: NextFunction) => {
+    configs.upload.uploadImageBlog(req, res, (error: any) => {
+        if (error instanceof MulterError) {
+            console.log(error);
+            res.status(400).json({ message: error.message, success: false, status_code: 400 });
+            return;
+        } else if (error) {
+            console.log(error);
+            res.status(400).json({ message: error.message, success: false, status_code: 400 });
+            return;
+        }
+        next();
+    });
+};
 export const uploadEvidence = async (req: IRequestWithId, res: Response) => {
     configs.upload.uploadEvidence(req, res, (error: any) => {
         if (error instanceof MulterError) {

@@ -48,7 +48,7 @@ import LecturerAppLayout from "./layout/lecturerAppLayout";
 import CouponAdmin from "./pages/Admin/Coupon";
 import ReportAdmin from "./pages/Admin/Report";
 import EventAdmin from "./pages/Admin/Event";
-
+import BlogAdmin from "./pages/Admin/Blog";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -75,6 +75,7 @@ function App() {
                                 <Route path="category" element={<CategoryAdmin />}></Route>
                                 <Route path="coupon" element={<CouponAdmin />}></Route>
                                 <Route path="event" element={<EventAdmin />}></Route>
+                                <Route path="blog" element={<BlogAdmin />}></Route>
                                 <Route path="user" element={<UserAdmin />}></Route>
                                 <Route path="user-profile/:id" element={<UserProfile />}></Route>
                                 <Route path="user/create" element={<CreateUser />}></Route>

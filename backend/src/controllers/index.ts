@@ -22,6 +22,9 @@ import CommentController from "./comment.controller";
 import ReplyCommentController from "./replycomment.controller";
 import ReactionController from "./reaction.controller";
 import CertifierController from "./certifier.controller";
+import BlogController from "./blog.controller";
+import CommentBlogController from "./commentblog.controller";
+import ReactionCommentBlogController from "./reactioncommentblog.controller";
 export default {
     authController: new AuthController(),
     sectionController: new SectionController(),
@@ -47,4 +50,7 @@ export default {
     replyCommentController: new ReplyCommentController(),
     reactionController: new ReactionController(),
     certifierController: new CertifierController(),
+    blogController: new BlogController(),
+    commentBlogController: new CommentBlogController(),
+    reactionCommentBlogController: new ReactionCommentBlogController(),
 };

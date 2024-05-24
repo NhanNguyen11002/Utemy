@@ -42,7 +42,10 @@ model User {
   replyCommentLectures ReplyCommentLecture[]
   likes Like[]
   dislikes  Dislike[]
+  reaction_comment_blogs ReactionCommentBlog[]
   certificate Certificate[]
+  blog  Blog[]
+  comment_blogs CommentBlog[]
   @@index([email], name: "idx_email")
 }
 
@@ -63,6 +66,7 @@ model Category {
   url_image         String           @db.Text
   description       String           @db.Text
   course_categories CourseCategory[]
+  blog_categories   BlogCategory[]
 }
 
 
@@ -129,6 +133,17 @@ model CourseCategory {
 
   @@map(name: "courses_categories")
 }
+model BlogCategory {
+  id          Int      @id @default(autoincrement())
+  blog_id   Int
+  category_id Int
+  created_at  DateTime @default(now())
+  blog      Blog   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@map(name: "blogs_categories")
+}
+
 
 model Section {
   id         Int       @id @default(autoincrement())
@@ -559,4 +574,49 @@ model Ratio {
   coupon_id Int     @unique
   coupon    Coupon  @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
   ratio     Float?  @db.Float
+}
+
+model Blog {
+  id  Int @id @default(autoincrement())
+  author_id Int
+  user      User     @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  title String    @db.VarChar(100)
+  content String @db.Text
+  url_image         String           @db.Text
+  created_at DateTime @default(now())  
+  updated_at DateTime @default(now())
+  is_published     Boolean         @default(false)
+  blog_categories BlogCategory[]
+  comment_blogs CommentBlog[]
+}
+model CommentBlog {
+  id             Int           @id @default(autoincrement())
+  content        String        @db.Text
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now())
+  user_id        Int
+  user           User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  blog_id     Int
+  blog       Blog       @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  parent_id      Int?          // Id của bình luận cha, null nếu là bình luận gốc
+  parent_comment CommentBlog?  @relation("ReplyRelation", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies        CommentBlog[] @relation("ReplyRelation")
+  reactions      ReactionCommentBlog[]
+  @@map(name: "comment_blog")
+}
+model ReactionCommentBlog {
+  id                 Int          @id @default(autoincrement())
+  user_id            Int
+  user               User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id         Int
+  comment_blog            CommentBlog  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  type               ReactionType
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @default(now())
+    @@map(name: "reaction_comment_blog")
+
+}
+enum ReactionType {
+  LIKE
+  DISLIKE
 }

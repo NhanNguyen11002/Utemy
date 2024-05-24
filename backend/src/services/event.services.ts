@@ -305,7 +305,10 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
                         is_delete: false,
                         remain_quantity: {
                             gt: 0,
-                        }
+                        },
+                        valid_until: {
+                            gt: new Date(), // Only include coupons valid until now
+                        },
                     },
                     include: {
                         ratio: true,

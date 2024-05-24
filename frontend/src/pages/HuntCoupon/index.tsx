@@ -154,6 +154,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../../components/ui/resizable";
+import { useNavigate } from 'react-router-dom';
 interface WheelData {
   option?: string;
   coupon?: any; // Thêm trường coupon vào đây
@@ -170,6 +171,7 @@ const HuntCoupon = () => {
   // const [couponIdInfo, setCouponIdInfo] = useState<{ id: number} | null>(null);// State để lưu thông tin id của coupon từ server
 
   // const [coupons, setCoupons] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     handleGetAllEventCouponByEventId();
@@ -187,25 +189,35 @@ const HuntCoupon = () => {
       .then((action) => {
         const response = action.payload;
         if (response.status_code === 200) {
-          const coupons = response.data || [];
-          const formattedDiscounts: WheelData[] = coupons.map((coupon: any, index: number) => ({
-            option: `${index + 1}`,
-            coupon: coupon // Gán thông tin về coupon vào đây
-          }));
-          // Thêm lựa chọn "Chúc bạn may mắn lần sau" vào cuối mảng
-          formattedDiscounts.push({ option: `${formattedDiscounts.length + 1}`, coupon: "Chúc bạn may mắn lần sau", optionSize: 1 });
-
-          // Cập nhật lại chỉ số của các lựa chọn nếu cần
-          formattedDiscounts.forEach((discount, index) => {
-            if (discount.option === "Chúc bạn may mắn lần sau") {
-              discount.option = `${formattedDiscounts.length}`;
+          if (response.data.length > 0)
+            {
+              const coupons = response.data || [];
+              const formattedDiscounts: WheelData[] = coupons.map((coupon: any, index: number) => ({
+                option: `${index + 1}`,
+                coupon: coupon // Gán thông tin về coupon vào đây
+              }));
+              // Thêm lựa chọn "Chúc bạn may mắn lần sau" vào cuối mảng
+              formattedDiscounts.push({ option: `${formattedDiscounts.length + 1}`, coupon: "Chúc bạn may mắn lần sau", optionSize: 1 });
+    
+              // Cập nhật lại chỉ số của các lựa chọn nếu cần
+              formattedDiscounts.forEach((discount, index) => {
+                if (discount.option === "Chúc bạn may mắn lần sau") {
+                  discount.option = `${formattedDiscounts.length}`;
+                }
+              });
+            //   const receivedCoupons = response.data || [];
+            // setCoupons(receivedCoupons);
+              // Pass discounts to LuckyWheel
+              setDiscounts(formattedDiscounts);
+              console.log('Discounts:', formattedDiscounts);
             }
-          });
-        //   const receivedCoupons = response.data || [];
-        // setCoupons(receivedCoupons);
-          // Pass discounts to LuckyWheel
-          setDiscounts(formattedDiscounts);
-          console.log('Discounts:', formattedDiscounts);
+            else {
+              navigate("/");
+              setTimeout(() => {
+                  toast.error("Sự kiện đã kết thúc");
+              }, 1000); //
+          }
+          
         } else {
           console.error('Error from getAllEventCoupon:', response.message);
         }

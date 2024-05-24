@@ -17,6 +17,7 @@ import {
   HoverCardTrigger,
 } from "../../components/ui/hover-card"
 import ReactionInfoCard from "./ReactionInfoCard";
+import { ScrollArea } from "../../components/ui/scroll-area"
 type CommentLectureCardProps = {
     userId: number | undefined;
     comment: Comment;
@@ -83,22 +84,28 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         setShowDeleteModal(false);
     };
     const handleEdit = () => {
-        console.log("content:", editedContent);
-        dispatch(commentActions.updateComment({ comment_id: props.comment.comment_id, content: editedContent })).then(
-            (response) => {
-                if (response.payload && response.payload.status_code === 200) {
-                    toast.success(response.payload.message);
-                    dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.comment.lecture_id, values: {
-                        pageIndex: 1
-                    }}));
-                } else {
-                    if (response.payload) toast.error(response.payload.message);
-                }
-            },
-        );
-        toggleEditMode(props.comment.comment_id);
-        props.onCommentSave(props.comment.comment_id);
-        closeAllEditModes(); // Đóng tất cả các trạng thái chỉnh sửa
+        if (editedContent===""){
+            toast.error("Bình luận không được để trống")
+        }
+        else {
+            console.log("content:", editedContent);
+            dispatch(commentActions.updateComment({ comment_id: props.comment.comment_id, content: editedContent })).then(
+                (response) => {
+                    if (response.payload && response.payload.status_code === 200) {
+                        toast.success(response.payload.message);
+                        dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.comment.lecture_id, values: {
+                            pageIndex: 1
+                        }}));
+                    } else {
+                        if (response.payload) toast.error(response.payload.message);
+                    }
+                },
+            );
+            toggleEditMode(props.comment.comment_id);
+            props.onCommentSave(props.comment.comment_id);
+            closeAllEditModes(); // Đóng tất cả các trạng thái chỉnh sửa
+        }
+        
     };
 
     const [liked, setLiked] = useState(false);
@@ -262,7 +269,9 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         <textarea
                             value={editedContent}
                             onChange={(e) => setEditedContent(e.target.value)}
-                            className="w-full py-2 px-6 h-full bg-navyhover/30 rounded-lg my-1 edit-textarea"
+                            className="w-full py-2 px-6 h-full bg-white rounded-lg my-1 edit-textarea"
+                            style={{ height: '200px' }}
+
                         />
                     ) : (
                         <div className="flex justify-between">
@@ -339,12 +348,17 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                         <HoverCardTrigger asChild>
                                             <span className="mr-2">{props.comment.likes_count}</span>
                                         </HoverCardTrigger>
+
                                         <HoverCardContent className="w-80">
+                                        <ScrollArea className="h-72 w-70 rounded-md border">
+
                                         {props.comment.likes
                                             .filter(like => like.reply_id === null) // Lọc các likes có reply_id bằng null
                                             .map(like => (
                                             <ReactionInfoCard key={like.like_id} reaction={{ id: like.like_id, ...like }} handleClick={handleCancel} />
                                         ))}
+                                        </ScrollArea>
+
                                         </HoverCardContent>
                                     </HoverCard>
                                     <button
@@ -358,11 +372,14 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                             <span className="ml-2 mr-2">{props.comment.dislikes_count}</span>
                                         </HoverCardTrigger>
                                         <HoverCardContent className="w-80">
+                                        <ScrollArea className="h-72 w-70 rounded-md border">
+
                                         {props.comment.dislikes
                                             .filter(dislike => dislike.reply_id === null) // Lọc các dislikes có reply_id bằng null
                                             .map(dislike => (
                                             <ReactionInfoCard key={dislike.dislike_id} reaction={{ id: dislike.dislike_id, ...dislike }} handleClick={handleCancel} />
                                         ))}
+                                        </ScrollArea>
                                         </HoverCardContent>
                                     </HoverCard>
                                     <button
