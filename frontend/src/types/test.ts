@@ -41,3 +41,12 @@ export type TestHistoryResponse = {
     created_at: string;
     total_question: number;
 };
+export type CreateTestType = {
+    course_id: number;
+    duration: number;
+    description: string;
+    title: string;
+    quiz_group_id: number;
+    pass_percent: number;
+    is_time_limit: boolean;
+};

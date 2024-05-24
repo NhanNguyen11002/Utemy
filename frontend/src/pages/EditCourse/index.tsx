@@ -9,6 +9,10 @@ import {
     Spin,
     PopupChoseLectureType,
     PopupAddTest,
+    PopupUpdateTest,
+    FinalTestCard,
+    PopupAddFinalTest,
+    PopupUpdateFinalTest,
 } from "../../components";
 import AccordionSection from "../../components/Accordion/AccordionSection";
 import { AddSection as AddSectionType, Section as SectionType } from "../../types/section";
@@ -21,7 +25,6 @@ import PromotionTab from "./PromotionTab";
 import StatusTab from "./StatusTab";
 import NotFound from "../NotFound";
 import constants from "../../constants";
-import PopupUpdateTest from "../../components/Popup/PopupUpdateTest";
 
 const EditCourse: React.FC = () => {
     const [isDisplayDeleteModal, setIsDisplayDeleteModal] = useState<boolean>(false);
@@ -46,6 +49,12 @@ const EditCourse: React.FC = () => {
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
 
+    //final test
+    const finalTest = useAppSelector((state) => state.courseSlice.courseDetail.test);
+    const [isDisplayAddFinalTest, setIsDisplayAddFinalTest] = useState(false);
+    const [isDisplayUpdateFinalTest, setIsDisplayUpdateFinalTest] = useState(false);
+    const [isDisplayDeleteFinalTest, setIsDisplayDeleteFinalTest] = useState(false);
+
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "";
 
     const { course_id } = useParams();
@@ -66,6 +75,7 @@ const EditCourse: React.FC = () => {
     const handleRerender = () => {
         dispatch(sectionActions.getAllSectionByCourseId(course_id as string));
     };
+
     // add section
     const handleAddSection = () => {
         if (section !== "") {
@@ -99,6 +109,30 @@ const EditCourse: React.FC = () => {
         } else {
             setIsDeleteSection(false);
         }
+    };
+    //final test
+    const handleToggleDisplayAddFinalTest = (display: boolean) => {
+        setIsDisplayAddFinalTest(display);
+    };
+    const handleToggleDisplayUpdateFinalTest = (display: boolean) => {
+        setIsDisplayUpdateFinalTest(display);
+    };
+    const handleToggleDisplayDeleteFinalTest = (display: boolean) => {
+        setIsDisplayDeleteFinalTest(display);
+    };
+    const handlRerenderFinalTest = () => {
+        dispatch(courseActions.getFinalTestByCourseId(Number(course_id)));
+    };
+    const handleDeleteFinalTest = () => {
+        dispatch(courseActions.deleteFinalTest(Number(course_id))).then((response) => {
+            if (response.payload?.status_code === 200) {
+                toast.success(response.payload.message);
+                dispatch(courseActions.setClearFinalTest());
+                handleToggleDisplayDeleteFinalTest(false);
+            } else {
+                if (response.payload) toast.error(response.payload.message);
+            }
+        });
     };
 
     //lecture
@@ -291,7 +325,7 @@ const EditCourse: React.FC = () => {
                                         {/* handle list lesson */}
                                         <div className="mt-2">
                                             {sectionOfCourse.length <= 0 ? (
-                                                <h1 className="text-center text-2xl text-error">
+                                                <h1 className="text-center text-2xl text-black">
                                                     Khóa học chưa có chương học nào
                                                 </h1>
                                             ) : (
@@ -311,6 +345,35 @@ const EditCourse: React.FC = () => {
                                             )}
                                         </div>
                                     </div>
+                                    <div className="border-y border-gray">
+                                        <p className="text-2xl font-normal p-6">Bài kiểm tra toàn khoá học</p>
+                                    </div>
+                                    <div className="p-4">
+                                        <p className="py-4">
+                                            Tại đây bạn sẽ tạo bài kiểm tra toàn khoá học. Khi học viên hoàn thành toàn
+                                            bộ chương trình giảng dạy ở trên thì bài kiểm tra sẽ được mở ra. Khi học
+                                            viên hoàn thành bài kiểm tra, họ sẽ nhận được 1 bản chứng chỉ online cho hồ
+                                            sơ của mình. Có thể coi đây là bài kiểm tra quan trọng nhất nên hãy đảm bảo
+                                            độ khó tương ứng và nội dung bao quát toàn bộ khoá học cho bài kiểm tra này
+                                        </p>
+                                        {finalTest ? (
+                                            <FinalTestCard
+                                                isDisplayEdit={true}
+                                                handleDisplayEditTest={() => handleToggleDisplayUpdateFinalTest(true)}
+                                                handleDisplayDeleteModal={() =>
+                                                    handleToggleDisplayDeleteFinalTest(true)
+                                                }
+                                                finalTest={finalTest}
+                                            />
+                                        ) : (
+                                            <button
+                                                onClick={() => handleToggleDisplayAddFinalTest(true)}
+                                                className="text-white btn btn-info text-lg flex-2 ml-2"
+                                            >
+                                                Tạo bài kiểm tra cuối khoá
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </Tabs.Content>
                             <Tabs.Content value="promotion" className="w-[80%]">
@@ -321,6 +384,13 @@ const EditCourse: React.FC = () => {
                             </Tabs.Content>
                         </Tabs.Root>
                     </div>
+                    {/* POPUP DELETE FINAL TEST*/}
+                    {isDisplayDeleteFinalTest && (
+                        <DeleteModal
+                            handleDelete={handleDeleteFinalTest}
+                            handleCancel={() => handleToggleDisplayDeleteFinalTest(false)}
+                        />
+                    )}
 
                     {/* POPUP DELETE LECTURE AND SECTION*/}
                     {isDisplayDeleteModal && (
@@ -369,6 +439,23 @@ const EditCourse: React.FC = () => {
                             </div>
                         </div>
                     )}
+                    {/* POPUP ADD LESSON */}
+                    {isDisplayAddFinalTest && (
+                        <PopupAddFinalTest
+                            handleToggle={handleToggleDisplayAddFinalTest}
+                            handleRerender={handlRerenderFinalTest}
+                            courseId={Number(course_id)}
+                        />
+                    )}
+                    {isDisplayUpdateFinalTest && (
+                        <PopupUpdateFinalTest
+                            handleToggle={handleToggleDisplayUpdateFinalTest}
+                            handleRerender={handlRerenderFinalTest}
+                            finalTest={finalTest}
+                            courseId={Number(course_id)}
+                        />
+                    )}
+
                     {/* POPUP ADD LESSON */}
                     {isDisplayAddLessonModal && (
                         <PopupAddLesson

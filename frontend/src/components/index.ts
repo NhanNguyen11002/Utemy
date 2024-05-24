@@ -11,6 +11,8 @@ import TotalRating from "./TotalRating";
 import Accordion from "./Accordion";
 import PopupAddLesson from "./Popup/PopupAddLesson";
 import PopupUpdateLesson from "./Popup/PopupUpdateLesson";
+import PopupAddFinalTest from "./Popup/PopupAddFinalTest";
+import PopupUpdateFinalTest from "./Popup/PopupUpdateFinalTest";
 import VideoPlayer from "./VideoPlayer";
 import VideoPlayerForTrailerTrial from "./VideoPlayerForTrailerTrial";
 import RequirementPopup from "./Popup/RequirementPopup";
@@ -20,6 +22,7 @@ import WatchVideoHeader from "./Header/HeaderWatchVideo";
 import Carousel from "./Carousel/Carousel";
 import PopupChoseLectureType from "./Popup/PopupChoseLectureType";
 import PopupAddTest from "./Popup/PopupAddTest";
+import PopupUpdateTest from "./Popup/PopupUpdateTest";
 import CardVideo from "./Card/CardVideo";
 import AccordionSection from "./Accordion/AccordionSection";
 import AccordionSectionForTrial from "./Accordion/AccordionSectionForTrial";
@@ -33,6 +36,8 @@ import DecisionCard from "./Card/DecisionCard";
 import UserToolDropdown from "./Dropdown/UserToolDropdown";
 import AllReportCard from "./Card/AllReportCard";
 import FillInQuiz from "./FillInQuiz";
+import FinalTestCard from "./Card/FinalTestCard";
+
 export {
     Spin,
     Navbar,
@@ -68,4 +73,8 @@ export {
     AllReportCard,
     MyEnrolledCourseCard,
     FillInQuiz,
+    FinalTestCard,
+    PopupUpdateTest,
+    PopupAddFinalTest,
+    PopupUpdateFinalTest,
 };
