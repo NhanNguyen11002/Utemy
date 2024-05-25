@@ -12,7 +12,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogFooter,
+    // DialogFooter,
     DialogClose,
 } from "../ui/dialog";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -73,14 +73,14 @@ const UserToolDropdown: React.FC<UserToolDropdownProps> = (props) => {
                             <DialogTrigger>
                                 <span className="flex text-black text-xl items-center gap-2">
                                     <FlagIcon className="w-4 h-4" />
-                                    <span>Báo cáo</span>
+                                    <span>Báo xấu</span>
                                 </span>
                             </DialogTrigger>
                         </li>
                     </ul>
                     <DialogContent className="min-w-[500px] min-h-[300px] flex flex-col items-start">
                         <DialogHeader>
-                            <DialogTitle>Báo cáo {props.isLecture && "bài học của"} khoá học</DialogTitle>
+                            <DialogTitle>Báo xấu {props.isLecture && "bài học của"} khoá học</DialogTitle>
                             <DialogDescription>
                                 <div className="flex gap-2 items-start mt-2">
                                     <img src={props.courseDetail.thumbnail} alt="thumbnail" className="w-16 shrink-0" />
@@ -116,7 +116,7 @@ const UserToolDropdown: React.FC<UserToolDropdownProps> = (props) => {
                                                     Tiêu đề
                                                 </label>
                                                 <p className="text-black text-sm">
-                                                    Hãy nêu ngắn gọn lí do báo cáo được gửi đi tại đây
+                                                    Hãy nêu ngắn gọn lí do báo xấu được gửi đi tại đây
                                                 </p>
                                                 <Field
                                                     id="title"
@@ -184,7 +184,7 @@ const UserToolDropdown: React.FC<UserToolDropdownProps> = (props) => {
                                 <div>
                                     <p className="text-lg font-medium">
                                         {" "}
-                                        Chúng tôi sẽ xem xét báo cáo của bạn và đưa ra quyết định phù hợp{" "}
+                                        Chúng tôi sẽ xem xét báo xấu của bạn và đưa ra quyết định phù hợp{" "}
                                     </p>
                                 </div>
                                 <p>
@@ -195,16 +195,14 @@ const UserToolDropdown: React.FC<UserToolDropdownProps> = (props) => {
                         )}
 
                         {!reporting && (
-                            <DialogFooter className="sm:justify-start">
-                                <DialogClose asChild>
-                                    <button
-                                        type="button"
-                                        className="border rounded-sm border-black hover:cursor-pointer hover:bg-gray-300 transition-all duration-300 py-1 px-3"
-                                    >
-                                        Đóng
-                                    </button>
-                                </DialogClose>
-                            </DialogFooter>
+                            <DialogClose className="self-end">
+                                <button
+                                    type="button"
+                                    className="border rounded-sm border-black hover:cursor-pointer hover:bg-gray-300 transition-all duration-300 py-1 px-3 self-end"
+                                >
+                                    Đóng
+                                </button>
+                            </DialogClose>
                         )}
                     </DialogContent>
                 </div>

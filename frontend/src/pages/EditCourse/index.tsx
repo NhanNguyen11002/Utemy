@@ -258,7 +258,7 @@ const EditCourse: React.FC = () => {
                                     onClick={() => setTab("target")}
                                     className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "target" ? "border-blue-400" : "border-white"}`}
                                 >
-                                    Học viên mục tiêu
+                                    Mục tiêu khoá học
                                 </Tabs.Trigger>
                                 <Tabs.Trigger
                                     value="section"

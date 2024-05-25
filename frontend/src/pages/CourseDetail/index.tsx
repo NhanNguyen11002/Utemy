@@ -408,7 +408,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         onClick={() => setActiveTab("Study")}
                                         className={activeTab === "Study" ? "text-gray-900" : ""}
                                     >
-                                        Nội dung bài học
+                                        Chuẩn đầu ra
                                     </Tab>
 
                                     <Tab

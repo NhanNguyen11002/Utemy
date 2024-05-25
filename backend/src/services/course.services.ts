@@ -839,7 +839,7 @@ const getAllCourse = async (req: Request): Promise<ResponseBase> => {
             : undefined;
         const sortBy: string | undefined = req.query.sort_by ? (req.query.sort_by as string) : undefined;
         const evaluate: number | undefined = req.query.evaluate ? parseFloat(req.query.evaluate as string) : undefined;
-        const take = configs.general.PAGE_SIZE;
+        const take = 5; // custom page size là 5
         const skip = ((Number(pageIndex) ?? 1) - 1) * take;
         const categoriesConvert = category?.map((item: string) => Number(item));
         const orderBy: CourseOrderByWithRelationInput = {};
