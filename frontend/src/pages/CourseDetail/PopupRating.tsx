@@ -110,13 +110,13 @@ const PopupRating: React.FC<RatingCourseProps> = (props) => {
                                 >
                                     <div className="px-5 py-3 flex items-center space-x-4">
                                         <label htmlFor="title" className="text-sm mb-1 tablet:text-xl font-medium">
-                                            Vote: {checked}
+                                            Đánh giá: {checked}
                                         </label>
                                         <RatingInPopup score={checked} handleCheck={handleCheck} />
                                     </div>
                                     <div className="px-5 py-3">
                                         <label htmlFor="title" className="text-sm mb-1 tablet:text-xl font-medium">
-                                            Comment:
+                                            Nội dung:
                                         </label>
                                         <br />
                                         <Field
@@ -140,17 +140,17 @@ const PopupRating: React.FC<RatingCourseProps> = (props) => {
                                             name="save_button"
                                             className="btn btn-info text-white text-lg"
                                         >
-                                            {isLoading ? "Loading..." : "Save"}
+                                            {isLoading ? "Loading..." : "Lưu"}
                                         </button>
                                         <button
                                             onClick={handleToggleDelete}
                                             type="button"
                                             className={` btn btn-error text-lg ml-2 ${rating.id ? "" : "hidden"} `}
                                         >
-                                            {isLoading ? "Loading..." : "Delete"}
+                                            {isLoading ? "Loading..." : "Xoá"}
                                         </button>
                                         <button onClick={props.handleCancel} type="button" className="btn text-lg ml-2">
-                                            {isLoading ? "Loading..." : "Cancel"}
+                                            {isLoading ? "Loading..." : "Huỷ"}
                                         </button>
                                     </div>
                                 </form>

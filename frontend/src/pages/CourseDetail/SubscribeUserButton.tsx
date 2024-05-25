@@ -30,14 +30,13 @@ const SubscribeUserButton: React.FC<SubscribeUserButtonProps> = (props) => {
     }, [dispatch, isPass, courseId]);
 
     const handleViewCertificate = () => {
-        console.log(currentCertificate);
         window.open("https://credsverse.com/credentials/" + currentCertificate, "_blank");
     };
     return (
         <>
             {props.courseDetail.number_of_section > 0 && (
                 <div className="flex gap-2 items-center">
-                    <button className=" btn btn-sm btn-info ">
+                    <button className=" btn btn-sm btn-info  ">
                         <WatchVideoIcon />
                         <Link to={`/course-detail/${props.courseDetail.slug}/watch`}>
                             <span className="text-white">Chuyển đến khóa học</span>
@@ -46,7 +45,10 @@ const SubscribeUserButton: React.FC<SubscribeUserButtonProps> = (props) => {
                     {isPass && (
                         <Dialog>
                             <DialogTrigger asChild>
-                                <button type="button" className=" btn btn-sm bg-green-400 text-white  ">
+                                <button
+                                    type="button"
+                                    className=" btn btn-sm bg-green-400 text-white hover:text-green-400 hover:bg-white hover:border-green-400  "
+                                >
                                     <GraduationCapIcon className="w-5 h-5" />
                                     <span className="text-white">Chứng chỉ</span>
                                 </button>

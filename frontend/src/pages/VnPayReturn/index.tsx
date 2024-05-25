@@ -19,6 +19,7 @@ const VnPayReturn = () => {
         vnp_TransactionNo,
         vnp_TransactionStatus,
         vnp_TxnRef,
+        vnp_SecureHash,
     } = useQueryParams();
     const data = {
         vnp_Amount,
@@ -32,7 +33,9 @@ const VnPayReturn = () => {
         vnp_TransactionNo,
         vnp_TransactionStatus,
         vnp_TxnRef,
+        vnp_SecureHash,
     };
+    console.log(data);
     useEffect(() => {
         dispatch(vnpayActions.vnpayIpn(data)).then((response) => {
             if (response.payload?.status_code === 200) {
