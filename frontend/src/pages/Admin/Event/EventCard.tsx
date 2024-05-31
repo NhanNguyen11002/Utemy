@@ -54,7 +54,7 @@ const EventCard: React.FC<EventCardProps> = (props) => {
     const handleUpdateRatio = (couponId: number) => {
         setSelectedCouponId(couponId);
         setIsUpdateRatioDialogOpen(true);
-        dispatch(couponActions.getCouponById(couponId));
+        dispatch(couponActions.getCouponByIdOnDate(couponId));
     };
     const handleResetRatio = (couponId: any) => {
         // Logic to reset ratio
@@ -197,6 +197,13 @@ const EventCard: React.FC<EventCardProps> = (props) => {
         // Thêm giá trị của coupon này vào tổng
         return accumulator + ratio;
     }, 0);
+    const truncateDescription = (description: string, maxLength: number) => {
+        if (description.length > maxLength) {
+            return description.substring(0, maxLength) + '...';
+        }
+        return description;
+    };
+    
     return (
         <>
             <div
@@ -217,8 +224,8 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                             <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
                                 <h1 className="text-black font-bold text-lg"> Mô tả sự kiện:</h1>
 
-                                <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
-                                    {props.event.description}
+                                <p className="ml-2 text-gray-700 font-normal text-lg truncate">
+                                    {truncateDescription(props.event.description, 100)}
                                 </p>
                             </div>
                             <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
