@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
 import { previewImage, previewTrailer } from "../../utils/helper";
+import logoUtemy from "../../assets/images/utemy_logo_notext.png";
 
 type CategoriesOptions = {
     value: number;
@@ -141,7 +142,6 @@ const CreateCourse: FC = () => {
                                 <form onSubmit={formik.handleSubmit} className="p-4">
                                     <div className="flex">
                                         <div className="flex rounded-lg items-start">
-                                            
                                             <div className="flex flex-col gap-3">
                                                 <div className="">
                                                     <p className="text-lg font-medium">Chọn ảnh bìa</p>
@@ -167,12 +167,13 @@ const CreateCourse: FC = () => {
                                                     className="text-[14px] text-error font-medium"
                                                 />
                                                 <img
+                                                    src={logoUtemy}
                                                     ref={imageRef}
                                                     alt="Thumbnail"
                                                     className="w-32 h-32 rounded-lg mr-3 outline-none border border-dashed border-black tablet:w-60 tablet:h-60"
                                                 />
                                             </div>
-                                            <div className="flex flex-col gap-3" style={{ marginLeft: '250px' }}>
+                                            <div className="flex flex-col gap-3" style={{ marginLeft: "250px" }}>
                                                 <div className="">
                                                     <p className="text-lg font-medium">Chọn video trailer</p>
                                                     <p className="italic">Kích thước video nhỏ hơn hoặc bằng 100mb</p>
@@ -197,16 +198,33 @@ const CreateCourse: FC = () => {
                                                 {/* Video player */}
                                                 {formik.values.trailer && (
                                                     <div className="mt-4">
-                                                        <video ref={trailerRef} controls className="mt-2" width="400" height="300">
-                                                            {["video/mp4", "video/x-matroska", "video/mov"].map((type, index) => (
-                                                                <source key={index} src={formik.values.trailer ? URL.createObjectURL(formik.values.trailer) : ''} type={type} />
-                                                            ))}
+                                                        <video
+                                                            ref={trailerRef}
+                                                            controls
+                                                            className="mt-2"
+                                                            width="400"
+                                                            height="300"
+                                                        >
+                                                            {["video/mp4", "video/x-matroska", "video/mov"].map(
+                                                                (type, index) => (
+                                                                    <source
+                                                                        key={index}
+                                                                        src={
+                                                                            formik.values.trailer
+                                                                                ? URL.createObjectURL(
+                                                                                      formik.values.trailer,
+                                                                                  )
+                                                                                : ""
+                                                                        }
+                                                                        type={type}
+                                                                    />
+                                                                ),
+                                                            )}
                                                             Your browser does not support the video tag.
                                                         </video>
                                                     </div>
                                                 )}
                                             </div>
-
                                         </div>
                                     </div>
 

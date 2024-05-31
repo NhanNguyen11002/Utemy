@@ -44,7 +44,7 @@ const MyEnrolledCourse: React.FC = () => {
     return (
         <>
             {isGetLoading && <Spin />}
-            <div className="container mx-auto mt-[100px] laptop:mt-0">
+            <div className="container mx-auto my-[100px] laptop:mt-0">
                 <div className="px-4 tablet:px-[60px]">
                     <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">
                         Khóa học đã đăng ký

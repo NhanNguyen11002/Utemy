@@ -72,7 +72,7 @@ const addPromotion = async (req: IRequestWithId): Promise<ResponseBase> => {
             const isAddPromotion = await configs.db.course.update({
                 data: {
                     sale_price: Number(sale_price),
-                    sale_until,
+                    sale_until: new Date(sale_until),
                 },
                 where: {
                     id: isFoundCourse.id,
@@ -677,6 +677,7 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 slug: data.slug,
                 study: JSON.stringify(data.study),
                 requirement: JSON.stringify(data.requirement),
+                final_test_id: data.final_test_id,
                 sections,
                 description: data.description,
             };
@@ -838,7 +839,7 @@ const getAllCourse = async (req: Request): Promise<ResponseBase> => {
             : undefined;
         const sortBy: string | undefined = req.query.sort_by ? (req.query.sort_by as string) : undefined;
         const evaluate: number | undefined = req.query.evaluate ? parseFloat(req.query.evaluate as string) : undefined;
-        const take = configs.general.PAGE_SIZE;
+        const take = 5; // custom page size là 5
         const skip = ((Number(pageIndex) ?? 1) - 1) * take;
         const categoriesConvert = category?.map((item: string) => Number(item));
         const orderBy: CourseOrderByWithRelationInput = {};

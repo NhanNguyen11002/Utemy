@@ -48,6 +48,7 @@ const EditCourse: React.FC = () => {
     const [itemTitle, setItemTitle] = useState<string>("");
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
+    const [key, setKey] = useState(0);
 
     //final test
     const finalTest = useAppSelector((state) => state.courseSlice.courseDetail.test);
@@ -213,6 +214,7 @@ const EditCourse: React.FC = () => {
     };
     //lecture
     const handleDisplayEditLecture = (lectureId: number, type: string) => {
+        setKey((prev) => prev + 1);
         setSectionId(lectureId);
         setType(type);
         setIsDisplayEditLectureModal(!isDisplayEditLectureModal);
@@ -256,7 +258,7 @@ const EditCourse: React.FC = () => {
                                     onClick={() => setTab("target")}
                                     className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "target" ? "border-blue-400" : "border-white"}`}
                                 >
-                                    Học viên mục tiêu
+                                    Mục tiêu khoá học
                                 </Tabs.Trigger>
                                 <Tabs.Trigger
                                     value="section"
@@ -496,6 +498,7 @@ const EditCourse: React.FC = () => {
                         ) : (
                             <>
                                 <PopupUpdateTest
+                                    key={key}
                                     handleRerender={handleRerender}
                                     handleCancel={handleCancelModalEditLecture}
                                     lectureId={sectionId}

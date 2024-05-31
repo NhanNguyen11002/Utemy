@@ -68,7 +68,6 @@ const PopupAddTest: React.FC<AddTestPopupProps> = (props) => {
     };
     const dispatch = useAppDispatch();
     const handleOnSubmit = (values: any) => {
-        console.log("submit", values);
         let formData = new FormData();
         formData.append("title", values.title);
         formData.append(props.changeType ? "lecture_id" : "section_id", props.sectionId.toString());

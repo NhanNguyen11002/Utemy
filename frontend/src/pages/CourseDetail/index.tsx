@@ -22,7 +22,6 @@ import toast from "react-hot-toast";
 import AuthorButton from "./AuthorButton";
 import GuestButton from "./GuestButton";
 import SubscribeUserButton from "./SubscribeUserButton";
-import PopupPromotion from "./PopupPromotion";
 import CommentSection from "./CommentSection";
 import constants from "../../constants";
 import { calDayRemains, getCourseIncludes, convertStringDate } from "../../utils/helper";
@@ -57,7 +56,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const dispatch = useAppDispatch();
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState<boolean>(false);
     const [isOpenPopupRating, setIsOpenPopupRating] = useState<boolean>(false);
-    const [isOpenPromotionPopup, setIsOpenPromotionPopup] = useState<boolean>(false);
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
     const [idItem, setIdItem] = useState<number>(-1);
     const [pageIndex, setPageIndex] = useState<number>(1);
@@ -112,9 +110,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const handleTogglePopupRating = () => {
         setIsOpenPopupRating(!isOpenPopupRating);
     };
-    const handleTogglePromotion = () => {
-        setIsOpenPromotionPopup(!isOpenPromotionPopup);
-    };
+
     const handleAfterVote = () => {
         dispatch(courseActions.getCourseDetail(slug as string));
         const values: GetRating = {
@@ -125,9 +121,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
         dispatch(ratingActions.getListRatingOfCourseBySlug(values));
         dispatch(ratingActions.getRatingPercentOfCourse(slug as string));
     };
-    const handleAfterPromotion = () => {
-        dispatch(courseActions.getCourseDetail(slug as string));
-    };
+
     // const [videoDialog, setVideoDialog] = useState<React.ReactNode | null>(null);
     const [showDialog, setShowDialog] = useState(false);
     const [videoUrl, setVideoUrl] = useState("");
@@ -204,11 +198,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     if (isNotFound) return <NotFound />;
-// Hàm tiện ích để lấy các bài giảng chung
+    // Hàm tiện ích để lấy các bài giảng chung
     function getCommonLectures(apiData1: any, apiData2: any) {
         const lectures1 = apiData1.sections.flatMap((section: any) => section.lecture);
         const lectures2 = apiData2.sections.flatMap((section: any) => section.lecture);
-        
+
         const lectureMap = new Map();
         lectures1.forEach((lecture: any) => {
             lectureMap.set(lecture.lecture_id, lecture);
@@ -220,7 +214,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
         return commonLectures;
     }
     const commonLectures = getCommonLectures(courseDetail, courseDetailForTrial);
-    console.log("abc: ",commonLectures);
     return (
         <>
             {isOpenPopupRating && (
@@ -231,14 +224,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                 />
             )}
             {isOpenDeleteModal && <DeleteModal handleDelete={handleDeleteCourse} handleCancel={handleCancelModal} />}
-
-            {isOpenPromotionPopup && (
-                <PopupPromotion
-                    handleAfterPromotion={handleAfterPromotion}
-                    handleCancel={handleTogglePromotion}
-                    course={courseDetail}
-                />
-            )}
 
             {isGetLoadingCourse && <Spin />}
             <div className="container mx-auto mt-[100px] laptop:mt-0">
@@ -385,7 +370,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                 <div className="flex-1 flex items-end gap-2 flex-wrap">
                                     {isLogin && (role === constants.util.ROLE_AUTHOR || isAdmin) && (
                                         <AuthorButton
-                                            handleTogglePromotion={handleTogglePromotion}
                                             handleDelete={() => {
                                                 setIsOpenDeleteModal(!isOpenDeleteModal);
                                                 setIdItem(courseDetail.course_id as number);
@@ -424,7 +408,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         onClick={() => setActiveTab("Study")}
                                         className={activeTab === "Study" ? "text-gray-900" : ""}
                                     >
-                                        Nội dung bài học
+                                        Chuẩn đầu ra
                                     </Tab>
 
                                     <Tab
@@ -446,7 +430,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                             Học thử
                                         </Tab>
                                     )} */}
-
                                 </TabsHeader>
                                 <div className="h-px w-full bg-gray-300"></div>
                                 <TabsBody>
@@ -520,11 +503,16 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                     })}
                                                     {showDialog && (
                                                         <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
-                                                            <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
-                                                                <DialogTitle className ="text-center">{descriptionVideo.replace(/<[^>]+>/g, '')}</DialogTitle>
+                                                            <DialogContent
+                                                                className={
+                                                                    "lg:max-w-screen-lg overflow-y-scroll max-h-screen"
+                                                                }
+                                                            >
+                                                                <DialogTitle className="text-center">
+                                                                    {descriptionVideo.replace(/<[^>]+>/g, "")}
+                                                                </DialogTitle>
                                                                 <VideoPlayerForTrailerTrial source={videoUrl} />
                                                             </DialogContent>
-                                                            
                                                         </Dialog>
                                                     )}
                                                 </div>

@@ -111,7 +111,7 @@ const CourseCard: FC<Course> = (props: Course) => {
                                     </span>{" "}
                                     <span className=" font-extrabold font-OpenSans text-lightblue ">
                                         {" "}
-                                        {dayRemains} days left
+                                        Còn lại {dayRemains}
                                     </span>{" "}
                                 </p>
                             ) : (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { Formik, Field, ErrorMessage } from "formik";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { addTestValidationSchema } from "../../validations/lesson";
@@ -13,6 +13,7 @@ type UpdateTestPopupProps = {
     handleRerender: () => void;
     handleChangeType: () => void;
     lectureId: number;
+    key: number;
 };
 const customStyles = {
     control: (styles: any) => ({
@@ -103,15 +104,16 @@ const PopupUpdateTest: React.FC<UpdateTestPopupProps> = (props) => {
         dispatch(quizActions.getAllQuizGroupHasQuiz());
         dispatch(lectureActions.getLectureById(props.lectureId));
     }, [dispatch, props.lectureId]);
-    const initialValue = {
-        title: lecture.content.title,
-        description: lecture.content.description,
-        is_time_limit: lecture.content.is_time_limit,
-        duration: lecture.content.duration,
-        pass_percent: (lecture.content.pass_percent * 100).toFixed(0),
-        quiz_group_id: lecture.content.quiz_group_id,
-    };
-    console.log("init", initialValue);
+    const initialValue = useMemo(() => {
+        return {
+            title: lecture.content.title,
+            description: lecture.content.description,
+            is_time_limit: lecture.content.is_time_limit,
+            duration: lecture.content.duration / 60,
+            pass_percent: (lecture.content.pass_percent * 100).toFixed(0),
+            quiz_group_id: lecture.content.quiz_group_id,
+        };
+    }, [JSON.stringify(lecture.content)]);
 
     return (
         <div className="fixed z-50 top-0 left-0 right-0 bottom-0 bg-black/50 flex items-center justify-center">
@@ -210,12 +212,13 @@ const PopupUpdateTest: React.FC<UpdateTestPopupProps> = (props) => {
                                     />
                                     <br />
                                     <Field
+                                        key={props.key}
                                         handleOnchange={(e: any) => handleChangeLimit(e, formik)}
                                         component={CustomeSelect}
                                         options={limitOptions}
                                         styles={customStyles}
                                         defautlValues={defaultTimeLimit}
-                                        placeholder={"Chọn..."}
+                                        placeholder={defaultTimeLimit ? defaultTimeLimit[0].label : "Chọn..."}
                                         name="is_time_limit"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.is_time_limit &&
@@ -236,6 +239,7 @@ const PopupUpdateTest: React.FC<UpdateTestPopupProps> = (props) => {
                                     />
                                     <br />
                                     <Field
+                                        key={props.key}
                                         handleOnchange={(e: any) => handleChangeQuizGroup(e, formik)}
                                         component={CustomeSelect}
                                         options={quizGroupOptions}
@@ -263,6 +267,7 @@ const PopupUpdateTest: React.FC<UpdateTestPopupProps> = (props) => {
                                         className="text-[14px] text-error font-medium"
                                     />
                                     <Field
+                                        key={props.key}
                                         as="textarea"
                                         name="description"
                                         description={lecture.content.description}

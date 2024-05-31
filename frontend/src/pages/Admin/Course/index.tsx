@@ -23,7 +23,6 @@ const CourseAdmin: React.FC = () => {
         else {
             dispatch(courseActions.getCourseDetail(slug)).then((response) => {
                 if (response && response.payload && response.payload.data && response.payload?.status_code === 200) {
-                    console.log("hehe");
                 } else {
                     setIsNotFound(true);
                 }
