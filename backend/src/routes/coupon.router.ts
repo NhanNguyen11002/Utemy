@@ -22,7 +22,8 @@ couponRouter.get("/all-history", isLogin, controllers.couponController.getAllCou
 couponRouter.post("/owner/", isLogin, controllers.couponController.createCouponOwner);
 couponRouter.post("/good-luck/", isLogin, controllers.couponController.createHistoryForGoodLuckNextTime);
 
-couponRouter.get("/route/:coupon_id", isLogin, controllers.couponController.getCouponById);
+couponRouter.get("/route/:coupon_id", isLogin, controllers.couponController.getCouponByIdOnDate);
+couponRouter.get("/visible/:coupon_id", isLogin, controllers.couponController.getCouponById);
 couponRouter.get("/spin-history/:event_id", isLogin, controllers.couponController.getHistorySpinOfUserForAEvent);
 couponRouter.get("/spin/voucher", isLogin, controllers.couponController.getVoucherBySpin);
 export default couponRouter;

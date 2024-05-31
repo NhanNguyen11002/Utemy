@@ -18,10 +18,14 @@ const createInvoice = async (totalwithcoupon: number, discount: number, id: numb
 };
 
 const getHistoryInvoices = async (values: InvoicePaging) => {
-    const path = `invoice/all?page_index=${values.page_index}&page_size=${values.page_size}`;
-    const reponse = await apiCaller("GET", path);
-    return reponse;
+    let path = `invoice/all?page_index=${values.page_index}&page_size=${values.page_size}`;
+    if (values.from && values.to) {
+        path += `&from=${values.from}&to=${values.to}`;
+    }
+    const response = await apiCaller("GET", path);
+    return response;
 };
+
 
 const invoiceApis = {
     getInvoiceNow,

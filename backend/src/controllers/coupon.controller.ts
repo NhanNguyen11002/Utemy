@@ -92,6 +92,10 @@ export default class CouponController {
         const response: ResponseBase = await services.CouponServices.getAllEventCouponByEventId(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getCouponByIdOnDate(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CouponServices.getCouponByIdOnDate(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
     async getCouponById(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.CouponServices.getCouponById(req);
         return res.status(response.getStatusCode()).json(response);

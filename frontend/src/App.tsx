@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Cookies from "js-cookie";
-import { authActions, cartActions, courseActions } from "./redux/slices";
+import { authActions, cartActions, courseActions, eventActions } from "./redux/slices";
 import { useAppDispatch, useAppSelector } from "./hooks/hooks";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
@@ -67,6 +67,9 @@ function App() {
             });
         }
     }, [dispatch]);
+    useEffect(() => {
+        dispatch(eventActions.getActiveEvent());
+    }, []);
     return (
         <div className="App">
             <BrowserRouter>
