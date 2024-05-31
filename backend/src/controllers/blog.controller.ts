@@ -51,4 +51,8 @@ export default class BlogController {
         const response: ResponseBase = await services.BlogService.getBlog(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async togglePublishedBlog(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.togglePublishedBlog(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

@@ -38,6 +38,10 @@ import AllReportCard from "./Card/AllReportCard";
 import FillInQuiz from "./FillInQuiz";
 import FinalTestCard from "./Card/FinalTestCard";
 import FillInNoLogicQuiz from "./FillInNoLogicQuiz";
+import BlogCard from "./Card/BlogCard";
+import HeaderBlog from "./Header/HeaderBlog";
+import Footer from "./Footer/Footer";
+import BlogNavbar from "./Navbar/BlogNavbar";
 
 export {
     Spin,
@@ -79,4 +83,8 @@ export {
     PopupAddFinalTest,
     PopupUpdateFinalTest,
     FillInNoLogicQuiz,
+    BlogCard,
+    HeaderBlog,
+    Footer,
+    BlogNavbar,
 };

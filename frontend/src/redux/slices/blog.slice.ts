@@ -36,7 +36,7 @@ export const updateBlog = createAsyncThunk<Response<null>, FormData, { rejectVal
         }
     },
 );
-export const deleteBlog = createAsyncThunk<Response<null>, number, { rejectValue: Response<null> }>(
+export const deleteBlog = createAsyncThunk<Response<null>, string, { rejectValue: Response<null> }>(
     "blog/delete",
     async (body, ThunkAPI) => {
         try {
@@ -47,7 +47,18 @@ export const deleteBlog = createAsyncThunk<Response<null>, number, { rejectValue
         }
     },
 );
-export const getBlog = createAsyncThunk<Response<null>, number, { rejectValue: Response<null> }>(
+export const togglePublishedBlog = createAsyncThunk<Response<null>, any, { rejectValue: Response<null> }>(
+    "blog/toggle-public",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.togglePublishedBlog(body);
+            return response.data as Response<null>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getBlog = createAsyncThunk<Response<null>, string, { rejectValue: Response<null> }>(
     "blog/get",
     async (body, ThunkAPI) => {
         try {
@@ -96,7 +107,8 @@ const initialState: BlogSliceType = {
             is_admin: false,
         },
         categories: [],
-        is_published: false
+        is_published: false,
+        slug: "",
     },
     totalPage: 0,
     totalRecord: 0,
@@ -109,6 +121,9 @@ export const blogSlice = createSlice({
     reducers: {
         setBlog: (state, action) => {
             state.blog = action.payload;
+        },
+        setBlogPublished: (state, action) => {
+            state.blog.is_published = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -152,6 +167,15 @@ export const blogSlice = createSlice({
         builder.addCase(deleteBlog.rejected, (state) => {
             state.isLoading = false;
         });
+        builder.addCase(togglePublishedBlog.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(togglePublishedBlog.fulfilled, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(togglePublishedBlog.rejected, (state) => {
+            state.isLoading = false;
+        });
         builder.addCase(getBlog.pending, (state) => {
             state.isGetLoading = true;
         });
@@ -174,6 +198,6 @@ export const blogSlice = createSlice({
     },
 });
 
-export const { setBlog } = blogSlice.actions;
+export const { setBlog, setBlogPublished } = blogSlice.actions;
 
 export default blogSlice.reducer;

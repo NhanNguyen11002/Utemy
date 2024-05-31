@@ -7,12 +7,14 @@ import constants from "../constants";
 import { DateTime } from "luxon";
 import helper from "../helper";
 import { BlogResponse } from "../types/blog.type";
+import { generateUniqueSlug } from "../utils/helper";
 
 const createBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const file = req.file;
         const userId = req.user_id;
-        const { title, content, categories } = req.body;
+        const { title, slug } = req.body;
+        const uniqueSlug = generateUniqueSlug(slug);
 
         if (file) {
             const isAdmin = await configs.db.user.findFirst({
@@ -25,20 +27,14 @@ const createBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
                 return new ResponseError(401, constants.error.ERROR_UNAUTHORIZED, false);
             } else {
                 const fullpathConverted = helper.ConvertHelper.convertFilePath(file.path);
-                const listCategoryId = categories.split(",").map((item: number) => ({
-                    category_id: Number(item),
-                }));
+
                 const createBlog = await configs.db.blog.create({
                     data: {
                         author_id: userId as number,
                         title: title,
-                        content: content,
+                        content: "",
+                        slug: uniqueSlug,
                         url_image: fullpathConverted,
-                        created_at: new Date(),
-                        updated_at: new Date(),
-                        blog_categories: {
-                            create: listCategoryId,
-                        },
                     },
                 });
 
@@ -59,8 +55,7 @@ const createBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
 const updateBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const file = req.file;
-        const { blog_id, title, content, categories, is_published } = req.body;
-        const isPublishedBoolean = is_published === "true";
+        const { blog_id, title, content, categories } = req.body;
         const userId = req.user_id;
         const isBlogExist = await configs.db.blog.findFirst({
             where: {
@@ -70,15 +65,6 @@ const updateBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
         if (!isBlogExist) {
             return new ResponseError(404, constants.error.ERROR_BLOG_NOT_FOUND, false);
         } else {
-            const isBlogUnique = await configs.db.blog.findFirst({
-                where: {
-                    title,
-                    NOT: {
-                        id: parseInt(blog_id),
-                    },
-                },
-            });
-            if (isBlogUnique) return new ResponseError(400, constants.error.ERROR_BLOG_ALREADY_EXISTS, false);
             const isAdmin = await configs.db.user.findFirst({
                 where: {
                     id: userId,
@@ -101,7 +87,6 @@ const updateBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
                             title: title,
                             content: content,
                             updated_at: new Date(),
-                            is_published: isPublishedBoolean,
                         },
                     });
                     const deleteOldCategory = await configs.db.blogCategory.deleteMany({
@@ -130,7 +115,6 @@ const updateBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
                             content: content,
                             author_id: userId,
                             updated_at: new Date(),
-                            is_published: isPublishedBoolean,
                         },
                     });
                     const deleteOldCategory = await configs.db.blogCategory.deleteMany({
@@ -154,13 +138,14 @@ const updateBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
-const deleteBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
+const togglePublishedBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
-        const { blog_id } = req.params;
-        const blogIdConvert = parseInt(blog_id);
+        const { slug } = req.params;
+        const { published } = req.body;
+        const convertPublished = published === "true" || published === true;
         const isBlogExist = await configs.db.blog.findFirst({
             where: {
-                id: blogIdConvert,
+                slug,
             },
         });
         if (!isBlogExist) {
@@ -175,14 +160,56 @@ const deleteBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
             if (!isAdmin) {
                 return new ResponseError(401, constants.error.ERROR_UNAUTHORIZED, false);
             } else {
-                const oldBlogImagePath = helper.ConvertHelper.deConvertFilePath(isBlogExist.url_image);
-                const deleteBlog = await configs.db.blog.delete({
+                const toggle = await configs.db.blog.update({
                     where: {
-                        id: blogIdConvert,
+                        slug,
+                    },
+                    data: {
+                        is_published: convertPublished,
+                    },
+                });
+                if (toggle) {
+                    return new ResponseSuccess(200, constants.success.SUCCESS_UPDATE_DATA, true);
+                } else {
+                    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+                }
+            }
+        }
+    } catch (error) {
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const deleteBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { slug } = req.params;
+        const isBlogExist = await configs.db.blog.findFirst({
+            where: {
+                slug,
+            },
+        });
+        if (!isBlogExist) {
+            return new ResponseError(404, constants.error.ERROR_BLOG_NOT_FOUND, false);
+        } else {
+            const isAdmin = await configs.db.user.findFirst({
+                where: {
+                    id: req.user_id,
+                    is_admin: true,
+                },
+            });
+            if (!isAdmin) {
+                return new ResponseError(401, constants.error.ERROR_UNAUTHORIZED, false);
+            } else {
+                // const oldBlogImagePath = helper.ConvertHelper.deConvertFilePath(isBlogExist.url_image);
+                const deleteBlog = await configs.db.blog.update({
+                    where: {
+                        slug,
+                    },
+                    data: {
+                        is_deleted: true,
                     },
                 });
                 if (deleteBlog) {
-                    await helper.FileHelper.destroyedFileIfFailed(oldBlogImagePath as string);
+                    // await helper.FileHelper.destroyedFileIfFailed(oldBlogImagePath as string);
                     return new ResponseSuccess(200, constants.success.SUCCESS_DELETE_DATA, true);
                 } else {
                     return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
@@ -215,6 +242,7 @@ const getBlogsWithPagination = async (req: IRequestWithId): Promise<ResponseBase
             };
         });
         const whereCondition: any = {
+            is_deleted: false,
             title: {
                 contains: searchItem?.toString(),
             },
@@ -251,6 +279,7 @@ const getBlogsWithPagination = async (req: IRequestWithId): Promise<ResponseBase
                 blog_id: item.id,
                 title: item.title,
                 content: item.content,
+                slug: item.slug,
                 url_image: item.url_image,
                 created_at: DateTime.fromISO(item.created_at.toISOString()),
                 updated_at: DateTime.fromISO(item.updated_at.toISOString()),
@@ -303,6 +332,7 @@ const getBlogs = async (req: Request): Promise<ResponseBase> => {
                 blog_id: item.id,
                 title: item.title,
                 content: item.content,
+                slug: item.slug,
                 url_image: item.url_image,
                 created_at: DateTime.fromISO(item.created_at.toISOString()),
                 updated_at: DateTime.fromISO(item.updated_at.toISOString()),
@@ -330,11 +360,11 @@ const getBlogs = async (req: Request): Promise<ResponseBase> => {
 };
 const getBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
-        const { blog_id } = req.params;
+        const { slug } = req.params;
 
         const getBlog = await configs.db.blog.findFirst({
             where: {
-                id: Number(blog_id),
+                slug: slug,
             },
             include: {
                 user: true,
@@ -350,6 +380,7 @@ const getBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
             blog_id: getBlog.id,
             title: getBlog.title,
             content: getBlog.content,
+            slug: getBlog.slug,
             url_image: getBlog.url_image,
             created_at: DateTime.fromISO(getBlog.created_at.toISOString()),
             updated_at: DateTime.fromISO(getBlog.updated_at.toISOString()),
@@ -361,7 +392,7 @@ const getBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
             categories: (getBlog.blog_categories as any).map((cc: any) => {
                 return {
-                    id: cc.category?.id,
+                    category_id: cc.category?.id,
                     title: cc.category?.title,
                     url_image: cc.category?.url_image,
                 };
@@ -380,5 +411,6 @@ const blogService = {
     getBlogsWithPagination,
     getBlogs,
     getBlog,
+    togglePublishedBlog,
 };
 export default blogService;

@@ -581,11 +581,13 @@ model Blog {
   author_id Int
   user      User     @relation(fields: [author_id], references: [id], onDelete: Cascade)
   title String    @db.VarChar(100)
+  slug String @db.VarChar(150) @unique
   content String @db.Text
   url_image         String           @db.Text
   created_at DateTime @default(now())  
-  updated_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   is_published     Boolean         @default(false)
+  is_deleted Boolean @default(false)
   blog_categories BlogCategory[]
   comment_blogs CommentBlog[]
 }
