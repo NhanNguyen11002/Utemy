@@ -31,6 +31,7 @@ export type VoucherDropdown = {
     valid_start: string;
     valid_until: string;
     discount: number;
+    quantity: number;
 };
 export type GetCouponsWithPagination = {
     searchItem: string;

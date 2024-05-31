@@ -233,6 +233,7 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                         coupon: {
                             code: code,
                         },
+                        is_from_event: false,
                     },
                     select: {
                         user_id: true,
@@ -272,9 +273,9 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                     if (isCouponExist) {
                         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
                     } else return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
-                }
+                } else return new ResponseError(404, constants.error.ERROR_COUPON_USED, false);
             }
-        }
+        } else return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
     } catch (error) {
         // Xử lý trường hợp coupon không tồn tại
         if (error instanceof PrismaClientKnownRequestError) {
@@ -283,7 +284,7 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
         console.log(error);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
-    return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    // return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
 };
 
 const GetCouponsWithPagination = async (req: IRequestWithId): Promise<ResponseBase> => {
@@ -612,7 +613,7 @@ const getAllEventCouponByEventId = async (req: IRequestWithId): Promise<Response
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
-const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
+const getCouponByIdOnDate = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { coupon_id } = req.params;
         const user_id = Number(req.user_id);
@@ -636,6 +637,7 @@ const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
                 where: {
                     coupon_id: isCouponExist.id,
                     user_id,
+                    is_from_event: false,
                 },
                 include: {
                     coupon: true,
@@ -647,6 +649,52 @@ const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
                 return new ResponseError(400, constants.error.ERROR_COUPON_USED, false);
             }
         } else {
+            console.log("is cp exist: ", isCouponExist);
+            // Xử lý trường hợp coupon không tồn tại
+            return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        }
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const { coupon_id } = req.params;
+        const user_id = Number(req.user_id);
+        const isCouponExist = await configs.db.coupon.findFirst({
+            where: {
+                id: Number(coupon_id),
+                is_delete: false,
+                remain_quantity: {
+                    gt: -1,
+                },
+            },
+            include: {
+                ratio: true,
+            }
+        });
+        if (isCouponExist) {
+            const isCouponUse = await configs.db.couponHistory.findFirst({
+                where: {
+                    coupon_id: isCouponExist.id,
+                    user_id,
+                    is_from_event: false,
+                },
+                include: {
+                    coupon: true,
+                },
+            });
+
+            if (isCouponUse && !isCouponUse.coupon.is_event) {
+                // Đã sử dụng coupon và coupon không phải là event
+                return new ResponseError(400, constants.error.ERROR_COUPON_USED, false);
+            }
+        } else {
+            console.log("is cp exist: ", isCouponExist);
             // Xử lý trường hợp coupon không tồn tại
             return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         }
@@ -685,6 +733,7 @@ const getVoucherBySpin = async (req: IRequestWithId): Promise<ResponseBase> => {
                 user_id: user_id, // Giá trị user_id mà người dùng nhập vào
             },
             select: {
+                quantity: true,
                 coupon: {
                     select: {
                         code: true,
@@ -701,6 +750,7 @@ const getVoucherBySpin = async (req: IRequestWithId): Promise<ResponseBase> => {
             valid_start: voucherSpin.coupon.valid_start,
             valid_until: voucherSpin.coupon.valid_until,
             discount: voucherSpin.coupon.discount,
+            quantity: voucherSpin.quantity,
         }));
         if (!allVoucherSpin) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, validVoucherData);
@@ -840,6 +890,7 @@ const couponService = {
     getCouponHistoryByUserId,
     getAllCouponHistory,
     createCouponOwner,
+    getCouponByIdOnDate,
     getCouponById,
     getHistorySpinOfUserForAEvent,
     getVoucherBySpin,

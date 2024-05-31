@@ -154,7 +154,7 @@ const error = {
     ERROR_NAME_REQUIRED: "Name is required",
     ERROR_NAME_MAX: "Name must be under than 50 chars",
     ERROR_DESCRIPTION_EVENT_REQUIRED: "Description is required",
-    ERROR_DESCRIPTION_EVENT_MAX: "Description must be under 200 chars",
+    ERROR_DESCRIPTION_EVENT_MAX: "Description must be under 150 chars",
     ERROR_DESCRIPTION_EVENT_MIN: "Description must be upper 8 chars",
     ERROR_END_DATE_LATER_START_DATE: "End date must be later than start date",
     ERROR_START_DATE_EARLIER_END_DATE: "Start date must be earlier than end date",

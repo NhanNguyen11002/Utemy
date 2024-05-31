@@ -40,56 +40,100 @@
 
 // export default Navbar;
 
-import React from 'react';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { images } from "../../assets/";
-import { useNavigate } from 'react-router-dom';
-import { eventActions } from '../../redux/slices';
-import { useAppDispatch} from "../../hooks/hooks";
-import toast from 'react-hot-toast';
+import React, {   useState } from "react";
+import { useNavigate } from "react-router-dom";
+// import { eventActions } from "../../redux/slices";
+import { useAppSelector } from "../../hooks/hooks";
+// import toast from 'react-hot-toast';
+import { XCircleIcon } from "@heroicons/react/24/outline";
 
-const EventBannerCarousel = () => {
-    const dispatch = useAppDispatch();
+const Navbar = () => {
+    // const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [isVisible, setIsVisible] = useState(true);
+    // const [, setIsEventActive] = useState(true);
+    const isLoggedIn = useAppSelector((state) => state.authSlice.isLogin); // Assuming there's an auth slice with isLoggedIn state
+    const ev = useAppSelector((state) => state.eventSlice.eventForSpin);
+    // useEffect(() => {
+    //     dispatch(eventActions.getActiveEvent()).then((response) => {
+    //         if (response.payload.status_code === 200) {
+    //             setIsEventActive(true);
+    //         } else {
+    //             setIsEventActive(false);
+    //         }
+    //     });
+    // }, []);
+    console.log("ev: ",ev);
 
-    const handleLegendClick = (legendText: any) => {
-        // Dispatch action here
-        dispatch(eventActions.getActiveEvent()).then((response) => {
-            if (response.payload.status_code === 200) {
+    const handleLegendClick = () => {
+        if (!isLoggedIn) {
+            navigate("/login");
+            return;
+        }
+        if (ev)
+            {
+                console.log("ev: ",ev);
                 navigate("/hunt-coupon");
-                // Navigate to another page
+            } else {
+                // toast.error("Sự kiện đã kết thúc!");
+                setIsVisible(false);
             }
-            else toast.error("Sự kiện đã kết thúc!")
-        });
     };
-  return (
-<div style={{ marginTop: '50px',marginBottom: '10px', height:'40px', width: '1300px', marginLeft: 'auto', marginRight: 'auto' }}>
-        <Carousel
-            showArrows={true}
-            infiniteLoop={true}
-            showThumbs={false}
-            showStatus={false}
-            autoPlay={true}
-            interval={5000} // thời gian chuyển đổi slide, tính bằng mili giây
-            centerMode={true} // Hiển thị trung tâm các slide
-        >
-            <div onClick={() => handleLegendClick('Sự kiện giới hạn')}>
-            <img src={images.Event1} alt="Banner 1" style={{ width: '1000px', height: '100%', objectFit: 'cover' }} />
-            <p className="legend">Sự kiện giới hạn</p>
-            </div>
-            <div onClick={() => handleLegendClick('Voucher hấp dẫn')}>
-            <img src={images.Event2} alt="Banner 2" style={{ width: '1000px', height: '100%', objectFit: 'cover' }} />
-            <p className="legend">Voucher hấp dẫn</p>
-            </div>
-            <div onClick={() => handleLegendClick('Săn ngay')}>
-            <img src={images.Event3} alt="Banner 3" style={{ width: '1000px', height: '100%', objectFit: 'cover' }} />
-            <p className="legend">Săn ngay</p>
-            </div>
-        </Carousel>
-    </div>
+    const handleCloseClick = () => {
+        setIsVisible(false);
+    };
 
-  );
+    if (!isVisible) {
+        return null;
+    }
+
+    return (
+        <>
+            {ev.id && (
+                <div
+                    style={{
+                        position: "relative",
+                        marginTop: "100px",
+                        marginBottom: "-120px",
+                        height: "60px",
+                        width: "1300px",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        border: "1px solid #ccc",
+                        padding: "20px",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                        borderRadius: "8px",
+                        backgroundColor: "#0033FF",
+                        fontSize: "20px",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        color: 'white'
+                    }}
+                    onClick={handleLegendClick}
+                >
+                    Sự kiện đang diễn ra, hãy nhấn để tham gia ngay
+                    <XCircleIcon
+                        className="w-6 h-6 shrink-0 text-white"
+                        style={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            cursor: "pointer",
+                            color: "#333",
+                        }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleCloseClick();
+                        }}
+                    />
+                </div>
+            )}
+        </>
+    );
 };
 
-export default EventBannerCarousel;
+export default Navbar;

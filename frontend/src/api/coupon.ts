@@ -6,8 +6,13 @@ const getCouponByCode = async (values: string) => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
-const getCouponById = async (values: number) => {
+const getCouponByIdOnDate = async (values: number) => {
     const path = `coupon/route/${values}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getCouponById = async (values: number) => {
+    const path = `coupon/visible/${values}`;
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
@@ -92,6 +97,7 @@ const couponApis = {
     updateCoupon,
     deleteCoupon,
     getCouponsWithPagination,
+    getCouponByIdOnDate,
     getCouponById,
     getAllEventCouponByEventId,
     getHistorySpinOfUserForAEvent,

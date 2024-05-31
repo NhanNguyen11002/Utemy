@@ -74,7 +74,7 @@ export const getAllEvents = createAsyncThunk<Event[], void, { rejectValue: any }
 );
 export const getActiveEvent = createAsyncThunk<Response<EventForSpin>, void, { rejectValue: any }>(
   "event/activeevent",
-  async (body, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
       const response = await apis.eventApis.getActiveEvent();
       return response.data;

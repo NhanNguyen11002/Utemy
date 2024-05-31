@@ -82,7 +82,7 @@ const createInvoice = async (
             const now = new Date();
             let paidPrice;
             if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
-                if (Number(totalorigin)- totalwithcoupon < max_discount_money)
+                if (Number(totalorigin) - totalwithcoupon < max_discount_money)
                     paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * discount;
                 else paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * ratio;
             } else {
@@ -116,12 +116,10 @@ const createInvoice = async (
         const createInvoiceDetail = await configs.db.invoiceDetail.createMany({
             data: createInvoiceDetailData,
         });
-        if (createInvoiceDetail && updateInvoice)
-        {
+        if (createInvoiceDetail && updateInvoice) {
             console.log("couponid:", coupon_id);
             return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
-        }
-        else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        } else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
@@ -132,7 +130,18 @@ const createInvoice = async (
 const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const userId = Number(req.user_id);
-        const { page_index: pageIndex, page_size: pageSize } = req.query;
+        const { page_index: pageIndex, page_size: pageSize, from: fromQueryParam, to: toQueryParam } = req.query;
+        // Chuyển đổi giá trị 'from' và 'to' sang kiểu 'Date' nếu chúng tồn tại
+        let fromDate: Date | undefined;
+        let toDate: Date | undefined;
+
+        if (typeof fromQueryParam === "string") {
+            fromDate = new Date(fromQueryParam);
+        }
+
+        if (typeof toQueryParam === "string") {
+            toDate = new Date(toQueryParam);
+        }
 
         // Parse pageIndex and pageSize to numbers, set default values if not provided
         const parsePageIndex = Number(pageIndex) || 1;
@@ -140,13 +149,21 @@ const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
 
         // Calculate skip based on pageIndex and pageSize
         const skip = (parsePageIndex - 1) * parsePageSize;
-
+        // Create a where object to hold the conditions
+        const where: any = {
+            user_id: userId,
+            is_success: true,
+        };
+        // Add conditions for from and to if they exist
+        if (fromDate && toDate) {
+            where.created_at = {
+                gte: fromDate,
+                lte: toDate,
+            };
+        }
         // Retrieve paginated invoices with details and courses
         const getInvoices = await configs.db.invoice.findMany({
-            where: {
-                user_id: userId,
-                is_success: true,
-            },
+            where,
             include: {
                 invoice_detail: {
                     include: {
@@ -160,17 +177,14 @@ const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
 
         // Calculate total records for pagination info
         const totalRecord = await configs.db.invoice.count({
-            where: {
-                user_id: userId,
-                is_success: true,
-            },
+            where,
         });
 
         // Calculate total pages
         const totalPage = Math.ceil(totalRecord / parsePageSize);
 
         // Prepare paginated response
-        const paginatedResponse: PagingArrayResponse<InvoiceInfo> = {
+        const paginatedResponse = {
             total_page: totalPage,
             total_record: totalRecord,
             data: getInvoices.map((invoice) => ({
@@ -206,9 +220,9 @@ const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
                         // Other course information...
                     },
                 })),
-            })),
+            })) as InvoiceInfo[],
         };
-
+        console.log("kq: ", getInvoices);
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, paginatedResponse);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {

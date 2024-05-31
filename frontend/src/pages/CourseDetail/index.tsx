@@ -292,7 +292,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         </DialogTrigger>
                                         <DialogContent className={"lg:max-w-screen-lg overflow-y-scroll max-h-screen"}>
                                             <DialogTitle className={"text-center"}>
-                                                This is introduce video about this course
+                                                Đây là đoạn video giới thiệu cho khóa học này
                                             </DialogTitle>
                                             <VideoPlayerForTrailerTrial source={courseDetail.url_trailer} />
                                         </DialogContent>

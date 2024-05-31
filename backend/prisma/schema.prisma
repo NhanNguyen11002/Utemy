@@ -438,6 +438,7 @@ model CouponHistory {
   user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   invoice_id Int
   invoice   Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+  is_from_event Boolean @default(false)
   @@map(name: "coupon_history")
 }
 model Report {

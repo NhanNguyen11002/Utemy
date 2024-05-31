@@ -116,6 +116,17 @@ export const deleteCoupon = createAsyncThunk<Response<null>, number, { rejectVal
     }
   },
 );
+export const getCouponByIdOnDate = createAsyncThunk<Response<Coupon>, number, { rejectValue: Response<null> }>(
+  "coupon/getCouponByIdOnDate",
+  async (id, thunkAPI) => {
+      try {
+          const response = await apis.couponApis.getCouponByIdOnDate(id);
+          return response.data as Response<Coupon>;
+      } catch (error: any) {
+          return thunkAPI.rejectWithValue(error.data as Response<null>);
+      }
+  },
+);
 export const getCouponById = createAsyncThunk<Response<Coupon>, number, { rejectValue: Response<null> }>(
   "coupon/getCouponById",
   async (id, thunkAPI) => {
@@ -249,6 +260,17 @@ const couponSlice = createSlice({
         state.eventCPRatio = action.payload;
       })
       .addCase(getAllEventCouponByEventId.rejected, (state) => {
+        state.isLoading = false;
+        // Handle rejection if needed
+      })
+      .addCase(getCouponByIdOnDate.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getCouponByIdOnDate.fulfilled, (state, action) => {
+        state.coupon = action.payload.data as Coupon;
+        state.isLoading = false;
+      })
+      .addCase(getCouponByIdOnDate.rejected, (state) => {
         state.isLoading = false;
         // Handle rejection if needed
       })

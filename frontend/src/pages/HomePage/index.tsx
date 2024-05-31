@@ -22,12 +22,20 @@ const Home: React.FC = () => {
     const top10Sale = useAppSelector((state) => state.courseSlice.top10Sale) ?? [];
     const top10AuthorEnrolled: EnrolledAuthor[] = useAppSelector((state) => state.userSlice.top10AuthorEnrolled) ?? [];
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
+    // const eventForSpin = useAppSelector(state => state.eventSlice.eventForSpin);
+
+    // useEffect(() => {
+    //     if (!eventForSpin.id) {
+    //         dispatch(eventActions.getActiveEvent());
+    //     }
+    // }, [dispatch, eventForSpin.id]);
     useEffect(() => {
         dispatch(courseActions.getTop10Rate());
         dispatch(courseActions.getTop10Enrolled());
         dispatch(courseActions.getTop10Sale());
         dispatch(userActions.getTop10AuthorByEnrolled());
         dispatch(categoryActions.get5Categories());
+        // dispatch(eventActions.getActiveEvent());
     }, [dispatch]);
     // useEffect(() => {
     //     dispatch(courseActions.getAllEnrolled());

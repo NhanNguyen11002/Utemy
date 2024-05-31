@@ -31,7 +31,7 @@ const Cart: React.FC = () => {
     };
     const formattedOptions: OptionType[] = voucherDropdown.map((voucher) => ({
         value: voucher.code,
-        label: `${voucher.code} - ${formatDate(voucher.valid_start)} - ${formatDate(voucher.valid_until)} - ${voucher.discount * 100}% off`
+        label: `${voucher.code} - ${formatDate(voucher.valid_start)} - ${formatDate(voucher.valid_until)} - ${voucher.discount * 100}% off - SỐ LƯỢNG: ${voucher.quantity}`
     }));
     const [discountInfo, setDiscountInfo] = useState<{ discount: number, id: number | null } | null>(null);// State để lưu thông tin giảm giá từ server
     const [maxDiscountMoneyInfo, setMaxDiscountMoneyInfo] = useState<{ max_discount_money: number, id: number | null } | null>(null);// State để lưu thông tin giá giảm tối đa từ server
@@ -110,18 +110,20 @@ const Cart: React.FC = () => {
         if (selectedOption !== null) {
             setSelectedVoucher(selectedOption);
             setCouponValue(selectedOption.value);
+            setOptions([...options, selectedOption]);
             console.log("giá trị:", selectedOption.value)
         } else {
             setSelectedVoucher({ value: '', label: '' });
             setCouponValue("");
+            setOptions([...options, { value: '', label: '' }]);
         }
     };
     
     const handleCreateOption = (inputValue: string) => {
         const newOption = { value: inputValue, label: inputValue };
-        setOptions([...options, newOption]);
         setSelectedVoucher(newOption);
-        setCouponValue(inputValue);
+        setCouponValue(inputValue.toUpperCase());
+        setOptions([...options, newOption]);
       };
     
     
@@ -137,7 +139,7 @@ const Cart: React.FC = () => {
         // }
     
         // Gọi hàm dispatch ngay khi người dùng nhấn nút
-        dispatch(cartActions.getCouponByCode(code)).then((response) => {
+        dispatch(cartActions.getCouponByCode(code.toUpperCase())).then((response) => {
             if (response.payload?.status_code === 200) {
                 if (response.payload.data) {
                     const couponData = response.payload.data;
@@ -202,17 +204,20 @@ const Cart: React.FC = () => {
         dispatch(couponActions.getVoucherBySpin());
         dispatch(cartActions.getAllCart());
         setCouponValue("");
-
+        // setSelectedVoucher({ value: '', label: '' });
+        // setOptions([...options, { value: '', label: '' }]);
         // dispatch(cartAction.getAllCoupon());
     }, [dispatch]);
     // const location = useLocation();
     // const fromCheckout = location.state?.fromCheckout || false;
-    useEffect(() => {
-        setCouponValue("");
+    // useEffect(() => {
+    //     setCouponValue("");
         
-      },[]);
+    //   },[]);
     let count = 0;
-   
+    const formatCreateLabel = (inputValue: any) => `Sử dụng: "${inputValue}"`;
+    const [currentInputValue, setCurrentInputValue] = useState("");
+
     return (
         <>
             <div className="hidden  w-full h-[80px] bg-background mt-[100px] laptop:flex"></div>
@@ -325,12 +330,19 @@ const Cart: React.FC = () => {
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
                                 <CreatableSelect
                                     isClearable
+                                    isSearchable
+                                    
                                     value={selectedVoucher}
                                     onChange={(selectedVoucher) =>handleVoucherChange(selectedVoucher)}
-                                    inputValue={couponValue} // Truyền giá trị cho ô nhập
-                                    onInputChange={(inputValue) => { setCouponValue(inputValue.toUpperCase()) }}
+                                    inputValue={currentInputValue} // Truyền giá trị cho ô nhập
+                                    onInputChange={(inputValue) => {
+                                        const uppercaseInputValue = inputValue.toUpperCase();
+                                        setCouponValue(uppercaseInputValue);
+                                        setCurrentInputValue(uppercaseInputValue); // Cập nhật giá trị hiện tại của ô input
+                                    }}
                                     options={formattedOptions}
                                     onCreateOption={handleCreateOption}
+                                    formatCreateLabel={formatCreateLabel}
                                     className="max-w-md"
                                     styles={{
                                         container: (provided) => ({

@@ -147,12 +147,20 @@ const vnpayIpn = async (req: IRequestWithId): Promise<ResponseBase> => {
             // }
 
             if (invoiceDetail.coupon_id !== null) {
+                const findCouponById = await configs.db.couponOwner.findFirst({
+                    where: {
+                        coupon_id: invoiceDetail.coupon_id,
+                        user_id: invoiceDetail.user_id,
+                    },
+                });
+                const isForEvent = !!findCouponById;
                 // Tạo dữ liệu cho bảng coupon_history
                 const createCouponHistory = await configs.db.couponHistory.create({
                     data: {
                         invoice_id: invoiceId as number,
                         coupon_id: invoiceDetail.coupon_id,
                         user_id: invoiceDetail.user_id,
+                        is_from_event: isForEvent,
                     },
                 });
             

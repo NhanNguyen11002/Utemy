@@ -10,5 +10,5 @@ eventRouter.post("/", isLogin, controllers.eventController.createEvent);
 eventRouter.patch("/:event_id", isLogin, controllers.eventController.updateEvent);
 eventRouter.delete("/:event_id", isLogin, controllers.eventController.deleteEvent);
 eventRouter.get("/:event_id", isLogin, controllers.eventController.getEventById);
-eventRouter.get("/is/active", isLogin, controllers.eventController.getActiveEvent);
+eventRouter.get("/is/active", controllers.eventController.getActiveEvent);
 export default eventRouter;
