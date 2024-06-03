@@ -98,10 +98,11 @@ const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
                 onSpinResult(null);
                 // Generate a random prize number
                 const ratios = discounts.map((discount) => {
+                    // console.log("discounts:",discounts);
                     if (discount && discount.coupon && discount.coupon.ratio && discount.coupon.ratio.ratio) {
                         return discount.coupon.ratio.ratio;
                     } else {
-                        console.error("Invalid discount object:", discount);
+                        // console.error("Invalid discount object:", discount);
                         return -1;
                     }
                 });

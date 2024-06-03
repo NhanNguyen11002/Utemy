@@ -22,6 +22,7 @@ type CommentLectureCardProps = {
     userId: number | undefined;
     comment: Comment;
     editmode: boolean;
+    course_id: number;
     onCommentSave(commentId: number): void
 };
 
@@ -68,7 +69,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         dispatch(commentActions.deleteComment({ comment_id: props.comment.comment_id })).then((response) => {
             if (response.payload && response.payload.status_code === 200) {
                 toast.success(response.payload.message);
-                dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.comment.lecture_id, values: {
+                dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
                     pageIndex: 1
                 }}));
             } else {
@@ -93,7 +94,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                 (response) => {
                     if (response.payload && response.payload.status_code === 200) {
                         toast.success(response.payload.message);
-                        dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.comment.lecture_id, values: {
+                        dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
                             pageIndex: 1
                         }}));
                     } else {
@@ -147,8 +148,8 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         setLikesCount(likesCount + 1);
                         setLiked(true);
                         // Lấy lại danh sách bình luận sau khi thích thành công
-                        dispatch(commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.comment.lecture_id, 
+                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.course_id, 
                             values: {
                                 pageIndex: 1
                             }
@@ -172,8 +173,8 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         setLikesCount(likesCount - 1);
                         setLiked(false);
                         // Lấy lại danh sách bình luận sau khi hủy thích thành công
-                        dispatch(commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.comment.lecture_id, 
+                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.course_id, 
                             values: {
                                 pageIndex: 1
                             }
@@ -204,8 +205,8 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         setDislikesCount(dislikesCount + 1);
                         setDisliked(true);
                         // Lấy lại danh sách bình luận sau khi Dislike thành công
-                        dispatch(commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.comment.lecture_id, 
+                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.course_id, 
                             values: {
                                 pageIndex: 1
                             }
@@ -229,8 +230,8 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         setDislikesCount(dislikesCount - 1);
                         setDisliked(false);
                         // Lấy lại danh sách bình luận sau khi hủy Dislike thành công
-                        dispatch(commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.comment.lecture_id, 
+                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.course_id, 
                             values: {
                                 pageIndex: 1
                             }
@@ -255,7 +256,8 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
             <div className={`flex items-start justify-between w-full h-full rounded-lg my-0`}>
                 <div className="avatar mr-1 hover:cursor-pointer">
                     <div className={`items-center justify-between w-14 border "border-lightblue"`}>
-                        <img alt="Avatar" src={(props.comment.user.url_avatar as string) || images.DefaultAvatar} />
+                        <img alt={`${props.comment.user.first_name} ${props.comment.user.last_name}`} 
+                        src={(props.comment.user.url_avatar as string) || images.DefaultAvatar} />
                     </div>
                 </div>
                 <div className={`w-full py-2 px-6 h-full bg-cyan-200/50 rounded-lg my-1`}>
@@ -269,7 +271,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         <textarea
                             value={editedContent}
                             onChange={(e) => setEditedContent(e.target.value)}
-                            className="w-full py-2 px-6 h-full bg-white rounded-lg my-1 edit-textarea"
+                            className="w-full py-2 px-6 h-full bg-white rounded-lg my-1 edit-textarea border border-gray-300"
                             style={{ height: '200px' }}
 
                         />
@@ -280,17 +282,17 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                             </p>
                         </div>
                     )}
-                    <div className="flex justify-between items-center mt-2">
+                    <div className="flex justify-end items-center mt-2">
                         {editMode && editingCommentId === props.comment.comment_id ? (
                             <>
                                 <button
-                                    className="save-button text-green-500 hover:text-green-700 "
+                                    type="submit" className="text-white btn btn-info text-lg"
                                     onClick={handleEdit}
                                 >
                                     Lưu
                                 </button>
                                 <button
-                                    className="cancel-button text-red-500 hover:text-red-700"
+                                    type="button" className="btn text-lg ml-2"
                                     onClick={() =>toggleEditMode(props.comment.comment_id)}
                                 >
                                     Hủy
@@ -404,7 +406,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                 ).then((response) => {
                                     if (response.payload && response.payload.status_code === 200) {
                                         // Phản hồi thành công từ createComment, dispatch action mới ở đây
-                                        dispatch(commentActions.getCommentsWithPaginationByLectureId({lecture_id:props.comment.lecture_id, values: {
+                                        dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
                                             pageIndex: 1
                                         }}));
                                     }
@@ -432,6 +434,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                     commentId ={props.comment.comment_id}
                                     userId={user.user_id || undefined}
                                     lectureId={props.comment.lecture_id}
+                                    courseId = {props.course_id}
                                     likes = {props.comment.likes}
                                     dislikes = {props.comment.dislikes}
                                 />

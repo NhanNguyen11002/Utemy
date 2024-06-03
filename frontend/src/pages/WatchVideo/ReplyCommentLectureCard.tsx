@@ -18,6 +18,7 @@ type ReplyCommentLectureCardProps = {
     userId: number | undefined;
     replycomment: ReplyComment;
     commentId: number;
+    courseId: number;
     lectureId: number;
     likes: Like[];
     dislikes: Dislike[];
@@ -44,8 +45,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 if (response.payload && response.payload.status_code === 200) {
                     toast.success(response.payload.message);
                     dispatch(
-                        commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.lectureId,
+                        commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.courseId,
                             values: {
                                 pageIndex: 1,
                             },
@@ -115,8 +116,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 if (response.payload && response.payload.status_code === 200) {
                     // toast.success(response.payload.message);
                     dispatch(
-                        commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.lectureId,
+                        commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.courseId,
                             values: {
                                 pageIndex: 1,
                             },
@@ -138,8 +139,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 if (response.payload && response.payload.status_code === 200) {
                     // toast.success(response.payload.message);
                     dispatch(
-                        commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.lectureId,
+                        commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.courseId,
                             values: {
                                 pageIndex: 1,
                             },
@@ -166,8 +167,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 if (response.payload && response.payload.status_code === 200) {
                     // toast.success(response.payload.message);
                     dispatch(
-                        commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.lectureId,
+                        commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.courseId,
                             values: {
                                 pageIndex: 1,
                             },
@@ -188,8 +189,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 if (response.payload && response.payload.status_code === 200) {
                     // toast.success(response.payload.message);
                     dispatch(
-                        commentActions.getCommentsWithPaginationByLectureId({
-                            lecture_id: props.lectureId,
+                        commentActions.getCommentsWithPaginationByCourseId({
+                            course_id: props.courseId,
                             values: {
                                 pageIndex: 1,
                             },
@@ -210,8 +211,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 toast.success(response.payload.message);
 
                 dispatch(
-                    commentActions.getCommentsWithPaginationByLectureId({
-                        lecture_id: props.lectureId,
+                    commentActions.getCommentsWithPaginationByCourseId({
+                        course_id: props.courseId,
                         values: {
                             pageIndex: 1,
                         },
@@ -236,7 +237,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                 <div className="avatar mr-1 hover:cursor-pointer">
                     <div className={`items-center justify-between w-14 border "border-lightblue"`}>
                         <img
-                            alt="Avatar"
+                            alt={`${props.replycomment.user.first_name} ${props.replycomment.user.last_name}`}
                             src={(props.replycomment.user.url_avatar as string) || images.DefaultAvatar}
                         />
                     </div>
@@ -264,17 +265,17 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                             </p>
                         </div>
                     )}
-                    <div className="flex justify-between items-center mt-2">
+                    <div className="flex justify-end items-center mt-2">
                         {editMode ? (
                             <>
                                 <button
-                                    className="save-button text-green-500 hover:text-green-700 "
+                                    type="submit" className="text-white btn btn-info text-lg"
                                     onClick={handleEdit}
                                 >
                                     Lưu
                                 </button>
                                 <button
-                                    className="cancel-button text-red-500 hover:text-red-700"
+                                    type="button" className="btn text-lg ml-2"
                                     onClick={toggleEditMode}
                                 >
                                     Hủy
@@ -406,8 +407,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                                     if (response.payload && response.payload.status_code === 200) {
                                         // Phản hồi thành công từ createComment, dispatch action mới ở đây
                                         dispatch(
-                                            commentActions.getCommentsWithPaginationByLectureId({
-                                                lecture_id: props.lectureId,
+                                            commentActions.getCommentsWithPaginationByCourseId({
+                                                course_id: props.courseId,
                                                 values: {
                                                     pageIndex: 1,
                                                 },

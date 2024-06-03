@@ -8,4 +8,5 @@ commentRouter.patch("/:comment_id", isLogin, controllers.commentController.updat
 commentRouter.delete("/:comment_id", isLogin, controllers.commentController.deleteComment);
 commentRouter.get("/all", controllers.commentController.getCommentsWithPagination);
 commentRouter.get("/:lecture_id", controllers.commentController.getCommentsWithPaginationByLectureId);
+commentRouter.get("/course/:course_id", controllers.commentController.getCommentsWithPaginationByCourseId);
 export default commentRouter;

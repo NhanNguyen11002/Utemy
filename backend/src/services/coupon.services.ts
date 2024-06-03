@@ -213,8 +213,8 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
             JOIN
                 coupon C ON CO.coupon_id = C.id
             WHERE
-                C.valid_start < NOW()  -- Lọc ra các bản ghi có valid_start nhỏ hơn ngày hiện tại
-				AND C.valid_until > NOW() 
+                C.valid_start < UTC_TIMESTAMP()  -- Lọc ra các bản ghi có valid_start nhỏ hơn ngày hiện tại
+				AND C.valid_until > UTC_TIMESTAMP()
             GROUP BY
                 CO.coupon_id, CO.user_id;
         `;
@@ -744,8 +744,14 @@ const getVoucherBySpin = async (req: IRequestWithId): Promise<ResponseBase> => {
                 },
             },
         });
-        const validVouchers = allVoucherSpin.filter((voucher) => voucher.coupon.valid_until >= new Date());
-        const validVoucherData = validVouchers.map((voucherSpin) => ({
+        const validVouchers = allVoucherSpin.filter((voucher) => {
+            const validUntilDate = new Date(voucher.coupon.valid_until);
+            const currentDate = new Date();
+            console.log(`Voucher valid until: ${validUntilDate}, Current date: ${currentDate}`);
+            return validUntilDate >= currentDate;
+        });
+        
+                const validVoucherData = validVouchers.map((voucherSpin) => ({
             code: voucherSpin.coupon.code,
             valid_start: voucherSpin.coupon.valid_start,
             valid_until: voucherSpin.coupon.valid_until,

@@ -265,9 +265,10 @@ const HuntCoupon = () => {
                     }
                 });
             }
-        } else {
-            console.error("Invalid result or coupon data.");
-        }
+        } 
+        // else {
+        //     console.error("Invalid result or coupon data.");
+        // }
         // handleGetAllEventCoupon();
     };
     // const lastIndex = discounts.length;
