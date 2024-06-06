@@ -46,6 +46,7 @@ model User {
   certificate Certificate[]
   blog  Blog[]
   comment_blogs CommentBlog[]
+  reaction_blogs ReactionBlog[]
   @@index([email], name: "idx_email")
 }
 
@@ -582,13 +583,29 @@ model Blog {
   author_id Int
   user      User     @relation(fields: [author_id], references: [id], onDelete: Cascade)
   title String    @db.VarChar(100)
+  slug String @db.VarChar(150) @unique
   content String @db.Text
   url_image         String           @db.Text
+  view Int @default(0)
   created_at DateTime @default(now())  
-  updated_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   is_published     Boolean         @default(false)
+  is_deleted Boolean @default(false)
   blog_categories BlogCategory[]
   comment_blogs CommentBlog[]
+  reactions_blog ReactionBlog[]
+}
+model ReactionBlog {
+  id                 Int          @id @default(autoincrement())
+  user_id            Int
+  user               User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  blog_id         Int 
+  blog            Blog  @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  type               ReactionType
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @default(now())
+    @@map(name: "reaction_blog")
+
 }
 model CommentBlog {
   id             Int           @id @default(autoincrement())

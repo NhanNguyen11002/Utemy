@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Accordion, AccordionHeader, AccordionBody } from "@material-tailwind/react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { ThreedotIcon, EditIcon, DeleteIcon } from "../../assets/icons";
 import { HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/solid";
 import { QuizType } from "../../types/quiz";
@@ -19,58 +19,60 @@ const QuizCard: React.FC<QuizCardProps> = (props) => {
     return (
         <div className="flex h-fit ">
             <>
-                <Accordion open={open} className="my-2 w-[90%] h-fit rounded-lg bg-lightblue/20 mx-5 px-4 pb-1">
-                    <AccordionHeader
-                        onClick={() => handleOpen()}
-                        className={`  transition-colors ${
-                            open ? "text-blue-500 hover:!text-blue-700 border-b border-gray-500" : "text-black"
-                        }`}
-                    >
-                        {/* {props.quiz.type === 3 ? ( */}
-                        <FillInNoLogicQuiz quiz={props.quiz} />
-                        {/* ) : (
-                            <h1 className="">{props.quiz.question}</h1>
-                        )} */}
-                    </AccordionHeader>
-                    <AccordionBody className=" flex justify-between items-center text-base font-normal">
-                        <h1 className="text-black">Loại câu hỏi: {typeSync[props.quiz.type - 1]}</h1>
-                        <h1 className="text-black">
-                            Ngày chỉnh sửa gần đây: {convertStringDate(props.quiz.updated_at as string)}
-                        </h1>
-                    </AccordionBody>
+                <Accordion
+                    type="single"
+                    collapsible
+                    className="my-2 h-fit rounded-lg bg-lightblue/20 mx-5 px-4 pb-1 w-full"
+                >
+                    <AccordionItem value={props.quiz.quiz_id.toString()}>
+                        <AccordionTrigger
+                            onClick={() => handleOpen()}
+                            className={` transition-colors ${
+                                open ? "text-blue-500 hover:!text-blue-700 border-b border-gray-500 mb-1" : "text-black"
+                            }`}
+                        >
+                            <FillInNoLogicQuiz quiz={props.quiz} />
+                        </AccordionTrigger>
+                        <AccordionContent className=" flex justify-between items-center text-base font-normal">
+                            <h1 className="text-black">Loại câu hỏi: {typeSync[props.quiz.type - 1]}</h1>
+                            <h1 className="text-black">
+                                Ngày chỉnh sửa gần đây: {convertStringDate(props.quiz.updated_at as string)}
+                            </h1>
+                        </AccordionContent>
 
-                    <div className="gap-2 items-center ">
-                        <AccordionBody className=" flex justify-between items-center text-base font-normal">
-                            <h1 className="text-black font-bold ">Câu trả lời</h1>
-                        </AccordionBody>
+                        <div className="gap-2 items-center ">
+                            <AccordionContent className=" flex justify-between items-center text-base font-normal">
+                                <h1 className="text-black font-bold ">Câu trả lời</h1>
+                            </AccordionContent>
 
-                        {props.quiz.quiz_answer.map((answer) => {
-                            return (
-                                <AccordionBody className="text-base font-normal flex justify-between text-black bg-white p-3 rounded-md items-center my-1">
-                                    <div className="w-[90%] ">
-                                        <h1 className="text-black">{answer.answer}</h1>
-                                    </div>
-                                    <div className="w-[10%] flex gap-1 items-center justify-end shrink-0">
-                                        {answer.is_correct ? (
-                                            <div className="flex gap-1 items-center">
-                                                <HandThumbUpIcon fill="#28a745" className=" w-4 h-4" />
-                                                <p className="text-success">Đúng</p>
-                                            </div>
-                                        ) : (
-                                            <div className="flex gap-1 items-center">
-                                                <HandThumbDownIcon fill="#FF0000" className=" w-4 h-4" />
-                                                <p className="text-error">Sai</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </AccordionBody>
-                            );
-                        })}
-                    </div>
+                            {props.quiz.quiz_answer.map((answer) => {
+                                return (
+                                    <AccordionContent className="text-base font-normal flex justify-between text-black bg-white p-3 rounded-md items-center my-1">
+                                        <div className="w-[90%] ">
+                                            <h1 className="text-black">{answer.answer}</h1>
+                                        </div>
+                                        <div className="w-[10%] flex gap-1 items-center justify-end shrink-0">
+                                            {answer.is_correct ? (
+                                                <div className="flex gap-1 items-center">
+                                                    <HandThumbUpIcon fill="#28a745" className=" w-4 h-4" />
+                                                    <p className="text-success">Đúng</p>
+                                                </div>
+                                            ) : (
+                                                <div className="flex gap-1 items-center">
+                                                    <HandThumbDownIcon fill="#FF0000" className=" w-4 h-4" />
+                                                    <p className="text-error">Sai</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </AccordionContent>
+                                );
+                            })}
+                        </div>
+                    </AccordionItem>
                 </Accordion>
             </>
 
-            <div className="dropdown dropdown-left ">
+            <div className={`dropdown dropdown-left ${open ? "visible" : "invisible"}`}>
                 <div tabIndex={0} role="button" className="btn btn-xs btn-circle m-1 bg-inherit border-0 ">
                     <ThreedotIcon />
                 </div>

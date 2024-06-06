@@ -15,6 +15,7 @@ import {
     Event3,
     QuillLetter,
     QuillLetterReflect,
+    ReadingBanner,
 } from "./images";
 
 const images = {
@@ -34,6 +35,7 @@ const images = {
     Event3,
     QuillLetter,
     QuillLetterReflect,
+    ReadingBanner,
 };
 
 export { images, DefaultAvatar };

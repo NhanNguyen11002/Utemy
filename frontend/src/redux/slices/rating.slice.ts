@@ -125,6 +125,7 @@ export const ratingSlice = createSlice({
         builder.addCase(getListRatingOfCourseBySlug.fulfilled, (state, action) => {
             state.ratings = action.payload.data?.data as Rating[];
             state.totalPage = action.payload.data?.total_page as number;
+            state.totalRecord = action.payload.data?.total_record as number;
             state.isGetLoading = false;
         });
         builder.addCase(getListRatingOfCourseBySlug.rejected, (state) => {

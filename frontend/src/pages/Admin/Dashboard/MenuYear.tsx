@@ -1,4 +1,9 @@
-import { Menu, MenuHandler, MenuList, MenuItem, Button } from "@material-tailwind/react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu";
 import { useState } from "react";
 import { useAppDispatch } from "../../../hooks/hooks";
 import { statisticActions } from "../../../redux/slices";
@@ -18,23 +23,22 @@ const MenuCustomAnimation = () => {
         }, 0);
     };
     return (
-        <Menu
-            animate={{
-                mount: { y: 0 },
-                unmount: { y: 25 },
-            }}
-        >
-            <MenuHandler>
-                <Button className="bg-navy"> {displayYear}</Button>
-            </MenuHandler>
-            <MenuList>
+        <DropdownMenu>
+            <DropdownMenuTrigger>
+                <button className="bg-navy text-white px-4 py-2 text-sm rounded-lg"> {displayYear}</button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
                 {yearArray.map((year) => (
-                    <MenuItem className="hover:bg-navy/50" id={year.toString()} onClick={() => handleOnChose(year)}>
-                        {year}
-                    </MenuItem>
+                    <DropdownMenuItem
+                        className="hover:bg-navy/50 flex justify-center cursor-pointer"
+                        id={year.toString()}
+                        onClick={() => handleOnChose(year)}
+                    >
+                        <p>{year}</p>
+                    </DropdownMenuItem>
                 ))}
-            </MenuList>
-        </Menu>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 };
 export default MenuCustomAnimation;

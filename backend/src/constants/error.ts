@@ -179,6 +179,10 @@ const error = {
     ERROR_GET_BLOG_FAILED: "Get blog failed",
     ERROR_BLOG_ALREADY_EXISTS: "Blog's title already exist",
 
+    ERROR_BLOG_SLUG_REQUIRED: "Blog's slug is required",
+    ERROR_BLOG_SLUG_STRING: "Blog's slug must be string",
+    ERROR_BLOG_SLUG_MALFORMED: "Blog's slug is malformed",
+
     ERROR_BLOG_ID_NUMBER: "Blog id must be an integer",
     ERROR_BLOG_ID_REQUIRED: "Blog id is required",
     ERROR_TITLE_BLOG_STRING: "Title must be string",
@@ -195,6 +199,5 @@ const error = {
     ERROR_DUPLICATE_BETWEEN_COMMENTBLOGID_REPLYBLOGID: "Duplicate between comment id and parent_id",
     ERROR_COMMENT_BLOG_NOT_FOUND: "Comment for blog not found",
     ERROR_REACTION_ONCE_TIME: "Reaction just once time",
-
 };
 export default error;

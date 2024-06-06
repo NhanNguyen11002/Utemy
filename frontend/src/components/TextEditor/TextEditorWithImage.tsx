@@ -8,6 +8,32 @@ import { decisionActions } from "../../redux/slices";
 import toast from "react-hot-toast";
 import ImageResize from "quill-image-resize-module-react";
 import BlotFormatter, { AlignAction, DeleteAction, ImageSpec, ResizeAction } from "quill-blot-formatter";
+const BaseImageFormat = Quill.import("formats/image");
+const ImageFormatAttributesList = ["alt", "height", "width", "style"];
+
+class ImageFormat extends BaseImageFormat {
+    static formats(domNode: any) {
+        return ImageFormatAttributesList.reduce(function (formats: any, attribute) {
+            if (domNode.hasAttribute(attribute)) {
+                formats[attribute] = domNode.getAttribute(attribute);
+            }
+            return formats;
+        }, {});
+    }
+    format(name: any, value: any) {
+        if (ImageFormatAttributesList.indexOf(name) > -1) {
+            if (value) {
+                this.domNode.setAttribute(name, value);
+            } else {
+                this.domNode.removeAttribute(name);
+            }
+        } else {
+            super.format(name, value);
+        }
+    }
+}
+
+Quill.register(ImageFormat, true);
 
 Quill.register("modules/imageResize", ImageResize);
 Quill.register("modules/blotFormatter", BlotFormatter);
@@ -21,6 +47,7 @@ class CustomImageSpec extends ImageSpec {
 type TextEditorWithImageProps = {
     propRef?: React.MutableRefObject<any>;
     content?: string;
+    height?: number;
     handleChangeContent(content: string): void;
 };
 const TextEditorWithImage: React.FC<TextEditorWithImageProps> = (props) => {
@@ -101,7 +128,7 @@ const TextEditorWithImage: React.FC<TextEditorWithImageProps> = (props) => {
                 value={display}
                 modules={modules}
                 onChange={handleOnChange}
-                className="h-[200px] display:block z-20"
+                className={`${props.height ? `h-[${props.height}px]` : "h-[200px]"} display:block z-20`}
             />
         </div>
     );

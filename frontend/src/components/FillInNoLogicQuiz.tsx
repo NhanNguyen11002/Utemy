@@ -5,6 +5,7 @@ import { TestDetail } from "@/types/test";
 type FillInNoLogicQuizProps = {
     quiz: QuizType | TestDetail;
     className?: string;
+    open?: boolean;
 };
 const FillInNoLogicQuiz: React.FC<FillInNoLogicQuizProps> = (props) => {
     const string = props.quiz.question;
@@ -29,13 +30,15 @@ const FillInNoLogicQuiz: React.FC<FillInNoLogicQuizProps> = (props) => {
                 );
                 blankId++;
             } else {
-                element.push(<span className="ql-editor" dangerouslySetInnerHTML={{ __html: part }}></span>);
+                element.push(
+                    <span className="ql-editor fill-in-quizz" dangerouslySetInnerHTML={{ __html: part }}></span>,
+                );
             }
         });
         return element;
     };
     return (
-        <div id={id} className="my-4 description-course text-black ql-snow">
+        <div id={id} className={`my-4 description-course ${props.open ? "text-blue-500" : "text-black"}  ql-snow`}>
             {renderString(quizId, string)}
         </div>
     );

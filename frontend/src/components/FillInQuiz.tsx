@@ -61,7 +61,9 @@ const FillInQuiz: React.FC<FizzInQuizProps> = (props) => {
                 );
                 blankId++;
             } else {
-                element.push(<span className="ql-editor" dangerouslySetInnerHTML={{ __html: part }}></span>);
+                element.push(
+                    <span className="ql-editor fill-in-quizz" dangerouslySetInnerHTML={{ __html: part }}></span>,
+                );
             }
         });
         return element;

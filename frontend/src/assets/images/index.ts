@@ -15,7 +15,9 @@ import Event3 from "./event3.jpg";
 import Learning from "./learning";
 import ImgLearn from "./img-e-learning-design-lab-2022.jpeg";
 import QuillLetter from "./QuillLetter.jpg";
-import QuillLetterReflect from "./QuillLetterReflect.jpg"
+import QuillLetterReflect from "./QuillLetterReflect.jpg";
+import UtemyNoText from "./utemy_logo_notext.png";
+import ReadingBanner from "./reading-time-google-classroom-header.png";
 
 export {
     DefaultAvatar,
@@ -36,4 +38,6 @@ export {
     ImgLearn,
     QuillLetter,
     QuillLetterReflect,
+    UtemyNoText,
+    ReadingBanner,
 };

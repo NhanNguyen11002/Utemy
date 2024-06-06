@@ -57,7 +57,7 @@ const error = {
     //description
     ERROR_DESCRIPTION_STRING: "Description must be string",
     ERROR_DESCRIPTION_REQUIRED: "Description is required",
-    ERROR_DESCRIPTION_TOO_MAX: "Description is too long",
+    ERROR_DESCRIPTION_TOO_MAX: "Description is too long, 200 chars only",
     ERROR_DESCRIPTION_TOO_SHORT: "Description is too short",
 
     //course

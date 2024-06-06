@@ -22,7 +22,7 @@ export const createCourseValidationSchema = Yup.object({
         .test("fileSize", constants.error.ERROR_VIDEO_TOO_BIG, (value: any) => {
             return value && value.size <= 1024 * 1024 * 100; // 100 MB
         }),
-    
+
     categories: Yup.array().min(1, constants.error.ERROR_CATEGORY_REQUIRED).max(4, constants.error.ERROR_CATEGORY_MAX),
     title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(100, constants.error.ERROR_TITLE_MAX),
     summary: Yup.string()

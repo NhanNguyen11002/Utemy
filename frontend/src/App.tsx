@@ -45,10 +45,17 @@ import HistoryTransaction from "./pages/HistoryTransaction";
 import UserWatchVideoLayout from "./layout/userWatchVideoLayout";
 import UserAppLayoutWithNav from "./layout/userAppLayoutWithNav";
 import LecturerAppLayout from "./layout/lecturerAppLayout";
+import UserBlogLayout from "./layout/userBlogLayout";
 import CouponAdmin from "./pages/Admin/Coupon";
 import ReportAdmin from "./pages/Admin/Report";
 import EventAdmin from "./pages/Admin/Event";
 import BlogAdmin from "./pages/Admin/Blog";
+import BlogEdit from "./pages/Admin/BlogEdit";
+import BlogReview from "./pages/Admin/BlogReview";
+import BlogHome from "./pages/BlogHome";
+import BlogCategory from "./pages/BlogCategory";
+import BlogDetail from "./pages/BlogDetail";
+import BlogSearch from "./pages/BlogSearch";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -79,6 +86,8 @@ function App() {
                                 <Route path="coupon" element={<CouponAdmin />}></Route>
                                 <Route path="event" element={<EventAdmin />}></Route>
                                 <Route path="blog" element={<BlogAdmin />}></Route>
+                                <Route path="blog/edit/:slug" element={<BlogEdit />}></Route>
+                                <Route path="blog/review/:slug" element={<BlogReview />}></Route>
                                 <Route path="user" element={<UserAdmin />}></Route>
                                 <Route path="user-profile/:id" element={<UserProfile />}></Route>
                                 <Route path="user/create" element={<CreateUser />}></Route>
@@ -117,6 +126,12 @@ function App() {
                                 <Route path="my-enrolled-courses" element={<MyEnrolledCourse />}></Route>
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
+                        </Route>
+                        <Route path="/blog" element={<UserBlogLayout isLogin={isLogin} />}>
+                            <Route index element={<BlogHome />}></Route>
+                            <Route path="detail/:slug" element={<BlogDetail />}></Route>
+                            <Route path="search" element={<BlogSearch />}></Route>
+                            <Route path="category/:category_id" element={<BlogCategory />}></Route>
                         </Route>
                         <Route path="/*" element={<UserAppLayoutWithNav isLogin={isLogin} />}>
                             <Route path="profile/:id" element={<AuthorProfile />}></Route>

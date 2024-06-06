@@ -84,15 +84,15 @@ export const eveluateList = [
 export const sortingBy = [
     {
         value: "newest",
-        title: "Newest",
+        title: "Mới nhất",
     },
     {
         value: "oldest",
-        title: "Oldest",
+        title: "Cũ nhất",
     },
-    { value: "attendees", title: "Most Attendees" },
-    { value: "ascprice", title: "Price: Lowest to Highest" },
-    { value: "descprice", title: "Price: Highest to Lowest" },
+    { value: "attendees", title: "Nhiều người tham gia nhất" },
+    { value: "ascprice", title: "Giá: Thấp đến cao" },
+    { value: "descprice", title: "Giá: Cao đến thấp" },
 ];
 export const calDayRemains = (date: string) => {
     const target = +new Date(date);

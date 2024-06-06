@@ -59,7 +59,7 @@ const Home: React.FC = () => {
                         Khóa học <span className="text-lightblue"> nổi tiếng </span>
                     </h2>
                     <span className="w-[60px] h-1 bg-black block"></span>
-                    <div className="mt-3 flex shrink-0 gap-3 py-2">
+                    <div className="mt-5 flex shrink-0 gap-3 py-2">
                         <CarouselCourse courses={top10Enrolled} type="enrolled" />
                     </div>
                 </div>
