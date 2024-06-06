@@ -55,4 +55,8 @@ export default class CategoryController {
         const response: ResponseBase = await services.CategoryServices.get5Categories(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async get8BlogCategories(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CategoryServices.get8BlogCategories(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

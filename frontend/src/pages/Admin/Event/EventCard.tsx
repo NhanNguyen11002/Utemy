@@ -17,7 +17,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu";
-import { Typography } from "@material-tailwind/react";
 import { GripIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
@@ -28,7 +27,6 @@ type EventCardProps = {
     event: Event;
     handleOpenDeleteModel(id: number): void;
     handleOpenPopupEdit(id: number): void;
-
 };
 const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -39,7 +37,6 @@ const formatDate = (dateString: any) => {
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
-
 
 const EventCard: React.FC<EventCardProps> = (props) => {
     const [isUpdateRatioDialogOpen, setIsUpdateRatioDialogOpen] = useState(false);
@@ -59,13 +56,13 @@ const EventCard: React.FC<EventCardProps> = (props) => {
     const handleResetRatio = (couponId: any) => {
         // Logic to reset ratio
         console.log(`Resetting ratio for coupon with ID: ${couponId}`);
-    
+
         // Sao chép mảng tempRates để không làm thay đổi trực tiếp mảng gốc
         const updatedTempRates = { ...tempRates };
-    
+
         // Xóa phần tử có couponId tương ứng khỏi mảng tempRates
         delete (updatedTempRates as any)[couponId];
-    
+
         // Cập nhật lại state với mảng tempRates đã được xóa phần tử
         setTempRates(updatedTempRates);
     };
@@ -76,9 +73,8 @@ const EventCard: React.FC<EventCardProps> = (props) => {
         ratio: coupon.ratio?.ratio || 0,
     };
     const handleSaveRatio = () => {
-        if (Number(ratioValue)<1 || Number(ratioValue)>99)
-            toast.error("Tỉ lệ phải lớn hơn 1 và nhỏ hơn 100");
-        else{
+        if (Number(ratioValue) < 1 || Number(ratioValue) > 99) toast.error("Tỉ lệ phải lớn hơn 1 và nhỏ hơn 100");
+        else {
             setTempRates({
                 ...tempRates,
                 [selectedCouponId]: ratioValue,
@@ -88,7 +84,6 @@ const EventCard: React.FC<EventCardProps> = (props) => {
             setIsUpdateRatioDialogOpen(false);
             setRatioValue("");
         }
-        
     };
 
     const handleCancel = () => {
@@ -104,12 +99,11 @@ const EventCard: React.FC<EventCardProps> = (props) => {
     const handleDeleteAllRates = () => {
         if (totalRatio === 0) {
             toast.error("Các coupon của sự kiện này chưa có tỉ lệ");
-        }
-        else {
+        } else {
             props.event.coupons.forEach((coupon) => {
                 dispatch(couponActions.deleteRatio({ coupon_id: coupon.coupon_id })).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
-                        dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }))
+                        dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }));
                         setTempRates({});
                     } else {
                         if (response.payload) toast.error(response.payload.message);
@@ -117,12 +111,12 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                 });
             });
             toast.success("Xóa tỉ lệ cho các coupon thành công");
-            setIsOpenDeleteModel(false); 
-        }        
+            setIsOpenDeleteModel(false);
+        }
     };
     const deleteAllRates = () => {
         setIsOpenDeleteModel(true);
-    }
+    };
     const saveAllRates = () => {
         console.log("Saving rates:", tempRates);
         if (Object.keys(tempRates).length < rowCount)
@@ -134,11 +128,11 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                 if (totalRatio === 0) {
                     const promises = Object.entries(tempRates).map(([coupon_id, ratio]) => {
                         return dispatch(
-                            couponActions.createRatio({ coupon_id: Number(coupon_id), ratio: (Number(ratio))/100 }),
+                            couponActions.createRatio({ coupon_id: Number(coupon_id), ratio: Number(ratio) / 100 }),
                         ).then((response) => {
                             if (response.payload && response.payload.status_code === 200) {
                                 toast.success(response.payload.message);
-                                dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }))
+                                dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }));
                                 setTempRates({});
                             } else {
                                 if (response.payload) toast.error(response.payload.message);
@@ -153,16 +147,14 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                         .catch((error) => {
                             console.error("Error saving some ratios:", error);
                         });
-                }
-                else {
+                } else {
                     const promises = Object.entries(tempRates).map(([coupon_id, ratio]) => {
                         return dispatch(
-                            couponActions.updateRatio({ coupon_id: Number(coupon_id), ratio: (Number(ratio))/100 }),
+                            couponActions.updateRatio({ coupon_id: Number(coupon_id), ratio: Number(ratio) / 100 }),
                         ).then((response) => {
                             if (response.payload && response.payload.status_code === 200) {
                                 toast.success(response.payload.message);
-                                dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }))
-
+                                dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }));
                             } else {
                                 if (response.payload) toast.error(response.payload.message);
                             }
@@ -199,11 +191,11 @@ const EventCard: React.FC<EventCardProps> = (props) => {
     }, 0);
     const truncateDescription = (description: string, maxLength: number) => {
         if (description.length > maxLength) {
-            return description.substring(0, maxLength) + '...';
+            return description.substring(0, maxLength) + "...";
         }
         return description;
     };
-    
+
     return (
         <>
             <div
@@ -358,11 +350,15 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                                                 {formatDate(coupon.valid_until)}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                                {coupon.ratio?.ratio ? ((coupon.ratio.ratio) * 100).toFixed(0) + '%' : null}
+                                                                {coupon.ratio?.ratio
+                                                                    ? (coupon.ratio.ratio * 100).toFixed(0) + "%"
+                                                                    : null}
                                                             </td>
 
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                                {(tempRates as any)[coupon.coupon_id] ? (tempRates as any)[coupon.coupon_id] + '%' : null}
+                                                                {(tempRates as any)[coupon.coupon_id]
+                                                                    ? (tempRates as any)[coupon.coupon_id] + "%"
+                                                                    : null}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                                 <DropdownMenu>
@@ -371,26 +367,24 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                                                     </DropdownMenuTrigger>
                                                                     <DropdownMenuContent align="start">
                                                                         <DropdownMenuItem>
-                                                                            <Typography
-                                                                                as="text"
+                                                                            <p
                                                                                 onClick={() =>
                                                                                     handleUpdateRatio(coupon.coupon_id)
                                                                                 }
                                                                                 className="text-xs font-semibold hover:underline hover:cursor-pointer text-blue-gray-600"
                                                                             >
                                                                                 Cập nhật tỉ lệ
-                                                                            </Typography>
+                                                                            </p>
                                                                         </DropdownMenuItem>
                                                                         <DropdownMenuItem>
-                                                                            <Typography
-                                                                                as="text"
+                                                                            <p
                                                                                 onClick={() =>
                                                                                     handleResetRatio(coupon.coupon_id)
                                                                                 }
                                                                                 className="text-xs font-semibold hover:underline hover:cursor-pointer text-red-700"
                                                                             >
                                                                                 Reset tỉ lệ
-                                                                            </Typography>
+                                                                            </p>
                                                                         </DropdownMenuItem>
                                                                     </DropdownMenuContent>
                                                                 </DropdownMenu>
@@ -411,7 +405,9 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                                                         <input
                                                                             type="number"
                                                                             value={ratioValue}
-                                                                            placeholder={String(initialValues.ratio*100)}
+                                                                            placeholder={String(
+                                                                                initialValues.ratio * 100,
+                                                                            )}
                                                                             onChange={(e) =>
                                                                                 setRatioValue(e.target.value)
                                                                             }
@@ -445,20 +441,16 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                                             -----------------------------
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                            {((100 - totalRatio)).toFixed(0)=== "100" ? (
-                                                                null
-                                                            ): (
-                                                                ((100 - totalRatio)).toFixed(0)+ '%'
-                                                            )}
+                                                            {(100 - totalRatio).toFixed(0) === "100"
+                                                                ? null
+                                                                : (100 - totalRatio).toFixed(0) + "%"}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                            {((100 - totalTempRate)).toFixed(0) === "100" ? (
-                                                                // Nếu kết quả là 1, hiển thị một nội dung trống
-                                                                null
-                                                            ) : (
-                                                                // Nếu kết quả không phải là 1, hiển thị kết quả của phép toán
-                                                                ((100 - totalTempRate)).toFixed(0)+ '%'
-                                                            )}
+                                                            {(100 - totalTempRate).toFixed(0) === "100"
+                                                                ? // Nếu kết quả là 1, hiển thị một nội dung trống
+                                                                  null
+                                                                : // Nếu kết quả không phải là 1, hiển thị kết quả của phép toán
+                                                                  (100 - totalTempRate).toFixed(0) + "%"}
                                                         </td>
 
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -470,8 +462,9 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                             <div className="px-6 py-4 whitespace-nowrap text-sm text-red-500">
                                                 {totalTempRate >= 100 ? (
                                                     <span>
-                                                        TỔNG TỈ LỆ (NGOẠI TRỪ CHÚC BẠN MAY MẮN LẦN SAU) PHẢI NHỎ HƠN 100%, HÃY ĐIỀU CHỈNH NẾU KHÔNG SẼ
-                                                        KHÔNG LƯU ĐƯỢC: {totalTempRate}%
+                                                        TỔNG TỈ LỆ (NGOẠI TRỪ CHÚC BẠN MAY MẮN LẦN SAU) PHẢI NHỎ HƠN
+                                                        100%, HÃY ĐIỀU CHỈNH NẾU KHÔNG SẼ KHÔNG LƯU ĐƯỢC:{" "}
+                                                        {totalTempRate}%
                                                     </span>
                                                 ) : (
                                                     <span>TỔNG TỈ LỆ TẠM THỜI: {totalTempRate} %</span>
@@ -480,10 +473,13 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                         </div>
                                         <DialogFooter>
                                             <Button type="submit" onClick={deleteAllRates}>
-                                                Xóa tất cả tỉ lệ 
+                                                Xóa tất cả tỉ lệ
                                             </Button>
                                             {isOpenDeleteModel && (
-                                                <DeleteModal handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteAllRates} />
+                                                <DeleteModal
+                                                    handleCancel={handleCancelDeleteModel}
+                                                    handleDelete={handleDeleteAllRates}
+                                                />
                                             )}
                                             <Button type="submit" onClick={() => setTempRates({})}>
                                                 Đặt lại tỉ lệ tạm

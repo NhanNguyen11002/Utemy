@@ -26,10 +26,10 @@ import CommentSection from "./CommentSection";
 import constants from "../../constants";
 import { calDayRemains, getCourseIncludes, convertStringDate } from "../../utils/helper";
 // import { orderLesson } from "../../types/lesson";
-import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline";
 import "react-quill/dist/quill.snow.css";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 
-import { Tabs, TabsHeader, TabsBody, Tab, TabPanel } from "@material-tailwind/react";
 import {
     CheckIcon,
     ClockIcon,
@@ -65,7 +65,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
         useAppSelector((state) => state.courseSlice.courseDetailForTrial) ?? {};
     const ratings: RatingType[] = useAppSelector((state) => state.ratingSlice.ratings) ?? [];
     const totalRatingPage: number = useAppSelector((state) => state.ratingSlice.totalPage) ?? Number(1);
-    const [activeTab, setActiveTab] = useState("Description");
+    const totalRatingRecord: number = useAppSelector((state) => state.ratingSlice.totalRecord) ?? Number(0);
+
     const { duration, lessonCount } = getCourseIncludes(courseDetail);
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "Unenrolled";
     const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
@@ -233,7 +234,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                             href={`/lecturer/course/edit/${courseDetail.course_id}`}
                             className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300"
                         >
-                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+                            <ArrowLeftEndOnRectangleIcon className="w-5 h-5" />
                             <p className="text-lg"> Quay lại chỉnh sửa</p>
                         </a>
                         <div className="w-[230px] h-px bg-gray-300"></div>
@@ -242,7 +243,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                 {isAdmin && (
                     <Link to={`/admin/course/${slug}`}>
                         <div className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300">
-                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+                            <ArrowLeftEndOnRectangleIcon className="w-5 h-5" />
                             <p className="text-lg"> Quay lại quản lý</p>
                         </div>
                     </Link>
@@ -387,268 +388,198 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                             </div>
                         </div>
                         <div className="mt-8">
-                            <Tabs value={activeTab}>
-                                <TabsHeader
-                                    className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 w-1/2"
-                                    indicatorProps={{
-                                        className: "bg-transparent border-b-2 border-gray-900 shadow-none rounded-none",
-                                    }}
-                                >
-                                    <Tab
+                            <Tabs defaultValue={"Description"}>
+                                <TabsList className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 w-1/2 justify-start ">
+                                    <TabsTrigger
                                         key={"Description"}
                                         value={"Description"}
-                                        onClick={() => setActiveTab("Description")}
-                                        className={activeTab === "Description" ? "text-gray-900" : ""}
+                                        className="data-[state=active]:border-b data-[state=active]:border-black rounded-[0px]"
                                     >
                                         Nội dung khóa học
-                                    </Tab>
-                                    <Tab
+                                    </TabsTrigger>
+                                    <TabsTrigger
                                         key={"Study"}
                                         value={"Study"}
-                                        onClick={() => setActiveTab("Study")}
-                                        className={activeTab === "Study" ? "text-gray-900" : ""}
+                                        className="data-[state=active]:border-b data-[state=active]:border-black rounded-[0px]"
                                     >
                                         Chuẩn đầu ra
-                                    </Tab>
+                                    </TabsTrigger>
 
-                                    <Tab
+                                    <TabsTrigger
                                         id="Rating"
                                         key={"Rating"}
                                         value={"Rating"}
-                                        onClick={() => setActiveTab("Rating")}
-                                        className={activeTab === "Rating" ? "text-gray-900" : ""}
+                                        className="data-[state=active]:border-b data-[state=active]:border-black rounded-[0px]"
                                     >
                                         Đánh giá
-                                    </Tab>
-                                    {/* {(!isLogin || (isLogin && role !== constants.util.ROLE_ENROLLED && role !== constants.util.ROLE_AUTHOR)) && (
-                                        <Tab
-                                            key={"Trial"}
-                                            value={"Trial"}
-                                            onClick={() => setActiveTab("Trial")}
-                                            className={activeTab === "Trial" ? "text-gray-900" : ""}
-                                        >
-                                            Học thử
-                                        </Tab>
-                                    )} */}
-                                </TabsHeader>
+                                    </TabsTrigger>
+                                </TabsList>
                                 <div className="h-px w-full bg-gray-300"></div>
-                                <TabsBody>
-                                    <TabPanel key="Study" value="Study">
+
+                                <TabsContent key="Study" value="Study">
+                                    <div className="w-1/2">
+                                        {courseDetail.study &&
+                                            courseDetail.study.length > 0 &&
+                                            courseDetail.study.map((study: any, index: any) => {
+                                                return (
+                                                    <div key={index} className="flex gap-1 items-start shrink-0">
+                                                        <CheckIcon className="w-6 h-6 shrink-0" />
+                                                        <p className="text-xl">{study}</p>
+                                                    </div>
+                                                );
+                                            })}
+                                    </div>
+                                </TabsContent>
+                                <TabsContent key="Description" value="Description">
+                                    <div className="w-full flex gap-10">
                                         <div className="w-1/2">
-                                            {courseDetail.study &&
-                                                courseDetail.study.length > 0 &&
-                                                courseDetail.study.map((study: any, index: any) => {
+                                            <div className="my-4">
+                                                <h2 className=" tablet:text-2xl font-bold mb-3">Yêu cầu</h2>
+                                                <ul className="list-disc">
+                                                    {courseDetail.requirement &&
+                                                        courseDetail.requirement.length > 0 &&
+                                                        courseDetail.requirement.map((req: any, index: any) => {
+                                                            return (
+                                                                <li key={index} className="ml-5">
+                                                                    {req}
+                                                                </li>
+                                                            );
+                                                        })}
+                                                </ul>
+                                            </div>
+                                            <div className="my-4 description-course ql-snow">
+                                                <h2 className=" tablet:text-2xl font-bold mb-3">Mô tả</h2>
+                                                <div
+                                                    className="ql-editor"
+                                                    dangerouslySetInnerHTML={{ __html: courseDetail.description }}
+                                                ></div>
+                                            </div>
+                                            <div className="table-of-content my-4">
+                                                <h2 className="text-xl tablet:text-2xl font-bold mb-3">
+                                                    Nội dung khóa học
+                                                </h2>
+                                                <span className="w-[60px] h-1 bg-black block mb-4"></span>
+                                                {!courseDetail.sections ||
+                                                    (courseDetail.sections.length === 0 && (
+                                                        <p className="mt-4 text-xl text-center text-lightblue font-bold">
+                                                            Khóa học này chưa có nội dung gì
+                                                        </p>
+                                                    ))}
+                                                {courseDetail.sections?.map((section: Section, index: number) => {
                                                     return (
-                                                        <div key={index} className="flex gap-1 items-start shrink-0">
-                                                            <CheckIcon className="w-6 h-6 shrink-0" />
-                                                            <p className="text-xl">{study}</p>
+                                                        <div key={index}>
+                                                            <AccordionSection
+                                                                key={section.id * index}
+                                                                isDisplayEdit={false}
+                                                                isDisplayProgress={
+                                                                    role === constants.util.ROLE_ENROLLED
+                                                                }
+                                                                section={section}
+                                                                redirectToWatchVideo={
+                                                                    isLogin && !(role === constants.util.ROLE_USER)
+                                                                }
+                                                                handleShowVideoDialog={handleShowVideoDialog}
+                                                                commonLectures={commonLectures}
+                                                            />
                                                         </div>
                                                     );
                                                 })}
-                                        </div>
-                                    </TabPanel>
-                                    <TabPanel key="Description" value="Description">
-                                        <div className="w-full flex gap-10">
-                                            <div className="w-1/2">
-                                                <div className="my-4">
-                                                    <h2 className=" tablet:text-2xl font-bold mb-3">Yêu cầu</h2>
-                                                    <ul className="list-disc">
-                                                        {courseDetail.requirement &&
-                                                            courseDetail.requirement.length > 0 &&
-                                                            courseDetail.requirement.map((req: any, index: any) => {
-                                                                return (
-                                                                    <li key={index} className="ml-5">
-                                                                        {req}
-                                                                    </li>
-                                                                );
-                                                            })}
-                                                    </ul>
-                                                </div>
-                                                <div className="my-4 description-course ql-snow">
-                                                    <h2 className=" tablet:text-2xl font-bold mb-3">Mô tả</h2>
-                                                    <div
-                                                        className="ql-editor"
-                                                        dangerouslySetInnerHTML={{ __html: courseDetail.description }}
-                                                    ></div>
-                                                </div>
-                                                <div className="table-of-content my-4">
-                                                    <h2 className="text-xl tablet:text-2xl font-bold mb-3">
-                                                        Nội dung khóa học
-                                                    </h2>
-                                                    <span className="w-[60px] h-1 bg-black block mb-4"></span>
-                                                    {!courseDetail.sections ||
-                                                        (courseDetail.sections.length === 0 && (
-                                                            <p className="mt-4 text-xl text-center text-lightblue font-bold">
-                                                                Khóa học này chưa có nội dung gì
-                                                            </p>
-                                                        ))}
-                                                    {courseDetail.sections?.map((section: Section, index: number) => {
-                                                        return (
-                                                            <div key={index}>
-                                                                <AccordionSection
-                                                                    key={section.id * index}
-                                                                    isDisplayEdit={false}
-                                                                    isDisplayProgress={
-                                                                        role === constants.util.ROLE_ENROLLED
-                                                                    }
-                                                                    section={section}
-                                                                    redirectToWatchVideo={
-                                                                        isLogin && !(role === constants.util.ROLE_USER)
-                                                                    }
-                                                                    handleShowVideoDialog={handleShowVideoDialog}
-                                                                    commonLectures={commonLectures}
-                                                                />
-                                                            </div>
-                                                        );
-                                                    })}
-                                                    {showDialog && (
-                                                        <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
-                                                            <DialogContent
-                                                                className={
-                                                                    "lg:max-w-screen-lg overflow-y-scroll max-h-screen"
-                                                                }
-                                                            >
-                                                                <DialogTitle className="text-center">
-                                                                    {descriptionVideo.replace(/<[^>]+>/g, "")}
-                                                                </DialogTitle>
-                                                                <VideoPlayerForTrailerTrial source={videoUrl} />
-                                                            </DialogContent>
-                                                        </Dialog>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="w-1/2 ">
-                                                <div className="w-3/4 bg-white shadow-md rounded-md border-gray-400  items-center flex flex-col">
-                                                    <p className="text-lg ">Khóa học bao gồm</p>
-                                                    <table className="table">
-                                                        <tbody>
-                                                            <tr className="flex justify-between shrink-0">
-                                                                <td className="flex gap-1 items-center">
-                                                                    <ClockIcon className="w-4 h-4" />
-                                                                    Giờ học video
-                                                                </td>
-                                                                <td>{duration}</td>
-                                                            </tr>
-                                                            <tr className="flex justify-between shrink-0">
-                                                                <td className="flex gap-1 items-center">
-                                                                    <PlayCircleIcon className="w-4 h-4" />
-                                                                    Số bài học
-                                                                </td>
-                                                                <td>{lessonCount}</td>
-                                                            </tr>
-                                                            <tr className="flex justify-between shrink-0">
-                                                                <td className="flex gap-1 items-center">
-                                                                    <BookOpenIcon className="w-4 h-4" />
-                                                                    Số chương
-                                                                </td>
-                                                                <td>{courseDetail.number_of_section}</td>
-                                                            </tr>
-                                                            <tr className="flex justify-between shrink-0">
-                                                                <td className="flex gap-1 items-center">
-                                                                    <GlobeAsiaAustraliaIcon className="w-4 h-4" />
-                                                                    Ngôn ngữ
-                                                                </td>
-                                                                <td>Việt Nam</td>
-                                                            </tr>
-                                                            <tr className="flex justify-between shrink-0">
-                                                                <td className="flex gap-1 items-center">
-                                                                    <TicketIcon className="w-4 h-4" />
-                                                                    Quyền truy cập vĩnh viễn trọn đời
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                {showDialog && (
+                                                    <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
+                                                        <DialogContent
+                                                            className={
+                                                                "lg:max-w-screen-lg overflow-y-scroll max-h-screen"
+                                                            }
+                                                        >
+                                                            <DialogTitle className="text-center">
+                                                                {descriptionVideo.replace(/<[^>]+>/g, "")}
+                                                            </DialogTitle>
+                                                            <VideoPlayerForTrailerTrial source={videoUrl} />
+                                                        </DialogContent>
+                                                    </Dialog>
+                                                )}
                                             </div>
                                         </div>
-                                    </TabPanel>
-                                    <TabPanel key="Rating" value="Rating">
-                                        <div id="#Rating">
-                                            {isGetLoadingCourse ? (
-                                                <p className="mt-4 text-2x text-center font-bold">Loading</p>
-                                            ) : (
-                                                <CommentSection
-                                                    ratingPercent={ratingPercent}
-                                                    averageRating={courseDetail.average_rating}
-                                                    ratings={ratings}
-                                                    handleFilterRatings={handleFilterRatings}
-                                                    handleTogglePopupRating={handleTogglePopupRating}
-                                                    role={role}
-                                                    isLogin={isLogin}
+                                        <div className="w-1/2 ">
+                                            <div className="w-3/4 bg-white shadow-md rounded-md border-gray-400  items-center flex flex-col">
+                                                <p className="text-lg ">Khóa học bao gồm</p>
+                                                <table className="table">
+                                                    <tbody>
+                                                        <tr className="flex justify-between shrink-0">
+                                                            <td className="flex gap-1 items-center">
+                                                                <ClockIcon className="w-4 h-4" />
+                                                                Giờ học video
+                                                            </td>
+                                                            <td>{duration}</td>
+                                                        </tr>
+                                                        <tr className="flex justify-between shrink-0">
+                                                            <td className="flex gap-1 items-center">
+                                                                <PlayCircleIcon className="w-4 h-4" />
+                                                                Số bài học
+                                                            </td>
+                                                            <td>{lessonCount}</td>
+                                                        </tr>
+                                                        <tr className="flex justify-between shrink-0">
+                                                            <td className="flex gap-1 items-center">
+                                                                <BookOpenIcon className="w-4 h-4" />
+                                                                Số chương
+                                                            </td>
+                                                            <td>{courseDetail.number_of_section}</td>
+                                                        </tr>
+                                                        <tr className="flex justify-between shrink-0">
+                                                            <td className="flex gap-1 items-center">
+                                                                <GlobeAsiaAustraliaIcon className="w-4 h-4" />
+                                                                Ngôn ngữ
+                                                            </td>
+                                                            <td>Việt Nam</td>
+                                                        </tr>
+                                                        <tr className="flex justify-between shrink-0">
+                                                            <td className="flex gap-1 items-center">
+                                                                <TicketIcon className="w-4 h-4" />
+                                                                Quyền truy cập vĩnh viễn trọn đời
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TabsContent>
+                                <TabsContent key="Rating" value="Rating">
+                                    <div id="#Rating">
+                                        {isGetLoadingCourse ? (
+                                            <p className="mt-4 text-2x text-center font-bold">Loading</p>
+                                        ) : (
+                                            <CommentSection
+                                                ratingPercent={ratingPercent}
+                                                averageRating={courseDetail.average_rating}
+                                                ratings={ratings}
+                                                handleFilterRatings={handleFilterRatings}
+                                                handleTogglePopupRating={handleTogglePopupRating}
+                                                role={role}
+                                                isLogin={isLogin}
+                                            />
+                                        )}
+                                        {totalRatingPage > 1 ? (
+                                            <div className="flex justify-end my-4">
+                                                <Pagination
+                                                    handleChangePageIndex={handleChangePageIndex}
+                                                    totalPage={totalRatingPage}
+                                                    currentPage={pageIndex}
                                                 />
-                                            )}
-                                            {totalRatingPage > 1 ? (
-                                                <div className="flex justify-end my-4">
-                                                    <Pagination
-                                                        handleChangePageIndex={handleChangePageIndex}
-                                                        totalPage={totalRatingPage}
-                                                        currentPage={pageIndex}
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <></>
-                                            )}
-                                            {ratings.length === 0 && (
-                                                <p className="mt-4 text-2xl text-error text-center font-bold">
-                                                    Khóa học này chưa có đánh giá
-                                                </p>
-                                            )}
-                                        </div>
-                                    </TabPanel>
-                                    {/* <TabPanel key="Trial" value="Trial">
-                                        <div className="w-full flex gap-10">
-                                            <div className="w-1/2">
-                                                <div className="table-of-content my-4">
-                                                    <h2 className="text-xl tablet:text-2xl font-bold mb-3">
-                                                        Bạn có thể học thử khóa học này dưới đây
-                                                    </h2>
-                                                    <span className="w-[60px] h-1 bg-black block mb-4"></span>
-                                                    {!courseDetailForTrial.sections ||
-                                                        (courseDetailForTrial.sections.every(
-                                                            (section) =>
-                                                                section.lecture !== undefined &&
-                                                                section.lecture.length === 0,
-                                                        ) && (
-                                                            <p className="mt-4 text-xl text-center text-lightblue font-bold">
-                                                                Khóa học này chưa có nội dung để học thử
-                                                            </p>
-                                                        ))}
-                                                    {courseDetailForTrial.sections?.map(
-                                                        (section: Section, index: number) => (
-                                                            <div key={index}>
-                                                                <AccordionSectionForTrial
-                                                                    key={section.id * index}
-                                                                    isDisplayEdit={false}
-                                                                    isDisplayProgress={
-                                                                        role === constants.util.ROLE_ENROLLED
-                                                                    }
-                                                                    section={section}
-                                                                    // redirectToWatchVideo={isLogin}
-                                                                    handleShowVideoDialog={handleShowVideoDialog}
-                                                                />
-                                                            </div>
-                                                        ),
-                                                    )}
-                                                    {showDialog && isLogin && (
-                                                        <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
-                                                            <DialogContent
-                                                                className={
-                                                                    "lg:max-w-screen-lg overflow-y-scroll max-h-screen"
-                                                                }
-                                                            >
-                                                                <DialogTitle className="text-center">
-                                                                    {descriptionVideo.replace(/<[^>]+>/g, "")}
-                                                                </DialogTitle>
-                                                                <VideoPlayerForTrailerTrial source={videoUrl} />
-                                                            </DialogContent>
-                                                        </Dialog>
-                                                    )}
-                                                </div>
                                             </div>
-                                            <div className="w-1/2 "></div>
-                                        </div>
-                                    </TabPanel> */}
-                                </TabsBody>
+                                        ) : (
+                                            <></>
+                                        )}
+                                        {ratings.length === 0 && (
+                                            <p className="mt-4 text-2xl text-error text-center font-bold">
+                                                {totalRatingRecord === 0
+                                                    ? "Khóa học này chưa có đánh giá"
+                                                    : "Không có đánh giá theo tiêu chí lọc"}
+                                            </p>
+                                        )}
+                                    </div>
+                                </TabsContent>
                             </Tabs>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
@@ -13,11 +13,10 @@ type SelectProps = {
 
 const CustomeSelect: FC<SelectProps> = (props) => {
     const animatedComponents = makeAnimated();
-    const [defaultValue, setDefaultValue] = useState<any>([]);
-    console.log(defaultValue);
-    useEffect(() => {
-        setDefaultValue(props.defautlValues ? props.defautlValues : []);
-    }, [props.defautlValues]);
+    // const [defaultValue, setDefaultValue] = useState<any>([]);
+    // useEffect(() => {
+    //     setDefaultValue(props.defautlValues ? props.defautlValues : []);
+    // }, [props.defautlValues]);
     return (
         <Select
             closeMenuOnSelect={props.isMulti ? false : true}

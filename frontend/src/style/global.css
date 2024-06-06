@@ -105,10 +105,36 @@ html {
 .description-course h3 {
     @apply text-2xl; /* You can adjust this size as needed */
 }
-.ql-editor img {
+.fill-in-quizz img {
     max-width: 100%;
     height: auto;
-    max-height: 200px;
+    max-height: 150px;
+}
+.blog-content {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px; */
+}
+.blog-content img {
+    width: 100%;
+    height: auto;
+    justify-self: center;
+}
+.blog-content p {
+    display: grid;
+}
+.blog-content h2 {
+    @apply text-3xl; /* You can adjust this size as needed */
+}
+.blog-content h1 {
+    @apply text-4xl; /* You can adjust this size as needed */
+}
+.blog-content h3 {
+    @apply text-2xl; /* You can adjust this size as needed */
 }
 @layer base {
     :root {

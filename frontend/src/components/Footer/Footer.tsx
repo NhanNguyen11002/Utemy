@@ -1,7 +1,9 @@
 import React from "react";
 import { images } from "../../assets/index";
+import { useNavigate } from "react-router-dom";
 
 const Footer: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <>
             <footer className="mt-auto  footer footer-center p-10 bg-footer text-base-content rounded ">
@@ -50,10 +52,20 @@ const Footer: React.FC = () => {
                         </div>
                     </div>
                     <div className="grid grid-flow-row gap-4">
+                        <p
+                            className="link text-lg no-underline hover:opacity-80 hover:underline underline-offset-2"
+                            onClick={() => navigate("/blog")}
+                        >
+                            Blog
+                        </p>
                         <a href="https://www.facebook.com/profile.php?id=100040927081687">
-                            <span className="link text-lg no-underline hover:opacity-80">Về chúng tôi</span>
+                            <span className="link text-lg no-underline hover:opacity-80 hover:underline underline-offset-2">
+                                Về chúng tôi
+                            </span>
                         </a>
-                        <span className="link text-lg no-underline hover:opacity-80">Liên hệ</span>
+                        <span className="link text-lg no-underline hover:opacity-80 hover:underline underline-offset-2">
+                            Liên hệ
+                        </span>
                     </div>
                 </div>
 

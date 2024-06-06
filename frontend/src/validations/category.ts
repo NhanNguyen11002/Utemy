@@ -12,11 +12,11 @@ export const createCategoryValidationSchema = Yup.object({
         .test("fileSize", constants.error.ERROR_IMAGE_TOO_BIG, (value: any) => {
             return value && value.size <= 1024 * 1024 * 4;
         }),
-    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(100, constants.error.ERROR_TITLE_MAX),
+    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(50, constants.error.ERROR_TITLE_MAX),
     description: Yup.string()
         .trim()
         .required(constants.error.ERROR_DESCRIPTION_REQUIRED)
-        .max(400, constants.error.ERROR_DESCRIPTION_TOO_MAX),
+        .max(200, constants.error.ERROR_DESCRIPTION_TOO_MAX),
 });
 export const editCategoryValidationSchema = Yup.object({
     title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(100, constants.error.ERROR_TITLE_MAX),
