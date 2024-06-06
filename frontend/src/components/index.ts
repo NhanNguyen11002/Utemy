@@ -42,6 +42,10 @@ import BlogCard from "./Card/BlogCard";
 import HeaderBlog from "./Header/HeaderBlog";
 import Footer from "./Footer/Footer";
 import BlogNavbar from "./Navbar/BlogNavbar";
+import CarouselBlog from "./Carousel/CarouselBlog";
+import CarouselBlogRelated from "./Carousel/CarouselBlogRelated";
+import BlogCardLong from "./Card/BlogCardLong";
+import ScrollToTopButton from "./Button/ScrollToTopButton";
 
 export {
     Spin,
@@ -87,4 +91,8 @@ export {
     HeaderBlog,
     Footer,
     BlogNavbar,
+    CarouselBlog,
+    CarouselBlogRelated,
+    BlogCardLong,
+    ScrollToTopButton,
 };

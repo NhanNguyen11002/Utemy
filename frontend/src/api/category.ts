@@ -7,6 +7,12 @@ const get5Categories = async () => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const get8BlogCategories = async () => {
+    const path = "category/top8blog";
+
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const getCategories = async () => {
     const path = "category/full";
 
@@ -52,6 +58,7 @@ const categoryApis = {
     deleteCategory,
     getCategory,
     editCategory,
+    get8BlogCategories,
 };
 
 export default categoryApis;

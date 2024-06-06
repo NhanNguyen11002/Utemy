@@ -78,7 +78,7 @@ const CreateUser = () => {
 
     return (
         <>
-            <div className="mt-12 mb-8 flex flex-row items-start justify-between bg-background_2 min-h-screen">
+            <div className="mt-12 mb-8 flex items-start justify-center laptop:justify-start bg-background_2 min-h-screen laptop:w-[1024px] xl:w-[1400px] mx-auto">
                 <div className="w-1/3 flex ">
                     <Formik
                         initialValues={initialValue}
@@ -231,7 +231,7 @@ const CreateUser = () => {
                     <img
                         src={images.CreateUser}
                         alt="panel"
-                        className=" rounded-3xl hidden laptop:block laptop:w-3/4"
+                        className=" rounded-3xl hidden laptop:block laptop:w-2/3 xl:w-full h-auto"
                     />
                 </div>
             </div>

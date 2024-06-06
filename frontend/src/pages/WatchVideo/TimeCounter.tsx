@@ -2,7 +2,12 @@ import React, { useEffect } from "react";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { testActions } from "../../redux/slices";
-import { Menu, MenuHandler, MenuList, MenuItem } from "@material-tailwind/react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 
 type TimeCounterProps = {
     handleOpenFinishPopup(): void;
@@ -36,8 +41,8 @@ const TimeCounter: React.FC<TimeCounterProps> = (props) => {
     };
     return (
         <>
-            <Menu>
-                <MenuHandler>
+            <DropdownMenu>
+                <DropdownMenuTrigger>
                     <div
                         className={`flex gap-2 items-center border-2 border-black rounded-md p-2 hover:cursor-pointer ${
                             is_time_limit ? "text-error" : "text-success"
@@ -46,9 +51,9 @@ const TimeCounter: React.FC<TimeCounterProps> = (props) => {
                         <ClockIcon className="w-5 h-5 shrink-0 " />
                         <span className=" shrink-0">{formatTime(duration)}</span>
                     </div>
-                </MenuHandler>
-                <MenuList>
-                    <MenuItem>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem className="flex items-center justify-center">
                         <button
                             onClick={props.handleOpenFinishPopup}
                             type="button"
@@ -56,9 +61,9 @@ const TimeCounter: React.FC<TimeCounterProps> = (props) => {
                         >
                             Nộp bài
                         </button>
-                    </MenuItem>
-                </MenuList>
-            </Menu>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </>
     );
 };

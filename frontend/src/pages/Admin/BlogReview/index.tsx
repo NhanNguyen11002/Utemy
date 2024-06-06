@@ -19,7 +19,7 @@ const BlogReview: React.FC<BlogReviewProps> = () => {
                     <ArrowLeftSquareIcon className="w-5 h-5" />
                     <p className="text-lg">Quay lại chỉnh sửa</p>
                 </Link>
-                <div className="bg-background p-10 ql-snow ">
+                <div className="bg-background p-10 ql-snow flex flex-col gap-5 ">
                     <div className="flex gap-1 mx-4 mb-2">
                         {blog.categories.length > 0 &&
                             blog.categories.map((category) => {
@@ -41,6 +41,9 @@ const BlogReview: React.FC<BlogReviewProps> = () => {
                                 {convertDateFormat(blog.updated_at as string)}
                             </p>
                         </div>
+                    </div>
+                    <div className="blog-content">
+                        <img src={blog.url_image} alt="thumbnail" className="" />
                     </div>
                     <div className="ql-editor blog-content" dangerouslySetInnerHTML={{ __html: blog.content }}></div>
                 </div>

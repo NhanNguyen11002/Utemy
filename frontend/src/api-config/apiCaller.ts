@@ -4,7 +4,7 @@ import constants from "../constants";
 import apis from "../api";
 
 const axiosPublic = axios.create({
-    baseURL: process.env.API_APP_BASE_URL || "http://localhost:3001",
+    baseURL: process.env.REACT_APP_API_URL || "http://localhost:3001",
 });
 
 const axiosInstance = axios.create();

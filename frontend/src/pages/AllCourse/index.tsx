@@ -56,7 +56,6 @@ const AllCourses: React.FC = () => {
 
     // HANDLE SORTING BTN CLICK
     const handleSortingCourse = (sortBy: string) => {
-        console.log(sortBy);
         setSortBy(sortBy);
     };
 

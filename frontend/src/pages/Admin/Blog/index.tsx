@@ -274,7 +274,7 @@ const BlogAdmin = () => {
                         </DialogContent>
                     </div>
 
-                    <div className="flex">
+                    <div className="flex w-full">
                         <div className=" w-1/6 ">
                             <button
                                 className="btn btn-info btn-outline text-lg mr-1 hover:text-white"
@@ -287,7 +287,7 @@ const BlogAdmin = () => {
                                 {categoriesList.length > 0 &&
                                     categoriesList.map((category) => {
                                         return (
-                                            <div className="flex items-center gap-2 mb-1" key={category.category_id}>
+                                            <div className="flex items-start gap-2 mb-1" key={category.category_id}>
                                                 <input
                                                     type="checkbox"
                                                     className="checkbox checkbox-info"
@@ -304,7 +304,7 @@ const BlogAdmin = () => {
                                     })}
                             </div>
                         </div>
-                        <div className="flex flex-col w-4/5 items-center">
+                        <div className="flex flex-col min-w-4/5 items-center shrink-0">
                             {blogs.length === 0 ? (
                                 <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy blog</p>
                             ) : (

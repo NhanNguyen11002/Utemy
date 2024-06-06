@@ -1321,7 +1321,9 @@ const getListRatingOfCourse = async (req: Request): Promise<ResponseBase> => {
             });
 
             const totalRecord = await configs.db.rating.count({
-                where: baseFilter,
+                where: {
+                    course_id: isFoundCourse.id,
+                },
             });
             const ratingListData: Rating[] = [];
             ratingList.map((item) => {

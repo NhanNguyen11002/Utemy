@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // import { Category } from "../../types/course";
 import { User } from "../../types/user";
 // import { Category } from "../../../types/category";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, EyeIcon } from "lucide-react";
 import { UtemyNoText } from "../../assets/images";
 import { Blog } from "../../types/blog";
 import { convertDateFormat } from "../../utils/helper";
@@ -18,9 +18,9 @@ interface BlogCardProps {
 const BlogCard: React.FC<BlogCardProps> = (props) => {
     const [hovered, setHovered] = useState(false);
     return (
-        <Link to={`${props.isAdmin ? `/admin/blog/edit/${props.blog.slug}` : `/blog/blog-detail/${props.blog.slug}`}`}>
+        <Link to={`${props.isAdmin ? `/admin/blog/edit/${props.blog.slug}` : `/blog/detail/${props.blog.slug}`}`}>
             <div
-                className=" bg-background  flex flex-col  cursor-pointer w-full"
+                className=" bg-background  flex flex-col  cursor-pointer w-full h-fit"
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
@@ -67,9 +67,29 @@ const BlogCard: React.FC<BlogCardProps> = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className={`p-4 flex-1 flex items-center  `}>
-                    <p className={`${hovered ? "underline underline-offset-8" : ""} `}>Chi tiết</p>
-                    <ArrowRight className={`w-4 h-4 transition-all  duration-300 ${hovered ? "translate-x-2" : ""}`} />
+                <div className={`p-4 flex-1 flex items-center justify-between  `}>
+                    <div className="flex items-center">
+                        <p className={`${hovered ? "underline underline-offset-8" : ""} `}>Chi tiết</p>
+                        <ArrowRight
+                            className={`w-4 h-4 transition-all  duration-300 ${hovered ? "translate-x-2" : ""}`}
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 shrink-0">
+                            <EyeIcon className="w-4 h-4" />
+                            <p>{props.blog.view}</p>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                            <ChevronUp className="w-4 h-4" />
+                            <p>{props.blog.like}</p>
+                        </div>
+                        {props.isAdmin && (
+                            <div className="flex items-center gap-1 shrink-0">
+                                <ChevronDown className="w-4 h-4" />
+                                <p>{props.blog.dislike}</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </Link>

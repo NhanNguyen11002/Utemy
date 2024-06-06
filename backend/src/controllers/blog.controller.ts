@@ -48,11 +48,43 @@ export default class BlogController {
         return res.status(response.getStatusCode()).json(response);
     }
     async getBlog(req: Request, res: Response): Promise<Response> {
-        const response: ResponseBase = await services.BlogService.getBlog(req);
+        const response: ResponseBase = await services.BlogService.getBlogBySlug(req);
         return res.status(response.getStatusCode()).json(response);
     }
-    async togglePublishedBlog(req: Request, res: Response): Promise<Response> {
+    async togglePublishedBlog(req: IRequestWithId, res: Response): Promise<Response> {
         const response: ResponseBase = await services.BlogService.togglePublishedBlog(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async top10Like(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.top10Like(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async top10View(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.top10View(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async searchBlogUserWithPagination(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.searchBlogUserWithPagination(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getNewestBlogWithPagination(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.getNewestBlogWithPagination(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async top5RelatedBySlug(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.top5RelatedBySlug(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async reactBlog(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.reactBlog(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getUserReactBySlug(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.getUserReactBySlug(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async increaseViewBlog(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BlogService.increaseViewBlog(req);
         return res.status(response.getStatusCode()).json(response);
     }
 }

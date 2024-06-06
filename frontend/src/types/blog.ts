@@ -7,6 +7,9 @@ export type Blog = {
     slug: string;
     url_image: string;
     content: string;
+    view: number;
+    like: number;
+    dislike: number;
     categories: Category[];
     created_at?: Date | string;
     updated_at?: Date | string;

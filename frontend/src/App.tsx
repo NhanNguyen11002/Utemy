@@ -53,6 +53,9 @@ import BlogAdmin from "./pages/Admin/Blog";
 import BlogEdit from "./pages/Admin/BlogEdit";
 import BlogReview from "./pages/Admin/BlogReview";
 import BlogHome from "./pages/BlogHome";
+import BlogCategory from "./pages/BlogCategory";
+import BlogDetail from "./pages/BlogDetail";
+import BlogSearch from "./pages/BlogSearch";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -126,6 +129,9 @@ function App() {
                         </Route>
                         <Route path="/blog" element={<UserBlogLayout isLogin={isLogin} />}>
                             <Route index element={<BlogHome />}></Route>
+                            <Route path="detail/:slug" element={<BlogDetail />}></Route>
+                            <Route path="search" element={<BlogSearch />}></Route>
+                            <Route path="category/:category_id" element={<BlogCategory />}></Route>
                         </Route>
                         <Route path="/*" element={<UserAppLayoutWithNav isLogin={isLogin} />}>
                             <Route path="profile/:id" element={<AuthorProfile />}></Route>

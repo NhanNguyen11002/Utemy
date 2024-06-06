@@ -81,9 +81,104 @@ export const getBlogsWithPagination = createAsyncThunk<
         return ThunkAPI.rejectWithValue(error.data as Response<null>);
     }
 });
+
+export const searchBlogUserWithPagination = createAsyncThunk<
+    Response<any>,
+    GetBlogsWithPagination,
+    { rejectValue: Response<null> }
+>("blog/search", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.blogApis.searchBlogUserWithPagination(body);
+        return response.data as Response<any>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
+export const getNewestBlogWithPagination = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "blog/newest",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.getNewestBlogWithPagination(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const top10Like = createAsyncThunk<Response<Blog[]>, void, { rejectValue: Response<null> }>(
+    "blog/top-like",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.top10Like();
+            return response.data as Response<Blog[]>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const top10View = createAsyncThunk<Response<Blog[]>, void, { rejectValue: Response<null> }>(
+    "blog/top-view",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.top10View();
+            return response.data as Response<Blog[]>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const top5RelatedBySlug = createAsyncThunk<Response<Blog[]>, string, { rejectValue: Response<null> }>(
+    "blog/related",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.top5RelatedBySlug(body);
+            return response.data as Response<Blog[]>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const reactBlog = createAsyncThunk<Response<any>, any, { rejectValue: Response<null> }>(
+    "blog/react",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.reactBlog(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getUserReactBySlug = createAsyncThunk<Response<any>, string, { rejectValue: Response<null> }>(
+    "blog/react/get",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.getUserReactBySlug(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const increaseViewBlog = createAsyncThunk<Response<any>, string, { rejectValue: Response<null> }>(
+    "blog/view/",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.blogApis.increaseViewBlog(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+
 type BlogSliceType = {
     blog: Blog;
     blogs: Blog[];
+    relatedBlogs: Blog[];
+    top10Like: Blog[];
+    top10View: Blog[];
+    currentBlogReact: string;
     totalPage: number;
     totalRecord: number;
     isLoading: boolean;
@@ -92,6 +187,9 @@ type BlogSliceType = {
 
 const initialState: BlogSliceType = {
     blogs: [],
+    top10Like: [],
+    top10View: [],
+    relatedBlogs: [],
     blog: {
         blog_id: 0,
         title: "",
@@ -109,7 +207,11 @@ const initialState: BlogSliceType = {
         categories: [],
         is_published: false,
         slug: "",
+        view: 0,
+        like: 0,
+        dislike: 0,
     },
+    currentBlogReact: "",
     totalPage: 0,
     totalRecord: 0,
     isLoading: false,
@@ -135,6 +237,60 @@ export const blogSlice = createSlice({
             state.isGetLoading = false;
         });
         builder.addCase(getBlogs.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(top10Like.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(top10Like.fulfilled, (state, action) => {
+            state.top10Like = action.payload.data as Blog[];
+            state.isGetLoading = false;
+        });
+        builder.addCase(top10Like.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(top10View.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(top10View.fulfilled, (state, action) => {
+            state.top10View = action.payload.data as Blog[];
+            state.isGetLoading = false;
+        });
+        builder.addCase(top10View.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(top5RelatedBySlug.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(top5RelatedBySlug.fulfilled, (state, action) => {
+            state.relatedBlogs = action.payload.data as Blog[];
+            state.isGetLoading = false;
+        });
+        builder.addCase(top5RelatedBySlug.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(searchBlogUserWithPagination.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(searchBlogUserWithPagination.fulfilled, (state, action) => {
+            state.blogs = action.payload.data.data as Blog[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(searchBlogUserWithPagination.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(getNewestBlogWithPagination.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getNewestBlogWithPagination.fulfilled, (state, action) => {
+            state.blogs = action.payload.data.data as Blog[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getNewestBlogWithPagination.rejected, (state) => {
             state.isGetLoading = false;
         });
         builder.addCase(createBlog.pending, (state) => {
@@ -193,6 +349,53 @@ export const blogSlice = createSlice({
             state.isLoading = false;
         });
         builder.addCase(updateBlog.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(reactBlog.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(reactBlog.fulfilled, (state, action) => {
+            const data = action.payload.data;
+            const currentBlogReact = state.currentBlogReact;
+            if (data.action === "update" || data.action === "create") {
+                const type = data.reaction_type;
+                if (type === "like") {
+                    state.blog.like += 1;
+                    state.currentBlogReact = "like";
+                } else {
+                    if (data.action === "update" && currentBlogReact === "like") state.blog.like -= 1;
+                    state.currentBlogReact = "dislike";
+                }
+            } else {
+                if (currentBlogReact === "like") {
+                    state.blog.like -= 1;
+                }
+                state.currentBlogReact = "";
+            }
+            state.isLoading = false;
+        });
+        builder.addCase(reactBlog.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(getUserReactBySlug.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(getUserReactBySlug.fulfilled, (state, action) => {
+            const type = action.payload.data ? action.payload.data.react_type : "";
+            state.currentBlogReact = type;
+            state.isLoading = false;
+        });
+        builder.addCase(getUserReactBySlug.rejected, (state) => {
+            state.isLoading = false;
+        });
+        builder.addCase(increaseViewBlog.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(increaseViewBlog.fulfilled, (state) => {
+            state.blog.view += 1;
+            state.isLoading = false;
+        });
+        builder.addCase(increaseViewBlog.rejected, (state) => {
             state.isLoading = false;
         });
     },

@@ -12,4 +12,7 @@ export type BlogResponse = {
     is_published: boolean;
     author: Author;
     categories: Category[];
+    like: number;
+    dislike: number;
+    view: number;
 };
