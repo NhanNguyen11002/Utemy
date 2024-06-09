@@ -119,6 +119,15 @@ html {
     height: 100%;
     padding: 20px; */
 }
+.category {
+    height: calc(2 * 2rem);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+}
+
 .blog-content img {
     width: 100%;
     height: auto;

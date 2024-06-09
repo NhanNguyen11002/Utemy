@@ -20,11 +20,13 @@ const OutCartCourse: React.FC<CartCourseProps> = (props) => {
             <div className="flex flex-col p-4 text-lg font-semibold shadow-md border rounded-sm">
                 <div className="flex flex-col md:flex-row gap-3 justify-between">
                     <div className="flex flex-row gap-6 ">
-                        <div className="w-28 h-28">
+                        <div className="w-28 h-28 shrink-0">
                             <img alt="thumbnail" className="w-full h-full" src={course.thumbnail} />
                         </div>
                         <div className="flex flex-col gap-1">
-                            <p className="text-2xl text-lightblue font-bold">{course.title}</p>
+                            <p className="text-lg tablet:text-2xl text-lightblue font-bold line-clamp-2">
+                                {course.title}
+                            </p>
                             <p className="text-xs text-gray-600 font-semibold">
                                 Tác giả:{" "}
                                 <span className="font-normal">
@@ -42,7 +44,7 @@ const OutCartCourse: React.FC<CartCourseProps> = (props) => {
                         </div>
                     </div>
 
-                    <div className=" flex flex-row w-[300px] items-center text-right">
+                    <div className=" flex flex-row w-[250px] tablet:w-[300px] items-center text-right">
                         <div className="flex flex-col w-3/4 items-start mr-[20px]">
                             <span
                                 className="w-full hover:underline hover:cursor-pointer hover:opacity-75"

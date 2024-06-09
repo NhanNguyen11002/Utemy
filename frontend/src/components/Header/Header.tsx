@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                                                         onClick={() =>
                                                             setIsDisplayCategoryDrawer(!isDisplayCategoryDrawer)
                                                         }
-                                                        className="hover:bg-footer text-lg font-medium text-center cursor-pointer px-6 py-4 laptop:py-[26px] min-w-fit rounded-lg"
+                                                        className="hover:bg-gray-400 hover:text-white transition-colors duration-300 text-lg font-medium text-center cursor-pointer px-6 py-4 laptop:py-[26px] min-w-fit rounded-lg"
                                                     >
                                                         {category.title}
                                                     </li>

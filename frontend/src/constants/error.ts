@@ -121,7 +121,7 @@ const error = {
     ERROR_PASS_PERCENT_REQUIRED: "Pass percent required",
     ERROR_IS_TIME_LIMIT_REQUIRED: "Time limit option required",
     ERROR_QUIZ_GROUP_ID_REQUIRED: "Quiz is required",
-    ERROR_TITLE_MAX: "Title must be under 50 chars",
+    ERROR_TITLE_MAX: "Title must be under 100 chars",
     ERROR_CATEGORY_ALREADY_EXISTS: "Category is already existed",
 
     //promotion

@@ -38,7 +38,7 @@ const BlogCategory: React.FC = () => {
                         <p className="line-clamp-4 text-xl">{category.description}</p>
                     </div>
                 </div>
-                <div className="w-1/2 h-full flex items-center justify-center">
+                <div className="w-0 hidden tablet:flex tablet:w-1/2 h-full items-center justify-center">
                     <img src={category.url_image} alt={category.title} className="w-auto h-[220px]" />
                 </div>
             </div>

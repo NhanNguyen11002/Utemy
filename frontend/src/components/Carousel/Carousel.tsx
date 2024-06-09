@@ -15,10 +15,10 @@ const CarouselUtemy = () => {
                     }),
                 ]}
             >
-                <CarouselContent className="w-[1340px] h-[350px]">
+                <CarouselContent className="w-[full] h-[350px]">
                     <CarouselItem className="w-full relative">
                         <img src={images.Slide2} className="w-full" alt="slide2" />
-                        <div className="absolute w-[450px] h-[150px] bg-white left-12 top-1/4 rounded-lg p-4 shadow-md z-10">
+                        <div className="absolute xl:w-[450px] xl:h-[150px] bg-white left-12 top-1/4 rounded-lg p-4 shadow-md z-10">
                             <h1 className="text-3xl font-bold mb-2"> Kỹ năng thúc đẩy bạn tiến về phía trước</h1>
                             <h3 className="text-md">
                                 {" "}

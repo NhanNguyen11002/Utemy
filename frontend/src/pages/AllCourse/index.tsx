@@ -106,7 +106,7 @@ const AllCourses: React.FC = () => {
             <div className="container mx-auto p-4 mt-[100px] laptop:mt-0">
                 <div className="">
                     <div className="flex flex-col gap-4 laptop:flex-row">
-                        <div className="w-[30%] laptop:w-[250px] ml-16">
+                        <div className="w-full laptop:w-[250px] ml-16">
                             <div className="">
                                 <button
                                     className="btn btn-info btn-outline text-lg mr-1 hover:text-white"
@@ -145,7 +145,7 @@ const AllCourses: React.FC = () => {
                                     return (
                                         <label
                                             htmlFor={evaluateItem.title}
-                                            className={`flex items-center justify-between mb-1 hover:cursor-pointer ${
+                                            className={`flex items-center w-fit justify-between mb-1 hover:cursor-pointer ${
                                                 evaluate ? (evaluate === 5 - index ? "" : "opacity-30") : ""
                                             } `}
                                             key={index}
@@ -175,14 +175,14 @@ const AllCourses: React.FC = () => {
                                 })}
                             </div>
                             <div className="hidden tablet:flex divider my-1"></div>
-                            <div className="">
+                            <div className="w-full">
                                 <h2 className="text-2xl font-bold mb-2">Danh mục</h2>
-                                <div className="grid grid-cols-2 laptop:grid-cols-1">
+                                <div className="grid grid-cols-2 laptop:grid-cols-1 w-full">
                                     {categoriesList.length > 0 &&
                                         categoriesList.map((category) => {
                                             return (
                                                 <div
-                                                    className="flex items-center gap-2 mb-1"
+                                                    className="flex items-start gap-1 mb-1 max-w-1/2"
                                                     key={category.category_id}
                                                 >
                                                     <input
@@ -195,17 +195,22 @@ const AllCourses: React.FC = () => {
                                                             handleSingleCategoryChange(event, category.category_id)
                                                         }
                                                     />
-                                                    <span className="text-xl">{category.title}</span>
+                                                    <span className="text-xl max-h-14 max-w-[100px] tablet:max-w-full line-clamp-2">
+                                                        {category.title}
+                                                    </span>
                                                 </div>
                                             );
                                         })}
                                 </div>
                             </div>
-                            <button className="btn btn-outline text-lg w-3/4" onClick={handleResetFilter}>
+                            <button
+                                className="btn btn-outline text-sm laptop:text-lg w-2/5 laptop:w-3/4"
+                                onClick={handleResetFilter}
+                            >
                                 Đặt lại
                             </button>
                         </div>
-                        <div className="border-t-[1px] w-[70%] laptop:border-l-[1px] laptop:border-t-0">
+                        <div className="border-t-[1px] w-full laptop:w-[70%] laptop:border-l-[1px] laptop:border-t-0">
                             <div className="w-full flex">
                                 {totalRecord === 0 && (
                                     <p className="text-error  text-2xl ml-3">Không có khoá học thoả mãn tiêu chí</p>

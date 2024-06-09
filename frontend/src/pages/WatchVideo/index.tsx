@@ -128,7 +128,7 @@ const WatchVideo: React.FC = () => {
 
             <div className=" w-full  mt-[66px] mb-[100px] justify-center  flex flex-col">
                 <div className="flex flex-col laptop:flex-row justify-center w-full">
-                    <div className="w-3/4 shrink-0 mt-1 bg-[#2D2F31] ">
+                    <div className="w-full laptop:w-3/4 shrink-0 mt-1 bg-[#2D2F31] h-fit ">
                         {lecture.type === "Lesson" ? (
                             <>
                                 <VideoPlayer
@@ -146,7 +146,7 @@ const WatchVideo: React.FC = () => {
                             </div>
                         )}
                     </div>
-                    <div className="flex-2 max-h-[700px]  laptop:overflow-y-auto shrink-0 w-1/4">
+                    <div className="flex-2 max-h-[700px]  laptop:overflow-y-auto shrink-0 w-full laptop:w-1/4">
                         {courseDetail.sections?.map((section: Section, index) => {
                             return (
                                 <AccordionSection

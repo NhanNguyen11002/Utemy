@@ -10,11 +10,9 @@ import {
     EnrolledAuthor,
 } from "../../types/user";
 import apis from "../../api";
-import { Course } from "../../types/course";
 
 type UserSliceType = {
     users: User[];
-    courses: Course[];
     top10AuthorEnrolled: EnrolledAuthor[];
     user: User;
     isLoading: boolean;
@@ -149,34 +147,6 @@ export const updateProfile = createAsyncThunk<Response<User>, UpdateInformation,
 );
 
 const initialState: UserSliceType = {
-    courses: [
-        {
-            course_id: 0,
-            title: "",
-            summary: "",
-            number_of_rating: 0,
-            thumbnail: "",
-            url_trailer: "",
-            description: "",
-            author: {
-                email: "",
-                first_name: "",
-                last_name: "",
-                description: "",
-                user_id: 0,
-            },
-            categories: [],
-            number_of_section: 0,
-            status: false,
-            number_of_enrolled: 0,
-            slug: "",
-            price: 0,
-            sale_price: 0,
-            sale_until: "",
-            average_rating: 0,
-            created_at: "",
-        },
-    ],
     users: [],
     top10AuthorEnrolled: [],
     user: {
@@ -247,7 +217,6 @@ export const userSlice = createSlice({
         builder.addCase(getAuthorProfile.fulfilled, (state, action) => {
             state.isGetLoading = false;
             state.user = action.payload.data?.user as User;
-            state.courses = action.payload.data?.courses as Course[];
         });
         builder.addCase(getAuthorProfile.rejected, (state) => {
             state.isGetLoading = false;

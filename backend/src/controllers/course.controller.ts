@@ -164,4 +164,8 @@ export default class CourseController {
         const response: ResponseBase = await services.CourseService.getFinalTestByCourseId(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getCourseByAuthorId(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CourseService.getCourseByAuthorId(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

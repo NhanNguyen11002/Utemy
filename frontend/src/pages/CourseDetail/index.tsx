@@ -285,7 +285,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     </Dialog>
                                 </div>
                             </div>
-                            <div className=" flex-1 object-right flex flex-col gap-4 px-3 pb-3 laptop:pt-3">
+                            <div className=" flex-1 object-right flex flex-col gap-4 px-3 pb-3 self-start laptop:self-center laptop:pt-3">
                                 <div className="flex-1">
                                     <div className="flex justify-between">
                                         <h2 className="text-2xl laptop:text-3xl font-bold text-title mb-3 tablet:w-[300px] xl:w-[600px] title-card-content ">
@@ -431,8 +431,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                     </div>
                                 </TabsContent>
                                 <TabsContent key="Description" value="Description">
-                                    <div className="w-full flex gap-10">
-                                        <div className="w-1/2">
+                                    <div className="w-full flex flex-col laptop:flex-row gap-10">
+                                        <div className="max-w-full laptop:w-1/2">
                                             <div className="my-4">
                                                 <h2 className=" tablet:text-2xl font-bold mb-3">Yêu cầu</h2>
                                                 <ul className="list-disc">
@@ -500,7 +500,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="w-1/2 ">
+                                        <div className="max-w-full laptop:w-1/2 ">
                                             <div className="w-3/4 bg-white shadow-md rounded-md border-gray-400  items-center flex flex-col">
                                                 <p className="text-lg ">Khóa học bao gồm</p>
                                                 <table className="table">

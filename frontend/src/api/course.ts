@@ -1,6 +1,12 @@
 import { CreateTestType } from "../types/test";
 import apiCaller from "../api-config/apiCaller";
-import { AddPromotion, SearchMyCourseEnrolledCourse, SearchAllCourses, UpdateTargetCourse } from "../types/course";
+import {
+    AddPromotion,
+    SearchMyCourseEnrolledCourse,
+    SearchAllCourses,
+    UpdateTargetCourse,
+    SearchAuthorCourse,
+} from "../types/course";
 
 const createCourse = async (values: FormData) => {
     const path = "course";
@@ -131,6 +137,11 @@ const getFinalTestByCourseId = async (values: number) => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getCourseByAuthorId = async (values: SearchAuthorCourse) => {
+    const path = `course/author/${values.authorId}/?search_item=${values.searchItem}&page_index=${values.pageIndex}`;
+    const response = await apiCaller("GET", path);
+    return response;
+};
 const courseApis = {
     createCourse,
     getMyCourses,
@@ -157,6 +168,7 @@ const courseApis = {
     deleteFinalTest,
     setDoneCourse,
     getFinalTestByCourseId,
+    getCourseByAuthorId,
 };
 
 export default courseApis;

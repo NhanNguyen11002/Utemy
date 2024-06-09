@@ -93,7 +93,7 @@ const BlogDetail: React.FC = () => {
             {isGetLoading && <Spin />}
             <div className="w-full min-h-[600px] mb-20 relative">
                 <div
-                    className={`fixed  w-[100px] h-[300px] top-1/4 left-[20%] transition-all duration-300 ${isVisible ? "" : "opacity-0"}`}
+                    className={`fixed  w-[100px] h-[300px] top-1/4 laptop:left-[20%] transition-all duration-300 ${isVisible ? "" : "opacity-0"}`}
                 >
                     <div className="w-full h-full items-center flex flex-col gap-4">
                         <div className="flex flex-col items-center">
@@ -119,7 +119,7 @@ const BlogDetail: React.FC = () => {
                         {stage === "production" && <ShareButton />}
                     </div>
                 </div>
-                <div id="pivot" className="flex flex-col gap-5 items-start w-[800px] h-fit mx-auto relative">
+                <div id="pivot" className="flex flex-col gap-5 items-start max-w-[800px] h-fit mx-auto relative">
                     <div className="bg-background p-10 ql-snow flex flex-col gap-5 ">
                         <div className="flex gap-1 mx-4 mb-2">
                             {blog.categories.length > 0 &&

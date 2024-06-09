@@ -11,6 +11,7 @@ courseRouter.get("/all-sales", controllers.courseController.getAllSalesCourses);
 courseRouter.get("/top10-sales", controllers.courseController.getTop10SalesCourses);
 //13. Get right of course
 courseRouter.get("/right/:course_id", isLogin, controllers.courseController.getRightOfCourse);
+courseRouter.get("/author/:id", controllers.courseController.getCourseByAuthorId);
 
 //14. Create course
 courseRouter.post("/", isLogin, uploadMixFiles, controllers.courseController.createCourse);

@@ -31,7 +31,7 @@ const CardVideo: React.FC<CardVideoProps> = (props) => {
         new Date(props.saleUntil) > new Date();
     return (
         <div
-            className="rounded-lg bg-background shadow-lg flex flex-col hover:scale-95 hover:duration-300 cursor-pointer w-[200px]"
+            className="rounded-lg bg-background shadow-lg flex flex-col hover:scale-95 hover:duration-300 cursor-pointer h-fit w-[200px]"
             onClick={() => navigate(`/course-detail/${props.slug}`)}
         >
             <img
@@ -40,17 +40,20 @@ const CardVideo: React.FC<CardVideoProps> = (props) => {
                 className="w-full h-[140px] rounded-t-lg bg-black object-cover"
             />
             <div className="p-4 flex-1 flex flex-col items-start">
-                <h2 className="font-bold text-title text-lg  whitespace-wrap line-clamp-2">{props.title}</h2>
+                <h2 className="font-bold text-title text-lg h-14 whitespace-wrap line-clamp-2">{props.title}</h2>
                 <div className="items-end">
                     <div className="font-medium mt-1">{props.author.first_name + " " + props.author.last_name}</div>
                     <div className="font-medium mt-1">
                         {props.rating}{" "}
                         <TotalRating ratingId={Number(ratingId)} isForCourse={false} totalScore={props.rating} />
                     </div>
-                    <div className="categori flex flex-wrap gap-1">
+                    <div className="categori flex flex-wrap gap-[2px] h-14 overflow-hidden">
                         {props.categories &&
                             props.categories.map((category: any) => (
-                                <div key={category.category_id} className="mt-1 badge badge-outline">
+                                <div
+                                    key={category.category_id}
+                                    className="mt-1 max-w-[100px] truncate badge badge-outline"
+                                >
                                     {category.title}
                                 </div>
                             ))}
