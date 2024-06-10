@@ -15,7 +15,7 @@ const CarouselBlogRelated: React.FC<CarouselBlogRelatedProps> = ({ blogs }) => {
                     {blogs.length > 0 &&
                         blogs.map((blog) => {
                             return (
-                                <CarouselItem className="w-full basis-1/3">
+                                <CarouselItem key={blog.blog_id} className="w-full basis-1/3">
                                     <BlogCard blog={blog} author={blog.author} isAdmin={false} />
                                 </CarouselItem>
                             );

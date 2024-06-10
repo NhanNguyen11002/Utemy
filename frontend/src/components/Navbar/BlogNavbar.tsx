@@ -33,6 +33,7 @@ const BlogNavbar: React.FC<BlogNavbarProps> = ({}) => {
                             <input
                                 ref={inputRef}
                                 type="text"
+                                id="search-blog"
                                 placeholder="Từ khoá tìm blog..."
                                 className="w-[95%] bg-navy p-2 text-white focus:outline-none placeholder-white/80 "
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}

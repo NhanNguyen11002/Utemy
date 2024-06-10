@@ -15,7 +15,7 @@ const FillInNoLogicQuiz: React.FC<FillInNoLogicQuizProps> = (props) => {
         const parts = string.split("$");
         let blankId = 0;
         const element: JSX.Element[] = [];
-        parts.forEach((part: string) => {
+        parts.forEach((part: string, index) => {
             if (part === "[...]") {
                 element.push(
                     <span>
@@ -31,7 +31,11 @@ const FillInNoLogicQuiz: React.FC<FillInNoLogicQuizProps> = (props) => {
                 blankId++;
             } else {
                 element.push(
-                    <span className="ql-editor fill-in-quizz" dangerouslySetInnerHTML={{ __html: part }}></span>,
+                    <span
+                        key={index}
+                        className="ql-editor fill-in-quizz"
+                        dangerouslySetInnerHTML={{ __html: part }}
+                    ></span>,
                 );
             }
         });

@@ -55,6 +55,7 @@ const MyEnrolledCourse: React.FC = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
+                                    id="search-enrolled-course"
                                     placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full border-[1px] border-black"
                                     value={userInput}

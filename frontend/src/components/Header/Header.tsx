@@ -87,6 +87,7 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                             </div>
                             <input
                                 type="text"
+                                id="search-course"
                                 placeholder="Điền từ khóa vào đây..."
                                 className=" rounded-full py-4 h-[40px] px-10 w-[70%] max-w-[1000px] border-[1px] border-black text-sm"
                                 value={keyword}

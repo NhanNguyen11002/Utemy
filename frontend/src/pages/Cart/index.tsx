@@ -233,6 +233,7 @@ const Cart: React.FC = () => {
                                 count += 1;
                                 return (
                                     <InCartCourse
+                                        key={cartItem.cart_detail_id}
                                         cartItem={cartItem}
                                         handleChangeSaveForLater={handleChangeSaveForLater}
                                         handleRemoveFromCart={handleRemoveFromCart}
@@ -262,6 +263,7 @@ const Cart: React.FC = () => {
                                     if (cartItem.saved_for_later) {
                                         return (
                                             <OutCartCourse
+                                                key={cartItem.cart_detail_id}
                                                 cartItem={cartItem}
                                                 handleChangeSaveForLater={handleChangeSaveForLater}
                                                 handleRemoveFromCart={handleRemoveFromCart}

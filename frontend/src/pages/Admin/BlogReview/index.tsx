@@ -23,7 +23,11 @@ const BlogReview: React.FC<BlogReviewProps> = () => {
                     <div className="flex gap-1 mx-4 mb-2">
                         {blog.categories.length > 0 &&
                             blog.categories.map((category) => {
-                                return <p className="text-sm font-semibold text-gray-500">{category.title}</p>;
+                                return (
+                                    <p key={category.category_id} className="text-sm font-semibold text-gray-500">
+                                        {category.title}
+                                    </p>
+                                );
                             })}
                     </div>
                     <p className="text-5xl font-semibold mx-4">{blog.title}</p>

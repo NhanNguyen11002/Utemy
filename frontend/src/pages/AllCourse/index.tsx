@@ -115,12 +115,14 @@ const AllCourses: React.FC = () => {
                                     Áp dụng
                                 </button>
                                 <div className="dropdown dropdown-bottom mr-1">
-                                    <label
+                                    <button
+                                        type="button"
                                         tabIndex={0}
+                                        id="sort"
                                         className="btn btn-warning btn-outline text-lg m-1 hover:text-white"
                                     >
                                         Sắp xếp
-                                    </label>
+                                    </button>
                                     <ul
                                         tabIndex={0}
                                         className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box min-w-[150px]"
@@ -189,6 +191,7 @@ const AllCourses: React.FC = () => {
                                                         type="checkbox"
                                                         className="checkbox checkbox-info"
                                                         name={category.title}
+                                                        id={category.title}
                                                         value={category.category_id}
                                                         checked={categoryChecked.includes(category.category_id)}
                                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>

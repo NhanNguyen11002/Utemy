@@ -105,6 +105,7 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
                                     <Field
                                         type="text"
                                         name="title"
+                                        id="title"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.title && formik.touched.title && "border-error"
                                         } `}
@@ -146,6 +147,7 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
                                         className="text-[14px] text-error font-medium"
                                     />
                                     <Field
+                                        id="description"
                                         as="textarea"
                                         name="description"
                                         component={TextEditor}

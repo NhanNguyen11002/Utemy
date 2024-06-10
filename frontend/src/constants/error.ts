@@ -163,5 +163,8 @@ const error = {
 
     //
     ERROR_QUESTION_REQUIRED: "Question is required",
+
+    //report
+    ERROR_REPORT_CONTENT_REQUIRED: "Content is required",
 };
 export default error;

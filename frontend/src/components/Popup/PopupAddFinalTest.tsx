@@ -117,6 +117,7 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
                                     </label>{" "}
                                     <br />
                                     <Field
+                                        id="title"
                                         type="text"
                                         placeholder="Tên bài kiểm tra"
                                         name="title"
@@ -138,6 +139,7 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
                                         </label>{" "}
                                         <br />
                                         <Field
+                                            id="duration"
                                             type="text"
                                             name="duration"
                                             placeholder="Nhập..."
@@ -161,6 +163,7 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
                                         </label>{" "}
                                         <br />
                                         <Field
+                                            id="pass_percent"
                                             type="text"
                                             name="pass_percent"
                                             placeholder="Nhập"
@@ -196,6 +199,7 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
                                         styles={customStyles}
                                         placeholder={"Chọn..."}
                                         name="is_time_limit"
+                                        id="is_time_limit"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.is_time_limit &&
                                             formik.touched.is_time_limit &&
@@ -221,6 +225,7 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
                                         styles={customStyles}
                                         placeholder={"Chọn bộ câu hỏi"}
                                         name="quiz_group_id"
+                                        id="quiz_group_id"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.quiz_group_id &&
                                             formik.touched.quiz_group_id &&
@@ -239,6 +244,7 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
                                         className="text-[14px] text-error font-medium"
                                     />
                                     <Field
+                                        id="description"
                                         as="textarea"
                                         name="description"
                                         component={TextEditor}

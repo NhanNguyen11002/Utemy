@@ -164,6 +164,7 @@ const UserAdmin = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
+                                    id="search-user"
                                     placeholder="Search user..."
                                     className="rounded py-2 px-10 w-full border-[1px] text-gray-700 border-black"
                                     value={userInput}
@@ -192,120 +193,126 @@ const UserAdmin = () => {
                 </div>
 
                 <div className="overflow-x-scroll px-0 pt-0 pb-2 ">
-                    <Table className="border">
-                        <TableCaption>Danh sách tài khoản</TableCaption>
-                        <TableHeader>
-                            <TableRow>
-                                {["Người dùng", "Loại tài khoản", "Trạng thái", "Ngày tạo", "Hành động"].map(
-                                    (header, index) => (
-                                        <TableHead
-                                            className={`border ${index === 0 ? "text-left" : index === 4 ? "text-right" : "text-center"}`}
-                                        >
-                                            {header}
-                                        </TableHead>
-                                    ),
-                                )}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {users.map((user, index) => {
-                                const className = ` py-3 px-5 `;
-                                console.log(className);
-                                const date = user.created_at?.toString().split(" ");
-                                const id = user.user_id as number;
-                                return (
-                                    <TableRow>
-                                        <TableCell className="font-medium border">
-                                            <Link to={`/admin/user-profile/${user.user_id}`}>
-                                                <div className="flex items-center gap-4">
-                                                    <img
-                                                        src={user.url_avatar || Logo}
-                                                        alt={user.user_id?.toString()}
-                                                        className="w-8 h-8 rounded-full"
-                                                    />
-                                                    <div>
-                                                        <p
-                                                            className={`font-semibold text-sm${
-                                                                user.user_id === currentId ? "text-lightblue" : ""
-                                                            }`}
-                                                        >
-                                                            {user.first_name} {user.last_name}
-                                                        </p>
-                                                        <p className="text-xs font-normal text-blue-gray-500">
-                                                            {user.email}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell className="border text-center">
-                                            {" "}
-                                            <div
-                                                className={` text-xs font-semibold ${
-                                                    user.is_admin
-                                                        ? "badge badge-info badge-outline"
-                                                        : "badge badge-outline"
-                                                } `}
+                    {users.length === 0 ? (
+                        <p className="text-center">
+                            Không tìm thấy user với từ khoá <span className="italic">"{searchItem}"</span>
+                        </p>
+                    ) : (
+                        <Table className="border">
+                            <TableCaption>Danh sách tài khoản</TableCaption>
+                            <TableHeader>
+                                <TableRow>
+                                    {["Người dùng", "Loại tài khoản", "Trạng thái", "Ngày tạo", "Hành động"].map(
+                                        (header, index) => (
+                                            <TableHead
+                                                key={index}
+                                                className={`border ${index === 0 ? "text-left" : index === 4 ? "text-right" : "text-center"}`}
                                             >
-                                                {user.is_admin ? "Admin" : "User"}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell
-                                            className={`border text-center text-[11px] font-medium ${
-                                                user.is_delete ? "text-red-700" : "text-green-700"
-                                            }`}
-                                        >
-                                            {user.is_delete ? "Xóa" : "Hoạt động"}
-                                        </TableCell>
-                                        <TableCell className="text-red-400 border text-center font-medium text-[11px] ">
-                                            {date![1] + " " + date![2] + " " + date![3]}
-                                        </TableCell>
-
-                                        {user.user_id === currentId ? (
-                                            <TableCell className="text-right text-xs font-semibold border">
-                                                None
-                                            </TableCell>
-                                        ) : (
-                                            <TableCell className="text-right border items-center">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger>
-                                                        <GripIcon className="w-5 h-5" />
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="start">
-                                                        <DropdownMenuItem>
+                                                {header}
+                                            </TableHead>
+                                        ),
+                                    )}
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {users.map((user, index) => {
+                                    const date = user.created_at?.toString().split(" ");
+                                    const id = user.user_id as number;
+                                    return (
+                                        <TableRow key={index}>
+                                            <TableCell className="font-medium border">
+                                                <Link to={`/admin/user-profile/${user.user_id}`}>
+                                                    <div className="flex items-center gap-4">
+                                                        <img
+                                                            src={user.url_avatar || Logo}
+                                                            alt={user.user_id?.toString()}
+                                                            className="w-8 h-8 rounded-full"
+                                                        />
+                                                        <div>
                                                             <p
-                                                                onClick={() => handleOpenEditUserPopup(user)}
-                                                                className="text-xs font-semibold hover:underline hover:cursor-pointer text-blue-gray-600"
+                                                                className={`font-semibold text-sm${
+                                                                    user.user_id === currentId ? "text-lightblue" : ""
+                                                                }`}
                                                             >
-                                                                Chỉnh sửa
+                                                                {user.first_name} {user.last_name}
                                                             </p>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            {user.is_delete ? (
-                                                                <p
-                                                                    onClick={() => handleOpenActiveModal(id)}
-                                                                    className="text-xs text-green-700 font-semibold hover:underline hover:cursor-pointer "
-                                                                >
-                                                                    Khôi phục
-                                                                </p>
-                                                            ) : (
-                                                                <p
-                                                                    onClick={() => handleOpenDeleteModal(id)}
-                                                                    className="text-xs text-red-700 font-semibold hover:underline hover:cursor-pointer "
-                                                                >
-                                                                    Xóa
-                                                                </p>
-                                                            )}
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                            <p className="text-xs font-normal text-blue-gray-500">
+                                                                {user.email}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </Link>
                                             </TableCell>
-                                        )}
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
+                                            <TableCell className="border text-center">
+                                                {" "}
+                                                <div
+                                                    className={` text-xs font-semibold ${
+                                                        user.is_admin
+                                                            ? "badge badge-info badge-outline"
+                                                            : "badge badge-outline"
+                                                    } `}
+                                                >
+                                                    {user.is_admin ? "Admin" : "User"}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell
+                                                className={`border text-center text-[11px] font-medium ${
+                                                    user.is_delete ? "text-red-700" : "text-green-700"
+                                                }`}
+                                            >
+                                                {user.is_delete ? "Xóa" : "Hoạt động"}
+                                            </TableCell>
+                                            <TableCell className="text-red-400 border text-center font-medium text-[11px] ">
+                                                {date![1] + " " + date![2] + " " + date![3]}
+                                            </TableCell>
+
+                                            {user.user_id === currentId ? (
+                                                <TableCell className="text-right text-xs font-semibold border">
+                                                    None
+                                                </TableCell>
+                                            ) : (
+                                                <TableCell className="text-right border items-center">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger>
+                                                            <GripIcon className="w-5 h-5" />
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="start">
+                                                            <DropdownMenuItem>
+                                                                <p
+                                                                    onClick={() => handleOpenEditUserPopup(user)}
+                                                                    className="text-xs font-semibold hover:underline hover:cursor-pointer text-blue-gray-600"
+                                                                >
+                                                                    Chỉnh sửa
+                                                                </p>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem>
+                                                                {user.is_delete ? (
+                                                                    <p
+                                                                        onClick={() => handleOpenActiveModal(id)}
+                                                                        className="text-xs text-green-700 font-semibold hover:underline hover:cursor-pointer "
+                                                                    >
+                                                                        Khôi phục
+                                                                    </p>
+                                                                ) : (
+                                                                    <p
+                                                                        onClick={() => handleOpenDeleteModal(id)}
+                                                                        className="text-xs text-red-700 font-semibold hover:underline hover:cursor-pointer "
+                                                                    >
+                                                                        Xóa
+                                                                    </p>
+                                                                )}
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    )}
+
                     {totalPage > 1 && (
                         <div className="flex justify-center my-4 ">
                             <Pagination

@@ -174,6 +174,7 @@ const MyProfile: React.FC = () => {
                                                     </label>
                                                     <Field
                                                         name="first_name"
+                                                        id="first_name"
                                                         type="text"
                                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                                             formik.errors.first_name && formik.touched.first_name
@@ -193,6 +194,7 @@ const MyProfile: React.FC = () => {
                                                     </label>
                                                     <Field
                                                         name="last_name"
+                                                        id="last_name"
                                                         type="text"
                                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                                             formik.errors.last_name && formik.touched.last_name
@@ -213,6 +215,7 @@ const MyProfile: React.FC = () => {
                                                 </label>
                                                 <Field
                                                     name="email"
+                                                    id="email"
                                                     disabled={true}
                                                     type="text"
                                                     className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -239,6 +242,7 @@ const MyProfile: React.FC = () => {
                                                 <Field
                                                     as="textarea"
                                                     name="description"
+                                                    id="description"
                                                     component={TextEditor}
                                                     description={user.description}
                                                     handleChangeDescription={(description: string) =>

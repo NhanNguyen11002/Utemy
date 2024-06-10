@@ -59,8 +59,8 @@ const BlogCard: React.FC<BlogCardProps> = (props) => {
                         </div>
                         <div className=" h-5 flex flex-wrap gap-1">
                             {props.blog.categories &&
-                                props.blog.categories.map((category: any) => (
-                                    <div key={category.category_id} className="mt-1 badge badge-outline">
+                                props.blog.categories.map((category: any, index) => (
+                                    <div key={`${props.blog.blog_id}-${index}`} className="mt-1 badge badge-outline">
                                         {category.title}
                                     </div>
                                 ))}

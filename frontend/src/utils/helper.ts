@@ -60,23 +60,23 @@ export const convertStringDate = (date: string) => {
 
 export const eveluateList = [
     {
-        title: "5 stars",
+        title: "5 sao",
         value: 5,
     },
     {
-        title: "4 stars",
+        title: "4 sao",
         value: 4,
     },
     {
-        title: "3 stars",
+        title: "3 sao",
         value: 3,
     },
     {
-        title: "2 stars",
+        title: "2 sao",
         value: 2,
     },
     {
-        title: "1 star",
+        title: "1 sao",
         value: 1,
     },
 ];

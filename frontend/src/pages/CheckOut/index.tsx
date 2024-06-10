@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import toast from "react-hot-toast";
-import {  invoiceActions, vnpayActions } from "../../redux/slices";
+import { invoiceActions, vnpayActions } from "../../redux/slices";
 // import { useNavigate } from "react-router-dom";
 import { Spin } from "../../components";
 import { getCouponByCode, setCouponNull } from "../../redux/slices/cart.slice";
@@ -16,17 +16,15 @@ function Checkout() {
     const isGetLoading = useAppSelector((state) => state.invoiceSlice.isGetLoading);
     const coupon = useAppSelector((state) => state.cartSlice.coupon);
     useEffect(() => {
-
         if (coupon) {
             dispatch(getCouponByCode(coupon.code)).then((response) => {
                 if (response.payload?.status_code == 404) {
                     toast.error("Mã coupon của bạn vừa chọn đã hết hạn hoặc hết số lượng, vui lòng kiểm tra lại");
                     navigate("/cart");
-                } 
+                }
             });
             dispatch(setCouponNull());
         }
-
     }, [dispatch]);
     // useEffect(() => {
     //     dispatch(getCouponByCode(coupon.code)).then((response) => {
@@ -40,8 +38,7 @@ function Checkout() {
     //         }
     //     });
     // }, [dispatch, coupon]);
-    
-    
+
     const handleChosePaymentMethod = (name: string) => {
         setMethod(name);
     };
@@ -127,9 +124,9 @@ function Checkout() {
                         <div>
                             <h2 className="text-xl font-bold font-OpenSans text-black  mb-3">Chi tiết hóa đơn</h2>
                             <div className="flex flex-col space-y-4">
-                                {invoice.invoice_items.map((item) => {
+                                {invoice.invoice_items.map((item, index) => {
                                     return (
-                                        <div className="flex space-x-4">
+                                        <div className="flex space-x-4" key={index}>
                                             <div>
                                                 <img
                                                     src={item.course.thumbnail}

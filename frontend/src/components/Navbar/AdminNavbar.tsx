@@ -56,10 +56,10 @@ function ProfileMenu() {
                 </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="p-2 gap-2">
-                {profileMenuItems.map(({ label, icon, link }, key) => {
+                {profileMenuItems.map(({ label, icon, link }, key: number) => {
                     const isLastItem = key === profileMenuItems.length - 1;
                     return (
-                        <NavLink to={link as string}>
+                        <NavLink key={key} to={link as string}>
                             <DropdownMenuItem
                                 key={label}
                                 onClick={isLastItem ? logout : closeMenu}

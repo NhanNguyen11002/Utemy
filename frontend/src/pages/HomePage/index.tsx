@@ -113,7 +113,7 @@ const Home: React.FC = () => {
                             <CarouselContent className="">
                                 {top10AuthorEnrolled.map((user, index) => {
                                     return (
-                                        <CarouselItem className="w-full basis-1/2 ">
+                                        <CarouselItem key={index} className="w-full basis-1/2 ">
                                             <LecturerCard key={index} lecturer={user} />
                                         </CarouselItem>
                                     );

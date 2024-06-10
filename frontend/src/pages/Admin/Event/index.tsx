@@ -73,7 +73,7 @@ const EventAdmin = () => {
             }
         });
     };
-    
+
     useEffect(() => {
         console.log("Total page:", totalPage); // Log the current value of 'events' to the console
         console.log("Total record:", totalRecord); // Log the current value of 'events' to the console
@@ -83,9 +83,7 @@ const EventAdmin = () => {
     return (
         <>
             {isOpenAddEvent && <PopUpAddEvent handleCancelAddEvent={handleCancelAddEvent} />}
-            {isOpenEditEvent && (
-                <PopUpEditEvent eventId={eventId} handleCancelEditEvent={handleCancelEditEvent}/>
-            )}
+            {isOpenEditEvent && <PopUpEditEvent eventId={eventId} handleCancelEditEvent={handleCancelEditEvent} />}
             {isOpenDeleteModel && (
                 <DeleteModal handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteEvent} />
             )}
@@ -101,6 +99,7 @@ const EventAdmin = () => {
                                     ref={inputRef}
                                     type="text"
                                     placeholder="Từ khóa..."
+                                    id="search-event"
                                     className="rounded-full py-4 px-10 w-full border-[1px] border-black"
                                     value={userInput}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
@@ -125,7 +124,14 @@ const EventAdmin = () => {
                     </button>{" "}
                 </div>
                 {events.length === 0 ? (
-                    <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy sự kiện</p>
+                    <p className="mt-4 text-2xl text-error text-center font-bold">
+                        Không tìm thấy sự kiện{" "}
+                        {searchItem && (
+                            <span>
+                                với từ khoá <span className="italic">"{searchItem}"</span>
+                            </span>
+                        )}
+                    </p>
                 ) : (
                     <p className="mt-4 text-2xl text-center font-bold">Có {totalRecord} sự kiện được tìm thấy </p>
                 )}

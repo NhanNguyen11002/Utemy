@@ -11,7 +11,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
     return (
         <div className={`  rating ${isForCourse ? "rating-m" : "rating-xs"} rating-half hover:cursor-default  `}>
             <input
-                id="0"
+                id={`0-${ratingName}`}
                 readOnly
                 disabled
                 type="radio"
@@ -20,7 +20,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score === 0}
             />
             <input
-                id="1"
+                id={`1-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -28,7 +28,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 className="bg-yellow-500 mask-star-2 mask-half-1  hover:cursor-default"
             />
             <input
-                id="2"
+                id={`2-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -37,7 +37,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score === 1}
             />
             <input
-                id="3"
+                id={`3-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -46,7 +46,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score > 1 && score < 2}
             />
             <input
-                id="4"
+                id={`4-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -55,7 +55,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score >= 2}
             />
             <input
-                id="5"
+                id={`5-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -64,7 +64,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score > 2 && score < 3}
             />
             <input
-                id="6"
+                id={`6-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -73,7 +73,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score >= 3}
             />
             <input
-                id="7"
+                id={`7-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -82,7 +82,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score > 3 && score < 4}
             />
             <input
-                id="8"
+                id={`8-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -91,7 +91,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score >= 4}
             />
             <input
-                id="9"
+                id={`9-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}
@@ -100,7 +100,7 @@ const TotalRating: React.FC<TotalRatingProps> = (props) => {
                 checked={score > 4 && score < 5}
             />
             <input
-                id="10"
+                id={`10-${ratingName}`}
                 readOnly
                 type="radio"
                 name={ratingName}

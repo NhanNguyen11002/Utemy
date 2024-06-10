@@ -43,7 +43,7 @@ const FillInQuiz: React.FC<FizzInQuizProps> = (props) => {
         const parts = string.split("$");
         let blankId = 0;
         const element: JSX.Element[] = [];
-        parts.forEach((part: string) => {
+        parts.forEach((part: string, index) => {
             if (part === "[...]") {
                 const quiz_answer_id = quiz.quiz_answer[blankId].quiz_answer_id as number;
                 element.push(
@@ -62,7 +62,11 @@ const FillInQuiz: React.FC<FizzInQuizProps> = (props) => {
                 blankId++;
             } else {
                 element.push(
-                    <span className="ql-editor fill-in-quizz" dangerouslySetInnerHTML={{ __html: part }}></span>,
+                    <span
+                        key={index}
+                        className="ql-editor fill-in-quizz"
+                        dangerouslySetInnerHTML={{ __html: part }}
+                    ></span>,
                 );
             }
         });

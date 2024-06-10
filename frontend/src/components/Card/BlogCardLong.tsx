@@ -55,7 +55,7 @@ const BlogCardLong: React.FC<BlogCardLongProps> = (props) => {
                         <div className="flex flex-wrap gap-1">
                             {props.blog.categories &&
                                 props.blog.categories.map((category: any) => (
-                                    <div key={category.category_id} className="mt-1 badge badge-outline">
+                                    <div key={category.id} className="mt-1 badge badge-outline">
                                         {category.title}
                                     </div>
                                 ))}

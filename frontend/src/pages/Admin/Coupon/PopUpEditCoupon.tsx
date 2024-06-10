@@ -90,7 +90,6 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
 
         if (!selectedEventId) {
             dispatch(couponActions.deleteRatio({ coupon_id: Number(selectedEventId) }));
-
         }
         dispatch(couponActions.updateCoupon({ coupon_id: props.couponId, body: formData })).then((response: any) => {
             if (response.payload && response.payload.status_code === 200) {

@@ -56,6 +56,7 @@ const ChangePassword: React.FC = () => {
                                     <Field
                                         type="password"
                                         name="current_password"
+                                        id="current_password"
                                         placeholder="Mật khẩu hiện tại..."
                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                             formik.errors.current_password &&
@@ -77,6 +78,7 @@ const ChangePassword: React.FC = () => {
                                         type="password"
                                         placeholder="Mật khẩu mới..."
                                         name="new_password"
+                                        id="new_password"
                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                             formik.errors.new_password && formik.touched.new_password && "border-error"
                                         }`}
@@ -94,6 +96,7 @@ const ChangePassword: React.FC = () => {
                                     <Field
                                         type="password"
                                         name="confirm_password"
+                                        id="confirm_password"
                                         placeholder="Xác nhận mật khẩu..."
                                         className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                             formik.errors.confirm_password &&

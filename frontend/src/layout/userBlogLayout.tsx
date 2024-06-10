@@ -18,7 +18,7 @@ const UserBlogLayout: React.FC<HeaderProps> = ({ isLogin }) => {
             behavior: "auto",
         });
     }, [pathname]);
-    return isAdmin ? (
+    return isAdmin && false ? (
         <Navigate to={"/admin"} />
     ) : (
         <div className="flex flex-col min-h-screen ">

@@ -5,6 +5,7 @@ import { decisionActions } from "../../../redux/slices";
 import { TextEditorWithImage, DecisionCard } from "../../../components";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { createDecisionValidationSchema } from "../../../validations/decision";
 const DecisionTab = () => {
     const dispatch = useAppDispatch();
 
@@ -60,7 +61,7 @@ const DecisionTab = () => {
                     <p className="font-bold">Gửi quyết định trên khoá học</p>
                     <div>
                         <Formik
-                            // validationSchema={addPromotionValidationSchema}
+                            validationSchema={createDecisionValidationSchema}
                             initialValues={initialValue}
                             onSubmit={handleOnSubmit}
                             enableReinitialize={true}
@@ -79,6 +80,7 @@ const DecisionTab = () => {
                                             <div className="  flex gap-1 py-2 pr-2 items-center">
                                                 <span className="label-text">Thông báo </span>
                                                 <input
+                                                    id="announced"
                                                     type="radio"
                                                     name="radio-type"
                                                     value="announced"
@@ -92,6 +94,7 @@ const DecisionTab = () => {
                                             <div className="  cursor-pointer flex gap-1 p-2 items-center">
                                                 <span className="label-text">Cảnh cáo </span>
                                                 <input
+                                                    id="restricted"
                                                     type="radio"
                                                     name="radio-type"
                                                     value="restricted"
@@ -119,6 +122,7 @@ const DecisionTab = () => {
                                             content={content}
                                             type="text"
                                             name="content"
+                                            id="content"
                                             className={` w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                                 formik.errors.content && formik.touched.content && "border-error"
                                             } `}
@@ -152,7 +156,7 @@ const DecisionTab = () => {
                     {isGetLoading && <p>Loading...</p>}
                     {decisions.length > 0 ? (
                         decisions.map((decision: any) => {
-                            return <DecisionCard decision={decision} isAuthor={false} />;
+                            return <DecisionCard key={decision.decision_id} decision={decision} isAuthor={false} />;
                         })
                     ) : (
                         <p>Không có quyết định nào trên khoá học</p>

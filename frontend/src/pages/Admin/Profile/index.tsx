@@ -13,7 +13,6 @@ import { TextEditor } from "../../../components";
 
 const ProfileAdmin = () => {
     const user = useAppSelector((state) => state.authSlice.user);
-    console.log(user);
     const dispatch = useAppDispatch();
     const initialValue = {
         first_name: user.first_name,
@@ -107,6 +106,7 @@ const ProfileAdmin = () => {
                                                 </label>
                                                 <Field
                                                     name="first_name"
+                                                    id="first_name"
                                                     type="text"
                                                     className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                                         formik.errors.first_name && formik.touched.first_name
@@ -126,6 +126,7 @@ const ProfileAdmin = () => {
                                                 </label>
                                                 <Field
                                                     name="last_name"
+                                                    id="last_name"
                                                     type="text"
                                                     className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
                                                         formik.errors.last_name && formik.touched.last_name
@@ -146,6 +147,7 @@ const ProfileAdmin = () => {
                                             </label>
                                             <Field
                                                 name="email"
+                                                id="email"
                                                 disabled={true}
                                                 type="text"
                                                 className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -170,6 +172,7 @@ const ProfileAdmin = () => {
                                             <Field
                                                 as="textarea"
                                                 name="description"
+                                                id="description"
                                                 component={TextEditor}
                                                 description={user.description}
                                                 handleChangeDescription={(description: string) =>
@@ -238,7 +241,7 @@ const ProfileAdmin = () => {
                                             />
                                         </div>
                                         <div className="flex flex-col mb-3">
-                                            <label htmlFor="confirm" className="text-sm mb-1 tablet:text-xl">
+                                            <label htmlFor="confirm_password" className="text-sm mb-1 tablet:text-xl">
                                                 Xác nhận mật khẩu mới
                                             </label>
                                             <Field

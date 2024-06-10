@@ -120,7 +120,14 @@ const CategoryAdmin = () => {
                     </button>{" "}
                 </div>
                 {categories.length === 0 ? (
-                    <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy danh mục</p>
+                    <p className="mt-4 text-2xl text-error text-center font-bold">
+                        Không tìm thấy danh mục{" "}
+                        {searchItem && (
+                            <span>
+                                với từ khoá <span className="italic">"{searchItem}"</span>
+                            </span>
+                        )}
+                    </p>
                 ) : (
                     <p className="mt-4 text-2xl text-center font-bold">Có {totalRecord} danh mục được tìm thấy </p>
                 )}

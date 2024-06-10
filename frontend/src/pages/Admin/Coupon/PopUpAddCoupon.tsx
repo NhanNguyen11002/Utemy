@@ -19,20 +19,20 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
 
     const isGetLoading = useAppSelector((state) => state.couponSlice.isGetLoading);
     const [isChecked, setIsChecked] = useState(false); // State để theo dõi trạng thái của checkbox
-    const [selectedEventId, setSelectedEventId] = useState(events.length > 0 ? events[0].event_id : '');
-    const [isEvent, setIsEvent] = useState(false); 
+    const [selectedEventId, setSelectedEventId] = useState(events.length > 0 ? events[0].event_id : "");
+    const [isEvent, setIsEvent] = useState(false);
 
     const dispatch = useAppDispatch();
     useEffect(() => {
         // Dispatch action để lấy danh sách sự kiện khi component được mount
         dispatch(eventActions.getAllEvents());
-        setSelectedEventId('');
+        setSelectedEventId("");
     }, [dispatch]);
-    const handleCheckboxChange = (e:any) => {
+    const handleCheckboxChange = (e: any) => {
         setIsChecked(e.target.checked); // Cập nhật trạng thái của checkbox khi thay đổi
         setIsEvent(true);
         if (!e.target.checked) {
-            setSelectedEventId('');
+            setSelectedEventId("");
             setIsEvent(false);
         }
     };
@@ -61,7 +61,7 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
         // console.log("random code:", randomCode);
         // console.log("coipon code:", couponCode);
         const randomCode = generateRandomCode();
-        formik.setFieldValue('code', randomCode);
+        formik.setFieldValue("code", randomCode);
     };
     const handleOnSubmit = async (values: CreateCouponType) => {
         try {
@@ -75,23 +75,23 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
             formData.append("valid_until", validUntil);
             formData.append("is_event", String(isEvent));
             formData.append("max_discount_money", values.max_discount_money.toString());
-            if (selectedEventId !== '') {
+            if (selectedEventId !== "") {
                 formData.append("event_id", String(selectedEventId));
             }
             console.log("Here is form data", formData);
             formData.forEach((value, key) => {
                 console.log(`${key}: ${value}`);
             });
-    
+
             const response = await dispatch(couponActions.createCoupon(formData));
             if (selectedEventId) {
-                coupons.forEach(coupon => {
+                coupons.forEach((coupon) => {
                     if (coupon.event_id === Number(selectedEventId)) {
                         dispatch(couponActions.deleteRatio({ coupon_id: coupon.coupon_id }));
                     }
                 });
             }
-    
+
             if (response.payload && response.payload.status_code === 200) {
                 dispatch(couponActions.getCouponsWithPagination({ searchItem: "", pageIndex: 1 }));
                 toast.success(response.payload.message);
@@ -112,7 +112,7 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
         valid_start: "",
         valid_until: "",
         max_discount_money: 0,
-        event_id: null
+        event_id: null,
     };
     return (
         <>
@@ -120,7 +120,9 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                 <Toaster />
                 <div className="  max-w-[360px] tablet:max-w-[600px] max-h-[630px] tablet:max-h-[1000px] rounded-[12px] bg-background mx-auto tablet:mx-0 flex-1 ">
                     <div className="w-full p-[12px]">
-                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">THÊM PHIẾU GIẢM GIÁ</h1>
+                        <h1 className="text-3xl mb-1 font-bold text-center text-lightblue text-title">
+                            THÊM PHIẾU GIẢM GIÁ
+                        </h1>
                         <Formik
                             initialValues={initialValues}
                             validationSchema={createCouponValidationSchema}
@@ -167,8 +169,7 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                                         className="text-[14px] text-error font-medium"
                                                     />
                                                 </div>
-                                                <div className="flex flex-col gap-3">
-                                                </div>
+                                                <div className="flex flex-col gap-3"></div>
                                             </div>
                                         </div>
 
@@ -182,6 +183,7 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                             <Field
                                                 as="input"
                                                 name="discount"
+                                                id="discount"
                                                 placeholder="Phần trăm giảm giá..."
                                                 className={`${
                                                     formik.errors.discount && formik.touched.discount
@@ -279,7 +281,8 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                                 id="max_discount_money"
                                                 placeholder="Giá giảm tối đa cho loại coupon này..."
                                                 className={`${
-                                                    formik.errors.max_discount_money && formik.touched.max_discount_money
+                                                    formik.errors.max_discount_money &&
+                                                    formik.touched.max_discount_money
                                                         ? "border-error"
                                                         : ""
                                                 } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
@@ -299,36 +302,46 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
                                             </label>
                                             <div className="flex items-center mt-4">
                                                 <input
-                                                type="checkbox"
-                                                name="is_event"
-                                                id="is_event"
-                                                className="mr-2 transform scale-150"
-                                                checked={isChecked} // Sử dụng state để xác định trạng thái của checkbox
-                                                onChange={handleCheckboxChange} // Sự kiện xảy ra khi checkbox thay đổi
+                                                    type="checkbox"
+                                                    name="is_event"
+                                                    id="is_event"
+                                                    className="mr-2 transform scale-150"
+                                                    checked={isChecked} // Sử dụng state để xác định trạng thái của checkbox
+                                                    onChange={handleCheckboxChange} // Sự kiện xảy ra khi checkbox thay đổi
                                                 />
-                                                <label htmlFor="is_event" className="text-sm text-sm ml-4">
-                                                Check để chọn
+                                                <label htmlFor="is_event" className="text-sm  ml-4">
+                                                    Check để chọn
                                                 </label>
                                             </div>
                                             {isChecked && ( // Hiển thị dropdown nếu checkbox được chọn
-                                                <select style={{ marginTop: '20px', backgroundColor: 'lightgray', color: 'black', border: '1px solid black', height: '30px' }}
+                                                <select
+                                                    style={{
+                                                        marginTop: "20px",
+                                                        backgroundColor: "lightgray",
+                                                        color: "black",
+                                                        border: "1px solid black",
+                                                        height: "30px",
+                                                    }}
                                                     value={selectedEventId}
-                                                    onChange={(e) => handleDropdownChange(e.target.value)}>
-                                                    <option value="" selected>-- Chọn sự kiện --</option>
-                                                {/* Render options from events array */}
-                                                {events.map((event) => (
-                                                    <option key={event.event_id} value={event.event_id}>
-                                                        {event.name}
+                                                    onChange={(e) => handleDropdownChange(e.target.value)}
+                                                >
+                                                    <option value="" selected>
+                                                        -- Chọn sự kiện --
                                                     </option>
-                                                ))}
-                                            </select>
+                                                    {/* Render options from events array */}
+                                                    {events.map((event) => (
+                                                        <option key={event.event_id} value={event.event_id}>
+                                                            {event.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             )}
                                             <div className="px-6 py-4 whitespace-nowrap text-sm text-red-500">
-                                                Lưu ý: Khi tick chọn sự kiện cho coupon và thêm thành công, toàn bộ tỉ lệ quay từ
+                                                Lưu ý: Khi tick chọn sự kiện cho coupon và thêm thành công, toàn bộ tỉ
+                                                lệ quay từ
                                                 <br />
                                                 các coupon khác của sự kiện tương ứng đều sẽ được reset lại
                                                 <br />
-                                                
                                             </div>
                                         </div>
                                     </div>
