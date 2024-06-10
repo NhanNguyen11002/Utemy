@@ -26,12 +26,18 @@ const getCommentsWithPaginationByLectureId = async (lecture_id: number, values: 
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getCommentsWithPaginationByCourseId = async (course_id: number, values: GetCommentsWithPaginationByLectureId) => {
+    const path = `comment/course/${course_id}?page_index=${values.pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const commentApis = {
     createComment,
     updateComment,
     deleteComment,
     getCommentsWithPagination,
     getCommentsWithPaginationByLectureId,
+    getCommentsWithPaginationByCourseId,
 };
 
 export default commentApis;

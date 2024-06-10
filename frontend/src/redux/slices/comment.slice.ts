@@ -63,6 +63,18 @@ export const getCommentsWithPaginationByLectureId = createAsyncThunk<
         return ThunkAPI.rejectWithValue(error.data as Response<null>);
     }
 });
+export const getCommentsWithPaginationByCourseId = createAsyncThunk<
+    Response<null>,
+    {course_id: number, values: GetCommentsWithPaginationByLectureId},
+    { rejectValue: Response<null> }
+>("comment/courseId", async ({course_id, values}, ThunkAPI) => {
+    try {
+        const response = await apis.commentApis.getCommentsWithPaginationByCourseId(course_id, values);
+        return response.data as Response<null>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 type CouponSliceType = {
     comment: CreateUpdateComment;
     comments: Comment[];
@@ -150,6 +162,18 @@ const replyCommentSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(getCommentsWithPaginationByLectureId.rejected, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(getCommentsWithPaginationByCourseId.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getCommentsWithPaginationByCourseId.fulfilled, (state, action: any) => {
+                state.comments = action.payload.data?.data as Comment[];
+                state.totalPage = action.payload.data.total_page;
+                state.totalRecord = action.payload.data.total_record;
+                state.isLoading = false;
+            })
+            .addCase(getCommentsWithPaginationByCourseId.rejected, (state) => {
                 state.isLoading = false;
             });
     },

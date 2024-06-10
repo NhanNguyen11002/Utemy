@@ -16,6 +16,7 @@ import HistoryTest from "./HistoryTest";
 import CommentLectureCard from "./CommentLectureCard";
 import PopUpAddComment from "./PopupAddCommentOrReply"; // Import PopUpAddComment component
 import "react-quill/dist/quill.snow.css";
+import { Pagination } from "../../components";
 
 const WatchVideo: React.FC = () => {
     const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
@@ -25,7 +26,9 @@ const WatchVideo: React.FC = () => {
     const testState: number = useAppSelector((state) => state.testSlice.testState);
     const comments = useAppSelector((state) => state.commentSlice.comments);
     const user = useAppSelector((state) => state.authSlice.user);
-    const [pageIndex] = useState(1);
+    // const [pageIndex] = useState(1);
+    const totalPage = useAppSelector((state) => state.commentSlice.totalPage);
+    const [pageIndex, setPageIndex] = useState(1);
     const [showAddCommentModal, setShowAddCommentModal] = useState(false); // State để hiển thị hộp thoại modal thêm bình luận
     const finalTest = courseDetail.test;
     const courseProgress = useAppSelector((state) => state.courseSlice.myEnrolled[courseDetail.course_id]);
@@ -40,12 +43,21 @@ const WatchVideo: React.FC = () => {
     const [key, setKey] = useState(0);
 
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
+    const handleChangePageIndex = (pageIndex: number) => {
+        if (pageIndex < 1) {
+            setPageIndex(totalPage);
+        } else if (pageIndex > totalPage) setPageIndex(1);
+        else {
+            setPageIndex(pageIndex);
+        }
+        return;
+    };
     const handleChangeLesson = (lecture: Lecture) => {
         setKey((prevKey) => prevKey + 1);
         dispatch(lectureActions.setLecture(lecture));
         dispatch(
-            commentActions.getCommentsWithPaginationByLectureId({
-                lecture_id: lecture.lecture_id,
+            commentActions.getCommentsWithPaginationByCourseId({
+                course_id: courseDetail.course_id,
                 values: {
                     pageIndex: pageIndex,
                 },
@@ -73,6 +85,12 @@ const WatchVideo: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const { slug } = useParams();
+    useEffect(() => {
+        dispatch(commentActions.getCommentsWithPaginationByCourseId({ course_id: courseDetail.course_id, values:{ pageIndex}}));
+    }, [dispatch, pageIndex, courseDetail]);
+    useEffect(() => {
+        dispatch(commentActions.getCommentsWithPaginationByCourseId({ course_id: courseDetail.course_id, values:{ pageIndex: 1}}));
+    }, [dispatch, courseDetail]);
     useEffect(() => {
         dispatch(courseActions.getCourseDetail(slug as string)).then((response) => {
             if (!response.payload || !response.payload.data || response.payload.status_code !== 200) {
@@ -199,7 +217,7 @@ const WatchVideo: React.FC = () => {
                 )}
 
                 {/* Nút "Bình luận" */}
-                <div className="button-container flex items-center justify-center">
+                <div className="button-container flex items-center justify-start ml-16">
                     <button
                         type="submit"
                         className="text-white btn btn-info text-lg mr-2"
@@ -223,8 +241,8 @@ const WatchVideo: React.FC = () => {
                                 if (response.payload && response.payload.status_code === 200) {
                                     // Phản hồi thành công từ createComment, dispatch action mới ở đây
                                     dispatch(
-                                        commentActions.getCommentsWithPaginationByLectureId({
-                                            lecture_id: lecture.lecture_id,
+                                        commentActions.getCommentsWithPaginationByCourseId({
+                                            course_id: courseDetail.course_id,
                                             values: {
                                                 pageIndex: 1,
                                             },
@@ -244,13 +262,24 @@ const WatchVideo: React.FC = () => {
                         <CommentLectureCard
                             key={index}
                             comment={comment}
+                            course_id ={courseDetail.course_id}
                             userId={user.user_id || undefined}
                             editmode={editModes[comment.comment_id] || false}
                             onCommentSave={() => handleCommentSave(comment.comment_id)}
                         />
                     ))}
+                    
                 </div>
             </div>
+            {totalPage > 1 && (
+                        <div className="flex justify-center my-4">
+                            <Pagination
+                                handleChangePageIndex={handleChangePageIndex}
+                                totalPage={totalPage}
+                                currentPage={pageIndex}
+                            />
+                        </div>
+                    )}
         </>
     );
 };

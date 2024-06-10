@@ -331,11 +331,172 @@ const getCommentsWithPaginationByLectureId = async (req: IRequestWithId): Promis
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getCommentsWithPaginationByCourseId = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const user_id = Number(req.user_id);
+        const { course_id } = req.params;
+        const { page_index: pageIndex } = req.query;
+        // const parsedSearchItem = searchItem as string;
+        const pageSize = configs.general.PAGE_SIZE;
+        const skip = ((Number(pageIndex) ?? 1) - 1) * pageSize;
+        // Bước 1: Lấy tất cả các section theo course_id
+        const sections = await configs.db.section.findMany({
+            where: {
+                course_id: Number(course_id),
+            },
+        });
+
+        // Bước 2: Lấy tất cả các lecture theo từng section_id
+        const lectures = await Promise.all(
+            sections.map(async (section) => {
+                return await configs.db.lecture.findMany({
+                    where: {
+                        section_id: section.id,
+                    },
+                });
+            }),
+        );
+
+        // Bước 3: Tính tổng số commentLecture theo từng lecture_id
+        const lectureIds = lectures.flat().map((lecture) => lecture.id);
+
+        const totalRecord = await configs.db.commentLecture.count({
+            where: {
+                lecture_id: {
+                    in: lectureIds,
+                },
+            },
+        });
+        const findSectionByCourseId = await configs.db.section.findMany({
+            where: {
+                course_id: Number(course_id),
+            },
+        });
+        const commentsByLecture = await Promise.all(
+            findSectionByCourseId.map(async (section) => {
+                const lectures = await configs.db.lecture.findMany({
+                    where: {
+                        section_id: section.id,
+                    },
+                });
+
+                return Promise.all(
+                    lectures.map(async (lecture) => {
+                        const offset = ((Number(pageIndex) ?? 1) - 1) * pageSize; // Tính offset
+                        const limit = pageSize; // Số lượng bản ghi cần lấy cho mỗi trang
+                        const comments = await configs.db.commentLecture.findMany({
+                            where: {
+                                lecture_id: lecture.id,
+                            },
+                            orderBy: {
+                                updatedAt: "desc",
+                            },
+                            include: {
+                                user: true,
+                                replyCommentLectures: {
+                                    include: {
+                                        user: true,
+                                    },
+                                },
+                                liked_by: {
+                                    include: {
+                                        user: true,
+                                    },
+                                },
+                                disliked_by: {
+                                    include: {
+                                        user: true,
+                                    },
+                                },
+                            },
+                        });
+
+                        return comments.map((item) => {
+                            const comment = {
+                                comment_id: item.id,
+                                content: item.content,
+                                updatedAt: DateTime.fromISO(item.updatedAt.toISOString()),
+                                user: {
+                                    id: item.user.id,
+                                    first_name: item.user.first_name,
+                                    last_name: item.user.last_name,
+                                    url_avatar: item.user.url_avatar || undefined,
+                                },
+                                likes_count: item.likes_count,
+                                dislikes_count: item.dislikes_count,
+                                replyCommentLectures: item.replyCommentLectures.map((r) => {
+                                    return {
+                                        reply_id: r.id,
+                                        content: r.content,
+                                        updatedAt: r.updatedAt,
+                                        user: {
+                                            user_id: r.user.id,
+                                            first_name: r.user.first_name,
+                                            last_name: r.user.last_name,
+                                            url_avatar: r.user.url_avatar,
+                                        },
+                                        likes_count: r.likes_count,
+                                        dislikes_count: r.dislikes_count,
+                                    };
+                                }),
+                                likes: item.liked_by.map((like) => {
+                                    return {
+                                        like_id: like.id,
+                                        user: {
+                                            user_id: like.user.id,
+                                            first_name: like.user.first_name,
+                                            last_name: like.user.last_name,
+                                            url_avatar: like.user.url_avatar,
+                                        },
+                                        comment_id: like.comment_id,
+                                        reply_id: like.reply_id,
+                                        updatedAt: like.updatedAt,
+                                    };
+                                }),
+                                dislikes: item.disliked_by.map((dislike) => {
+                                    return {
+                                        dislike_id: dislike.id,
+                                        user: {
+                                            user_id: dislike.user.id,
+                                            first_name: dislike.user.first_name,
+                                            last_name: dislike.user.last_name,
+                                            url_avatar: dislike.user.url_avatar,
+                                        },
+                                        comment_id: dislike.comment_id,
+                                        reply_id: dislike.reply_id,
+                                        updatedAt: dislike.updatedAt,
+                                    };
+                                }),
+                            };
+                            return comment;
+                        });
+                    }),
+                );
+            }),
+        );
+        const flatCommentsByLecture = commentsByLecture.flat(2); // Flatten the nested arrays
+        const pagedComments = flatCommentsByLecture.slice(skip, skip + pageSize);
+        const totalPage = Math.ceil(totalRecord / pageSize);
+        const commentsResponseData = {
+            total_record: totalRecord,
+            total_page: totalPage,
+            data: pagedComments,
+        };
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, commentsResponseData);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        console.log("Error:", error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const commentService = {
     createComment,
     updateComment,
     deleteComment,
     getCommentsWithPagination,
     getCommentsWithPaginationByLectureId,
+    getCommentsWithPaginationByCourseId,
 };
 export default commentService;

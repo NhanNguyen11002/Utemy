@@ -25,6 +25,7 @@ import CertifierController from "./certifier.controller";
 import BlogController from "./blog.controller";
 import CommentBlogController from "./commentblog.controller";
 import ReactionCommentBlogController from "./reactioncommentblog.controller";
+import BoxChatController from "./boxchat.controller";
 export default {
     authController: new AuthController(),
     sectionController: new SectionController(),
@@ -53,4 +54,5 @@ export default {
     blogController: new BlogController(),
     commentBlogController: new CommentBlogController(),
     reactionCommentBlogController: new ReactionCommentBlogController(),
+    boxChatController: new BoxChatController(),
 };

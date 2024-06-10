@@ -24,11 +24,11 @@ const PopupEditCommentOrReply: React.FC<EditPopupProps> = (props) => {
                         defaultValue="" // Đặt giá trị mặc định của text area tại đây nếu cần thiết
                     ></textarea>
                 </div>
-                <div className="w-full flex justify-between">
-                    <button className="text-white btn btn-primary text-lg" onClick={() => props.handleEditPopup}>
+                <div className="button-container flex justify-end">
+                    <button type="submit" className="text-white btn btn-info text-lg" onClick={props.handleEditPopup}>
                         Lưu
                     </button>
-                    <button className="btn text-lg" onClick={props.handleCancelPopup}>
+                    <button type="button" className="btn text-lg ml-2" onClick={props.handleCancelPopup}>
                         Hủy
                     </button>
                 </div>

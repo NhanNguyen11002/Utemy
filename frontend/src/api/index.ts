@@ -23,7 +23,7 @@ import commentApis from "./comment";
 import replyCommentApis from "./replycomment";
 import certifierApis from "./certifier";
 import blogApis from "./blog";
-
+import boxChatApis from "./boxchat";
 const apis = {
     authApis,
     categoryApis,
@@ -50,5 +50,6 @@ const apis = {
     replyCommentApis,
     certifierApis,
     blogApis,
+    boxChatApis,
 };
 export default apis;
