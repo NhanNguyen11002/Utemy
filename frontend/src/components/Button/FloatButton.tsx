@@ -119,7 +119,7 @@ const FloatButton = () => {
                 style={{ position: "fixed", bottom: 40, right: 40 }}
                 onClick={handleOpen}
             >
-                <ChatBubbleBottomCenterTextIcon />
+                <ChatBubbleBottomCenterTextIcon className="w-8 h-8" />
             </Fab>
             {open && (
                 <Card
