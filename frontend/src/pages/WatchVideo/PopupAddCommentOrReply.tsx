@@ -23,11 +23,11 @@ const PopUpAddCommentOrReply: React.FC<PopUpAddCommentOrReplyProps> = ({ onSave,
 
     return (
         <div className="flex items-center justify-between w-full h-full rounded-lg my-0">
-            <div className="w-full py-2 px-6 h-full bg-white rounded-lg my-1 border border-gray-300">
+            <div className="w-full py-2 px-6 h-full bg-cyan-200/50 rounded-lg my-1 border border-gray-300 ml-16 mr-8">
                 <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="edit-textarea bg-transparent w-full py-2 px-6 rounded-lg my-1"
+                    className="edit-textarea bg-white w-full py-2 px-6 rounded-lg my-1 border border-gray-300"
                     style={{ height: '200px' }}
                     placeholder="Nhập nội dung bình luận..."
                 />

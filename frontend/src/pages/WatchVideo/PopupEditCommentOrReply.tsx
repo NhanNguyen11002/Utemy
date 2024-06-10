@@ -17,17 +17,17 @@ const PopupEditCommentOrReply: React.FC<EditPopupProps> = (props) => {
                 </div>
                 <div className="w-full mb-4">
                     <textarea
-                        className="edit-textarea bg-transparent w-full py-2 px-6 rounded-lg my-1"
+                        className="edit-textarea bg-transparent w-full py-2 px-6 rounded-lg my-1 "
                         style={{ height: '200px' }}
                         placeholder={props.content}
                         defaultValue="" // Đặt giá trị mặc định của text area tại đây nếu cần thiết
                     ></textarea>
                 </div>
-                <div className="w-full flex justify-between">
-                    <button className="text-white btn btn-primary text-lg" onClick={()=>props.handleEditPopup}>
+                <div className="button-container flex justify-end">
+                    <button type="submit" className="text-white btn btn-info text-lg" onClick={props.handleEditPopup}>
                         Lưu
                     </button>
-                    <button className="btn text-lg" onClick={props.handleCancelPopup}>
+                    <button type="button" className="btn text-lg ml-2" onClick={props.handleCancelPopup}>
                         Hủy
                     </button>
                 </div>

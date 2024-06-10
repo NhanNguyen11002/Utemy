@@ -26,6 +26,7 @@ import CertifierServices from "./certifier.services";
 import BlogService from "./blog.services";
 import CommentBlogService from "./commentblog.services";
 import ReactionCommentBlogServices from "./reactioncommentblog.services";
+import BoxChatServices from "./boxchat.services";
 export default {
     AuthServices,
     UserService,
@@ -55,4 +56,5 @@ export default {
     BlogService,
     CommentBlogService,
     ReactionCommentBlogServices,
+    BoxChatServices,
 };

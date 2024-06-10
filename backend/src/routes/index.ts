@@ -25,6 +25,7 @@ import certifierRouter from "./certifier.router";
 import blogRouter from "./blog.router";
 import commentBlogRouter from "./commentblog.router";
 import reactionCommentBlogRouter from "./reactioncommentblog.router";
+import boxchatRouter from "./boxchat.router";
 export default {
     authRouter,
     userRouter,
@@ -53,4 +54,5 @@ export default {
     blogRouter,
     commentBlogRouter,
     reactionCommentBlogRouter,
+    boxchatRouter,
 };

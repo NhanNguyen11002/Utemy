@@ -24,4 +24,8 @@ export default class CommentController {
         const response: ResponseBase = await services.CommentServices.getCommentsWithPaginationByLectureId(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getCommentsWithPaginationByCourseId(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.CommentServices.getCommentsWithPaginationByCourseId(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }
