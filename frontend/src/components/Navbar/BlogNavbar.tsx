@@ -33,6 +33,7 @@ const BlogNavbar: React.FC<BlogNavbarProps> = ({}) => {
                             <input
                                 ref={inputRef}
                                 type="text"
+                                id="search-blog"
                                 placeholder="Từ khoá tìm blog..."
                                 className="w-[95%] bg-navy p-2 text-white focus:outline-none placeholder-white/80 "
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
@@ -57,7 +58,7 @@ const BlogNavbar: React.FC<BlogNavbarProps> = ({}) => {
                         onClick={() => setSearching(true)}
                         className="w-6 h-6 text-white ml-5 hover:cursor-pointer"
                     />
-                    <div className={`h-full w-full flex gap-5 items-center justify-center `}>
+                    <div className={`h-full w-full gap-5 items-center justify-center hidden tablet:flex`}>
                         {categories.map((category) => {
                             return (
                                 <p
@@ -69,6 +70,9 @@ const BlogNavbar: React.FC<BlogNavbarProps> = ({}) => {
                                 </p>
                             );
                         })}
+                    </div>
+                    <div className="h-full w-full tablet:w-0 flex gap-5 items-center justify-center">
+                        <p className="text-lg font-semibold text-white block tablet:hidden">Tìm kiếm ở đây</p>
                     </div>
                 </div>
             </div>

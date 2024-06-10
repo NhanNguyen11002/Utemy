@@ -60,6 +60,7 @@ const MyCourses: React.FC = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
+                                    id="search-my-course"
                                     placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full tablet:w-[70%] border-[1px] border-black"
                                     value={userInput}

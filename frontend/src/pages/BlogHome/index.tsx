@@ -93,6 +93,7 @@ const BlogHome: React.FC = () => {
                                         categories.map((category) => {
                                             return (
                                                 <Link
+                                                    key={category.category_id}
                                                     to={`/blog/category/${category.category_id}`}
                                                     className="border border-gray-500 rounded-[50px] truncate h-10 max-w-[200px] text-xl py-2 px-4 my-2 mx-1 cursor-pointer hover:border-info hover:text-info transition-all duration-300"
                                                 >

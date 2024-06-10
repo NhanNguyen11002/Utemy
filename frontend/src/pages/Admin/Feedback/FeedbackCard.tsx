@@ -9,8 +9,8 @@ const FeedbackCard: React.FC<FeedbackCardProps> = (props) => {
     const date = props.feedback.created_at.toString().split(" ");
     return (
         <div>
-            <div className={` flex items-center justify-between w-full h-full rounded-lg my-0 `}>
-                <div className="avatar mr-1">
+            <div className={` flex items-start justify-between w-full h-full rounded-lg my-0 `}>
+                <div className="avatar mr-1 py-2">
                     <div className=" items-center justify-between w-14 border border-black rounded-full">
                         <img alt="1" src={(props.feedback.url_avatar as string) || images.DefaultAvatar} />
                     </div>

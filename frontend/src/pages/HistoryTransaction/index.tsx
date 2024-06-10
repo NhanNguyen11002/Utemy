@@ -20,26 +20,25 @@ const HistoryTransaction = () => {
 
     useEffect(() => {
         if (!searchMode) {
-                // Gọi API với trang hiện tại khi không ở chế độ tìm kiếm
-                dispatch(
-                    getHistoryInvoices({
-                        page_index: pageIndex,
-                        page_size: 10,
-                        from: fromDate,
-                        to: toDate,
-                        user_id: 0,
-                        total_money: 0,
-                        is_success: false,
-                        created_at: "",
-                        invoice_detail: [],
-                        invoice_items: [],
-                        invoice_id: 0,
-                    }),
-                );
-                console.log("from:", fromDate);
-                 
+            // Gọi API với trang hiện tại khi không ở chế độ tìm kiếm
+            dispatch(
+                getHistoryInvoices({
+                    page_index: pageIndex,
+                    page_size: 10,
+                    from: fromDate,
+                    to: toDate,
+                    user_id: 0,
+                    total_money: 0,
+                    is_success: false,
+                    created_at: "",
+                    invoice_detail: [],
+                    invoice_items: [],
+                    invoice_id: 0,
+                }),
+            );
+            console.log("from:", fromDate);
         }
-    }, [dispatch, pageIndex, searchMode, fromDate,toDate]);
+    }, [dispatch, pageIndex, searchMode, fromDate, toDate]);
 
     // const handlePageChange = (newPage: number) => {
     //     setCurrentPage(newPage);
@@ -109,31 +108,33 @@ const HistoryTransaction = () => {
                     </button>
                 </div>
                 <div className="mb-4">
-                <label htmlFor="fromDate" className="text-lg font-semibold">
-                    Từ ngày:
-                </label>
-                <input
-                    type="date"
-                    id="fromDate"
-                    value={fromDate}
-                    onChange={(e) => setFromDate(e.target.value)}
-                    className="border p-2 rounded mx-2"
-                />
-                <label htmlFor="toDate" className="text-lg font-semibold">
-                    Đến ngày:
-                </label>
-                <input
-                    type="date"
-                    id="toDate"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
-                    className="border p-2 rounded mx-2"
-                />
-                <button className="text-white  btn-info btn hover:bg-lightblue/60 focus:outline-none"
-                onClick={e=>handleResetClick()}>
-                            Làm mới
-                </button>
-            </div>
+                    <label htmlFor="fromDate" className="text-lg font-semibold">
+                        Từ ngày:
+                    </label>
+                    <input
+                        type="date"
+                        id="fromDate"
+                        value={fromDate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                        className="border p-2 rounded mx-2"
+                    />
+                    <label htmlFor="toDate" className="text-lg font-semibold">
+                        Đến ngày:
+                    </label>
+                    <input
+                        type="date"
+                        id="toDate"
+                        value={toDate}
+                        onChange={(e) => setToDate(e.target.value)}
+                        className="border p-2 rounded mx-2"
+                    />
+                    <button
+                        className="text-white  btn-info btn hover:bg-lightblue/60 focus:outline-none"
+                        onClick={(e) => handleResetClick()}
+                    >
+                        Làm mới
+                    </button>
+                </div>
                 <div>
                     {searchMode ? (
                         // Hiển thị kết quả tìm kiếm
@@ -154,8 +155,8 @@ const HistoryTransaction = () => {
                         <div>
                             <p>Có {totalRecord} lần giao dịch được tìm thấy</p>
                             <h2>Lịch sử giao dịch:</h2>
-                            {historyTrans.map((historyTran) => (
-                                <TransactionCard key={historyTran.invoice_id} historyTran={historyTran} />
+                            {historyTrans.map((historyTran, index) => (
+                                <TransactionCard key={`${historyTran.invoice_id}-${index}`} historyTran={historyTran} />
                             ))}
                         </div>
                     )}
@@ -185,14 +186,14 @@ const HistoryTransaction = () => {
                     </div>
                 )} */}
                 {!searchMode && totalPage > 1 && (
-                        <div className="flex justify-center my-4">
-                            <Pagination
-                                handleChangePageIndex={handleChangePageIndex}
-                                totalPage={totalPage}
-                                currentPage={pageIndex}
-                            />
-                        </div>
-                    )}
+                    <div className="flex justify-center my-4">
+                        <Pagination
+                            handleChangePageIndex={handleChangePageIndex}
+                            totalPage={totalPage}
+                            currentPage={pageIndex}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 import { eventActions } from "../../../redux/slices";
 import { Formik, ErrorMessage, Field } from "formik";
-import React, {  useRef } from "react";
+import React, { useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import toast, { Toaster } from "react-hot-toast";
 import { NewEvent as CreateEventType } from "../../../types/event";
@@ -33,9 +33,9 @@ const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
             formData.forEach((value, key) => {
                 console.log(`${key}: ${value}`);
             });
-    
+
             const response = await dispatch(eventActions.createEvent(formData));
-    
+
             if (response.payload && response.payload.status_code === 200) {
                 dispatch(eventActions.getEventsWithPagination({ searchItem: "", pageIndex: 1 }));
                 toast.success(response.payload.message);
@@ -53,7 +53,7 @@ const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
         description: "",
         start_date: "",
         end_date: "",
-        is_active: 0
+        is_active: 0,
     };
     return (
         <>
@@ -114,20 +114,16 @@ const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
                                         </div> */}
 
                                         <div className="flex-1 flex flex-col w-full ">
-                                            <label
-                                                htmlFor="name"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
-                                            >
+                                            <label htmlFor="name" className="text-sm mb-1 font-medium tablet:text-xl">
                                                 Tên sự kiện
                                             </label>
                                             <Field
                                                 as="input"
                                                 name="name"
+                                                id="name"
                                                 placeholder="Tên sự kiện..."
                                                 className={`${
-                                                    formik.errors.name && formik.touched.name
-                                                        ? "border-error"
-                                                        : ""
+                                                    formik.errors.name && formik.touched.name ? "border-error" : ""
                                                 } flex-1 w-full  min-h-[50px]  resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
                                             />
                                             <ErrorMessage
@@ -146,6 +142,7 @@ const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
                                             <Field
                                                 as="input"
                                                 name="description"
+                                                id="description"
                                                 placeholder="Mô tả cho sự kiện..."
                                                 className={`${
                                                     formik.errors.description && formik.touched.description

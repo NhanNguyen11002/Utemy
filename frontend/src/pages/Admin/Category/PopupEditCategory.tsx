@@ -130,6 +130,7 @@ const PopupEditCategory: React.FC<PopupEditCategoryProps> = (props) => {
                                                     </div>
                                                     <Field
                                                         name="categoryImage"
+                                                        id="categoryImage"
                                                         type="file"
                                                         value={undefined}
                                                         className="file-input file-input-bordered file-input-info w-full max-w-xs"

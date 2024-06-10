@@ -109,19 +109,18 @@ const PopupRating: React.FC<RatingCourseProps> = (props) => {
                                     className="text-sm mb-1 tablet:text-xl font-medium"
                                 >
                                     <div className="px-5 py-3 flex items-center space-x-4">
-                                        <label htmlFor="title" className="text-sm mb-1 tablet:text-xl font-medium">
-                                            Đánh giá: {checked}
-                                        </label>
+                                        <p className="text-sm mb-1 tablet:text-xl font-medium">Đánh giá: {checked}</p>
                                         <RatingInPopup score={checked} handleCheck={handleCheck} />
                                     </div>
                                     <div className="px-5 py-3">
-                                        <label htmlFor="title" className="text-sm mb-1 tablet:text-xl font-medium">
+                                        <label htmlFor="content" className="text-sm mb-1 tablet:text-xl font-medium">
                                             Nội dung:
                                         </label>
                                         <br />
                                         <Field
                                             as="textarea"
                                             name="content"
+                                            id="content"
                                             className={` w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                                 formik.errors.content && formik.touched.content && "border-error"
                                             } `}

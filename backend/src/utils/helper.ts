@@ -13,11 +13,12 @@ export const getPublicIdFromUrl = (url: string): string | null => {
 export const convertDateForCertifer = (date: Date): any => {
     //yyyy-mm-dd
     const day = date.getDate();
-    const month = date.getMonth() + 1; // Để lấy tháng, bạn phải cộng thêm 1 vì tháng trong JavaScript bắt đầu từ 0
+    const strDay = day < 10 ? `0${day}` : day.toString();
+    const month = date.getMonth() + 1;
     const strMonth = month < 10 ? `0${month}` : month.toString();
     const year = date.getFullYear();
-    const issueDate = `${year}-${strMonth}-${day}`;
-    const expiryDate = `${year + 4}-${strMonth}-${day}`;
+    const issueDate = `${year}-${strMonth}-${strDay}`;
+    const expiryDate = `${year + 4}-${strMonth}-${strDay}`;
     return {
         issueDate,
         expiryDate,

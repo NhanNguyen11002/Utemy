@@ -48,6 +48,7 @@ export function ReportAdmin() {
                         ref={inputRef}
                         type="text"
                         placeholder="Từ khóa..."
+                        id="search-report"
                         className="rounded-full py-2 px-10 w-full border-[1px] border-black"
                         value={userInput}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
@@ -96,7 +97,15 @@ export function ReportAdmin() {
                             </TableBody>
                         </Table>
                     ) : (
-                        <p className={`text-lg mt-2 `}>Có vẻ như không có báo cáo tới khoá học nào</p>
+                        <p className={`text-lg mt-2 `}>
+                            Có vẻ như không có báo cáo tới khoá học nào{" "}
+                            {keyword !== "" && (
+                                <span>
+                                    {" "}
+                                    có từ khoá <span className="italic">"{keyword}"</span>
+                                </span>
+                            )}
+                        </p>
                     )}
                 </div>
                 {totalPage > 1 && (

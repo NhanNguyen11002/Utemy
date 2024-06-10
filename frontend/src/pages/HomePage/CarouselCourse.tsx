@@ -13,11 +13,11 @@ const CarouselCourse: React.FC<CarouselCourseProps> = ({ courses, type }) => {
     return (
         <>
             <Carousel className="">
-                <CarouselContent className="w-[1340px] h-[350px]">
+                <CarouselContent className="w-[1340px] h-[fit] p-5">
                     {courses.length > 0 &&
                         courses.map((course, index) => {
                             return (
-                                <CarouselItem className="w-full basis-1/5">
+                                <CarouselItem key={index} className="w-full basis-1/5">
                                     <CardVideo
                                         key={index}
                                         for={type}

@@ -50,11 +50,12 @@ const MyEnrolledCourse: React.FC = () => {
                         Khóa học đã đăng ký
                     </h1>
                     <div className="w-full flex flex-col gap-4 justify-between shrink-0 tablet:flex-row">
-                        <div className="w-3/4 tablet:w-1/2 mx-auto">
+                        <div className="w-3/4  mx-auto">
                             <div className="relative">
                                 <input
                                     ref={inputRef}
                                     type="text"
+                                    id="search-enrolled-course"
                                     placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full border-[1px] border-black"
                                     value={userInput}

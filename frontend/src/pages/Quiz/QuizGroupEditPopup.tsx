@@ -53,6 +53,7 @@ const QuizGroupEditPopup: React.FC<QuizGroupEditPopupProps> = (props) => {
                                     <Field
                                         type="text"
                                         name="title"
+                                        id="title"
                                         placeholder="Tên bộ câu hỏi"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.title && formik.touched.title && "border-error"
@@ -73,6 +74,7 @@ const QuizGroupEditPopup: React.FC<QuizGroupEditPopupProps> = (props) => {
                                     <Field
                                         type="text"
                                         name="description"
+                                        id="description"
                                         placeholder="Tên bộ câu hỏi"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.description && formik.touched.description && "border-error"

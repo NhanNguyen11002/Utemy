@@ -41,6 +41,9 @@ const StatisticsBarChart: React.FC<StatisticBarChartProps> = ({
             xaxis: {
                 ...chartsConfig.xaxis,
                 categories: categories,
+                labels: {
+                    maxHeight: 70,
+                },
             },
         },
     };

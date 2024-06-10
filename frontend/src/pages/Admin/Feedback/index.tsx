@@ -88,7 +88,9 @@ export function FeedbackAdmin() {
                     </div>
                     <div className="flex my-1  flex-col justify-between w-3/4 px-10 gap border-l-[1px]">
                         {feedbacks.length === 0 ? (
-                            <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy phản hồi</p>
+                            <p className="mt-4 text-2xl text-error text-center font-bold">
+                                Không tìm thấy phản hồi {evaluate ? `${evaluate} sao` : ""}
+                            </p>
                         ) : (
                             <p className="mt-4 text-2xl text-center font-bold">Tìm thấy {totalRecord} phản hồi </p>
                         )}

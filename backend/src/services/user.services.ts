@@ -110,30 +110,6 @@ const getAuthorProfile = async (req: Request): Promise<ResponseBase> => {
         });
         if (!user) return new ResponseError(404, constants.error.ERROR_USER_NOT_FOUND, false);
 
-        const courses: OutstandingCourse[] = [];
-
-        user?.courses.map((course) => {
-            const data: OutstandingCourse = {
-                course_id: course.id,
-                thumbnail: course.thumbnail,
-                title: course.title,
-                slug: course.slug,
-                number_of_enrolled: course.number_of_enrolled,
-                number_of_rating: course.number_of_rating,
-                categories: course.course_categories.map((cate) => (cate as any).Category),
-                author: {
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    user_id: user.id,
-                },
-                created_at: course.created_at,
-                updated_at: course.updated_at,
-                average_rating: course.average_rating,
-                status: course.status,
-            };
-            courses.push(data);
-        });
-
         const data = {
             user: {
                 first_name: user.first_name,
@@ -142,7 +118,6 @@ const getAuthorProfile = async (req: Request): Promise<ResponseBase> => {
                 description: user.description,
                 is_admin: user.is_admin,
             },
-            courses: courses,
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_REQUEST, true, data);
     } catch (error) {

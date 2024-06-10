@@ -113,3 +113,8 @@ export type SearchAllCoursesResponse = {
     total_record: number;
     data: Course[];
 };
+export type SearchAuthorCourse = {
+    pageIndex: number;
+    authorId: number;
+    searchItem: string;
+};

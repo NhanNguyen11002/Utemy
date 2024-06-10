@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
-import { blogActions } from "../../../redux/slices";
+import { blogActions, categoryActions } from "../../../redux/slices";
 import { Pagination, BlogCard } from "../../../components";
 import SearchIcon from "../../../assets/icons/SeacrchIcon";
 import logoUtemy from "../../../assets/images/utemy_logo_notext.png";
@@ -90,7 +90,6 @@ const BlogAdmin = () => {
         dispatch(blogActions.getBlogsWithPagination({ searchItem, pageIndex }));
     };
     const handleOnSubmit = (values: NewBlog) => {
-        console.log("on submit", values);
         const slug = slugify(values.title.toLowerCase());
         const formData = new FormData();
         formData.append("title", values.title);
@@ -125,6 +124,9 @@ const BlogAdmin = () => {
     useEffect(() => {
         dispatch(blogActions.getBlogsWithPagination({ searchItem, pageIndex, category: categoryChecked }));
     }, [dispatch, searchItem, pageIndex]);
+    useEffect(() => {
+        dispatch(categoryActions.getCategories());
+    });
 
     return (
         <>
@@ -138,6 +140,7 @@ const BlogAdmin = () => {
                                     <input
                                         ref={inputRef}
                                         type="text"
+                                        id="search-blog"
                                         placeholder="Từ khóa..."
                                         className="rounded-full py-4 px-10 w-full border-[1px] border-black"
                                         value={userInput}
@@ -289,6 +292,7 @@ const BlogAdmin = () => {
                                         return (
                                             <div className="flex items-start gap-2 mb-1" key={category.category_id}>
                                                 <input
+                                                    id={category.title}
                                                     type="checkbox"
                                                     className="checkbox checkbox-info"
                                                     name={category.title}
@@ -306,7 +310,15 @@ const BlogAdmin = () => {
                         </div>
                         <div className="flex flex-col min-w-4/5 items-center shrink-0">
                             {blogs.length === 0 ? (
-                                <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy blog</p>
+                                <p className="mt-4 text-2xl text-error text-center font-bold">
+                                    Không tìm thấy blog{" "}
+                                    {searchItem && (
+                                        <span>
+                                            với từ khoá <span className="italic">"{searchItem}"</span>
+                                        </span>
+                                    )}
+                                    {categoryChecked.length > 0 && <span> với các danh mục yêu cầu</span>}
+                                </p>
                             ) : (
                                 <p className="mt-4 text-2xl text-center font-bold">
                                     Có {totalRecord} blog được tìm thấy{" "}

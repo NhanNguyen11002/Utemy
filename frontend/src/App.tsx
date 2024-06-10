@@ -104,6 +104,12 @@ function App() {
                                 <Route index element={<WatchVideo />}></Route>
                             </Route>
                         </Route>
+                        <Route path="/blog" element={<UserBlogLayout isLogin={isLogin} />}>
+                            <Route index element={<BlogHome />}></Route>
+                            <Route path="detail/:slug" element={<BlogDetail />}></Route>
+                            <Route path="search" element={<BlogSearch />}></Route>
+                            <Route path="category/:category_id" element={<BlogCategory />}></Route>
+                        </Route>
                         <Route element={<UserAppLayout isLogin={isLogin} />}>
                             <Route path="login" element={<Login />}></Route>
                             <Route path="signup" element={<Signup />}></Route>
@@ -129,12 +135,7 @@ function App() {
                             </Route>
                             <Route path="*" element={<NotFound />}></Route>
                         </Route>
-                        <Route path="/blog" element={<UserBlogLayout isLogin={isLogin} />}>
-                            <Route index element={<BlogHome />}></Route>
-                            <Route path="detail/:slug" element={<BlogDetail />}></Route>
-                            <Route path="search" element={<BlogSearch />}></Route>
-                            <Route path="category/:category_id" element={<BlogCategory />}></Route>
-                        </Route>
+
                         <Route path="/*" element={<UserAppLayoutWithNav isLogin={isLogin} />}>
                             <Route path="profile/:id" element={<AuthorProfile />}></Route>
                             <Route index element={<HomePage />}></Route>

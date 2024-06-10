@@ -91,10 +91,11 @@ const PopUpChangeAvatar: React.FC<props> = (props) => {
                         alt="Avatar"
                         className="w-52 h-52 my-2 object-cover rounded-full mx-auto"
                     />
-
+                    <label htmlFor="avt"></label>
                     <input
                         ref={inputRef}
                         accept=".jpg, .png"
+                        id="avt"
                         type="file"
                         className="file-input file-input-bordered file-input-info w-full max-w-xs"
                         onChange={handleFileInputChange}

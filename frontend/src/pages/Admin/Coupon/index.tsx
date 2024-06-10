@@ -20,7 +20,7 @@ const CouponAdmin = () => {
     const [searchItem, setSearchItem] = useState("");
     // const [couponCode] = useState("");
     const [couponId, setCouponId] = useState(0);
-    const [eventId, setEventId ] = useState<number | null>(null);
+    const [eventId, setEventId] = useState<number | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
     const coupons = useAppSelector((state) => state.couponSlice.coupons);
@@ -68,7 +68,7 @@ const CouponAdmin = () => {
         setIsOpenEditCoupon(!isOpenEditCoupon);
     };
     const handleClosePopupCard = () => {
-        setSelectedCoupon(null)    
+        setSelectedCoupon(null);
     };
     const handleChangePageIndex = (pageIndex: number) => {
         if (pageIndex < 1) {
@@ -111,10 +111,19 @@ const CouponAdmin = () => {
         <>
             {isOpenAddCoupon && <PopUpAddCoupon handleCancelAddCoupon={handleCancelAddCoupon} />}
             {isOpenEditCoupon && (
-                <PopUpEditCoupon couponId={couponId} eventId={eventId} handleCancelEditCoupon={handleCancelEditCoupon} handleClosePopupCard={handleClosePopupCard}/>
+                <PopUpEditCoupon
+                    couponId={couponId}
+                    eventId={eventId}
+                    handleCancelEditCoupon={handleCancelEditCoupon}
+                    handleClosePopupCard={handleClosePopupCard}
+                />
             )}
             {isOpenDeleteModel && (
-                <PopUpDeleteCoupon handleCancel={handleCancelDeleteModel} handleDelete={handleDeleteCoupon} handleClosePopupCard={handleClosePopupCard}/>
+                <PopUpDeleteCoupon
+                    handleCancel={handleCancelDeleteModel}
+                    handleDelete={handleDeleteCoupon}
+                    handleClosePopupCard={handleClosePopupCard}
+                />
             )}
             {isGetLoading && <Loading />}
             {/* minhscreen */}
@@ -127,6 +136,7 @@ const CouponAdmin = () => {
                                     ref={inputRef}
                                     type="text"
                                     placeholder="Từ khóa..."
+                                    id="search-coupon"
                                     className="rounded-full py-4 px-10 w-full border-[1px] border-black"
                                     value={userInput}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
@@ -151,7 +161,14 @@ const CouponAdmin = () => {
                     </button>{" "}
                 </div>
                 {coupons.length === 0 ? (
-                    <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy phiếu giảm giá</p>
+                    <p className="mt-4 text-2xl text-error text-center font-bold">
+                        Không tìm thấy phiếu giảm giá{" "}
+                        {searchItem && (
+                            <span>
+                                với từ khoá <span className="italic">"{searchItem}"</span>
+                            </span>
+                        )}
+                    </p>
                 ) : (
                     <p className="mt-4 text-2xl text-center font-bold">
                         Có {totalRecord} phiếu giảm giá được tìm thấy{" "}
@@ -169,11 +186,14 @@ const CouponAdmin = () => {
                         <TableBody>
                             {/* Sử dụng vòng lặp map để render các hàng dữ liệu */}
                             {coupons.map((coupon, index) => (
-                                <TableRow key={index}
-                                onMouseEnter={() => handleMouseEnter(index)}
-                                onMouseLeave={handleMouseLeave}
-                                style={{ background: hoveredRow === index ? '#f0f0f0' : 'transparent' }} 
-                                onClick={(event) => handleRowClick(coupon, event)}>
+                                <TableRow
+                                    className="cursor-pointer"
+                                    key={index}
+                                    onMouseEnter={() => handleMouseEnter(index)}
+                                    onMouseLeave={handleMouseLeave}
+                                    style={{ background: hoveredRow === index ? "#f0f0f0" : "transparent" }}
+                                    onClick={(event) => handleRowClick(coupon, event)}
+                                >
                                     <TableCell className="w-1/3">
                                         <p>{coupon.code}</p>
                                     </TableCell>
@@ -188,8 +208,10 @@ const CouponAdmin = () => {
                         </TableBody>
                     </Table>
                     {selectedCoupon && (
-                        <div className="absolute top-28 right-0 z-50 w-2/5 h-max flex justify-center items-center "
-                            style={{ top: cardPosition.y, left: cardPosition.x }}>
+                        <div
+                            className="absolute top-28 right-0 z-50 w-2/5 h-max flex justify-center items-center "
+                            style={{ top: cardPosition.y, left: cardPosition.x }}
+                        >
                             <div className="flex-1  my-1  w-1/2 px-10 justify-start">
                                 <CouponCard
                                     coupon={selectedCoupon}

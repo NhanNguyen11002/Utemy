@@ -103,8 +103,8 @@ const StatusTab: React.FC<StatusTabProps> = () => {
                     <p className="font-bold mb-2">Các quyết định trên khoá học của bạn</p>
                     <div className=" min-h-[100px] h-fit max-h-[400px] w-[full] rounded-md border p-4 grid grid-cols-2 gap-3 overflow-y-scroll ">
                         {decision.length > 0 ? (
-                            decision.map((decision) => {
-                                return <DecisionCard decision={decision} isAuthor={true} />;
+                            decision.map((decision, index) => {
+                                return <DecisionCard key={index} decision={decision} isAuthor={true} />;
                             })
                         ) : (
                             <p>Không có quyết định nào trên khoá học của bạn</p>

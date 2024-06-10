@@ -12,13 +12,13 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    // DialogFooter,
     DialogClose,
 } from "../ui/dialog";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { reportActions } from "../../redux/slices";
 import toast from "react-hot-toast";
 import { Lecture } from "../../types/lecture";
+import { createReportValidationSchema } from "../../validations/report";
 
 type UserToolDropdownProps = {
     courseDetail: CourseDetailType;
@@ -98,7 +98,7 @@ const UserToolDropdown: React.FC<UserToolDropdownProps> = (props) => {
                         {reporting ? (
                             <div>
                                 <Formik
-                                    // validationSchema={addPromotionValidationSchema}
+                                    validationSchema={createReportValidationSchema}
                                     initialValues={initialValue}
                                     onSubmit={handleOnSubmit}
                                     enableReinitialize={true}
@@ -144,6 +144,7 @@ const UserToolDropdown: React.FC<UserToolDropdownProps> = (props) => {
                                                 </label>
                                                 <br />
                                                 <Field
+                                                    id="content"
                                                     placeholder=""
                                                     component={TextEditorWithImage}
                                                     handleChangeContent={(content: string) =>

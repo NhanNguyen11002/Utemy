@@ -9,6 +9,7 @@ import {
     SearchAllCourses,
     SearchAllCoursesResponse,
     UpdateTargetCourse,
+    SearchAuthorCourse,
 } from "../../types/course";
 import apis from "../../api";
 import { Approval } from "../../types/approval";
@@ -390,6 +391,17 @@ export const getFinalTestByCourseId = createAsyncThunk<Response<any>, number, { 
         }
     },
 );
+export const getCourseByAuthorId = createAsyncThunk<Response<any>, SearchAuthorCourse, { rejectValue: Response<null> }>(
+    "course/author/get",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.courseApis.getCourseByAuthorId(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 export const courseSlice = createSlice({
     name: "course",
     initialState,
@@ -661,6 +673,18 @@ export const courseSlice = createSlice({
         });
         builder.addCase(getFinalTestByCourseId.rejected, (state) => {
             state.isLoading = false;
+        });
+        builder.addCase(getCourseByAuthorId.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getCourseByAuthorId.fulfilled, (state, action) => {
+            state.isGetLoading = false;
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.courses = action.payload.data.courses;
+        });
+        builder.addCase(getCourseByAuthorId.rejected, (state) => {
+            state.isGetLoading = false;
         });
     },
 });

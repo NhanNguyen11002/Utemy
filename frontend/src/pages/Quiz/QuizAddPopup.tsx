@@ -215,6 +215,7 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                     <br />
                                     <Field
                                         name="type"
+                                        id="type"
                                         component={CustomeSelect}
                                         handleOnchange={(e: any) => handleChangeStatus(e, formik)}
                                         options={typeOptions}
@@ -255,6 +256,7 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                                 handleContentChange(content, formik)
                                             }
                                             name="question"
+                                            id="question"
                                             placeholder="Tên câu hỏi..."
                                             className={`w-full px-2 py-2 rounded-lg border-[1px] text-sm outline-none ${
                                                 formik.errors.question && formik.touched.question && "border-error"
@@ -275,6 +277,7 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                         answer.map((answer, index) => {
                                             return (
                                                 <AnswerCardInPopup
+                                                    key={index}
                                                     toggleEdit={(bool: boolean) => setEdit(bool)}
                                                     type={type}
                                                     answer={answer}
@@ -300,6 +303,7 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                                 ref={inputRef}
                                                 type="text"
                                                 name="Answer"
+                                                id="Answer"
                                                 placeholder="Điền vào câu trả lời"
                                                 className="input w-full input-info"
                                                 onChange={() => setError("")}
@@ -310,6 +314,7 @@ const QuizAddPopup: React.FC<QuizAddPopupProps> = (props) => {
                                                     ref={inputRightRef}
                                                     type="checkbox"
                                                     name="isCorrect"
+                                                    id="isCorrect"
                                                     defaultChecked={type === 3}
                                                     disabled={type === 3}
                                                     className="radio checked:bg-success "

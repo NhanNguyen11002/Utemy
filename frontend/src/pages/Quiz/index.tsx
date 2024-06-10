@@ -149,6 +149,7 @@ const QuizHome: React.FC = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
+                                    id="search-quiz"
                                     placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full tablet:w-[70%] border-[1px] border-black"
                                     value={userInput}
@@ -188,9 +189,9 @@ const QuizHome: React.FC = () => {
                         {groupId !== 0 && quizList.length > 0 ? (
                             quizList.map((data, index) => {
                                 return (
-                                    <div key={index}>
+                                    <div key={data.quiz_id}>
                                         <QuizCard
-                                            key={index}
+                                            key={data.quiz_id}
                                             quiz={data}
                                             handleOpenEdit={handleOpenEditQuiz}
                                             handleOpenDelete={handleOpenDeleteQuiz}

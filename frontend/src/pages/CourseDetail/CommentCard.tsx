@@ -21,11 +21,11 @@ const CommentCard: React.FC<CommentCardProps> = (props) => {
     const isUserComment = props.userId === props.rating.user_id;
     return (
         <div>
-            <div className={` flex items-center justify-between w-full h-full rounded-lg my-0 `}>
+            <div className={` flex items-start justify-between w-full h-full rounded-lg my-0 `}>
                 <Link to={isUserComment ? `/my-profile` : `/profile/${props.rating.user_id}`}>
-                    <div className="avatar mr-1 hover:cursor-pointer">
+                    <div className="avatar mr-1 py-2 hover:cursor-pointer">
                         <div
-                            className={` items-center justify-between w-14 border ${
+                            className={` items-center justify-between w-8 tablet:w-10 laptop:w-14 border ${
                                 isUserComment ? "border-lightblue" : "border-black"
                             } rounded-full`}
                         >

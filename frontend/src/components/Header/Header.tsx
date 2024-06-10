@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                                                         onClick={() =>
                                                             setIsDisplayCategoryDrawer(!isDisplayCategoryDrawer)
                                                         }
-                                                        className="hover:bg-footer text-lg font-medium text-center cursor-pointer px-6 py-4 laptop:py-[26px] min-w-fit rounded-lg"
+                                                        className="hover:bg-gray-400 hover:text-white transition-colors duration-300 text-lg font-medium text-center cursor-pointer px-6 py-4 laptop:py-[26px] min-w-fit rounded-lg"
                                                     >
                                                         {category.title}
                                                     </li>
@@ -87,6 +87,7 @@ const Header: React.FC<HeaderProps> = ({ isLogin }) => {
                             </div>
                             <input
                                 type="text"
+                                id="search-course"
                                 placeholder="Điền từ khóa vào đây..."
                                 className=" rounded-full py-4 h-[40px] px-10 w-[70%] max-w-[1000px] border-[1px] border-black text-sm"
                                 value={keyword}

@@ -101,6 +101,7 @@ const CreateUser = () => {
                                                 Tên
                                             </label>
                                             <Field
+                                                id="first_name"
                                                 name="first_name"
                                                 type="text"
                                                 className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
@@ -120,6 +121,7 @@ const CreateUser = () => {
                                                 Họ
                                             </label>
                                             <Field
+                                                id="last_name"
                                                 name="last_name"
                                                 type="text"
                                                 className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
@@ -140,6 +142,7 @@ const CreateUser = () => {
                                             Email
                                         </label>
                                         <Field
+                                            id="email"
                                             name="email"
                                             type="text"
                                             className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -157,6 +160,7 @@ const CreateUser = () => {
                                             Mật khẩu
                                         </label>
                                         <Field
+                                            id="password"
                                             name="password"
                                             type="password"
                                             className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -174,6 +178,7 @@ const CreateUser = () => {
                                             Nhập lại mật khẩu
                                         </label>
                                         <Field
+                                            id="confirm_password"
                                             name="confirm_password"
                                             type="password"
                                             className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -196,6 +201,7 @@ const CreateUser = () => {
                                             Loại tài khoản
                                         </label>
                                         <Field
+                                            id="status"
                                             className="w-full"
                                             name="status"
                                             component={CustomeSelect}

@@ -12,6 +12,6 @@ categoryRouter.get("/all", controllers.categoryController.getCategoriesWithPagin
 categoryRouter.get("/full", controllers.categoryController.getCategories); //
 categoryRouter.get("/top5", controllers.categoryController.get5Categories); //
 categoryRouter.get("/top8blog", controllers.categoryController.get8BlogCategories); //
-categoryRouter.get("/:category_id", isLogin, controllers.categoryController.getCategory); //
+categoryRouter.get("/:category_id", controllers.categoryController.getCategory); //
 
 export default categoryRouter;

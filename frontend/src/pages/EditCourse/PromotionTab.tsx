@@ -109,6 +109,7 @@ const PromotionTab: React.FC<PromotionTabProps> = () => {
                                     placeholder="Sale price here..."
                                     type="text"
                                     name="sale_price"
+                                    id="sale_price"
                                     className={` w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                         formik.errors.sale_price && formik.touched.sale_price && "border-error"
                                     } `}

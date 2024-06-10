@@ -36,7 +36,7 @@ const ReportTab = () => {
                     <div className="grid grid-cols-2 gap-2 items-center">
                         {reports.length > 0 ? (
                             reports.map((report: any) => {
-                                return <ReportCard report={report} />;
+                                return <ReportCard key={report.report_id} report={report} />;
                             })
                         ) : (
                             <p className="my-1 self-start">Khoá học không có báo cáo nào</p>

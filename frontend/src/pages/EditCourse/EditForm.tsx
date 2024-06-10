@@ -305,7 +305,7 @@ const EditForm: React.FC<props> = (props) => {
                                         <div className="grid grid-cols-2 gap-10 shrink-0 mb-2">
                                             <div>
                                                 <label
-                                                    htmlFor="title"
+                                                    htmlFor="categories"
                                                     className="text-sm mb-1 font-medium tablet:text-xl"
                                                 >
                                                     Danh mục
@@ -318,6 +318,7 @@ const EditForm: React.FC<props> = (props) => {
                                                     } rounded-md mt-1`}
                                                 >
                                                     <Field
+                                                        id="categories"
                                                         name="categories"
                                                         component={CustomeSelect}
                                                         handleOnchange={(e: any) => handleChangeCategories(e, formik)}
@@ -396,6 +397,7 @@ const EditForm: React.FC<props> = (props) => {
                                                 className="text-[14px] text-error font-medium"
                                             />
                                             <Field
+                                                id="description"
                                                 as="textarea"
                                                 name="description"
                                                 component={TextEditor}

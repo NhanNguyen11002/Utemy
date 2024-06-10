@@ -56,13 +56,15 @@ const CommentSection: React.FC<CommentSectionProps> = (props) => {
                     )}
                 </div>
 
-                <div className="flex flex-row gap-2 my-4 items-center">
-                    <div className="flex flex-col items-center gap-1 w-1/5">
+                <div className="flex flex-row gap-2 my-4 items-center justify-center">
+                    <div className="flex flex-col items-center gap-1 w-1/2 tablet:w-1/5">
                         <h1 className="font-bold text-5xl text-[#EAB308]">{props.averageRating}</h1>
-                        <TotalRating ratingId={1} totalScore={props.averageRating} isForCourse={true} />
+                        <div className="w-full mobile:flex justify-center hidden ">
+                            <TotalRating ratingId={1} totalScore={props.averageRating} isForCourse={true} />
+                        </div>
                         <p className="text-[#EAB308]">Đánh giá</p>
                     </div>
-                    <div className="flex flex-col gap-5 w-4/5">
+                    <div className="flex flex-col gap-5 w-1/2 tablet:w-4/5">
                         {props.ratingPercent.length > 0
                             ? props.ratingPercent.map((rating, index) => {
                                   return (
@@ -119,7 +121,11 @@ const RatingBar: React.FC<RatingBarProps> = (props) => {
                         props.handleOnClick(props.rate);
                     }}
                 >
-                    <progress className={`progress progress-warning w-[85%]`} value={props.values} max="100"></progress>
+                    <progress
+                        className={`progress progress-warning w-[85%] hidden mobile:block`}
+                        value={props.values}
+                        max="100"
+                    ></progress>
                     <DummyRating rate={props.rate} />
                     <h1 className="text-lightblue underline">{props.values}%</h1>
                 </div>

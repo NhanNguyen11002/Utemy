@@ -149,6 +149,7 @@ const PopupEditUser: React.FC<PopupEditUserProps> = (props) => {
                                             <Field
                                                 className="w-full"
                                                 name="status"
+                                                id="status"
                                                 component={CustomeSelect}
                                                 handleOnchange={(e: any) => handleChangeStatus(e, formik)}
                                                 options={roleOptions}

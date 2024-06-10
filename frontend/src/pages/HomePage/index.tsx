@@ -45,7 +45,7 @@ const Home: React.FC = () => {
         <>
             {isGetLoading && <Spin />}
 
-            <div className="flex justify-center my-2 rounded-md">
+            <div className="flex justify-center container my-2 rounded-md">
                 <CarouselUtemy />
             </div>
             <div className="w-full h-fill bg-background_2 ">
@@ -54,7 +54,7 @@ const Home: React.FC = () => {
                 </div>
             </div>
             <div className="container mx-auto">
-                <div className="my-4 px-4">
+                <div className="my-4 px-4 w-full">
                     <h2 className="text-xl tablet:text-4xl font-bold mb-3">
                         Khóa học <span className="text-lightblue"> nổi tiếng </span>
                     </h2>
@@ -63,7 +63,7 @@ const Home: React.FC = () => {
                         <CarouselCourse courses={top10Enrolled} type="enrolled" />
                     </div>
                 </div>
-                <div className="my-4 px-4">
+                <div className="my-4 px-4 w-full">
                     <h2 className="text-xl tablet:text-4xl font-bold mb-3">
                         Được <span className="text-lightblue">đánh giá cao</span>{" "}
                     </h2>
@@ -83,7 +83,7 @@ const Home: React.FC = () => {
                         </div>
                     </div>
                 )}
-                <div className="my-4 px-4">
+                <div className="my-4 px-4 w-full">
                     <h2 className="text-xl tablet:text-4xl font-bold mb-3">
                         Danh mục <span className="text-lightblue">hàng đầu</span>{" "}
                     </h2>
@@ -113,7 +113,7 @@ const Home: React.FC = () => {
                             <CarouselContent className="">
                                 {top10AuthorEnrolled.map((user, index) => {
                                     return (
-                                        <CarouselItem className="w-full basis-1/2 ">
+                                        <CarouselItem key={index} className="w-full basis-1/2 ">
                                             <LecturerCard key={index} lecturer={user} />
                                         </CarouselItem>
                                     );

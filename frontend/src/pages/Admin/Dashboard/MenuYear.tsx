@@ -30,6 +30,7 @@ const MenuCustomAnimation = () => {
             <DropdownMenuContent>
                 {yearArray.map((year) => (
                     <DropdownMenuItem
+                        key={year}
                         className="hover:bg-navy/50 flex justify-center cursor-pointer"
                         id={year.toString()}
                         onClick={() => handleOnChose(year)}

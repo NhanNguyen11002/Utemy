@@ -42,20 +42,10 @@ const BlogDetail: React.FC = () => {
     const isBetweenBotAndMiddle = (el: any) => {
         return el.getBoundingClientRect().bottom <= (window.innerHeight * 2) / 3;
     };
-    // const increaseViewBlog = () => {
-    //     console.log("First view", isFirstViewed);
-    //     if (isFirstViewed) {
-    //         setIsFirstViewed(false);
-    //         dispatch(blogActions.increaseViewBlog(slug as string)).then((res) => {
-    //             if (res.payload && res.payload.status_code === 200) setIsFirstViewed(false);
-    //         });
-    //     }
-    // };
     const trackScrolling = () => {
-        const wrappedElement = authorRef.current;
-
+        const topAuthor = authorRef.current;
         const bottomAuthor = bottomAuthorRef.current;
-        if (isMiddle(wrappedElement)) {
+        if (isMiddle(topAuthor)) {
             setIsVisible(true);
         } else setIsVisible(false);
 
@@ -63,7 +53,6 @@ const BlogDetail: React.FC = () => {
         else setIsVisible(true);
     };
     const trackViewIncrease = () => {
-        console.log("trackViewIncrease");
         const contentElement = contentRef.current;
         if (isBottom(contentElement)) {
             window.removeEventListener("scroll", trackViewIncrease);
@@ -93,7 +82,7 @@ const BlogDetail: React.FC = () => {
             {isGetLoading && <Spin />}
             <div className="w-full min-h-[600px] mb-20 relative">
                 <div
-                    className={`fixed  w-[100px] h-[300px] top-1/4 left-[20%] transition-all duration-300 ${isVisible ? "" : "opacity-0"}`}
+                    className={`fixed  w-[100px] h-[300px] top-1/4 laptop:left-[20%] transition-all duration-300 ${isVisible ? "" : "opacity-0"}`}
                 >
                     <div className="w-full h-full items-center flex flex-col gap-4">
                         <div className="flex flex-col items-center">
@@ -119,13 +108,14 @@ const BlogDetail: React.FC = () => {
                         {stage === "production" && <ShareButton />}
                     </div>
                 </div>
-                <div id="pivot" className="flex flex-col gap-5 items-start w-[800px] h-fit mx-auto relative">
+                <div id="pivot" className="flex flex-col gap-5 items-start max-w-[800px] h-fit mx-auto relative">
                     <div className="bg-background p-10 ql-snow flex flex-col gap-5 ">
                         <div className="flex gap-1 mx-4 mb-2">
                             {blog.categories.length > 0 &&
                                 blog.categories.map((category) => {
                                     return (
                                         <Link
+                                            key={category.category_id}
                                             to={`/blog/category/${category.category_id}`}
                                             className="text-sm hover:underline hover:cursor-pointer underline-offset-1 font-semibold text-gray-500"
                                         >

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Spin, BlogCardLong, Pagination } from "../../components";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { blogActions, categoryActions } from "../../redux/slices";
 
 const BlogCategory: React.FC = () => {
@@ -24,9 +24,12 @@ const BlogCategory: React.FC = () => {
     const totalRecord = useAppSelector((state) => state.blogSlice.totalRecord) || 0;
     const category = useAppSelector((state) => state.categorySlice.category) || {};
     useEffect(() => {
-        if (!category_id) navigate("/404");
         dispatch(blogActions.searchBlogUserWithPagination({ pageIndex, category: [cateId], searchItem: "" }));
-        dispatch(categoryActions.getCategory(cateId));
+        dispatch(categoryActions.getCategory(cateId)).then((res) => {
+            if (res.payload && res.payload.status_code !== 200) {
+                navigate("/404");
+            }
+        });
     }, [dispatch, pageIndex, cateId]);
     return (
         <>
@@ -38,7 +41,7 @@ const BlogCategory: React.FC = () => {
                         <p className="line-clamp-4 text-xl">{category.description}</p>
                     </div>
                 </div>
-                <div className="w-1/2 h-full flex items-center justify-center">
+                <div className="w-0 hidden tablet:flex tablet:w-1/2 h-full items-center justify-center">
                     <img src={category.url_image} alt={category.title} className="w-auto h-[220px]" />
                 </div>
             </div>

@@ -149,6 +149,7 @@ const CreateCourse: FC = () => {
                                                 </div>
                                                 <Field
                                                     name="thumbnail"
+                                                    id="thumbnail"
                                                     type="file"
                                                     value={undefined}
                                                     className="file-input file-input-bordered file-input-info w-full max-w-xs"
@@ -180,6 +181,7 @@ const CreateCourse: FC = () => {
                                                 </div>
                                                 <Field
                                                     name="trailer"
+                                                    id="trailer"
                                                     type="file"
                                                     value={undefined}
                                                     className="file-input file-input-bordered file-input-info w-full max-w-xs"
@@ -235,6 +237,7 @@ const CreateCourse: FC = () => {
                                         <Field
                                             type="text"
                                             name="title"
+                                            id="title"
                                             className={`${
                                                 formik.errors.title && formik.touched.title ? "border-error" : ""
                                             } px-2 py-4 rounded-lg border-[1px] outline-none w-full`}
@@ -258,6 +261,7 @@ const CreateCourse: FC = () => {
                                                     <Field
                                                         type="text"
                                                         name="price"
+                                                        id="price"
                                                         className={`${
                                                             formik.errors.price && formik.touched.price
                                                                 ? "border-error"
@@ -280,7 +284,7 @@ const CreateCourse: FC = () => {
                                             <div className="flex flex-col w-1/2 gap-4">
                                                 <div>
                                                     <label
-                                                        htmlFor="category"
+                                                        htmlFor=""
                                                         className="text-sm mb-1 font-medium tablet:text-xl"
                                                     >
                                                         Danh mục
@@ -293,6 +297,7 @@ const CreateCourse: FC = () => {
                                                         } border-[1px] rounded-md`}
                                                     >
                                                         <Field
+                                                            id="categories"
                                                             name="categories"
                                                             component={CustomeSelect}
                                                             handleOnchange={(e: any) =>
@@ -331,6 +336,7 @@ const CreateCourse: FC = () => {
                                         <Field
                                             type="text"
                                             name="summary"
+                                            id="summary"
                                             className={`${
                                                 formik.errors.summary && formik.touched.summary ? "border-error" : ""
                                             } w-full h-[68px] rounded-[8px] px-[8px] border-[1px] outline-none`}
@@ -342,10 +348,7 @@ const CreateCourse: FC = () => {
                                         />
                                     </div>
                                     <div className="flex-1 flex flex-col w-full h-[300px]">
-                                        <label
-                                            htmlFor="description"
-                                            className="text-sm mb-1 font-medium tablet:text-xl"
-                                        >
+                                        <label htmlFor="" className="text-sm mb-1 font-medium tablet:text-xl">
                                             Mô tả
                                         </label>
                                         <ErrorMessage
@@ -356,6 +359,7 @@ const CreateCourse: FC = () => {
                                         <Field
                                             as="textarea"
                                             name="description"
+                                            id="description"
                                             component={TextEditor}
                                             handleChangeDescription={(description: string) =>
                                                 handleDescriptionChange(description, formik)

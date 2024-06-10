@@ -35,6 +35,7 @@ const QuestionCounter: React.FC<QuestionCounterProps> = (props) => {
                     {loopArray.map((item, index) => {
                         return (
                             <DropdownMenuItem
+                                key={index}
                                 onClick={() => handleChoseQuestion(index)}
                                 className={`hover:bg-gray-300 my-1 w-full flex justify-center h-full ${
                                     index === props.questionIndex ? "bg-gray-200" : ""
