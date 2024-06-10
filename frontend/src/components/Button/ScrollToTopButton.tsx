@@ -32,7 +32,7 @@ const ScrollToTopButton = () => {
             onClick={scrollToTop}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className={`fixed bottom-10 right-10 transition-all duration-300 z-1 cursor-pointer rounded-full bg-info text-white ${visible ? " h-16 w-16" : " h-0 w-0"}`}
+            className={`fixed bottom-10 left-10 transition-all duration-300 z-1 cursor-pointer rounded-full bg-info text-white ${visible ? " h-16 w-16" : " h-0 w-0"}`}
         >
             <ArrowUpIcon
                 className={`h-6 w-6 text-white inline transition-all duration-300 ${visible ? "block " : "hidden"} ${hovered ? " -translate-y-1" : ""}`}
