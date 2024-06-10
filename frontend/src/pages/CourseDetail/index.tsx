@@ -26,7 +26,7 @@ import CommentSection from "./CommentSection";
 import constants from "../../constants";
 import { calDayRemains, getCourseIncludes, convertStringDate } from "../../utils/helper";
 // import { orderLesson } from "../../types/lesson";
-import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 import "react-quill/dist/quill.snow.css";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 
@@ -234,7 +234,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                             href={`/lecturer/course/edit/${courseDetail.course_id}`}
                             className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300"
                         >
-                            <ArrowLeftEndOnRectangleIcon className="w-5 h-5" />
+                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
                             <p className="text-lg"> Quay lại chỉnh sửa</p>
                         </a>
                         <div className="w-[230px] h-px bg-gray-300"></div>
@@ -243,7 +243,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                 {isAdmin && (
                     <Link to={`/admin/course/${slug}`}>
                         <div className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300">
-                            <ArrowLeftEndOnRectangleIcon className="w-5 h-5" />
+                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
                             <p className="text-lg"> Quay lại quản lý</p>
                         </div>
                     </Link>

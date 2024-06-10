@@ -1,6 +1,7 @@
 import React from "react";
 import { images } from "../../assets/index";
 import { useNavigate } from "react-router-dom";
+import FloatButton from "../Button/FloatButton";
 
 const Footer: React.FC = () => {
     const navigate = useNavigate();
@@ -71,6 +72,7 @@ const Footer: React.FC = () => {
 
                 <p className="font-medium">Copyright © 2023 - All right reserved by Utemy</p>
             </footer>
+            <FloatButton/>
         </>
     );
 };

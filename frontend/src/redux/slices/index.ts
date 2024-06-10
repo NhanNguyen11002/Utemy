@@ -24,4 +24,6 @@ export * as commentActions from "./comment.slice";
 export * as replyCommentActions from "./replycomment.slice";
 export * as certifierActions from "./certifier.slice";
 export * as blogActions from "./blog.slice";
+export * as boxChatActions from "./boxchat.slice";
+
 

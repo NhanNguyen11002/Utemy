@@ -8,7 +8,7 @@ type StatisticBarChartProps = {
     name: string;
     data: number[];
     categories: any[];
-    footer: string;
+    footer: any;
 };
 const StatisticsBarChart: React.FC<StatisticBarChartProps> = ({
     color,

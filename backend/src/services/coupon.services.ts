@@ -272,10 +272,62 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                     });
                     if (isCouponExist) {
                         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
-                    } else return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+                    } else console.log(isCouponExist);
+                    return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
                 } else return new ResponseError(404, constants.error.ERROR_COUPON_USED, false);
             }
-        } else return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+            // } else console.log("acv:", couponOwnersWithCouponInfo);
+            // return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+        } else {
+            const isUsedCoupon = await configs.db.couponHistory.findFirst({
+                where: {
+                    user_id: user_id,
+                    coupon: {
+                        code: code,
+                    },
+                    is_from_event: false,
+                },
+                select: {
+                    user_id: true,
+                    coupon: {
+                        select: {
+                            code: true,
+                        },
+                    },
+                },
+            });
+            if (!isUsedCoupon) {
+                // Nếu không có dữ liệu trong bảng coupon_owner và chưa có lịch sử sd cp đó, tiếp tục kiểm tra trong bảng coupon
+                const isCouponExist = await configs.db.coupon.findFirst({
+                    where: {
+                        code: code,
+                        is_delete: false,
+                        is_event: false,
+                        valid_until: {
+                            gt: new Date(),
+                        },
+                        valid_start: {
+                            lt: new Date(),
+                        },
+                        remain_quantity: {
+                            gt: 0,
+                        },
+                    },
+                    select: {
+                        id: true,
+                        code: true,
+                        discount: true,
+                        valid_until: true,
+                        max_discount_money: true,
+                        remain_quantity: true,
+                    },
+                });
+                if (isCouponExist) {
+                    return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, isCouponExist);
+                } else console.log(isCouponExist);
+                return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
+            } else return new ResponseError(404, constants.error.ERROR_COUPON_USED, false);
+        }
     } catch (error) {
         // Xử lý trường hợp coupon không tồn tại
         if (error instanceof PrismaClientKnownRequestError) {
@@ -630,7 +682,7 @@ const getCouponByIdOnDate = async (req: IRequestWithId): Promise<ResponseBase> =
             },
             include: {
                 ratio: true,
-            }
+            },
         });
         if (isCouponExist) {
             const isCouponUse = await configs.db.couponHistory.findFirst({
@@ -675,7 +727,7 @@ const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
             include: {
                 ratio: true,
-            }
+            },
         });
         if (isCouponExist) {
             const isCouponUse = await configs.db.couponHistory.findFirst({
@@ -750,8 +802,8 @@ const getVoucherBySpin = async (req: IRequestWithId): Promise<ResponseBase> => {
             console.log(`Voucher valid until: ${validUntilDate}, Current date: ${currentDate}`);
             return validUntilDate >= currentDate;
         });
-        
-                const validVoucherData = validVouchers.map((voucherSpin) => ({
+
+        const validVoucherData = validVouchers.map((voucherSpin) => ({
             code: voucherSpin.coupon.code,
             valid_start: voucherSpin.coupon.valid_start,
             valid_until: voucherSpin.coupon.valid_until,

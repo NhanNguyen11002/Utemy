@@ -56,6 +56,7 @@ import BlogHome from "./pages/BlogHome";
 import BlogCategory from "./pages/BlogCategory";
 import BlogDetail from "./pages/BlogDetail";
 import BlogSearch from "./pages/BlogSearch";
+import DashboardLecturer from "./pages/DashboardLecturer";
 function App() {
     const dispatch = useAppDispatch();
 
@@ -145,6 +146,7 @@ function App() {
                                 <Route path="course/edit/:course_id" element={<EditCourse />}></Route>
                                 <Route path="course-detail/:slug" element={<CourseDetail isLogin={isLogin} />}></Route>
                                 <Route path="quiz" element={<Quiz />}></Route>
+                                <Route path="dashboard" element={<DashboardLecturer />}></Route>
                             </Route>
                         </Route>
                         <Route path="course-detail/:slug/watch" element={<UserWatchVideoLayout />}>

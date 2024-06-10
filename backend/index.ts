@@ -44,6 +44,7 @@ app.use("/api/certifier", routes.certifierRouter);
 app.use("/api/blog", routes.blogRouter);
 app.use("/api/commentblog", routes.commentBlogRouter);
 app.use("/api/reactioncommentblog", routes.reactionCommentBlogRouter);
+app.use("/api/boxchat", routes.boxchatRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
