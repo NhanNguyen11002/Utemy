@@ -70,6 +70,7 @@ function App() {
                 dispatch(cartActions.getAllCart());
             });
         }
+        localStorage.removeItem('messages');
     }, [dispatch]);
     useEffect(() => {
         dispatch(eventActions.getActiveEvent());

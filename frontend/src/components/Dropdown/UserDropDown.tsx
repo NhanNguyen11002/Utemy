@@ -20,6 +20,7 @@ const UserDropDown: React.FC = () => {
     const navigate = useNavigate();
     const handleLogout = () => {
         dispatch(authActions.logout());
+        localStorage.removeItem('messages');
         navigate("/");
     };
 
