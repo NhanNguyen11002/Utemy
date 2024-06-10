@@ -52,20 +52,19 @@ const FloatButton = () => {
 
     if (messageEndRef.current) {
         setTimeout(() => {
-            if(messageEndRef.current)
-                messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+            if (messageEndRef.current) messageEndRef.current.scrollIntoView({ behavior: "smooth" });
         }, 100); // Đợi 100ms trước khi cuộn
-      }
+    }
     const handleOpen = () => {
         setOpen(true);
     };
 
     const handleClose = () => {
-        const storedMessages = localStorage.getItem('messages');
-    if (storedMessages) {
-        // Nếu có, phục hồi lại danh sách tin nhắn từ dữ liệu lưu trữ
-        setMessages(JSON.parse(storedMessages));
-    }
+        const storedMessages = localStorage.getItem("messages");
+        if (storedMessages) {
+            // Nếu có, phục hồi lại danh sách tin nhắn từ dữ liệu lưu trữ
+            setMessages(JSON.parse(storedMessages));
+        }
         setOpen(false);
     };
     const addMessage = (text: string, sender: string) => {
@@ -74,7 +73,7 @@ const FloatButton = () => {
     };
     const [inputText, setInputText] = useState("");
     useEffect(() => {
-        const storedMessages = localStorage.getItem('messages');
+        const storedMessages = localStorage.getItem("messages");
         if (storedMessages) {
             setMessages(JSON.parse(storedMessages));
         }
@@ -93,7 +92,7 @@ const FloatButton = () => {
                 }
             });
         }
-        localStorage.setItem('messages', JSON.stringify(messages));
+        localStorage.setItem("messages", JSON.stringify(messages));
     }, [messages, dispatch]);
     const handleSendMessage = () => {
         if (inputText.trim() !== "") {
@@ -103,7 +102,7 @@ const FloatButton = () => {
         }
     };
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
+        if (event.key === "Enter") {
             handleSendMessage();
         }
     };
@@ -117,7 +116,7 @@ const FloatButton = () => {
             <Fab
                 color="primary"
                 aria-label="add"
-                style={{ position: "fixed", bottom: 20, right: 20 }}
+                style={{ position: "fixed", bottom: 40, right: 40 }}
                 onClick={handleOpen}
             >
                 <ChatBubbleBottomCenterTextIcon />
@@ -142,17 +141,36 @@ const FloatButton = () => {
                                 <Avatar>A</Avatar>
                             </Grid>
                             <Grid item>
-                                <Typography variant="h5" component="h2" style={{ color: "#000000", fontSize: "20px", fontWeight: "bold" }}>
+                                <Typography
+                                    variant="h5"
+                                    component="h2"
+                                    style={{ color: "#000000", fontSize: "20px", fontWeight: "bold" }}
+                                >
                                     Trợ lí ảo UtemyVietNam
                                 </Typography>
                             </Grid>
                         </Grid>
                     </Box>
-                    <Box sx={{ p: 2, backgroundColor: "#ffffff", height: "500px", overflowY: "scroll", border: "2px solid #64b5f6", borderRadius: "0 0 0 0" }}>
+                    <Box
+                        sx={{
+                            p: 2,
+                            backgroundColor: "#ffffff",
+                            height: "500px",
+                            overflowY: "scroll",
+                            border: "2px solid #64b5f6",
+                            borderRadius: "0 0 0 0",
+                        }}
+                    >
                         <List>
                             {messages.map((message, index) =>
                                 message.sender === "user" ? (
-                                    <Grid container justifyContent="flex-end" alignItems="start" spacing={1} key={index}>
+                                    <Grid
+                                        container
+                                        justifyContent="flex-end"
+                                        alignItems="start"
+                                        spacing={1}
+                                        key={index}
+                                    >
                                         <Grid item>
                                             <UserMessageCard>
                                                 <Typography>{message.text}</Typography>
@@ -163,7 +181,13 @@ const FloatButton = () => {
                                         </Grid>
                                     </Grid>
                                 ) : (
-                                    <Grid container justifyContent="flex-start" alignItems="start" spacing={1} key={index}>
+                                    <Grid
+                                        container
+                                        justifyContent="flex-start"
+                                        alignItems="start"
+                                        spacing={1}
+                                        key={index}
+                                    >
                                         <Grid item>
                                             <Avatar>{message.sender.charAt(0).toUpperCase()}</Avatar>
                                         </Grid>
@@ -197,7 +221,7 @@ const FloatButton = () => {
                                 right: "20px",
                                 top: "50%",
                                 transform: "translateY(-50%)",
-                                backgroundColor: "#ffffff"
+                                backgroundColor: "#ffffff",
                             }}
                         >
                             <PaperAirplaneIcon className="w-6 h-6 text-black-500 ml-1" />
@@ -215,6 +239,5 @@ const FloatButton = () => {
         </>
     );
 };
-
 
 export default FloatButton;
