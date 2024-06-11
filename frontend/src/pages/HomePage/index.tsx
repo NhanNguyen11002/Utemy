@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Spin, Carousel as CarouselUtemy } from "../../components";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { categoryActions, courseActions, userActions } from "../../redux/slices";
+import { categoryActions, courseActions, eventActions, userActions } from "../../redux/slices";
 import { Course as CourseType } from "../../types/course";
 import { EnrolledAuthor } from "../../types/user";
 import CategoryCard from "./CategoryCard";
@@ -35,6 +35,7 @@ const Home: React.FC = () => {
         dispatch(courseActions.getTop10Sale());
         dispatch(userActions.getTop10AuthorByEnrolled());
         dispatch(categoryActions.get5Categories());
+        dispatch(eventActions.getActiveEvent());
         // dispatch(eventActions.getActiveEvent());
     }, [dispatch]);
     // useEffect(() => {

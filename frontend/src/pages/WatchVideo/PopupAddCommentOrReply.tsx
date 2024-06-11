@@ -46,7 +46,8 @@ const PopUpAddCommentOrReply: React.FC<PopUpAddCommentOrReplyProps> = ({ onSave,
                         {isSaving ? <span className="loading loading-spinner"></span> : ""}
                         {isSaving ? "Loading..." : "Lưu"}
                     </button>
-                    <button type="button" className="btn text-lg ml-2" onClick={handleCancel}>
+                    <button type="button" className="btn text-lg ml-2" onClick={handleCancel}disabled={isSaving}
+                    >
                         Hủy
                     </button>
                 </div>

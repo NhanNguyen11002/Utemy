@@ -280,7 +280,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                                 {isSavingPopUpAdd ? <span className="loading loading-spinner"></span> : ""}
                                 {isSavingPopUpAdd ? "Loading..." : "Lưu"}
                                 </button>
-                                <button type="button" className="btn text-lg ml-2" onClick={toggleEditMode}>
+                                <button type="button" className="btn text-lg ml-2" onClick={toggleEditMode} disabled={isSavingPopUpAdd}
+                                >
                                     Hủy
                                 </button>
                             </>

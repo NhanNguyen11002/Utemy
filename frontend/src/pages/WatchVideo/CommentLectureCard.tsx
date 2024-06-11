@@ -305,6 +305,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                 <button
                                     type="button" className="btn text-lg ml-2"
                                     onClick={() =>toggleEditMode(props.comment.comment_id)}
+                                    disabled={isLoading}
                                 >
                                     Hủy
                                 </button>
