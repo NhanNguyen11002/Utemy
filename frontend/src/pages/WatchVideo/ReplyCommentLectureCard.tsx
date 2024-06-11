@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { images } from "../../assets";
 import { ReplyComment } from "@/types/replycomment";
 import { DeleteModal } from "../../components";
-import { commentActions, reactionActions, replyCommentActions } from "../../redux/slices";
-import { useAppDispatch } from "../../hooks/hooks";
+import { boxChatActions, commentActions, reactionActions, replyCommentActions } from "../../redux/slices";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import toast from "react-hot-toast";
 import { HandThumbDownIcon, HandThumbUpIcon } from "@heroicons/react/24/outline";
 import PopUpAddCommentOrReply from "./PopupAddCommentOrReply";
@@ -35,28 +35,34 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
             toast.error("Bình luận không được để trống");
         } else {
             // Xử lý khi nhấn vào nút "Sửa"
-            console.log("Edit button clicked", props.replycomment.content);
-            dispatch(
-                replyCommentActions.updateReplyComment({
-                    reply_id: props.replycomment.reply_id,
-                    content: editedContent,
-                }),
-            ).then((response) => {
-                if (response.payload && response.payload.status_code === 200) {
-                    toast.success(response.payload.message);
+            // console.log("Edit button clicked", props.replycomment.content);
+            dispatch(boxChatActions.checkValidateComment({ content: editedContent })).then((response) => {
+                if (response.payload && response.payload.data.isValid === true) {
                     dispatch(
-                        commentActions.getCommentsWithPaginationByCourseId({
-                            course_id: props.courseId,
-                            values: {
-                                pageIndex: 1,
-                            },
+                        replyCommentActions.updateReplyComment({
+                            reply_id: props.replycomment.reply_id,
+                            content: editedContent,
                         }),
-                    );
+                    ).then((response) => {
+                        if (response.payload && response.payload.status_code === 200) {
+                            toast.success(response.payload.message);
+                            dispatch(
+                                commentActions.getCommentsWithPaginationByCourseId({
+                                    course_id: props.courseId,
+                                    values: {
+                                        pageIndex: 1,
+                                    },
+                                }),
+                            );
+                        } else {
+                            if (response.payload) toast.error(response.payload.message);
+                        }
+                    });
+                    toggleEditMode();
                 } else {
-                    if (response.payload) toast.error(response.payload.message);
+                    if (response.payload && response.payload.message) toast.error(response.payload?.message);
                 }
             });
-            toggleEditMode();
         }
     };
     const [liked, setLiked] = useState(false);
@@ -231,6 +237,8 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
     const togglePopup = () => {
         setShowPopup(!showPopup); // Khi nhấn nút "Trả lời", toggle hiển thị Popup
     };
+    const isSavingPopUpAdd= useAppSelector(state => state.boxchatSlice.isGetLoading);  // Thêm state để theo dõi trạng thái đang lưu
+
     return (
         <div>
             <div className={`flex items-start justify-between w-full h-full rounded-lg my-0`}>
@@ -268,16 +276,11 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                     <div className="flex justify-end items-center mt-2">
                         {editMode ? (
                             <>
-                                <button
-                                    type="submit" className="text-white btn btn-info text-lg"
-                                    onClick={handleEdit}
-                                >
-                                    Lưu
+                                <button type="submit" className="text-white btn btn-info text-lg" onClick={handleEdit} disabled= {isSavingPopUpAdd}>
+                                {isSavingPopUpAdd ? <span className="loading loading-spinner"></span> : ""}
+                                {isSavingPopUpAdd ? "Loading..." : "Lưu"}
                                 </button>
-                                <button
-                                    type="button" className="btn text-lg ml-2"
-                                    onClick={toggleEditMode}
-                                >
+                                <button type="button" className="btn text-lg ml-2" onClick={toggleEditMode}>
                                     Hủy
                                 </button>
                             </>
@@ -398,26 +401,37 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                     {showPopup && (
                         <PopUpAddCommentOrReply
                             onSave={(content) => {
-                                dispatch(
-                                    replyCommentActions.createReplyComment({
-                                        content: content,
-                                        comment_id: props.commentId,
-                                    }),
-                                ).then((response) => {
-                                    if (response.payload && response.payload.status_code === 200) {
-                                        // Phản hồi thành công từ createComment, dispatch action mới ở đây
+                                dispatch(boxChatActions.checkValidateComment({ content: content })).then((response) => {
+                                    if (response.payload && response.payload.data.isValid === true) {
                                         dispatch(
-                                            commentActions.getCommentsWithPaginationByCourseId({
-                                                course_id: props.courseId,
-                                                values: {
-                                                    pageIndex: 1,
-                                                },
+                                            replyCommentActions.createReplyComment({
+                                                content: content,
+                                                comment_id: props.commentId,
                                             }),
-                                        );
+                                        ).then((response) => {
+                                            if (response.payload && response.payload.status_code === 200) {
+                                                // Phản hồi thành công từ createComment, dispatch action mới ở đây
+                                                dispatch(
+                                                    commentActions.getCommentsWithPaginationByCourseId({
+                                                        course_id: props.courseId,
+                                                        values: {
+                                                            pageIndex: 1,
+                                                        },
+                                                    }),
+                                                );
+                                                setShowPopup(!showPopup); 
+                                            }
+                                        });
+                                    } else {
+                                        if (response.payload && response.payload.message)
+                                            toast.error(response.payload?.message);
                                     }
-                                });
+                                })
+                                
                             }}
+                            isSaving={isSavingPopUpAdd} // Đóng Popup khi nhấn Hủy
                             onCancel={togglePopup} // Đóng Popup khi nhấn Hủy
+                            addMode= {showPopup}
                         />
                     )}
                     {showDeleteModal && <DeleteModal handleDelete={handleDelete} handleCancel={handleCancel} />}

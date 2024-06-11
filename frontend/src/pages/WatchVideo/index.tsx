@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { courseActions, lectureActions, testActions, progressActions, commentActions } from "../../redux/slices";
+import { courseActions, lectureActions, testActions, progressActions, commentActions, boxChatActions } from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
 import { VideoPlayer, Spin, WatchVideoHeader, UserToolDropdown, FinalTestCard } from "../../components";
@@ -17,6 +17,7 @@ import CommentLectureCard from "./CommentLectureCard";
 import PopUpAddComment from "./PopupAddCommentOrReply"; // Import PopUpAddComment component
 import "react-quill/dist/quill.snow.css";
 import { Pagination } from "../../components";
+import toast from "react-hot-toast";
 
 const WatchVideo: React.FC = () => {
     const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin) ?? false;
@@ -136,6 +137,9 @@ const WatchVideo: React.FC = () => {
     const handleCommentSave = (commentId: number) => {
         setEditModes((prevModes) => ({ ...prevModes, [commentId]: false }));
     };
+    const isSavingPopUpAdd = useAppSelector(state => state.boxchatSlice.isGetLoading);
+    // Thêm state để theo dõi trạng thái đang lưu
+
     if (role === constants.util.ROLE_USER && !isAdmin) return <NotFound />;
     if (isNotFound) return <NotFound />;
 
@@ -231,27 +235,31 @@ const WatchVideo: React.FC = () => {
                 {showAddCommentModal && (
                     <PopUpAddComment
                         onSave={(commentContent: any) => {
-                            // Dispatch action để lưu bình luận
-                            dispatch(
-                                commentActions.createComment({
-                                    content: commentContent,
-                                    lecture_id: lecture.lecture_id,
-                                }),
-                            ).then((response) => {
-                                if (response.payload && response.payload.status_code === 200) {
-                                    // Phản hồi thành công từ createComment, dispatch action mới ở đây
+                            dispatch(boxChatActions.checkValidateComment({content: commentContent})).then((response) => {
+                                if (response.payload && response.payload.data.isValid === true) {
+                                    // Dispatch action để lưu bình luận
                                     dispatch(
-                                        commentActions.getCommentsWithPaginationByCourseId({
-                                            course_id: courseDetail.course_id,
-                                            values: {
-                                                pageIndex: 1,
-                                            },
+                                        commentActions.createComment({
+                                            content: commentContent,
+                                            lecture_id: lecture.lecture_id,
                                         }),
-                                    );
-                                }
-                            });
+                                    ).then((response) => {
+                                        if (response.payload && response.payload.status_code === 200) {
+                                            // Phản hồi thành công từ createComment, dispatch action mới ở đây
+                                            dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:courseDetail.course_id, values: {
+                                                pageIndex: 1
+                                            }}));
+                                            setShowAddCommentModal(!showAddCommentModal);                                             }
+                                    });
+                                } else {
+                                    if (response.payload && response.payload.message)
+                                        toast.error(response.payload?.message);
+                        
+                                }})
                         }}
+                        isSaving={isSavingPopUpAdd} // Đóng Popup khi nhấn Hủy
                         onCancel={() => setShowAddCommentModal(false)}
+                        addMode={showAddCommentModal}
                     />
                 )}
 

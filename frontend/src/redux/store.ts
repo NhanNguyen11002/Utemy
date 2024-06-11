@@ -25,7 +25,7 @@ import commentSlice from "./slices/comment.slice";
 import replyCommentSlice from "./slices/replycomment.slice";
 import certifierSlice from "./slices/certifier.slice";
 import blogSlice from "./slices/blog.slice";
-
+import boxchatSlice from "./slices/boxchat.slice";
 // import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
 // import { composeWithDevTools } from "redux-devtools-extension";
 
@@ -57,6 +57,7 @@ const store = configureStore({
         replyCommentSlice,
         certifierSlice,
         blogSlice,
+        boxchatSlice,
         // fileStorageSlice: fileStorageSlice,
     },
     middleware: (getDefaultMiddleware) =>

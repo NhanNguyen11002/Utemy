@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Fab from "@mui/material/Fab";
-// import Button from "@mui/material/Button";
+import logoUtemy from "../../assets/images/utemy_chatbox.jpeg";
 import ChatBubbleBottomCenterTextIcon from "@heroicons/react/24/outline/ChatBubbleBottomCenterTextIcon";
 // import Box from '@mui/material/Box';
 import Typography from "@mui/material/Typography";
@@ -138,7 +138,7 @@ const FloatButton = () => {
                     <Box sx={{ p: 2, backgroundColor: "#e3f2fd", borderRadius: "20px 20px 0 0" }}>
                         <Grid container alignItems="center" spacing={1}>
                             <Grid item>
-                                <Avatar>A</Avatar>
+                                <Avatar src= {logoUtemy}></Avatar>
                             </Grid>
                             <Grid item>
                                 <Typography
@@ -177,7 +177,7 @@ const FloatButton = () => {
                                             </UserMessageCard>
                                         </Grid>
                                         <Grid item>
-                                            <Avatar>{user.url_avatar}</Avatar>
+                                        <Avatar src={user.url_avatar}>{user.url_avatar ? "" : user.last_name.charAt(0)}</Avatar>
                                         </Grid>
                                     </Grid>
                                 ) : (
@@ -189,7 +189,7 @@ const FloatButton = () => {
                                         key={index}
                                     >
                                         <Grid item>
-                                            <Avatar>{message.sender.charAt(0).toUpperCase()}</Avatar>
+                                            <Avatar src= {logoUtemy}> </Avatar>
                                         </Grid>
                                         <Grid item>
                                             <ResponseMessageCard>
@@ -207,24 +207,24 @@ const FloatButton = () => {
                             label="Type your message"
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            fullWidth
+                            onKeyDown={handleKeyPress}
+                            // fullWidth
                             variant="outlined"
                             margin="normal"
-                            style={{ backgroundColor: "#ffffff" }}
+                            style={{ backgroundColor: "#ffffff", width: "90%"}}
                         />
                         <IconButton
                             onClick={handleSendMessage}
                             color="primary"
                             style={{
                                 position: "absolute",
-                                right: "20px",
-                                top: "50%",
+                                right: "10px",
+                                top: "53%",
                                 transform: "translateY(-50%)",
-                                backgroundColor: "#ffffff",
+                                backgroundColor: "#e3f2fd",
                             }}
                         >
-                            <PaperAirplaneIcon className="w-6 h-6 text-black-500 ml-1" />
+                            <PaperAirplaneIcon className="w-8 h-8 text-black-500 ml-1" />
                         </IconButton>
                     </Box>
                     <IconButton

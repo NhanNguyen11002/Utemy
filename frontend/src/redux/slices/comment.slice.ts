@@ -75,7 +75,7 @@ export const getCommentsWithPaginationByCourseId = createAsyncThunk<
         return ThunkAPI.rejectWithValue(error.data as Response<null>);
     }
 });
-type CouponSliceType = {
+type CommentSliceType = {
     comment: CreateUpdateComment;
     comments: Comment[];
     totalPage: number;
@@ -83,7 +83,7 @@ type CouponSliceType = {
     isLoading: boolean;
     isGetLoading: boolean;
 };
-const initialState: CouponSliceType = {
+const initialState: CommentSliceType = {
     isLoading: false,
     isGetLoading: false,
     totalPage: 0,
@@ -122,6 +122,7 @@ const replyCommentSlice = createSlice({
             })
             .addCase(updateComment.pending, (state) => {
                 state.isLoading = true;
+                // state.isGetLoading = true;
             })
             .addCase(updateComment.fulfilled, (state) => {
                 state.isLoading = false;

@@ -10,4 +10,8 @@ export default class BoxChatController {
         const response: ResponseBase = await services.BoxChatServices.submitQuestion(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async checkValidateComment(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.BoxChatServices.checkValidateComment(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

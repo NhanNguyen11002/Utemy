@@ -5,5 +5,11 @@ const submitQuestion = async (content: string) => {
     const reponse = await apiCaller("POST", path, {content});
     return reponse;
 };
-const boxChatApis ={submitQuestion};
+const checkValidateComment = async (content: string) => {
+    const path = "boxchat/check";
+
+    const reponse = await apiCaller("POST", path, {content});
+    return reponse;
+};
+const boxChatApis ={submitQuestion, checkValidateComment};
 export default boxChatApis;

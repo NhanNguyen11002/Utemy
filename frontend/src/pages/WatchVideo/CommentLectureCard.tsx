@@ -4,7 +4,7 @@ import { Comment } from "@/types/comment";
 import { ReplyComment } from "@/types/replycomment";
 import ReplyCommentLectureCard from "./ReplyCommentLectureCard";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { commentActions, reactionActions, replyCommentActions } from "../../redux/slices";
+import { boxChatActions, commentActions, reactionActions, replyCommentActions } from "../../redux/slices";
 import toast from "react-hot-toast";
 import { DeleteModal } from "../../components";
 import { HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/outline";
@@ -27,11 +27,12 @@ type CommentLectureCardProps = {
 };
 
 const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
+    const isLoading = useAppSelector(state => state.boxchatSlice.isGetLoading);
     const [showReplies, setShowReplies] = useState(false);
     const isCurrentUserComment = props.userId === props.comment.user.id; // Kiểm tra xem bình luận có phải của người dùng hiện tại không
     const [editMode, setEditMode] = useState(false);
     // const [deleteConfirmation, setDeleteConfirmation] = useState(false);
-    const [showPopup, setShowPopup] = useState(false); // State để kiểm soát việc hiển thị Popup
+    const [showPopup, setShowPopup] = useState(false); 
 
     const [editedContent, setEditedContent] = useState(props.comment.content);
     useEffect(() => {
@@ -61,7 +62,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         setEditingCommentId(null);
     };
     const togglePopup = () => {
-        setShowPopup(!showPopup); // Khi nhấn nút "Trả lời", toggle hiển thị Popup
+            setShowPopup(!showPopup); 
     };
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -90,21 +91,29 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         }
         else {
             console.log("content:", editedContent);
-            dispatch(commentActions.updateComment({ comment_id: props.comment.comment_id, content: editedContent })).then(
-                (response) => {
-                    if (response.payload && response.payload.status_code === 200) {
-                        toast.success(response.payload.message);
-                        dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
-                            pageIndex: 1
-                        }}));
-                    } else {
-                        if (response.payload) toast.error(response.payload.message);
-                    }
-                },
-            );
-            toggleEditMode(props.comment.comment_id);
-            props.onCommentSave(props.comment.comment_id);
-            closeAllEditModes(); // Đóng tất cả các trạng thái chỉnh sửa
+            dispatch(boxChatActions.checkValidateComment({content: editedContent})).then((response) => {
+                if (response.payload && response.payload.data.isValid === true) {
+                    dispatch(commentActions.updateComment({ comment_id: props.comment.comment_id, content: editedContent })).then(
+                        (response) => {
+                            if (response.payload && response.payload.status_code === 200) {
+                                toast.success(response.payload.message);
+                                dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
+                                    pageIndex: 1
+                                }}));
+                            } else {
+                                if (response.payload) toast.error(response.payload.message);
+                            }
+                        },
+                    );
+                    toggleEditMode(props.comment.comment_id);
+                    props.onCommentSave(props.comment.comment_id);
+                    closeAllEditModes(); // Đóng tất cả các trạng thái chỉnh sửa
+                } else {
+                    if (response.payload && response.payload.message)
+                        toast.error(response.payload?.message);
+                
+                }
+            })
         }
         
     };
@@ -245,12 +254,12 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
             }
         }
     };
-    
+    const isSavingPopUpAdd = useAppSelector(state => state.boxchatSlice.isGetLoading);
+
     // const reactions = [
     //     ...props.comment.likes.map((like) => ({ id: like.like_id, ...like })),
     //     ...props.comment.dislikes.map((dislike) => ({ id: dislike.dislike_id, ...dislike })),
     // ];
-
     return (
         <div  className ={"mr-8"}>
             <div className={`flex items-start justify-between w-full h-full rounded-lg my-0`}>
@@ -288,8 +297,10 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                 <button
                                     type="submit" className="text-white btn btn-info text-lg"
                                     onClick={handleEdit}
+                                    disabled={isLoading}
                                 >
-                                    Lưu
+                                    {isLoading ? <span className="loading loading-spinner"></span> : ""}
+                                    {isLoading ? "Loading..." : "Lưu"}
                                 </button>
                                 <button
                                     type="button" className="btn text-lg ml-2"
@@ -398,21 +409,33 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                     {showPopup && (
                         <PopUpAddCommentOrReply
                             onSave={(content) => {
-                                dispatch(
-                                    replyCommentActions.createReplyComment({
-                                        content: content,
-                                        comment_id: props.comment.comment_id,
-                                    }),
-                                ).then((response) => {
-                                    if (response.payload && response.payload.status_code === 200) {
-                                        // Phản hồi thành công từ createComment, dispatch action mới ở đây
-                                        dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
-                                            pageIndex: 1
-                                        }}));
+                                dispatch(boxChatActions.checkValidateComment({content: content})).then((response) => {
+                                    if (response.payload && response.payload.data.isValid === true) {
+                                        dispatch(
+                                            replyCommentActions.createReplyComment({
+                                                content: content,
+                                                comment_id: props.comment.comment_id,
+                                            }),
+                                        ).then((response) => {
+                                            if (response.payload && response.payload.status_code === 200) {
+                                                // Phản hồi thành công từ createComment, dispatch action mới ở đây
+                                                dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
+                                                    pageIndex: 1
+                                                }}));
+                                                setShowPopup(!showPopup);                                             
+                                            }
+                                        });
+                                    } else {
+                                        if (response.payload && response.payload.message)
+                                            toast.error(response.payload?.message);
+                                    
                                     }
-                                });
+                                })
+                                
                             }}
-                            onCancel={togglePopup} // Đóng Popup khi nhấn Hủy
+                            onCancel={togglePopup}
+                            addMode = {showPopup}
+                            isSaving={isSavingPopUpAdd} // Đóng Popup khi nhấn Hủy
                         />
                     )}
                     {showDeleteModal && <DeleteModal handleDelete={handleDelete} handleCancel={handleCancel} />}
