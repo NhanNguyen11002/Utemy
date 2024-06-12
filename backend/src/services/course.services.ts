@@ -1515,6 +1515,7 @@ const getTop10SalesCourses = async (req: Request): Promise<ResponseBase> => {
                 Course.is_delete = false
                 AND Course.status = true
                 AND Course.price - Course.sale_price > 0
+                AND course.sale_until >= now()
             GROUP BY 
                 Course.id
             ORDER BY 

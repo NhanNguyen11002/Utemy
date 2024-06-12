@@ -3,45 +3,31 @@ import { couponActions } from "../../redux/slices";
 import { AppDispatch } from "@/redux/store";
 import React, { useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette";
-// import { WheelData } from 'react-custom-roulette/dist/components/Wheel/types'; // Import WheelData type
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 
 // Define props interface
 interface Props {
     discounts: WheelData[]; // Define props type
-    onSpinResult: (result: WheelData | null) => void; // Define prop for handling spin result, accepts null as well
+    onSpinResult: (result: WheelData | null) => void; 
 }
 interface WheelData {
     option?: string;
     coupon?: any; // Thêm trường coupon vào đây
     optionSize?: number; // Optional
 
-    // Các trường khác...
 }
 
 const LuckyWheel = ({ discounts, onSpinResult }: Props) => {
     const [mustSpin, setMustSpin] = useState(false);
     const [prizeNumber, setPrizeNumber] = useState(0);
     const [numberOfTurn, setNumberOfTurn] = useState(Number);
-    // const goodLuckOption = 'Chúc bạn may mắn lần sau'; // Option text for "Good luck" message
     const wheelDataWithGoodLuckMessage: WheelData[] = [
         ...discounts,
-        // { option: 'Chúc bạn may mắn lần sau' , style: { fontSize: 12 } }
     ];
     const dispatch = useDispatch<AppDispatch>();
     const eventForSpin = useAppSelector((state) => state.eventSlice.eventForSpin);
-    // const eventCPRatio = useAppSelector((state) => state.couponSlice.eventCPRatio);
-
-    // Hàm để lấy màu ngẫu nhiên
-    // const getRandomColor = () => {
-    //   const letters = '0123456789ABCDEF';
-    //   let color = '#';
-    //   for (let i = 0; i < 6; i++) {
-    //     color += letters[Math.floor(Math.random() * 16)];
-    //   }
-    //   return color;
-    // };
+    
     const getColor = () => {
         const colors = [
             "#ff5722",

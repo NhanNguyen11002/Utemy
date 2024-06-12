@@ -13,15 +13,28 @@ export const submitQuestion = createAsyncThunk<Response<any>, { content: string 
         }
     },
 );
+export const checkValidateComment = createAsyncThunk<Response<any>, { content: string }, { rejectValue: Response<null> }>(
+    "boxchat/check-comment",
+    async ({content}, ThunkAPI) => {
+        try {
+            const response = await apis.boxChatApis.checkValidateComment(content);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 type BoxChatSliceType = {
     answer: string | null;
+    isValid: boolean;
     isLoading: boolean;
     isGetLoading: boolean;
 };
 const initialState: BoxChatSliceType = {
     answer: "",
     isLoading: false,
-    isGetLoading: false
+    isGetLoading: false,
+    isValid: false
 }
 export const boxChatSlice = createSlice({
     name: "boxchat",
@@ -37,6 +50,16 @@ export const boxChatSlice = createSlice({
             state.isGetLoading = false;
         });
         builder.addCase(submitQuestion.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(checkValidateComment.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(checkValidateComment.fulfilled, (state, action) => {
+            state.isValid = action.payload.data.isValid;
+            state.isGetLoading = false;
+        });
+        builder.addCase(checkValidateComment.rejected, (state) => {
             state.isGetLoading = false;
         });
     },
