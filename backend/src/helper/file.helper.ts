@@ -37,32 +37,47 @@ const createFileM3U8AndTS = async (
     outputFolderPath: string,
     uuid: string,
 ) => {
-    // mỗi video ứng với 1 uuid
-    resolutions.map((resolution) => {
-        const videoFolderPath = path.join(outputFolderPath, uuid, `video_${resolution}`); //folder path để chứa resolution của 1 video
+    try {
+        console.log(inputFileVideo.path);
+        // mỗi video ứng với 1 uuid
+        resolutions.map((resolution) => {
+            const videoFolderPath = path.join(outputFolderPath, uuid, `video_${resolution}`); //folder path để chứa resolution của 1 video
 
-        if (!fs.existsSync(videoFolderPath)) {
-            fs.mkdirSync(videoFolderPath, { recursive: true });
-        } // nếu folder trên ko tồn tại thì tạo
-        // const videoPath = `${videoFolderPath}\\video_${resolution}.m3u8`; // địa chỉ file m3u8 của mỗi resolution, video path = folder path + tên file - windows
-        const videoPath = `${videoFolderPath}/video_${resolution}.m3u8`; // địa chỉ file m3u8 của mỗi resolution, video path = folder path + tên file -macos
+            if (!fs.existsSync(videoFolderPath)) {
+                fs.mkdirSync(videoFolderPath, { recursive: true });
+            } // nếu folder trên ko tồn tại thì tạo
+            // const videoPath = `${videoFolderPath}\\video_${resolution}.m3u8`; // địa chỉ file m3u8 của mỗi resolution, video path = folder path + tên file - windows
+            const videoPath = `${videoFolderPath}/video_${resolution}.m3u8`; // địa chỉ file m3u8 của mỗi resolution, video path = folder path + tên file -macos
 
-        ffmpeg(inputFileVideo.path)
-            .output(videoPath)
-            .outputOptions([`-s ${resolution}`, "-c:v h264", "-c:a aac", "-f hls", "-hls_time 10", "-hls_list_size 0"])
-            .on("progress", (progress) => {})
-            .on("end", () => {
-                console.log(`Conversion to m3u8 completed.`);
-            })
-            .on("error", (err) => {
-                console.error(`Error: ${err}`);
-            })
-            .run();
-    });
-    // thực hiện tạo file main m3u8
-    const urlVideo = await createMainM3U8(inputFileVideo, resolutions, outputFolderPath, uuid);
-    const duration = await getDuration(inputFileVideo);
-    return { urlVideo, duration };
+            ffmpeg(inputFileVideo.path)
+                .output(videoPath)
+                .outputOptions([
+                    `-s ${resolution}`,
+                    "-c:v h264",
+                    "-c:a aac",
+                    "-f hls",
+                    "-hls_time 10",
+                    "-hls_list_size 0",
+                ])
+                .on("progress", (progress) => {})
+                .on("end", () => {
+                    console.log(`Conversion to m3u8 completed.`);
+                })
+                .on("error", (err) => {
+                    console.error(`Error: ${err}`);
+                })
+                .run();
+        });
+        const duration = await getDuration(inputFileVideo);
+        const urlVideo = await createMainM3U8(inputFileVideo, resolutions, outputFolderPath, uuid);
+
+        return { urlVideo, duration };
+    } catch (error) {
+        console.error("An error occurred during video processing:", error);
+        throw error;
+    } finally {
+        await destroyedFileIfFailed(inputFileVideo.path);
+    }
 };
 const createMainM3U8 = async (
     inputFileVideo: Express.Multer.File,
@@ -84,12 +99,14 @@ const createMainM3U8 = async (
 
     //tạo file main và ghi nội dung vào file main
     fs.writeFileSync(outputMainM3U8, mainM3U8Content);
+
     //trả về url của video là path tơi file main
     const urlVideo = configs.general.PATH_TO_PUBLIC_FOLDER_VIDEOS + `\\${uuid}\\main.m3u8`;
     return urlVideo;
 };
 const destroyedVideoIfFailed = async (filePath: string): Promise<boolean> => {
     try {
+        console.log("start delete");
         if (filePath) {
             const folderPath = path.dirname(filePath);
             fs.rmSync(folderPath, { recursive: true });

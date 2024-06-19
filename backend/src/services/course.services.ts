@@ -614,6 +614,9 @@ const searchMyCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                                 lesson: true,
                                 test: true,
                             },
+                            where: {
+                                is_delete: false,
+                            },
                         },
                     },
                 },
