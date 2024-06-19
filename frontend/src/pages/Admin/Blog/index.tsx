@@ -126,7 +126,7 @@ const BlogAdmin = () => {
     }, [dispatch, searchItem, pageIndex]);
     useEffect(() => {
         dispatch(categoryActions.getCategories());
-    });
+    }, [dispatch]);
 
     return (
         <>
@@ -308,7 +308,7 @@ const BlogAdmin = () => {
                                     })}
                             </div>
                         </div>
-                        <div className="flex flex-col min-w-4/5 items-center shrink-0">
+                        <div className="flex flex-col w-4/5 items-center shrink-0">
                             {blogs.length === 0 ? (
                                 <p className="mt-4 text-2xl text-error text-center font-bold">
                                     Không tìm thấy blog{" "}
