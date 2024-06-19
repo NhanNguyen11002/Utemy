@@ -8,7 +8,6 @@ import { CreateLessonType } from "../types/lesson";
 const createLesson = async (content: CreateLessonType, lectureId: number): Promise<ResponseBase> => {
     try {
         const videoFile = content.videoFile;
-        console.log(videoFile);
         const title = content.title;
         const description = content.description;
         const uuid = uuidv4();
