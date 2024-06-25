@@ -277,7 +277,7 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 if (!createFile) {
                     await helper.FileHelper.destroyedVideoIfFailed(createFile.urlVideo);
                 } else {
-                    const oldTrailerPath = helper.ConvertHelper.deConvertFilePath(isFoundCourseById.thumbnail);
+                    const oldTrailerPath = helper.ConvertHelper.deConvertFilePath(isFoundCourseById.url_trailer);
                     const fullpathConvertedTrailer = helper.ConvertHelper.convertFilePath(createFile.urlVideo);
                     await configs.db.course.update({
                         where: { id: Number(course_id) },
@@ -290,7 +290,7 @@ const editCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                             price: Number(price),
                         },
                     });
-                    helper.FileHelper.destroyedFileIfFailed(oldTrailerPath);
+                    helper.FileHelper.destroyedVideoIfFailed(oldTrailerPath);
                 }
             }
         } else {
