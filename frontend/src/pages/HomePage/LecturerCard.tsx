@@ -59,7 +59,7 @@ const LecturerCard: React.FC<CategoryProps> = ({ lecturer }) => {
                             <UserCircleIcon className="w-4 h-4" />
                         </div>
                         <div className="flex gap-1 items-center">
-                            <p> - {lecturer.average_rating_all_course}</p>
+                            <p> - {lecturer.average_rating_all_course.toFixed(1)}</p>
                             <StarIcon className="w-4 h-4 fill-yellow-300" />
                         </div>
                     </div>
