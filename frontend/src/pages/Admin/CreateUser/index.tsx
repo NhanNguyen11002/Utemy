@@ -59,7 +59,6 @@ const CreateUser = () => {
     }, [dispatch]);
 
     const handleOnSubmit = (values: CreateNewUser, actions: any) => {
-        console.log(values);
         const data = {
             first_name: values.first_name,
             last_name: values.last_name,

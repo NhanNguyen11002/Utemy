@@ -102,8 +102,6 @@ const CouponAdmin = () => {
         });
     };
     useEffect(() => {
-        console.log("Total page:", totalPage); // Log the current value of 'coupons' to the console
-        console.log("Total record:", totalRecord); // Log the current value of 'coupons' to the console
         dispatch(couponActions.getCouponsWithPagination({ searchItem, pageIndex }));
     }, [dispatch, searchItem, pageIndex]);
 

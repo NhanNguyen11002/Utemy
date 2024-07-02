@@ -80,7 +80,6 @@ const FloatButton = () => {
     }, []);
     useEffect(() => {
         const lastMessage = messages[messages.length - 1];
-        console.log(lastMessage);
         if (lastMessage && lastMessage.sender === "user") {
             // Gửi tin nhắn và xử lý phản hồi
             dispatch(boxChatActions.submitQuestion({ content: lastMessage.text })).then((response) => {
@@ -138,7 +137,7 @@ const FloatButton = () => {
                     <Box sx={{ p: 2, backgroundColor: "#e3f2fd", borderRadius: "20px 20px 0 0" }}>
                         <Grid container alignItems="center" spacing={1}>
                             <Grid item>
-                                <Avatar src= {logoUtemy}></Avatar>
+                                <Avatar src={logoUtemy}></Avatar>
                             </Grid>
                             <Grid item>
                                 <Typography
@@ -177,7 +176,9 @@ const FloatButton = () => {
                                             </UserMessageCard>
                                         </Grid>
                                         <Grid item>
-                                        <Avatar src={user.url_avatar}>{user.url_avatar ? "" : user.last_name.charAt(0)}</Avatar>
+                                            <Avatar src={user.url_avatar}>
+                                                {user.url_avatar ? "" : user.last_name.charAt(0)}
+                                            </Avatar>
                                         </Grid>
                                     </Grid>
                                 ) : (
@@ -189,7 +190,7 @@ const FloatButton = () => {
                                         key={index}
                                     >
                                         <Grid item>
-                                            <Avatar src= {logoUtemy}> </Avatar>
+                                            <Avatar src={logoUtemy}> </Avatar>
                                         </Grid>
                                         <Grid item>
                                             <ResponseMessageCard>
@@ -211,7 +212,7 @@ const FloatButton = () => {
                             // fullWidth
                             variant="outlined"
                             margin="normal"
-                            style={{ backgroundColor: "#ffffff", width: "90%"}}
+                            style={{ backgroundColor: "#ffffff", width: "90%" }}
                         />
                         <IconButton
                             onClick={handleSendMessage}

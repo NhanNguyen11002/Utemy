@@ -30,8 +30,8 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
             ? report.lecture.content.title
             : report.course.title
         : report.course.title;
-    console.log(title);
     const handleOnClick = () => {
+        if (report.is_handle) return;
         dispatch(reportActions.handleReport(report.report_id)).then((res) => {
             if (res && res.payload) {
                 if (res.payload.status_code === 200) {

@@ -7,7 +7,6 @@ const HistoryTest: React.FC = () => {
     const testHistory = useAppSelector((state) => state.testSlice.testHistory);
     const testId = useAppSelector((state) => state.testSlice.test.test_id);
     const testTitle = useAppSelector((state) => state.testSlice.test.title);
-    console.log(testHistory);
     const dispatch = useAppDispatch();
     const handleSetBeforeTest = () => {
         dispatch(testActions.setBeforeTest());

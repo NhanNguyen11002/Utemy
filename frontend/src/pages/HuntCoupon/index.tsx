@@ -19,7 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 
 interface WheelData {
     option?: string;
-    coupon?: any; 
+    coupon?: any;
     optionSize?: number; // Optional
 
     // Các trường khác...
@@ -60,9 +60,8 @@ const HuntCoupon = () => {
                                 discount.option = `${formattedDiscounts.length}`;
                             }
                         });
-                        
+
                         setDiscounts(formattedDiscounts);
-                        console.log("Discounts:", formattedDiscounts);
                     } else {
                         navigate("/");
                         setTimeout(() => {
@@ -79,10 +78,8 @@ const HuntCoupon = () => {
     };
     const handleSpinResult = (result: WheelData | null) => {
         setResult(result);
-        console.log("Spin result:", result);
         if (result !== null && result.coupon) {
             const selectedCoupon = result.coupon;
-            console.log("Selected coupon:", selectedCoupon);
             if (selectedCoupon !== "Chúc bạn may mắn lần sau") {
                 const couponMessage = `Chúc mừng bạn đã trúng phiếu giảm giá ${selectedCoupon.discount * 100} %!`;
                 toast.success(couponMessage);
@@ -115,7 +112,7 @@ const HuntCoupon = () => {
                     }
                 });
             }
-        } 
+        }
         // else {
         //     console.error("Invalid result or coupon data.");
         // }
@@ -143,10 +140,7 @@ const HuntCoupon = () => {
                 {/* <ResizableHandle /> */}
                 <ResizablePanel defaultSize={85} className="border-red-500">
                     <ResizablePanelGroup direction="horizontal" className="h-full">
-                        <ResizablePanel
-                            defaultSize={30}
-                            className="border-red-500"
-                        >
+                        <ResizablePanel defaultSize={30} className="border-red-500">
                             <div className="flex h-full items-center justify-center ">
                                 <div
                                     style={{
@@ -157,23 +151,23 @@ const HuntCoupon = () => {
                                         fontFamily: "monospace",
                                     }}
                                 >
-                                                                      <h2>Mô tả sự kiện:</h2>
+                                    <h2>Mô tả sự kiện:</h2>
                                     <Table
                                         className="border"
                                         style={{ border: "2px solid black", borderRadius: "8px" }}
                                     >
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead >Nội dung</TableHead>
+                                                <TableHead>Nội dung</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {/* Sử dụng vòng lặp map để render các hàng dữ liệu */}
-                                                <TableRow>
-                                                    <TableCell className="w-1/3" style={{ fontSize: '18px' }}>
-                                                        <p>{eventForSpin.description}</p>
-                                                    </TableCell>
-                                                </TableRow>
+                                            <TableRow>
+                                                <TableCell className="w-1/3" style={{ fontSize: "18px" }}>
+                                                    <p>{eventForSpin.description}</p>
+                                                </TableCell>
+                                            </TableRow>
                                         </TableBody>
                                     </Table>
                                 </div>

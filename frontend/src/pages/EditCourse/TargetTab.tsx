@@ -15,8 +15,7 @@ const TargetTab: React.FC<TargetTabProps> = () => {
     const [requirement, setRequirement] = useState(courseDetail.requirement || []);
     const [edit, setEdit] = useState(false);
     const dispatch = useAppDispatch();
-    console.log(dispatch);
-    console.log(edit);
+
     const handleSubmitStudy = (study: any) => {
         setStudy(study);
     };

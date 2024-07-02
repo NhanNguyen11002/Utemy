@@ -40,7 +40,7 @@
 
 // export default Navbar;
 
-import React, {   useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { eventActions } from "../../redux/slices";
 import { useAppSelector } from "../../hooks/hooks";
@@ -63,21 +63,18 @@ const Navbar = () => {
     //         }
     //     });
     // }, []);
-    console.log("ev: ",ev);
 
     const handleLegendClick = () => {
         if (!isLoggedIn) {
             navigate("/login");
             return;
         }
-        if (ev)
-            {
-                console.log("ev: ",ev);
-                navigate("/hunt-coupon");
-            } else {
-                // toast.error("Sự kiện đã kết thúc!");
-                setIsVisible(false);
-            }
+        if (ev) {
+            navigate("/hunt-coupon");
+        } else {
+            // toast.error("Sự kiện đã kết thúc!");
+            setIsVisible(false);
+        }
     };
     const handleCloseClick = () => {
         setIsVisible(false);
@@ -111,7 +108,7 @@ const Navbar = () => {
                         fontSize: "20px",
                         fontWeight: "bold",
                         textAlign: "center",
-                        color: 'white'
+                        color: "white",
                     }}
                     onClick={handleLegendClick}
                 >

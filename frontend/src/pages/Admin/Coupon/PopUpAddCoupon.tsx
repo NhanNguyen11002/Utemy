@@ -38,7 +38,6 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
     };
     const handleDropdownChange = (value: string) => {
         setSelectedEventId(value);
-        console.log("Selected event ID:", value); // In ra giá trị đã chọn từ dropdown
     };
     // const [couponCode, setCouponCode] = useState("");
 
@@ -56,10 +55,6 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
 
     // Xử lý sự kiện khi nhấn vào nút sinh mã code ngẫu nhiên
     const handleGenerateRandomCode = (formik: FormikProps<CreateCouponType>) => {
-        // const randomCode = generateRandomCode();
-        // setCouponCode(randomCode);
-        // console.log("random code:", randomCode);
-        // console.log("coipon code:", couponCode);
         const randomCode = generateRandomCode();
         formik.setFieldValue("code", randomCode);
     };
@@ -78,10 +73,6 @@ const PopUpAddCoupon: React.FC<PopUpAddCouponProps> = (props) => {
             if (selectedEventId !== "") {
                 formData.append("event_id", String(selectedEventId));
             }
-            console.log("Here is form data", formData);
-            formData.forEach((value, key) => {
-                console.log(`${key}: ${value}`);
-            });
 
             const response = await dispatch(couponActions.createCoupon(formData));
             if (selectedEventId) {

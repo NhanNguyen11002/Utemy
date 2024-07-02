@@ -52,6 +52,14 @@ const updateLecture = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
         });
         if (!isLectureExist) return new ResponseError(500, constants.error.ERROR_DATA_NOT_FOUND, false);
+        const deleteProgress = await configs.db.progress.updateMany({
+            where: {
+                lecture_id: isLectureExist.id,
+            },
+            data: {
+                is_delete: true,
+            },
+        });
         if (type === "Lesson") {
             const lessonContent = {
                 duration,

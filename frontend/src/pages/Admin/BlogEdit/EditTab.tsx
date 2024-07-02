@@ -138,7 +138,7 @@ const EditTab: React.FC<props> = (props) => {
         formData.append("content", values.content);
         formData.append("categories", categories.toString());
         formData.append("image_blog", thumbnail as File);
-        console.log(formData);
+
         dispatch(blogActions.updateBlog(formData)).then((response) => {
             if (response.payload?.status_code === 200) {
                 toast.success(response.payload.message);

@@ -112,7 +112,7 @@ const handleDecision = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
         });
         if (!handleDecision) return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
-        return new ResponseSuccess(200, constants.success.SUCCES_HANDLE_DECISION, true);
+        return new ResponseSuccess(200, constants.success.SUCCESS_HANDLE_DECISION, true);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);

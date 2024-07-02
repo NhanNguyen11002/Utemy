@@ -347,6 +347,7 @@ const createTestHistory = async (req: IRequestWithId): Promise<ResponseBase> => 
                         user_id,
                         lecture_id: Number(isExistTest.lecture_id),
                         course_id: Number(isExistTest.lecture?.section.course_id),
+                        is_delete: false,
                     },
                 });
                 if (!isExistProgress) {

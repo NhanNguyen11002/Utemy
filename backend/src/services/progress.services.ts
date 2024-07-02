@@ -33,7 +33,6 @@ const updateProgress = async (req: IRequestWithId): Promise<ResponseBase> => {
     const isPass = progressPercent >= 0.85;
 
     if (isProgressExist) {
-        // console.log("??", isProgressExist.id, isProgressExist.progress_value, progressValue);
         if (isProgressExist.progress_value > progressValue)
             return new ResponseSuccess(200, constants.success.SUCCESS_BUT_NO_UPDATE_PROGRESS, true);
         const data = {

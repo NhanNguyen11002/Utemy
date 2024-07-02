@@ -42,7 +42,6 @@ const StatusTab: React.FC<StatusTabProps> = () => {
                 if (response.payload.status_code === 200) {
                     toast.success(response.payload.message);
                     if (response.payload.data) {
-                        console.log(response.payload.data);
                         const data = response.payload.data as any;
 
                         dispatch(courseActions.setApprovalCourseDetail({ ...data, approval_id: data.id }));
