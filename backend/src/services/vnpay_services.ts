@@ -226,7 +226,6 @@ const createPaymentUrl = async (req: IRequestWithId): Promise<ResponseBase> => {
 
         const tmnCode = encodeURIComponent(configs.general.vnp_TmnCode as string);
         const secretKey = configs.general.vnp_HashSecret;
-        // console.log("secret", secretKey);
         let vnpUrl = configs.general.vnp_Url;
         const returnUrl = encodeURIComponent(configs.general.vnp_ReturnUrl as string);
         const orderId = moment(date).format("DDHHmmss");
@@ -269,19 +268,13 @@ const createPaymentUrl = async (req: IRequestWithId): Promise<ResponseBase> => {
             vnp_Params["vnp_BankCode"] = bankCode;
         }
         vnp_Params = sortObject(vnp_Params);
-        // console.log("params ", typeof vnp_Params, vnp_Params);
         const signData = qs.stringify(vnp_Params, { encode: false });
-        // console.log("sign data", typeof signData, signData);
-        // console.log(typeof secretKey, secretKey);
         const hmac = crypto.createHmac("sha512", secretKey as string);
         const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
         vnp_Params["vnp_SecureHash"] = signed;
-        // console.log("params update????", typeof vnp_Params, vnp_Params);
         vnpUrl += "?" + qs.stringify(vnp_Params, { encode: false });
-        // console.log("url", typeof vnpUrl, vnpUrl);
         return new ResponseSuccess(200, constants.success.SUCCESS_REQUEST, true, vnpUrl);
     } catch (error) {
-        // console.log("err", error);
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
         }

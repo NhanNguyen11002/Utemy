@@ -73,7 +73,7 @@ export function ApprovalAdmin() {
                                     return (
                                         <TableRow key={index}>
                                             <Link
-                                                to={`/admin/course/${approval.course_slug}/`}
+                                                to={`/admin/course/${approval.course_slug}#approval`}
                                                 className="hover:cursor-pointer"
                                             >
                                                 <TableCell className="font-medium">

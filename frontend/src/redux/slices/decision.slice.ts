@@ -64,10 +64,7 @@ export const decisionSlice = createSlice({
     initialState,
     reducers: {
         setHandleDecision: (state, action) => {
-            console.log(action.payload);
             const index = state.decisions.findIndex((e: DecisionType) => e.decision_id === action.payload);
-            console.log(index);
-            console.log(state.decisions[index]);
             state.decisions[index].is_handle = true;
         },
     },

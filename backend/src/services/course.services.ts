@@ -137,8 +137,6 @@ const createCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             // Check if thumbnailFiles is an array and not empty
             if (Array.isArray(thumbnailFiles) && thumbnailFiles.length > 0) {
                 const thumbnailFile = thumbnailFiles[0];
-                console.log("Thumbnail file:", thumbnailFiles);
-                console.log(thumbnailFile.path);
                 fullPathConvertedThumbnail = helper.ConvertHelper.convertFilePath(thumbnailFile.path);
             } else {
                 console.log("No thumbnail file uploaded.");

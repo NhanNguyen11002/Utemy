@@ -48,7 +48,6 @@ const ratingCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
                 },
             });
             if (isAlreadyRating) {
-                console.log(isAlreadyRating);
                 return new ResponseError(400, constants.error.ERROR_ALREADY_RATING, false);
             }
             const ratingCourse = await configs.db.rating.create({
@@ -108,7 +107,6 @@ const editRatingCourse = async (req: IRequestWithId): Promise<ResponseBase> => {
             return new ResponseError(404, constants.error.ERROR_RATING_NOT_FOUND, false);
         } else {
             if (isRatingExist.user_id !== user_id) {
-                console.log(isRatingExist.user_id);
                 return new ResponseError(401, constants.error.ERROR_UNAUTHORIZED, false);
             }
             const course_id = isRatingExist.course_id;

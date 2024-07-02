@@ -75,8 +75,6 @@ const EventAdmin = () => {
     };
 
     useEffect(() => {
-        console.log("Total page:", totalPage); // Log the current value of 'events' to the console
-        console.log("Total record:", totalRecord); // Log the current value of 'events' to the console
         dispatch(eventActions.getEventsWithPagination({ searchItem, pageIndex }));
     }, [dispatch, searchItem, pageIndex]);
 

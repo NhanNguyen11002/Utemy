@@ -27,15 +27,12 @@ type ReplyCommentLectureCardProps = {
 const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) => {
     const isCurrentUserReply = props.replycomment.user.user_id === props.userId; // Kiểm tra xem bình luận có phải của người dùng hiện tại không
     const [editedContent, setEditedContent] = useState(props.replycomment.content);
-    console.log("user_id:", props.userId);
-    console.log("replycomment.user.id:", props.replycomment.user.user_id);
 
     const handleEdit = () => {
         if (editedContent === "") {
             toast.error("Bình luận không được để trống");
         } else {
             // Xử lý khi nhấn vào nút "Sửa"
-            // console.log("Edit button clicked", props.replycomment.content);
             dispatch(boxChatActions.checkValidateComment({ content: editedContent })).then((response) => {
                 if (response.payload && response.payload.data.isValid === true) {
                     dispatch(
@@ -237,7 +234,7 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
     const togglePopup = () => {
         setShowPopup(!showPopup); // Khi nhấn nút "Trả lời", toggle hiển thị Popup
     };
-    const isSavingPopUpAdd= useAppSelector(state => state.boxchatSlice.isGetLoading);  // Thêm state để theo dõi trạng thái đang lưu
+    const isSavingPopUpAdd = useAppSelector((state) => state.boxchatSlice.isGetLoading); // Thêm state để theo dõi trạng thái đang lưu
 
     return (
         <div>
@@ -276,11 +273,20 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                     <div className="flex justify-end items-center mt-2">
                         {editMode ? (
                             <>
-                                <button type="submit" className="text-white btn btn-info text-lg" onClick={handleEdit} disabled= {isSavingPopUpAdd}>
-                                {isSavingPopUpAdd ? <span className="loading loading-spinner"></span> : ""}
-                                {isSavingPopUpAdd ? "Loading..." : "Lưu"}
+                                <button
+                                    type="submit"
+                                    className="text-white btn btn-info text-lg"
+                                    onClick={handleEdit}
+                                    disabled={isSavingPopUpAdd}
+                                >
+                                    {isSavingPopUpAdd ? <span className="loading loading-spinner"></span> : ""}
+                                    {isSavingPopUpAdd ? "Loading..." : "Lưu"}
                                 </button>
-                                <button type="button" className="btn text-lg ml-2" onClick={toggleEditMode} disabled={isSavingPopUpAdd}
+                                <button
+                                    type="button"
+                                    className="btn text-lg ml-2"
+                                    onClick={toggleEditMode}
+                                    disabled={isSavingPopUpAdd}
                                 >
                                     Hủy
                                 </button>
@@ -420,19 +426,18 @@ const ReplyCommentLectureCard: React.FC<ReplyCommentLectureCardProps> = (props) 
                                                         },
                                                     }),
                                                 );
-                                                setShowPopup(!showPopup); 
+                                                setShowPopup(!showPopup);
                                             }
                                         });
                                     } else {
                                         if (response.payload && response.payload.message)
                                             toast.error(response.payload?.message);
                                     }
-                                })
-                                
+                                });
                             }}
                             isSaving={isSavingPopUpAdd} // Đóng Popup khi nhấn Hủy
                             onCancel={togglePopup} // Đóng Popup khi nhấn Hủy
-                            addMode= {showPopup}
+                            addMode={showPopup}
                         />
                     )}
                     {showDeleteModal && <DeleteModal handleDelete={handleDelete} handleCancel={handleCancel} />}

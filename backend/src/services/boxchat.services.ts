@@ -13,7 +13,6 @@ const openAIClient = new OpenAIClient(OPENAI_ENDPOINT, new AzureKeyCredential(OP
 const submitQuestion = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { content } = req.body;
-        console.log("hihi", content);
         const response = await openAIClient.getChatCompletions("utemyvietnam", [{ role: "user", content: content }], {
             maxTokens: 500,
             temperature: 0.7,
@@ -37,7 +36,6 @@ const submitQuestion = async (req: IRequestWithId): Promise<ResponseBase> => {
 const checkValidateComment = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { content } = req.body;
-        console.log("Checking comment:", content);
 
         const response = await openAIClient.getCompletions("utemyvietnam", [content], {
             maxTokens: 500,
@@ -89,8 +87,9 @@ const checkValidateComment = async (req: IRequestWithId): Promise<ResponseBase> 
                 "Bình luận của bạn đã bị chặn do chứa nội dung không phù hợp, vui lòng kiểm tra lại!!",
                 false,
                 {
-                isValid: false,
-            });
+                    isValid: false,
+                },
+            );
         }
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }

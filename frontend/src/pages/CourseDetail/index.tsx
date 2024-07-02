@@ -157,7 +157,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
             dispatch(courseActions.getRightOfCourse(courseDetail.course_id)).then((res) => {
                 if (res.payload && res.payload.data) {
                     if (res.payload.data.role === constants.util.ROLE_ENROLLED) {
-                        console.log(role);
                         dispatch(progressActions.getProgressByCourseSlug(slug as string));
                     }
                 }
@@ -210,7 +209,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
         });
 
         const commonLectures = lectures2.filter((lecture: any) => lectureMap.has(lecture.lecture_id));
-        // console.log("Common lecture: ", commonLectures);
 
         return commonLectures;
     }

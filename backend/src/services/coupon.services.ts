@@ -276,8 +276,6 @@ const getCouponByCode = async (req: IRequestWithId): Promise<ResponseBase> => {
                     return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
                 } else return new ResponseError(404, constants.error.ERROR_COUPON_USED, false);
             }
-            // } else console.log("acv:", couponOwnersWithCouponInfo);
-            // return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         } else {
             const isUsedCoupon = await configs.db.couponHistory.findFirst({
                 where: {
@@ -701,7 +699,6 @@ const getCouponByIdOnDate = async (req: IRequestWithId): Promise<ResponseBase> =
                 return new ResponseError(400, constants.error.ERROR_COUPON_USED, false);
             }
         } else {
-            console.log("is cp exist: ", isCouponExist);
             // Xử lý trường hợp coupon không tồn tại
             return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         }
@@ -746,7 +743,6 @@ const getCouponById = async (req: IRequestWithId): Promise<ResponseBase> => {
                 return new ResponseError(400, constants.error.ERROR_COUPON_USED, false);
             }
         } else {
-            console.log("is cp exist: ", isCouponExist);
             // Xử lý trường hợp coupon không tồn tại
             return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         }

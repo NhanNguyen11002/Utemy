@@ -134,7 +134,6 @@ const createMainM3U8 = async (
 };
 const destroyedVideoIfFailed = async (filePath: string): Promise<boolean> => {
     try {
-        console.log("start delete");
         if (filePath) {
             const folderPath = path.dirname(filePath);
             fs.rmSync(folderPath, { recursive: true });

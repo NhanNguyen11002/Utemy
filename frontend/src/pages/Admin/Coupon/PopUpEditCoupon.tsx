@@ -85,7 +85,7 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
         formData.append("is_event", isEventValue);
         formData.append("max_discount_money", values.max_discount_money.toString());
         formData.append("event_id", selectedEventId); // Đây là trường ẩn chứa event_id được chọn từ select
-        console.log(formData);
+
         dispatch(couponActions.deleteRatio({ coupon_id: props.couponId }));
 
         if (!selectedEventId) {
@@ -108,7 +108,6 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
         });
     };
     useEffect(() => {
-        console.log("Coupon ID:");
         dispatch(couponActions.getCouponById(props.couponId));
         if (props.eventId !== null) {
             dispatch(eventActions.getEventById(props.eventId)).then((response: any) => {
@@ -120,19 +119,6 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
             setSelectedEventId("");
         }
     }, [dispatch, props.couponId, props.eventId]);
-    // useEffect(() => {
-    //     if (event.event_id.toString() !== '') {
-    //         setSelectedEventId(event.event_id.toString()); // Assume id is the property containing the event id
-    //         console.log("eventid: ",event.event_id)
-    //         setIsChecked(true);
-    //     }
-    //     else{
-    //         setIsChecked(false);
-    //         setSelectedEventId('');
-    //     }
-    // }, [event]);
-
-    // const validUntil = coupon.valid_until.slice(0, -5);
 
     return (
         <>
@@ -249,7 +235,6 @@ const PopUpEditCoupon: React.FC<PopUpEditCouponProps> = (props) => {
                                                     value={formik.values.valid_until} // Thêm giá trị value tương ứng
                                                     onChange={(e: { target: { value: any } }) => {
                                                         formik.handleChange(e);
-                                                        console.log("Datetime value changed:", e.target.value);
                                                     }} // Xử lý sự kiện thay đổi
                                                     onBlur={formik.handleBlur} // Xử lý sự kiện blur
                                                     className={`${
