@@ -29,10 +29,6 @@ const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
             const endDate = new Date(values.end_date).toISOString();
             formData.append("start_date", startDate);
             formData.append("end_date", endDate);
-            console.log("Here is form data", formData);
-            formData.forEach((value, key) => {
-                console.log(`${key}: ${value}`);
-            });
 
             const response = await dispatch(eventActions.createEvent(formData));
 

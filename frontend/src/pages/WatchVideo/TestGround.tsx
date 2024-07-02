@@ -66,7 +66,7 @@ const TestGround: React.FC = () => {
                     <QuestionCounter questionCount={questionCount} questionIndex={questionIndex} />
                     <TimeCounter handleFinish={handleFinishTest} handleOpenFinishPopup={() => setFinishPopup(true)} />
                 </div>
-                <div className="w-4/5 h-[70%]">
+                <div className="w-4/5 h-[70%] overflow-auto">
                     {nowQuestion.type === 3 ? (
                         <FillInQuiz quiz={nowQuestion} handleFill={handleFill} testProgress={testProgress} />
                     ) : (

@@ -73,7 +73,6 @@ const PopupAddFinalTest: React.FC<AddFinalTestPopupProps> = (props) => {
                 props.handleRerender();
                 props.handleToggle(false);
             } else {
-                console.log(response);
                 if (response.payload) toast.error(response.payload.message);
             }
         });

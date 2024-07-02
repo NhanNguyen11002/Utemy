@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../../hooks/hooks";
 import toast, { Toaster } from "react-hot-toast";
 import { NewEvent as CreateEventType } from "../../../types/event";
-import { eventActions} from "../../../redux/slices";
+import { eventActions } from "../../../redux/slices";
 import { editEventValidationSchema } from "../../../validations/event";
 
 type PopUpEditEventProps = {
@@ -22,7 +22,7 @@ const PopUpEditEvent: React.FC<PopUpEditEventProps> = (props) => {
     const end_date = new Date(event.end_date);
 
     const formatDateTime = (date: Date): string => {
-        const pad = (n: number) => (n < 10 ? '0' + n : n);
+        const pad = (n: number) => (n < 10 ? "0" + n : n);
         const year = date.getFullYear();
         const month = pad(date.getMonth() + 1);
         const day = pad(date.getDate());
@@ -34,9 +34,9 @@ const PopUpEditEvent: React.FC<PopUpEditEventProps> = (props) => {
     const initialValues: CreateEventType = {
         name: event.name,
         description: event.description,
-        start_date : formatDateTime(start_date),
+        start_date: formatDateTime(start_date),
         end_date: formatDateTime(end_date),
-        is_active: event.is_active
+        is_active: event.is_active,
     };
     const handleOnSubmit = async (values: CreateEventType) => {
         const formData = new FormData();
@@ -47,7 +47,6 @@ const PopUpEditEvent: React.FC<PopUpEditEventProps> = (props) => {
         const endDate = new Date(values.end_date).toISOString();
         formData.append("start_date", startDate);
         formData.append("end_date", endDate);
-        console.log(formData);
         dispatch(eventActions.updateEvent({ event_id: props.eventId, body: formData })).then((response: any) => {
             if (response.payload && response.payload.status_code === 200) {
                 toast.success(response.payload.message);
@@ -59,12 +58,9 @@ const PopUpEditEvent: React.FC<PopUpEditEventProps> = (props) => {
         });
     };
     useEffect(() => {
-        console.log("Event ID:");
         dispatch(eventActions.getEventById(props.eventId));
     }, [dispatch, props.eventId]);
-    
-    const startDateValue = new Date(event.start_date);
-    console.log("start date event:",startDateValue);
+
     // const endDateValue = event.end_date.slice(0, -7);
 
     return (
@@ -77,17 +73,17 @@ const PopUpEditEvent: React.FC<PopUpEditEventProps> = (props) => {
                             CHỈNH SỬA SỰ KIỆN
                         </h1>
                         {!isGetLoading && event && (
-                        <Formik
-                            initialValues={initialValues}
-                            enableReinitialize //!@$@$$#^%
-                            validationSchema={editEventValidationSchema}
-                            onSubmit={handleOnSubmit}
-                            innerRef={formikRef}
-                        >
-                            {(formik) => (
-                                <form onSubmit={formik.handleSubmit} className="p-4">
-                                    <div className="flex flex-col items-center">
-                                        {/* <div className="flex rounded-lg items-start">
+                            <Formik
+                                initialValues={initialValues}
+                                enableReinitialize //!@$@$$#^%
+                                validationSchema={editEventValidationSchema}
+                                onSubmit={handleOnSubmit}
+                                innerRef={formikRef}
+                            >
+                                {(formik) => (
+                                    <form onSubmit={formik.handleSubmit} className="p-4">
+                                        <div className="flex flex-col items-center">
+                                            {/* <div className="flex rounded-lg items-start">
                                             <div className="flex flex-col gap-11 ">
                                                 <div className="flex-1 flex flex-col w-full ">
                                                     <label
@@ -116,133 +112,131 @@ const PopUpEditEvent: React.FC<PopUpEditEventProps> = (props) => {
                                                 <div className="flex flex-col gap-3"></div>
                                             </div>
                                         </div> */}
-                                        <div className="flex-1 flex flex-col w-full">
-                                            <label
-                                                htmlFor="name"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
-                                            >
-                                                Tên sự kiện:
-                                            </label>
-                                            <Field
-                                                type="text"
-                                                name="name"
-                                                id="name"
-                                                placeholder={event.name}
-                                                className={`${
-                                                    formik.errors.name && formik.touched.name
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
-                                            />
-                                            <ErrorMessage
-                                                name="name"
-                                                component="span"
-                                                className="text-[14px] text-error font-medium"
-                                            />
-                                        </div>
-                                        <div className="flex flex-col w-full">
-                                            <label
-                                                htmlFor="description"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
-                                            >
-                                                Mô tả cho sự kiện:
-                                            </label>
-                                            <Field
-                                                as="textarea"
-                                                name="description"
-                                                id="description"
-                                                placeholder={event.description}
-                                                className={`${
-                                                    formik.errors.description && formik.touched.description
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
-                                            />
-                                            <ErrorMessage
-                                                name="description"
-                                                component="span"
-                                                className="text-[14px] text-error font-medium"
-                                            />
+                                            <div className="flex-1 flex flex-col w-full">
+                                                <label
+                                                    htmlFor="name"
+                                                    className="text-sm mb-1 font-medium tablet:text-xl"
+                                                >
+                                                    Tên sự kiện:
+                                                </label>
+                                                <Field
+                                                    type="text"
+                                                    name="name"
+                                                    id="name"
+                                                    placeholder={event.name}
+                                                    className={`${
+                                                        formik.errors.name && formik.touched.name ? "border-error" : ""
+                                                    } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                                />
+                                                <ErrorMessage
+                                                    name="name"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col w-full">
+                                                <label
+                                                    htmlFor="description"
+                                                    className="text-sm mb-1 font-medium tablet:text-xl"
+                                                >
+                                                    Mô tả cho sự kiện:
+                                                </label>
+                                                <Field
+                                                    as="textarea"
+                                                    name="description"
+                                                    id="description"
+                                                    placeholder={event.description}
+                                                    className={`${
+                                                        formik.errors.description && formik.touched.description
+                                                            ? "border-error"
+                                                            : ""
+                                                    } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                                />
+                                                <ErrorMessage
+                                                    name="description"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col w-full">
+                                                <label
+                                                    htmlFor="start_date"
+                                                    className="text-sm mb-1 font-medium tablet:text-xl"
+                                                >
+                                                    Ngày bắt đầu sự kiện:
+                                                </label>
+                                                <Field
+                                                    type="datetime-local"
+                                                    name="start_date"
+                                                    id="start_date"
+                                                    value={formik.values.start_date} // Thêm giá trị value tương ứng
+                                                    onChange={formik.handleChange} // Xử lý sự kiện thay đổi
+                                                    onBlur={formik.handleBlur} // Xử lý sự kiện blur
+                                                    className={`${
+                                                        formik.errors.start_date && formik.touched.start_date
+                                                            ? "border-error"
+                                                            : ""
+                                                    } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                                />
+                                                <ErrorMessage
+                                                    name="start_date"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col w-full">
+                                                <label
+                                                    htmlFor="start_date"
+                                                    className="text-sm mb-1 font-medium tablet:text-xl"
+                                                >
+                                                    Ngày kết thúc sự kiện:
+                                                </label>
+                                                <Field
+                                                    type="datetime-local"
+                                                    name="end_date"
+                                                    id="end_date"
+                                                    value={formik.values.end_date} // Thêm giá trị value tương ứng
+                                                    onChange={formik.handleChange} // Xử lý sự kiện thay đổi
+                                                    onBlur={formik.handleBlur} // Xử lý sự kiện blur
+                                                    className={`${
+                                                        formik.errors.end_date && formik.touched.end_date
+                                                            ? "border-error"
+                                                            : ""
+                                                    } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                                />
+                                                <ErrorMessage
+                                                    name="end_date"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
+                                            </div>
                                         </div>
 
-                                        <div className="flex flex-col w-full">
-                                            <label
-                                                htmlFor="start_date"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
+                                        <div className="py-[12px] flex justify-end">
+                                            <button
+                                                disabled={isLoading}
+                                                type="submit"
+                                                className="text-white btn btn-info text-lg"
                                             >
-                                                Ngày bắt đầu sự kiện:
-                                            </label>
-                                            <Field
-                                                type="datetime-local"
-                                                name="start_date"
-                                                id="start_date"
-                                                value={formik.values.start_date} // Thêm giá trị value tương ứng
-                                                onChange={formik.handleChange} // Xử lý sự kiện thay đổi
-                                                onBlur={formik.handleBlur} // Xử lý sự kiện blur
-                                                className={`${
-                                                    formik.errors.start_date && formik.touched.start_date
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
-                                            />
-                                            <ErrorMessage
-                                                name="start_date"
-                                                component="span"
-                                                className="text-[14px] text-error font-medium"
-                                            />
-                                        </div>
-                                        <div className="flex flex-col w-full">
-                                            <label
-                                                htmlFor="start_date"
-                                                className="text-sm mb-1 font-medium tablet:text-xl"
+                                                {isLoading ? <span className="loading loading-spinner"></span> : ""}
+                                                {isLoading || isGetLoading ? "Loading..." : "Lưu"}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn text-lg ml-2"
+                                                disabled={isLoading || isGetLoading}
+                                                onClick={() => {
+                                                    props.handleCancelEditEvent();
+                                                    // formik.resetForm(initialValues);
+                                                }}
                                             >
-                                                Ngày kết thúc sự kiện:
-                                            </label>
-                                            <Field
-                                                type="datetime-local"
-                                                name="end_date"
-                                                id="end_date"
-                                                value={formik.values.end_date} // Thêm giá trị value tương ứng
-                                                onChange={formik.handleChange} // Xử lý sự kiện thay đổi
-                                                onBlur={formik.handleBlur} // Xử lý sự kiện blur
-                                                className={`${
-                                                    formik.errors.end_date && formik.touched.end_date
-                                                        ? "border-error"
-                                                        : ""
-                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
-                                            />
-                                            <ErrorMessage
-                                                name="end_date"
-                                                component="span"
-                                                className="text-[14px] text-error font-medium"
-                                            />
+                                                Hủy
+                                            </button>
                                         </div>
-                                    </div>
-
-                                    <div className="py-[12px] flex justify-end">
-                                        <button
-                                            disabled={isLoading}
-                                            type="submit"
-                                            className="text-white btn btn-info text-lg"
-                                        >
-                                            {isLoading ? <span className="loading loading-spinner"></span> : ""}
-                                            {isLoading || isGetLoading ? "Loading..." : "Lưu"}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn text-lg ml-2"
-                                            disabled={isLoading || isGetLoading}
-                                            onClick={() => {
-                                                props.handleCancelEditEvent();
-                                                // formik.resetForm(initialValues);
-                                            }}
-                                        >
-                                            Hủy
-                                        </button>
-                                    </div>
-                                </form>
-                            )}
-                        </Formik>
+                                    </form>
+                                )}
+                            </Formik>
                         )}
                     </div>
                 </div>

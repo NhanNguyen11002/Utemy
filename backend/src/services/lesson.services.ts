@@ -120,7 +120,6 @@ const deleteLesson = async (lectureId: number): Promise<ResponseBase> => {
                     );
                     return new ResponseSuccess(200, constants.success.SUCCESS_DELETE_LESSON, true);
                 } else {
-                    console.log("del");
                     return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
                 }
             }

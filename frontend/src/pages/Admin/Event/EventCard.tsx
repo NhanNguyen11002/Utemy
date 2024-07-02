@@ -55,7 +55,6 @@ const EventCard: React.FC<EventCardProps> = (props) => {
     };
     const handleResetRatio = (couponId: any) => {
         // Logic to reset ratio
-        console.log(`Resetting ratio for coupon with ID: ${couponId}`);
 
         // Sao chép mảng tempRates để không làm thay đổi trực tiếp mảng gốc
         const updatedTempRates = { ...tempRates };
@@ -80,7 +79,6 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                 [selectedCouponId]: ratioValue,
             });
             // Logic to save the new ratio
-            console.log(`Saving new ratio for coupon with ID: ${selectedCouponId}, Ratio: ${ratioValue}`);
             setIsUpdateRatioDialogOpen(false);
             setRatioValue("");
         }
@@ -118,7 +116,6 @@ const EventCard: React.FC<EventCardProps> = (props) => {
         setIsOpenDeleteModel(true);
     };
     const saveAllRates = () => {
-        console.log("Saving rates:", tempRates);
         if (Object.keys(tempRates).length < rowCount)
             toast.error("Hãy nhập tỉ lệ cho tất cả các coupon có trong sự kiện này!!!");
         else {
@@ -172,16 +169,7 @@ const EventCard: React.FC<EventCardProps> = (props) => {
             }
         }
     };
-    // const [errorInputRatio, setErrorInputRatio] = useState(""); // Trạng thái lưu trữ thông báo lỗi
-    // // Hàm kiểm tra và cập nhật trạng thái lỗi
-    // const validateInput = (value: string) => {
-    //     if (Number(value) < 1 || Number(value) > 99) {
-    //         setErrorInputRatio("Giá trị phải nằm trong khoảng từ 1 đến 99");
-    //         console.log(errorInputRatio)
-    //     } else {
-    //         setErrorInputRatio("");
-    //     }
-    // };
+
     const totalTempRate = Object.values(tempRates).reduce((acc: number, cur: any) => acc + Number(cur), 0);
     const totalRatio = props.event.coupons.reduce((accumulator, coupon) => {
         // Lấy giá trị của mỗi coupon

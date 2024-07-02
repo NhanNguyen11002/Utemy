@@ -27,7 +27,6 @@ const MyCourses: React.FC = () => {
 
     // handle pagination
     const handleChangePageIndex = (pageIndex: number) => {
-        console.log(pageIndex);
         if (pageIndex < 1) {
             setPageIndex(totalPage);
         } else if (pageIndex > totalPage) setPageIndex(1);

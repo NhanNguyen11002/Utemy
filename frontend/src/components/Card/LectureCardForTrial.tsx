@@ -21,7 +21,7 @@ type LectureCardForTrialType = {
 
 const LectureCardForTrial: React.FC<LectureCardForTrialType> = (props) => {
     const [checked, setChecked] = useState(true);
-    console.log(checked);
+
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const slug: string = useAppSelector((state) => state.courseSlice.courseDetail.slug) ?? {};

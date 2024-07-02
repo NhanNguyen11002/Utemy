@@ -15,7 +15,6 @@ const createInvoice = async (
     max_discount_money: number,
 ): Promise<ResponseBase> => {
     try {
-        console.log("Total with coupon is: ", max_discount_money);
         const userId = Number(req.user_id);
         const isInvoiceNotSucess = await configs.db.invoice.findFirst({
             where: {
@@ -76,8 +75,6 @@ const createInvoice = async (
             }
         });
         const ratio = max_discount_money / totalorigin;
-        console.log("totalorigin: ", totalorigin);
-        console.log("max discount money: ", max_discount_money);
         const createInvoiceDetailData = boughtCourses.map((cartDetail) => {
             const now = new Date();
             let paidPrice;
@@ -117,7 +114,6 @@ const createInvoice = async (
             data: createInvoiceDetailData,
         });
         if (createInvoiceDetail && updateInvoice) {
-            console.log("couponid:", coupon_id);
             return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
         } else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     } catch (error) {
@@ -222,7 +218,6 @@ const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
                 })),
             })) as InvoiceInfo[],
         };
-        console.log("kq: ", getInvoices);
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, paginatedResponse);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {

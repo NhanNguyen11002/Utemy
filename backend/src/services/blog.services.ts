@@ -873,7 +873,6 @@ const reactBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
         });
         if (isExistReaction) {
             if (isExistReaction.type === convertReactionType) {
-                console.log("delete", convertReactionType, isExistReaction.type);
                 const deleteReaction = await configs.db.reactionBlog.delete({
                     where: {
                         id: isExistReaction.id,

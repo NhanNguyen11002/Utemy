@@ -104,7 +104,6 @@ const CreateCourse: FC = () => {
 
     const handleChangeCategories = (event: any, formik: any) => {
         formik.setFieldValue("categories", event);
-        console.log(formik.values);
     };
 
     const onChangeInputThumbnailFile = (event: React.ChangeEvent<HTMLInputElement>) => {

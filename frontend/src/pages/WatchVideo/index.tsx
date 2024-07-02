@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { courseActions, lectureActions, testActions, progressActions, commentActions, boxChatActions } from "../../redux/slices";
+import {
+    courseActions,
+    lectureActions,
+    testActions,
+    progressActions,
+    commentActions,
+    boxChatActions,
+} from "../../redux/slices";
 import NotFound from "../NotFound";
 import { Course } from "../../types/course";
 import { VideoPlayer, Spin, WatchVideoHeader, UserToolDropdown, FinalTestCard } from "../../components";
@@ -87,10 +94,20 @@ const WatchVideo: React.FC = () => {
 
     const { slug } = useParams();
     useEffect(() => {
-        dispatch(commentActions.getCommentsWithPaginationByCourseId({ course_id: courseDetail.course_id, values:{ pageIndex}}));
+        dispatch(
+            commentActions.getCommentsWithPaginationByCourseId({
+                course_id: courseDetail.course_id,
+                values: { pageIndex },
+            }),
+        );
     }, [dispatch, pageIndex, courseDetail]);
     useEffect(() => {
-        dispatch(commentActions.getCommentsWithPaginationByCourseId({ course_id: courseDetail.course_id, values:{ pageIndex: 1}}));
+        dispatch(
+            commentActions.getCommentsWithPaginationByCourseId({
+                course_id: courseDetail.course_id,
+                values: { pageIndex: 1 },
+            }),
+        );
     }, [dispatch, courseDetail]);
     useEffect(() => {
         dispatch(courseActions.getCourseDetail(slug as string)).then((response) => {
@@ -137,7 +154,7 @@ const WatchVideo: React.FC = () => {
     const handleCommentSave = (commentId: number) => {
         setEditModes((prevModes) => ({ ...prevModes, [commentId]: false }));
     };
-    const isSavingPopUpAdd = useAppSelector(state => state.boxchatSlice.isGetLoading);
+    const isSavingPopUpAdd = useAppSelector((state) => state.boxchatSlice.isGetLoading);
     // Thêm state để theo dõi trạng thái đang lưu
 
     if (role === constants.util.ROLE_USER && !isAdmin) return <NotFound />;
@@ -188,7 +205,11 @@ const WatchVideo: React.FC = () => {
                     <div className="flex gap-2">
                         <h2 className=" tablet:text-2xl font-bold mb-3">Mô tả bài học</h2>
                         {!isAdmin && role !== constants.util.ROLE_AUTHOR && (
-                            <UserToolDropdown courseDetail={courseDetail} isLecture={true} lecture={lecture} />
+                            <UserToolDropdown
+                                courseDetail={courseDetail}
+                                isLecture={lecture.lecture_id !== 0 ? true : false}
+                                lecture={lecture}
+                            />
                         )}
                     </div>
                     {getLecture && lecture.content.description && (
@@ -235,27 +256,35 @@ const WatchVideo: React.FC = () => {
                 {showAddCommentModal && (
                     <PopUpAddComment
                         onSave={(commentContent: any) => {
-                            dispatch(boxChatActions.checkValidateComment({content: commentContent})).then((response) => {
-                                if (response.payload && response.payload.data.isValid === true) {
-                                    // Dispatch action để lưu bình luận
-                                    dispatch(
-                                        commentActions.createComment({
-                                            content: commentContent,
-                                            lecture_id: lecture.lecture_id,
-                                        }),
-                                    ).then((response) => {
-                                        if (response.payload && response.payload.status_code === 200) {
-                                            // Phản hồi thành công từ createComment, dispatch action mới ở đây
-                                            dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:courseDetail.course_id, values: {
-                                                pageIndex: 1
-                                            }}));
-                                            setShowAddCommentModal(!showAddCommentModal);                                             }
-                                    });
-                                } else {
-                                    if (response.payload && response.payload.message)
-                                        toast.error(response.payload?.message);
-                        
-                                }})
+                            dispatch(boxChatActions.checkValidateComment({ content: commentContent })).then(
+                                (response) => {
+                                    if (response.payload && response.payload.data.isValid === true) {
+                                        // Dispatch action để lưu bình luận
+                                        dispatch(
+                                            commentActions.createComment({
+                                                content: commentContent,
+                                                lecture_id: lecture.lecture_id,
+                                            }),
+                                        ).then((response) => {
+                                            if (response.payload && response.payload.status_code === 200) {
+                                                // Phản hồi thành công từ createComment, dispatch action mới ở đây
+                                                dispatch(
+                                                    commentActions.getCommentsWithPaginationByCourseId({
+                                                        course_id: courseDetail.course_id,
+                                                        values: {
+                                                            pageIndex: 1,
+                                                        },
+                                                    }),
+                                                );
+                                                setShowAddCommentModal(!showAddCommentModal);
+                                            }
+                                        });
+                                    } else {
+                                        if (response.payload && response.payload.message)
+                                            toast.error(response.payload?.message);
+                                    }
+                                },
+                            );
                         }}
                         isSaving={isSavingPopUpAdd} // Đóng Popup khi nhấn Hủy
                         onCancel={() => setShowAddCommentModal(false)}
@@ -270,24 +299,23 @@ const WatchVideo: React.FC = () => {
                         <CommentLectureCard
                             key={index}
                             comment={comment}
-                            course_id ={courseDetail.course_id}
+                            course_id={courseDetail.course_id}
                             userId={user.user_id || undefined}
                             editmode={editModes[comment.comment_id] || false}
                             onCommentSave={() => handleCommentSave(comment.comment_id)}
                         />
                     ))}
-                    
                 </div>
             </div>
             {totalPage > 1 && (
-                        <div className="flex justify-center my-4">
-                            <Pagination
-                                handleChangePageIndex={handleChangePageIndex}
-                                totalPage={totalPage}
-                                currentPage={pageIndex}
-                            />
-                        </div>
-                    )}
+                <div className="flex justify-center my-4">
+                    <Pagination
+                        handleChangePageIndex={handleChangePageIndex}
+                        totalPage={totalPage}
+                        currentPage={pageIndex}
+                    />
+                </div>
+            )}
         </>
     );
 };

@@ -74,7 +74,7 @@ export function ReportAdmin() {
                                     return (
                                         <TableRow key={index}>
                                             <Link
-                                                to={`/admin/course/${report.course.slug}/`}
+                                                to={`/admin/course/${report.course.slug}#report`}
                                                 className="hover:cursor-pointer"
                                             >
                                                 <TableCell className="font-medium">

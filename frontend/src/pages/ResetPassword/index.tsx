@@ -27,7 +27,6 @@ const ResetPassword: React.FC<{}> = () => {
     };
 
     const handleSubmit = (values: ResetPasswordType) => {
-        console.log(values);
         const data = {
             ...values,
             token: token as string,

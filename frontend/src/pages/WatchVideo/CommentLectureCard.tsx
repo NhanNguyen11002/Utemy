@@ -9,35 +9,31 @@ import toast from "react-hot-toast";
 import { DeleteModal } from "../../components";
 import { HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/outline";
 import PopUpAddCommentOrReply from "./PopupAddCommentOrReply";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 // import { Button } from "../../components/ui/button"
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../../components/ui/hover-card"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../../components/ui/hover-card";
 import ReactionInfoCard from "./ReactionInfoCard";
-import { ScrollArea } from "../../components/ui/scroll-area"
+import { ScrollArea } from "../../components/ui/scroll-area";
 type CommentLectureCardProps = {
     userId: number | undefined;
     comment: Comment;
     editmode: boolean;
     course_id: number;
-    onCommentSave(commentId: number): void
+    onCommentSave(commentId: number): void;
 };
 
 const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
-    const isLoading = useAppSelector(state => state.boxchatSlice.isGetLoading);
+    const isLoading = useAppSelector((state) => state.boxchatSlice.isGetLoading);
     const [showReplies, setShowReplies] = useState(false);
     const isCurrentUserComment = props.userId === props.comment.user.id; // Kiểm tra xem bình luận có phải của người dùng hiện tại không
     const [editMode, setEditMode] = useState(false);
     // const [deleteConfirmation, setDeleteConfirmation] = useState(false);
-    const [showPopup, setShowPopup] = useState(false); 
+    const [showPopup, setShowPopup] = useState(false);
 
     const [editedContent, setEditedContent] = useState(props.comment.content);
     useEffect(() => {
         setEditedContent(props.comment.content);
-    }, [props.comment.content, ]);
+    }, [props.comment.content]);
     useEffect(() => {
         // Cập nhật trạng thái chỉnh sửa khi editMode thay đổi
         setEditMode(props.editmode);
@@ -51,18 +47,16 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         setShowReplies(!showReplies);
     };
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-    
 
     const toggleEditMode = (commentId: number) => {
         setEditMode(!editMode);
         setEditingCommentId(commentId);
-
     };
     const closeAllEditModes = () => {
         setEditingCommentId(null);
     };
     const togglePopup = () => {
-            setShowPopup(!showPopup); 
+        setShowPopup(!showPopup);
     };
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -70,9 +64,14 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         dispatch(commentActions.deleteComment({ comment_id: props.comment.comment_id })).then((response) => {
             if (response.payload && response.payload.status_code === 200) {
                 toast.success(response.payload.message);
-                dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
-                    pageIndex: 1
-                }}));
+                dispatch(
+                    commentActions.getCommentsWithPaginationByCourseId({
+                        course_id: props.course_id,
+                        values: {
+                            pageIndex: 1,
+                        },
+                    }),
+                );
             } else {
                 if (response.payload) toast.error(response.payload.message);
             }
@@ -86,36 +85,36 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
         setShowDeleteModal(false);
     };
     const handleEdit = () => {
-        if (editedContent===""){
-            toast.error("Bình luận không được để trống")
-        }
-        else {
-            console.log("content:", editedContent);
-            dispatch(boxChatActions.checkValidateComment({content: editedContent})).then((response) => {
+        if (editedContent === "") {
+            toast.error("Bình luận không được để trống");
+        } else {
+            dispatch(boxChatActions.checkValidateComment({ content: editedContent })).then((response) => {
                 if (response.payload && response.payload.data.isValid === true) {
-                    dispatch(commentActions.updateComment({ comment_id: props.comment.comment_id, content: editedContent })).then(
-                        (response) => {
-                            if (response.payload && response.payload.status_code === 200) {
-                                toast.success(response.payload.message);
-                                dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
-                                    pageIndex: 1
-                                }}));
-                            } else {
-                                if (response.payload) toast.error(response.payload.message);
-                            }
-                        },
-                    );
+                    dispatch(
+                        commentActions.updateComment({ comment_id: props.comment.comment_id, content: editedContent }),
+                    ).then((response) => {
+                        if (response.payload && response.payload.status_code === 200) {
+                            toast.success(response.payload.message);
+                            dispatch(
+                                commentActions.getCommentsWithPaginationByCourseId({
+                                    course_id: props.course_id,
+                                    values: {
+                                        pageIndex: 1,
+                                    },
+                                }),
+                            );
+                        } else {
+                            if (response.payload) toast.error(response.payload.message);
+                        }
+                    });
                     toggleEditMode(props.comment.comment_id);
                     props.onCommentSave(props.comment.comment_id);
                     closeAllEditModes(); // Đóng tất cả các trạng thái chỉnh sửa
                 } else {
-                    if (response.payload && response.payload.message)
-                        toast.error(response.payload?.message);
-                
+                    if (response.payload && response.payload.message) toast.error(response.payload?.message);
                 }
-            })
+            });
         }
-        
     };
 
     const [liked, setLiked] = useState(false);
@@ -123,16 +122,30 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
     const [likesCount, setLikesCount] = useState(props.comment.likes_count);
     const [dislikesCount, setDislikesCount] = useState(props.comment.dislikes_count);
     useEffect(() => {
-        if (props.comment.likes.some(like => like.user.user_id === user.user_id && like.comment_id === props.comment.comment_id && like.reply_id === null)) {
+        if (
+            props.comment.likes.some(
+                (like) =>
+                    like.user.user_id === user.user_id &&
+                    like.comment_id === props.comment.comment_id &&
+                    like.reply_id === null,
+            )
+        ) {
             setLiked(true);
         } else {
             setLiked(false);
         }
-    }, [props.comment.likes, user.user_id, props.comment.comment_id, props.comment.replyCommentLectures.reply_id ]);
-    
+    }, [props.comment.likes, user.user_id, props.comment.comment_id, props.comment.replyCommentLectures.reply_id]);
+
     // Kiểm tra nếu người dùng đã không thích bình luận
     useEffect(() => {
-        if (props.comment.dislikes.some(dislike => dislike.user.user_id === user.user_id && dislike.comment_id === props.comment.comment_id && dislike.reply_id === null)) {
+        if (
+            props.comment.dislikes.some(
+                (dislike) =>
+                    dislike.user.user_id === user.user_id &&
+                    dislike.comment_id === props.comment.comment_id &&
+                    dislike.reply_id === null,
+            )
+        ) {
             setDisliked(true);
         } else {
             setDisliked(false);
@@ -147,22 +160,26 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
             if (!liked) {
                 // Nếu người dùng chưa thích bình luận và chưa gửi yêu cầu thích
                 setLikeRequested(true); // Đặt trạng thái yêu cầu đã gửi
-                dispatch(reactionActions.createLike({ 
-                    comment_id: props.comment.comment_id, 
-                    reply_id: null 
-                })).then((response) => {
+                dispatch(
+                    reactionActions.createLike({
+                        comment_id: props.comment.comment_id,
+                        reply_id: null,
+                    }),
+                ).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
                         // toast.success(response.payload.message);
                         // Cập nhật số lượt thích và trạng thái nút thích
                         setLikesCount(likesCount + 1);
                         setLiked(true);
                         // Lấy lại danh sách bình luận sau khi thích thành công
-                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
-                            course_id: props.course_id, 
-                            values: {
-                                pageIndex: 1
-                            }
-                        }));
+                        dispatch(
+                            commentActions.getCommentsWithPaginationByCourseId({
+                                course_id: props.course_id,
+                                values: {
+                                    pageIndex: 1,
+                                },
+                            }),
+                        );
                     } else {
                         if (response.payload) toast.error(response.payload.message);
                     }
@@ -172,22 +189,26 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
             } else {
                 // Gửi yêu cầu xóa thích bình luận
                 setLikeRequested(true); // Đặt trạng thái yêu cầu đã gửi
-                dispatch(reactionActions.deleteLike({ 
-                    comment_id: props.comment.comment_id, 
-                    reply_id: null 
-                })).then((response) => {
+                dispatch(
+                    reactionActions.deleteLike({
+                        comment_id: props.comment.comment_id,
+                        reply_id: null,
+                    }),
+                ).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
                         // toast.success(response.payload.message);
                         // Cập nhật số lượt thích và trạng thái nút thích
                         setLikesCount(likesCount - 1);
                         setLiked(false);
                         // Lấy lại danh sách bình luận sau khi hủy thích thành công
-                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
-                            course_id: props.course_id, 
-                            values: {
-                                pageIndex: 1
-                            }
-                        }));
+                        dispatch(
+                            commentActions.getCommentsWithPaginationByCourseId({
+                                course_id: props.course_id,
+                                values: {
+                                    pageIndex: 1,
+                                },
+                            }),
+                        );
                     } else {
                         if (response.payload) toast.error(response.payload.message);
                     }
@@ -204,22 +225,26 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
             if (!disliked) {
                 // Nếu người dùng chưa Dislike bình luận và chưa gửi yêu cầu Dislike
                 setDislikeRequested(true); // Đặt trạng thái yêu cầu đã gửi
-                dispatch(reactionActions.createDislike({ 
-                    comment_id: props.comment.comment_id, 
-                    reply_id: null 
-                })).then((response) => {
+                dispatch(
+                    reactionActions.createDislike({
+                        comment_id: props.comment.comment_id,
+                        reply_id: null,
+                    }),
+                ).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
                         // toast.success(response.payload.message);
                         // Cập nhật số lượt Dislike và trạng thái nút Dislike
                         setDislikesCount(dislikesCount + 1);
                         setDisliked(true);
                         // Lấy lại danh sách bình luận sau khi Dislike thành công
-                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
-                            course_id: props.course_id, 
-                            values: {
-                                pageIndex: 1
-                            }
-                        }));
+                        dispatch(
+                            commentActions.getCommentsWithPaginationByCourseId({
+                                course_id: props.course_id,
+                                values: {
+                                    pageIndex: 1,
+                                },
+                            }),
+                        );
                     } else {
                         if (response.payload) toast.error(response.payload.message);
                     }
@@ -229,22 +254,26 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
             } else {
                 // Gửi yêu cầu xóa Dislike bình luận
                 setDislikeRequested(true); // Đặt trạng thái yêu cầu đã gửi
-                dispatch(reactionActions.deleteDislike({ 
-                    comment_id: props.comment.comment_id, 
-                    reply_id: null 
-                })).then((response) => {
+                dispatch(
+                    reactionActions.deleteDislike({
+                        comment_id: props.comment.comment_id,
+                        reply_id: null,
+                    }),
+                ).then((response) => {
                     if (response.payload && response.payload.status_code === 200) {
                         // toast.success(response.payload.message);
                         // Cập nhật số lượt Dislike và trạng thái nút Dislike
                         setDislikesCount(dislikesCount - 1);
                         setDisliked(false);
                         // Lấy lại danh sách bình luận sau khi hủy Dislike thành công
-                        dispatch(commentActions.getCommentsWithPaginationByCourseId({
-                            course_id: props.course_id, 
-                            values: {
-                                pageIndex: 1
-                            }
-                        }));
+                        dispatch(
+                            commentActions.getCommentsWithPaginationByCourseId({
+                                course_id: props.course_id,
+                                values: {
+                                    pageIndex: 1,
+                                },
+                            }),
+                        );
                     } else {
                         if (response.payload) toast.error(response.payload.message);
                     }
@@ -254,19 +283,21 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
             }
         }
     };
-    const isSavingPopUpAdd = useAppSelector(state => state.boxchatSlice.isGetLoading);
+    const isSavingPopUpAdd = useAppSelector((state) => state.boxchatSlice.isGetLoading);
 
     // const reactions = [
     //     ...props.comment.likes.map((like) => ({ id: like.like_id, ...like })),
     //     ...props.comment.dislikes.map((dislike) => ({ id: dislike.dislike_id, ...dislike })),
     // ];
     return (
-        <div  className ={"mr-8"}>
+        <div className={"mr-8"}>
             <div className={`flex items-start justify-between w-full h-full rounded-lg my-0`}>
                 <div className="avatar mr-1 hover:cursor-pointer">
                     <div className={`items-center justify-between w-14 border "border-lightblue"`}>
-                        <img alt={`${props.comment.user.first_name} ${props.comment.user.last_name}`} 
-                        src={(props.comment.user.url_avatar as string) || images.DefaultAvatar} />
+                        <img
+                            alt={`${props.comment.user.first_name} ${props.comment.user.last_name}`}
+                            src={(props.comment.user.url_avatar as string) || images.DefaultAvatar}
+                        />
                     </div>
                 </div>
                 <div className={`w-full py-2 px-6 h-full bg-cyan-200/50 rounded-lg my-1`}>
@@ -274,15 +305,16 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         <p className={`comment-author mb-1 italic font-bold`}>
                             {props.comment.user.first_name} {props.comment.user.last_name}
                         </p>
-                        <p className="comment-date mb-1 text-black italic">{format(new Date(props.comment.updatedAt), "HH:mm dd/MM/yyyy")}</p>
+                        <p className="comment-date mb-1 text-black italic">
+                            {format(new Date(props.comment.updatedAt), "HH:mm dd/MM/yyyy")}
+                        </p>
                     </div>
-                    {editMode  && editingCommentId === props.comment.comment_id ? (
+                    {editMode && editingCommentId === props.comment.comment_id ? (
                         <textarea
                             value={editedContent}
                             onChange={(e) => setEditedContent(e.target.value)}
                             className="w-full py-2 px-6 h-full bg-white rounded-lg my-1 edit-textarea border border-gray-300"
-                            style={{ height: '200px' }}
-
+                            style={{ height: "200px" }}
                         />
                     ) : (
                         <div className="flex justify-between">
@@ -295,7 +327,8 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                         {editMode && editingCommentId === props.comment.comment_id ? (
                             <>
                                 <button
-                                    type="submit" className="text-white btn btn-info text-lg"
+                                    type="submit"
+                                    className="text-white btn btn-info text-lg"
                                     onClick={handleEdit}
                                     disabled={isLoading}
                                 >
@@ -303,8 +336,9 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                     {isLoading ? "Loading..." : "Lưu"}
                                 </button>
                                 <button
-                                    type="button" className="btn text-lg ml-2"
-                                    onClick={() =>toggleEditMode(props.comment.comment_id)}
+                                    type="button"
+                                    className="btn text-lg ml-2"
+                                    onClick={() => toggleEditMode(props.comment.comment_id)}
                                     disabled={isLoading}
                                 >
                                     Hủy
@@ -324,7 +358,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                         <div className="flex items-center ml-2">
                                             <button
                                                 className="edit-button text-blue-500 hover:text-blue-700 mr-2 focus:outline-none"
-                                                onClick={()=>toggleEditMode(props.comment.comment_id)}
+                                                onClick={() => toggleEditMode(props.comment.comment_id)}
                                             >
                                                 Sửa
                                             </button>
@@ -364,15 +398,17 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                         </HoverCardTrigger>
 
                                         <HoverCardContent className="w-80">
-                                        <ScrollArea className="h-72 w-70 rounded-md border">
-
-                                        {props.comment.likes
-                                            .filter(like => like.reply_id === null) // Lọc các likes có reply_id bằng null
-                                            .map(like => (
-                                            <ReactionInfoCard key={like.like_id} reaction={{ id: like.like_id, ...like }} handleClick={handleCancel} />
-                                        ))}
-                                        </ScrollArea>
-
+                                            <ScrollArea className="h-72 w-70 rounded-md border">
+                                                {props.comment.likes
+                                                    .filter((like) => like.reply_id === null) // Lọc các likes có reply_id bằng null
+                                                    .map((like) => (
+                                                        <ReactionInfoCard
+                                                            key={like.like_id}
+                                                            reaction={{ id: like.like_id, ...like }}
+                                                            handleClick={handleCancel}
+                                                        />
+                                                    ))}
+                                            </ScrollArea>
                                         </HoverCardContent>
                                     </HoverCard>
                                     <button
@@ -386,14 +422,17 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                             <span className="ml-2 mr-2">{props.comment.dislikes_count}</span>
                                         </HoverCardTrigger>
                                         <HoverCardContent className="w-80">
-                                        <ScrollArea className="h-72 w-70 rounded-md border">
-
-                                        {props.comment.dislikes
-                                            .filter(dislike => dislike.reply_id === null) // Lọc các dislikes có reply_id bằng null
-                                            .map(dislike => (
-                                            <ReactionInfoCard key={dislike.dislike_id} reaction={{ id: dislike.dislike_id, ...dislike }} handleClick={handleCancel} />
-                                        ))}
-                                        </ScrollArea>
+                                            <ScrollArea className="h-72 w-70 rounded-md border">
+                                                {props.comment.dislikes
+                                                    .filter((dislike) => dislike.reply_id === null) // Lọc các dislikes có reply_id bằng null
+                                                    .map((dislike) => (
+                                                        <ReactionInfoCard
+                                                            key={dislike.dislike_id}
+                                                            reaction={{ id: dislike.dislike_id, ...dislike }}
+                                                            handleClick={handleCancel}
+                                                        />
+                                                    ))}
+                                            </ScrollArea>
                                         </HoverCardContent>
                                     </HoverCard>
                                     <button
@@ -410,7 +449,7 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                     {showPopup && (
                         <PopUpAddCommentOrReply
                             onSave={(content) => {
-                                dispatch(boxChatActions.checkValidateComment({content: content})).then((response) => {
+                                dispatch(boxChatActions.checkValidateComment({ content: content })).then((response) => {
                                     if (response.payload && response.payload.data.isValid === true) {
                                         dispatch(
                                             replyCommentActions.createReplyComment({
@@ -420,22 +459,25 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                         ).then((response) => {
                                             if (response.payload && response.payload.status_code === 200) {
                                                 // Phản hồi thành công từ createComment, dispatch action mới ở đây
-                                                dispatch(commentActions.getCommentsWithPaginationByCourseId({course_id:props.course_id, values: {
-                                                    pageIndex: 1
-                                                }}));
-                                                setShowPopup(!showPopup);                                             
+                                                dispatch(
+                                                    commentActions.getCommentsWithPaginationByCourseId({
+                                                        course_id: props.course_id,
+                                                        values: {
+                                                            pageIndex: 1,
+                                                        },
+                                                    }),
+                                                );
+                                                setShowPopup(!showPopup);
                                             }
                                         });
                                     } else {
                                         if (response.payload && response.payload.message)
                                             toast.error(response.payload?.message);
-                                    
                                     }
-                                })
-                                
+                                });
                             }}
                             onCancel={togglePopup}
-                            addMode = {showPopup}
+                            addMode={showPopup}
                             isSaving={isSavingPopUpAdd} // Đóng Popup khi nhấn Hủy
                         />
                     )}
@@ -455,12 +497,12 @@ const CommentLectureCard: React.FC<CommentLectureCardProps> = (props) => {
                                 <ReplyCommentLectureCard
                                     key={index}
                                     replycomment={replyComment}
-                                    commentId ={props.comment.comment_id}
+                                    commentId={props.comment.comment_id}
                                     userId={user.user_id || undefined}
                                     lectureId={props.comment.lecture_id}
-                                    courseId = {props.course_id}
-                                    likes = {props.comment.likes}
-                                    dislikes = {props.comment.dislikes}
+                                    courseId={props.course_id}
+                                    likes={props.comment.likes}
+                                    dislikes={props.comment.dislikes}
                                 />
                             ))}
                         </div>

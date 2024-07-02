@@ -102,21 +102,6 @@ function Checkout() {
                                                 />
                                             </label>
                                         </div>
-                                        {/* <div className="form-control border border-black px-2 bg-footer">
-                                            <label className="label cursor-pointer">
-                                                <span className="label-text">Paypal</span>
-                                                <input
-                                                    type="radio"
-                                                    name="radio-payment-method"
-                                                    value="paypal"
-                                                    className="radio  checked:bg-blue-500"
-                                                    onChange={(event) => {
-                                                        console.log("evnt", event);
-                                                        handleChosePaymentMethod(event.target.value);
-                                                    }}
-                                                />
-                                            </label>
-                                        </div> */}
                                     </div>
                                 </div>
                             </div>

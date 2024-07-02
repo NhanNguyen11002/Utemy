@@ -83,7 +83,6 @@ const createCategory = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const file = req.file;
         const { title, description } = req.body;
-        console.log("Request Cat: ", req.body);
 
         if (file) {
             const isAdmin = await configs.db.user.findFirst({
