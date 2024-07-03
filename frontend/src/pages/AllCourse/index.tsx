@@ -92,6 +92,16 @@ const AllCourses: React.FC = () => {
         dispatch(categoryActions.getCategories());
 
         const query: SearchAllCourses = {
+            pageIndex: 1,
+            keyword: keyword,
+            sortBy: sortBy,
+            rating: evaluate,
+            category: categoryChecked,
+        };
+        dispatch(courseActions.getAllCourses(query));
+    }, [dispatch, keyword, sortBy, evaluate]);
+    useEffect(() => {
+        const query: SearchAllCourses = {
             pageIndex: pageIndex,
             keyword: keyword,
             sortBy: sortBy,
@@ -99,7 +109,7 @@ const AllCourses: React.FC = () => {
             category: categoryChecked,
         };
         dispatch(courseActions.getAllCourses(query));
-    }, [dispatch, keyword, pageIndex, sortBy, evaluate]);
+    }, [dispatch, pageIndex]);
 
     return (
         <>
