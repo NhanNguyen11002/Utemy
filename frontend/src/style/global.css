@@ -119,6 +119,7 @@ html {
     height: 100%;
     padding: 20px; */
 }
+
 .category {
     height: calc(2 * 2rem);
     overflow: hidden;
@@ -133,9 +134,9 @@ html {
     height: auto;
     justify-self: center;
 }
-.blog-content p {
+/* .blog-content p {
     display: grid;
-}
+} */
 .blog-content h2 {
     @apply text-3xl; /* You can adjust this size as needed */
 }
