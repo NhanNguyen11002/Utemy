@@ -32,7 +32,7 @@ export const createCourseValidationSchema = Yup.object({
     description: Yup.string()
         .trim()
         .required(constants.error.ERROR_DESCRIPTION_REQUIRED)
-        .max(400, constants.error.ERROR_DESCRIPTION_TOO_MAX),
+        .max(10000, constants.error.ERROR_DESCRIPTION_TOO_MAX),
     price: Yup.number().positive().required(constants.error.ERROR_COURSE_PRICE_REQUIRED),
 });
 
@@ -56,7 +56,7 @@ export const editCourseValidationSchema = Yup.object({
     description: Yup.string()
         .trim()
         .required(constants.error.ERROR_DESCRIPTION_REQUIRED)
-        .max(400, constants.error.ERROR_DESCRIPTION_TOO_MAX),
+        .max(10000, constants.error.ERROR_DESCRIPTION_TOO_MAX),
     price: Yup.number().positive().required(constants.error.ERROR_COURSE_PRICE_REQUIRED),
 });
 export const addPromotionValidationSchema = Yup.object({

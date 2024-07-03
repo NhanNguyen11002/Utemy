@@ -57,7 +57,7 @@ const error = {
     //description
     ERROR_DESCRIPTION_STRING: "Mô tả phải là một chuỗi",
     ERROR_DESCRIPTION_REQUIRED: "Phải nhập mô tả",
-    ERROR_DESCRIPTION_TOO_MAX: "Mô tả quá dài, chỉ được 200 ký tự",
+    ERROR_DESCRIPTION_TOO_MAX: "Mô tả quá dài, chỉ được 10000 ký tự",
     ERROR_DESCRIPTION_TOO_SHORT: "Mô tả quá ngắn",
 
     //course
