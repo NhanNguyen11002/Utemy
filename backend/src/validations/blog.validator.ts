@@ -14,7 +14,7 @@ export const updateBlogSchema: ObjectSchema<updateBlog> = Joi.object({
         "number.base": constants.error.ERROR_BLOG_ID_NUMBER,
         "any.required": constants.error.ERROR_BLOG_ID_REQUIRED,
     }),
-    title: Joi.string().trim().required().max(50).messages({
+    title: Joi.string().trim().required().max(300).messages({
         "string.base": constants.error.ERROR_TITLE_BLOG_STRING,
         "any.required": constants.error.ERROR_TITLE_BLOG_REQUIRED,
         "string.max": constants.error.ERROR_TITLE_BLOG_MAX,

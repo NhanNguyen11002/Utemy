@@ -81,6 +81,7 @@ const AllCourses: React.FC = () => {
 
     useEffect(() => {
         setCategoryChecked(categoryQuery);
+
         const query: SearchAllCourses = {
             pageIndex: 1,
             category: categoryQuery,
@@ -90,7 +91,7 @@ const AllCourses: React.FC = () => {
 
     useEffect(() => {
         dispatch(categoryActions.getCategories());
-
+        setPageIndex(1);
         const query: SearchAllCourses = {
             pageIndex: 1,
             keyword: keyword,

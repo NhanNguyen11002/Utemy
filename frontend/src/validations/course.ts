@@ -24,11 +24,11 @@ export const createCourseValidationSchema = Yup.object({
         }),
 
     categories: Yup.array().min(1, constants.error.ERROR_CATEGORY_REQUIRED).max(4, constants.error.ERROR_CATEGORY_MAX),
-    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(100, constants.error.ERROR_TITLE_MAX),
+    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(200, constants.error.ERROR_TITLE_MAX),
     summary: Yup.string()
         .trim()
         .required(constants.error.ERROR_COURSE_SUMMARY_REQUIRED)
-        .max(200, constants.error.ERROR_COURSE_SUMMARY_MAX),
+        .max(400, constants.error.ERROR_COURSE_SUMMARY_MAX),
     description: Yup.string()
         .trim()
         .required(constants.error.ERROR_DESCRIPTION_REQUIRED)
@@ -48,11 +48,11 @@ export const editCourseValidationSchema = Yup.object({
     //         return value && value.size <= 1024 * 1024 * 4;
     //     }),
     categories: Yup.array().min(1, constants.error.ERROR_CATEGORY_REQUIRED).max(4, constants.error.ERROR_CATEGORY_MAX),
-    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(100, constants.error.ERROR_TITLE_MAX),
+    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(200, constants.error.ERROR_TITLE_MAX),
     summary: Yup.string()
         .trim()
         .required(constants.error.ERROR_COURSE_SUMMARY_REQUIRED)
-        .max(200, constants.error.ERROR_COURSE_SUMMARY_MAX),
+        .max(400, constants.error.ERROR_COURSE_SUMMARY_MAX),
     description: Yup.string()
         .trim()
         .required(constants.error.ERROR_DESCRIPTION_REQUIRED)

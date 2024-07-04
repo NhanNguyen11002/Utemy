@@ -13,7 +13,7 @@ export const createBlogValidationSchema = Yup.object({
             return value && value.size <= 1024 * 1024 * 4;
         }),
 
-    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(100, constants.error.ERROR_TITLE_MAX),
+    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(300, constants.error.ERROR_TITLE_MAX),
 });
 export const editBlogValidationSchema = Yup.object({
     // image_blog: Yup.mixed()
@@ -26,6 +26,6 @@ export const editBlogValidationSchema = Yup.object({
     //         return value && value.size <= 1024 * 1024 * 4;
     //     }),
     categories: Yup.array().min(1, constants.error.ERROR_CATEGORY_REQUIRED).max(4, constants.error.ERROR_CATEGORY_MAX),
-    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(100, constants.error.ERROR_TITLE_MAX),
-    cotent: Yup.string().trim(),
+    title: Yup.string().trim().required(constants.error.ERROR_TITLE_REQUIRED).max(300, constants.error.ERROR_TITLE_MAX),
+    content: Yup.string().trim(),
 });

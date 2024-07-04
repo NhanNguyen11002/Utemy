@@ -136,6 +136,7 @@ const updateBlog = async (req: IRequestWithId): Promise<ResponseBase> => {
             }
         }
     } catch (error) {
+        console.log(error);
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
