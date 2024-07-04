@@ -79,7 +79,7 @@ export function DashboardLecturer() {
             color: "violet",
             icon: BanknotesIcon,
             title: "Tổng doanh thu các khóa học",
-            value: `${totalIncomeByOwner || 0}đ`,
+            value: `${totalIncomeByOwner.toLocaleString() || 0}đ`,
             footer: {
                 color: "text-green-500",
                 value: "+55%",
@@ -90,7 +90,7 @@ export function DashboardLecturer() {
             color: "gray",
             icon: GiftIcon,
             title: "Doanh thu các khóa học giảm giá",
-            value: `${totalIncomeSaleCourse || 0}đ`,
+            value: `${totalIncomeSaleCourse.toLocaleString() || 0}đ`,
             footer: {
                 color: "text-green-500",
                 value: "+3%",
@@ -101,7 +101,7 @@ export function DashboardLecturer() {
             color: "gray",
             icon: CircleStackIcon,
             title: "Doanh thu từ các khóa học giá gốc",
-            value: `${totalIncomeOriginCourse || 0}đ`,
+            value: `${totalIncomeOriginCourse.toLocaleString() || 0}đ`,
             footer: {
                 color: "text-green-500",
                 value: "+3%",

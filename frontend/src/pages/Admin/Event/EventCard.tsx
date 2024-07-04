@@ -39,6 +39,7 @@ const formatDate = (dateString: any) => {
 };
 
 const EventCard: React.FC<EventCardProps> = (props) => {
+    const isLoading = useAppSelector((state) => state.couponSlice.isLoading);
     const [isUpdateRatioDialogOpen, setIsUpdateRatioDialogOpen] = useState(false);
     const [selectedCouponId, setSelectedCouponId] = useState(Number);
     const [ratioValue, setRatioValue] = useState("");
@@ -409,7 +410,9 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                                                         >
                                                                             Hủy
                                                                         </Button>
-                                                                        <Button onClick={handleSaveRatio}>Lưu</Button>
+                                                                        <Button onClick={handleSaveRatio} disabled={isLoading}>
+                                                                            {isLoading ? <span className="loading loading-spinner"></span> : ""}
+                                                                        {isLoading ? "Loading..." : "Lưu"}</Button>
                                                                     </DialogFooter>
                                                                 </DialogContent>
                                                             </Dialog>
@@ -460,8 +463,9 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                             </div>
                                         </div>
                                         <DialogFooter>
-                                            <Button type="submit" onClick={deleteAllRates}>
-                                                Xóa tất cả tỉ lệ
+                                            <Button type="submit" onClick={deleteAllRates}disabled={isLoading}>
+                                                                            {isLoading ? <span className="loading loading-spinner"></span> : ""}
+                                                                        {isLoading ? "Loading..." : "Xóa tất cả tỉ lệ"}
                                             </Button>
                                             {isOpenDeleteModel && (
                                                 <DeleteModal
@@ -469,11 +473,13 @@ const EventCard: React.FC<EventCardProps> = (props) => {
                                                     handleDelete={handleDeleteAllRates}
                                                 />
                                             )}
-                                            <Button type="submit" onClick={() => setTempRates({})}>
-                                                Đặt lại tỉ lệ tạm
+                                            <Button type="submit" onClick={() => setTempRates({})}disabled={isLoading}>
+                                                                            {isLoading ? <span className="loading loading-spinner"></span> : ""}
+                                                                        {isLoading ? "Loading..." : "Đặt lại tỉ lệ tạm"}
                                             </Button>
-                                            <Button type="submit" onClick={saveAllRates}>
-                                                Lưu
+                                            <Button type="submit" onClick={saveAllRates}disabled={isLoading}>
+                                                                            {isLoading ? <span className="loading loading-spinner"></span> : ""}
+                                                                        {isLoading ? "Loading..." : "Lưu"}
                                             </Button>
                                         </DialogFooter>
                                     </DialogContent>
