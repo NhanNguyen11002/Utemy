@@ -27,10 +27,10 @@ const MyEnrolledCourseCard: FC<MyEnrolledCourseCardProps> = ({ enrolledCourse })
                 </div>
                 <div className="flex justify-between tablet:flex-1 px-2 pb-2 tablet:px-0">
                     <div className="w-full flex flex-col gap-[1px]">
-                        <h2 className="tablet:w-[300px] xl:w-[600px] text-xl font-bold text-title truncate">
-                            {enrolledCourse.title}
-                        </h2>
-                        <p className="text-base italic tablet:block hidden">{enrolledCourse.summary}</p>
+                        <h2 className="w-full text-xl font-bold title-card-content">{enrolledCourse.title}</h2>
+                        {/* <p className="w-full text-sm italic tablet:block hidden line-clamp-2 ">
+                            {enrolledCourse.summary}
+                        </p> */}
                         <p className="text-base font-bold">
                             <span>Tác giả: </span>
                             <Link

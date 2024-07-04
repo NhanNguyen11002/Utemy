@@ -31,7 +31,7 @@ const BlogCardLong: React.FC<BlogCardLongProps> = (props) => {
                 />
                 <div className="px-4 flex-1 gap-2 flex flex-col justify-between items-start">
                     <h2
-                        className={` font-semibold text-2xl h-8 whitespace-wrap transition-all duration-300 line-clamp-1 ${hovered ? "text-info" : ""}`}
+                        className={` font-semibold text-2xl h-16 whitespace-wrap transition-all duration-300 line-clamp-2 ${hovered ? "text-info" : ""}`}
                     >
                         {props.blog.title}
                     </h2>

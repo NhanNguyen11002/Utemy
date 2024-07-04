@@ -40,7 +40,7 @@ const CardVideo: React.FC<CardVideoProps> = (props) => {
                 className="w-full h-[140px] rounded-t-lg bg-black object-cover"
             />
             <div className="p-4 flex-1 flex flex-col items-start">
-                <h2 className="font-bold text-title text-lg h-14 whitespace-wrap line-clamp-2">{props.title}</h2>
+                <h2 className="font-bold text-title text-lg h-21 whitespace-wrap line-clamp-3">{props.title}</h2>
                 <div className="items-end">
                     <div className="font-medium mt-1">{props.author.first_name + " " + props.author.last_name}</div>
                     <div className="font-medium mt-1">

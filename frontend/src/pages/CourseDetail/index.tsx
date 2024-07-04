@@ -286,7 +286,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                             <div className=" flex-1 object-right flex flex-col gap-4 px-3 pb-3 self-start laptop:self-center laptop:pt-3">
                                 <div className="flex-1">
                                     <div className="flex justify-between">
-                                        <h2 className="text-2xl laptop:text-3xl font-bold text-title mb-3 tablet:w-[300px] xl:w-[600px] title-card-content ">
+                                        <h2 className="text-xl laptop:text-2xl font-bold text-title mb-3 tablet:w-[300px] xl:w-[600px] line-clamp-4 ">
                                             {courseDetail.title}
                                         </h2>
                                         {isLogin && !isAdmin && role !== constants.util.ROLE_AUTHOR && (
@@ -294,7 +294,9 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         )}
                                     </div>
                                     <div className="summary-card-content mb-3">
-                                        <p className="text-xl laptop:text-2xl font-normal ">{courseDetail.summary}</p>
+                                        <p className="text-lg italic line-clamp-5 font-normal ">
+                                            {courseDetail.summary}
+                                        </p>
                                     </div>
 
                                     <div className="flex items-center l font-normal mb-3">
@@ -319,8 +321,8 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
                                         <p className="text-m  ml-2 ">{courseDetail.number_of_enrolled} học viên</p>
                                     </div>
                                     <div className="flex items-center text-xl font-medium mb-3">
-                                        <span className="text-xl laptop:text-l font-bold mr-2">Cập nhật gần đây:</span>
-                                        <p className="text-l  ml-2 ">
+                                        <span className="text-base font-bold mr-2">Cập nhật gần đây:</span>
+                                        <p className="text-base  ml-2 ">
                                             {courseDetail.updated_at
                                                 ? convertStringDate(courseDetail.updated_at.toString())
                                                 : convertStringDate(new Date().toString())}
