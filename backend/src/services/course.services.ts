@@ -1481,7 +1481,7 @@ const getTop10SalesCourses = async (req: Request): Promise<ResponseBase> => {
                 Course.summary,
                 Course.thumbnail,
                 Course.number_of_rating,
-                Course.average_rating,
+                ROUND(Course.average_rating, 1) AS average_rating,            
                 Course.number_of_enrolled,
                 User.id AS user_id,
                 User.first_name,
