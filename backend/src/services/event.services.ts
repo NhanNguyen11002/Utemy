@@ -319,6 +319,9 @@ const getEventsWithPagination = async (req: IRequestWithId): Promise<ResponseBas
         if (!getAllEvent) return new ResponseError(404, constants.error.ERROR_DATA_NOT_FOUND, false);
         const totalRecord = await configs.db.event.count({
             where: {
+                name: {
+                    contains: parsedSearchItem,
+                },
                 is_delete: false,
             },
         });

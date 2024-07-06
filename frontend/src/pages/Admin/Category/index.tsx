@@ -73,8 +73,11 @@ const CategoryAdmin = () => {
         });
     };
     useEffect(() => {
+        dispatch(categoryActions.getCategoriesWithPagination({ searchItem, pageIndex: 1 }));
+    }, [dispatch, searchItem]);
+    useEffect(() => {
         dispatch(categoryActions.getCategoriesWithPagination({ searchItem, pageIndex }));
-    }, [dispatch, searchItem, pageIndex]);
+    }, [dispatch, pageIndex]);
 
     return (
         <>

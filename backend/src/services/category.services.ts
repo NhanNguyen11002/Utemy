@@ -174,7 +174,13 @@ const getCategoriesWithPagination = async (req: IRequestWithId): Promise<Respons
             },
         });
         if (!getListCategories) return new ResponseError(404, constants.error.ERROR_CATEGORY_NOT_FOUND, false);
-        const totalRecord = await configs.db.category.count({});
+        const totalRecord = await configs.db.category.count({
+            where: {
+                title: {
+                    contains: searchItem?.toString(),
+                },
+            },
+        });
         const totalPage = Math.ceil(totalRecord / pageSize);
         const categories: CategoryResponse[] = [];
         getListCategories.map((item) => {

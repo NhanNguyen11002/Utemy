@@ -73,7 +73,9 @@ const TestGround: React.FC = () => {
                         <FillInNoLogicQuiz quiz={nowQuestion} />
                     )}
                     {nowQuestion.type !== 3 && (
-                        <div className="grid grid-rows-2 grid-cols-2 gap-2 w-full items-center justify-items-center h-[20%]">
+                        <div
+                            className={`grid grid-rows-2 grid-cols-2 gap-2 w-full items-center justify-items-center ${nowQuestion.type === 1 ? "h-[50%]" : "h-[20%]"}`}
+                        >
                             {nowQuestion.quiz_answer.map((answer, index) => {
                                 return (
                                     <AnswerCard

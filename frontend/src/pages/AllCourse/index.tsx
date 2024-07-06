@@ -91,7 +91,6 @@ const AllCourses: React.FC = () => {
 
     useEffect(() => {
         dispatch(categoryActions.getCategories());
-        setPageIndex(1);
         const query: SearchAllCourses = {
             pageIndex: 1,
             keyword: keyword,

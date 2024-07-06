@@ -75,8 +75,11 @@ const EventAdmin = () => {
     };
 
     useEffect(() => {
+        dispatch(eventActions.getEventsWithPagination({ searchItem, pageIndex: 1 }));
+    }, [dispatch, searchItem]);
+    useEffect(() => {
         dispatch(eventActions.getEventsWithPagination({ searchItem, pageIndex }));
-    }, [dispatch, searchItem, pageIndex]);
+    }, [dispatch, pageIndex]);
 
     return (
         <>

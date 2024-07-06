@@ -38,8 +38,11 @@ export function ReportAdmin() {
         return;
     };
     useEffect(() => {
+        dispatch(reportActions.getAllReportWithPagination({ pageIndex: 1, keyword }));
+    }, [keyword]);
+    useEffect(() => {
         dispatch(reportActions.getAllReportWithPagination({ pageIndex, keyword }));
-    }, [keyword, pageIndex]);
+    }, [pageIndex]);
     return (
         <>
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2 gap-4 ">

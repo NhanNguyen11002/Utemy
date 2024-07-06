@@ -22,8 +22,12 @@ const MyCourses: React.FC = () => {
 
     useEffect(() => {
         dispatch(componentActions.setLecturerNavPlace("courses"));
+        dispatch(courseActions.getMyCourses({ pageIndex: 1, keyword }));
+    }, [dispatch, keyword]);
+    useEffect(() => {
+        dispatch(componentActions.setLecturerNavPlace("courses"));
         dispatch(courseActions.getMyCourses({ pageIndex, keyword }));
-    }, [dispatch, keyword, pageIndex]);
+    }, [dispatch, pageIndex]);
 
     // handle pagination
     const handleChangePageIndex = (pageIndex: number) => {

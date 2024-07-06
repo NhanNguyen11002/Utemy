@@ -155,6 +155,7 @@ const WatchVideo: React.FC = () => {
         setEditModes((prevModes) => ({ ...prevModes, [commentId]: false }));
     };
     const isSavingPopUpAdd = useAppSelector((state) => state.boxchatSlice.isGetLoading);
+    const isGetLoadingTest = useAppSelector((state) => state.testSlice.isGetLoading);
     // Thêm state để theo dõi trạng thái đang lưu
 
     if (role === constants.util.ROLE_USER && !isAdmin) return <NotFound />;
@@ -162,7 +163,7 @@ const WatchVideo: React.FC = () => {
 
     return (
         <>
-            {isGetLoading && <Spin />}
+            {isGetLoading && isGetLoadingTest && <Spin />}
             <WatchVideoHeader course={courseDetail} role={role} />
 
             <div className=" w-full  mt-[66px] mb-[100px] justify-center  flex flex-col">
