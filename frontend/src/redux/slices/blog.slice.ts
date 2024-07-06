@@ -386,6 +386,7 @@ export const blogSlice = createSlice({
             state.isLoading = false;
         });
         builder.addCase(getUserReactBySlug.rejected, (state) => {
+            state.currentBlogReact = "";
             state.isLoading = false;
         });
         builder.addCase(increaseViewBlog.pending, (state) => {

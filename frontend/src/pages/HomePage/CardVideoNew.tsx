@@ -90,7 +90,7 @@ const CardVideoNew: React.FC<CardVideoNewProps> = (props) => {
                                     {props.author.first_name + " " + props.author.last_name}
                                 </div>
                                 <div className="font-medium mt-1">
-                                    {props.rating}{" "}
+                                    {props.rating.toFixed(1)}{" "}
                                     <TotalRating
                                         ratingId={Number(ratingId)}
                                         isForCourse={false}

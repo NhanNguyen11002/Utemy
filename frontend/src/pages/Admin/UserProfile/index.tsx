@@ -57,8 +57,11 @@ const UserProfile = () => {
         });
     }, [dispatch, id]);
     useEffect(() => {
+        dispatch(courseActions.getCourseByAuthorId({ authorId: Number(id), pageIndex: 1, searchItem }));
+    }, [id, searchItem]);
+    useEffect(() => {
         dispatch(courseActions.getCourseByAuthorId({ authorId: Number(id), pageIndex, searchItem }));
-    }, [id, pageIndex, searchItem]);
+    }, [pageIndex]);
     if (Number(id) === Number(loginId)) navigate("/my-profile");
     if (isNotFound) return <NotFound />;
 

@@ -23,6 +23,26 @@ const HistoryTransaction = () => {
             // Gọi API với trang hiện tại khi không ở chế độ tìm kiếm
             dispatch(
                 getHistoryInvoices({
+                    page_index: 1,
+                    page_size: 10,
+                    from: fromDate,
+                    to: toDate,
+                    user_id: 0,
+                    total_money: 0,
+                    is_success: false,
+                    created_at: "",
+                    invoice_detail: [],
+                    invoice_items: [],
+                    invoice_id: 0,
+                }),
+            );
+        }
+    }, [dispatch, searchMode, fromDate, toDate]);
+    useEffect(() => {
+        if (!searchMode) {
+            // Gọi API với trang hiện tại khi không ở chế độ tìm kiếm
+            dispatch(
+                getHistoryInvoices({
                     page_index: pageIndex,
                     page_size: 10,
                     from: fromDate,
@@ -37,7 +57,7 @@ const HistoryTransaction = () => {
                 }),
             );
         }
-    }, [dispatch, pageIndex, searchMode, fromDate, toDate]);
+    }, [dispatch, pageIndex]);
 
     // const handlePageChange = (newPage: number) => {
     //     setCurrentPage(newPage);

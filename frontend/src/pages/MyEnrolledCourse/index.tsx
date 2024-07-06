@@ -19,7 +19,11 @@ const MyEnrolledCourse: React.FC = () => {
 
     useEffect(() => {
         dispatch(courseActions.getEnrolledCourses({ pageIndex, keyword }));
-    }, [dispatch, keyword, pageIndex]);
+    }, [dispatch, pageIndex]);
+
+    useEffect(() => {
+        dispatch(courseActions.getEnrolledCourses({ pageIndex: 1, keyword }));
+    }, [dispatch, keyword]);
 
     // handle pagination
     const handleChangePageIndex = (pageIndex: number) => {

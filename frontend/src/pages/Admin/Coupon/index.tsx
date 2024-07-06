@@ -102,8 +102,11 @@ const CouponAdmin = () => {
         });
     };
     useEffect(() => {
+        dispatch(couponActions.getCouponsWithPagination({ searchItem, pageIndex: 1 }));
+    }, [dispatch, searchItem]);
+    useEffect(() => {
         dispatch(couponActions.getCouponsWithPagination({ searchItem, pageIndex }));
-    }, [dispatch, searchItem, pageIndex]);
+    }, [dispatch, pageIndex]);
 
     return (
         <>

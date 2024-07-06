@@ -65,7 +65,7 @@ const LecturerCard: React.FC<CategoryProps> = ({ lecturer }) => {
                     </div>
                     <div className="ql-snow">
                         <div
-                            className="overflow-hidden text-ellipsis max-h-[250px] ql-editor"
+                            className="overflow-hidden text-ellipsis line-clamp-[10] max-h-[250px] ql-editor"
                             dangerouslySetInnerHTML={{ __html: ` ${lecturer.description} ` }}
                         ></div>
                     </div>

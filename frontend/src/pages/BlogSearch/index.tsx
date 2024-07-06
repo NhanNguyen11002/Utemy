@@ -25,7 +25,11 @@ const BlogSearch: React.FC = () => {
     useEffect(() => {
         // if (!keyword) navigate("/404");
         dispatch(blogActions.searchBlogUserWithPagination({ pageIndex, searchItem: keyword }));
-    }, [dispatch, pageIndex, keyword]);
+    }, [dispatch, pageIndex]);
+    useEffect(() => {
+        // if (!keyword) navigate("/404");
+        dispatch(blogActions.searchBlogUserWithPagination({ pageIndex: 1, searchItem: keyword }));
+    }, [dispatch, keyword]);
     return (
         <>
             {isGetLoading && <Spin />}

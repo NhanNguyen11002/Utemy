@@ -37,8 +37,11 @@ export function ApprovalAdmin() {
         return;
     };
     useEffect(() => {
+        dispatch(approvalActions.getApprovalsWithPagenation({ pageIndex: 1, keyword }));
+    }, [keyword]);
+    useEffect(() => {
         dispatch(approvalActions.getApprovalsWithPagenation({ pageIndex, keyword }));
-    }, [keyword, pageIndex]);
+    }, [pageIndex]);
     return (
         <>
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2 gap-4 ">

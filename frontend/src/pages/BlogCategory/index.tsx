@@ -24,13 +24,14 @@ const BlogCategory: React.FC = () => {
     const totalRecord = useAppSelector((state) => state.blogSlice.totalRecord) || 0;
     const category = useAppSelector((state) => state.categorySlice.category) || {};
     useEffect(() => {
-        dispatch(blogActions.searchBlogUserWithPagination({ pageIndex, category: [cateId], searchItem: "" }));
         dispatch(categoryActions.getCategory(cateId)).then((res) => {
             if (res.payload && res.payload.status_code !== 200) {
                 navigate("/404");
             }
         });
+        dispatch(blogActions.searchBlogUserWithPagination({ pageIndex, category: [cateId], searchItem: "" }));
     }, [dispatch, pageIndex, cateId]);
+    //
     return (
         <>
             {isGetLoading && <Spin />}

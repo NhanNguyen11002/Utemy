@@ -84,6 +84,11 @@ const getApprovalsWithPagination = async (req: IRequestWithId): Promise<Response
         const totalRecord = await configs.db.approval.count({
             where: {
                 is_handle: false,
+                course: {
+                    title: {
+                        contains: searchItem?.toString(),
+                    },
+                },
             },
         });
         const totalPage = Math.ceil(totalRecord / pageSize);

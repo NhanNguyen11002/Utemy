@@ -45,9 +45,9 @@ const CourseCard: FC<Course> = (props: Course) => {
     return (
         <div className="py-2">
             <div className="flex flex-col gap-2 tablet:gap-4 tablet:flex-row rounded-2xl hover:bg-lightblue/25 transition ease-in-out hover:shadow-lg duration-200 shadow-lg">
-                <div className=" bg-gray-400 rounded-lg tablet:w-64 shrink-0 self-center">
+                <div className=" h-48 bg-gray-400 rounded-lg tablet:w-64 shrink-0 self-center">
                     <Link to={`${props.isEditCourse ? "/lecturer" : ""}/course-detail/${props.slug}`}>
-                        <img src={props.thumbnail} alt={props.title} className="w-full h-auto rounded-lg " />
+                        <img src={props.thumbnail} alt={props.title} className="w-full h-full rounded-lg " />
                     </Link>
                 </div>
                 <div className="flex justify-between tablet:flex-1 px-2 pb-2 tablet:px-0">

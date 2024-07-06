@@ -177,7 +177,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ isLogin }) => {
     }, [dispatch, courseDetail, pageIndex]);
     const handleFilterRatings = (scoreFilter: number) => {
         if (courseDetail.number_of_rating > 0) {
-            setPageIndex(1);
+            // setPageIndex(1);
             const values: GetRating = {
                 slug: slug as string,
                 page_index: 1,
