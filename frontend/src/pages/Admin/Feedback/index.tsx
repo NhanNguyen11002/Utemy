@@ -31,11 +31,18 @@ export function FeedbackAdmin() {
     };
     useEffect(() => {
         const data = {
+            pageIndex: 1,
+            evaluate: Number(evaluate),
+        };
+        dispatch(feedbackActions.getAllFeedbacks(data));
+    }, [dispatch, evaluate]);
+    useEffect(() => {
+        const data = {
             pageIndex,
             evaluate: Number(evaluate),
         };
         dispatch(feedbackActions.getAllFeedbacks(data));
-    }, [dispatch, pageIndex, evaluate]);
+    }, [dispatch, pageIndex]);
     return (
         <>
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2 ">

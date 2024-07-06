@@ -76,8 +76,9 @@ const BlogAdmin = () => {
         setUserInput("");
     };
     const handleFilterBlog = () => {
+        setPageIndex(1);
         const query: GetBlogsWithPagination = {
-            pageIndex: pageIndex,
+            pageIndex: 1,
             searchItem: searchItem as string,
             category: categoryChecked,
         };
@@ -122,8 +123,11 @@ const BlogAdmin = () => {
         if (closeRef.current) closeRef.current.click();
     };
     useEffect(() => {
+        dispatch(blogActions.getBlogsWithPagination({ searchItem, pageIndex: 1, category: categoryChecked }));
+    }, [dispatch, searchItem]);
+    useEffect(() => {
         dispatch(blogActions.getBlogsWithPagination({ searchItem, pageIndex, category: categoryChecked }));
-    }, [dispatch, searchItem, pageIndex]);
+    }, [dispatch, pageIndex]);
     useEffect(() => {
         dispatch(categoryActions.getCategories());
     }, [dispatch]);

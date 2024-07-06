@@ -111,15 +111,15 @@ function Checkout() {
                             <div className="flex flex-col space-y-4">
                                 {invoice.invoice_items.map((item, index) => {
                                     return (
-                                        <div className="flex space-x-4" key={index}>
+                                        <div className="flex space-x-4 items-start" key={index}>
                                             <div>
                                                 <img
                                                     src={item.course.thumbnail}
                                                     alt={item.course.title}
-                                                    className="w-10"
+                                                    className="w-10 h-auto"
                                                 />
                                             </div>
-                                            <div className="items-center w-full flex flex-row justify-between">
+                                            <div className="items-start w-full flex flex-row justify-between">
                                                 <p className="text-l  font-bold">{item.course.title}</p>
                                                 <p className="text-l  font-bold">{item.paid_price.toLocaleString()}đ</p>
                                             </div>

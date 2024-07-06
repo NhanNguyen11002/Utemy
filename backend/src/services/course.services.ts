@@ -885,7 +885,7 @@ const getAllCourse = async (req: Request): Promise<ResponseBase> => {
         if (evaluate) {
             baseFilter.average_rating = {
                 gte: evaluate - 1,
-                lt: evaluate, // nếu rating truyền vào là 3, thì login ở đây sẽ filter rating >2 và <=3
+                lte: evaluate, // nếu rating truyền vào là 3, thì login ở đây sẽ filter rating >=2 và <=3
             };
         }
         const totalRecord = await db.course.count({
@@ -2176,6 +2176,9 @@ const getCourseByAuthorId = async (req: Request): Promise<ResponseBase> => {
                 is_delete: false,
                 status: true,
                 author_id: user.id,
+                title: {
+                    contains: searchItem,
+                },
             },
         });
         const totalPage = Math.ceil(user.courses.length / 6);

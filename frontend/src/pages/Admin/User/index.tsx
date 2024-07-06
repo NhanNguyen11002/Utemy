@@ -114,7 +114,10 @@ const UserAdmin = () => {
     };
     useEffect(() => {
         dispatch(userActions.getAllUsersWithPagination({ pageIndex, searchItem, role }));
-    }, [dispatch, pageIndex, searchItem, role]);
+    }, [dispatch, pageIndex]);
+    useEffect(() => {
+        dispatch(userActions.getAllUsersWithPagination({ pageIndex: 1, searchItem, role }));
+    }, [dispatch, searchItem, role]);
     return (
         <>
             {isOpenDeleteModal && (

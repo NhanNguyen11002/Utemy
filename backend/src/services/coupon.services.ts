@@ -371,6 +371,9 @@ const GetCouponsWithPagination = async (req: IRequestWithId): Promise<ResponseBa
         const totalRecord = await configs.db.coupon.count({
             where: {
                 is_delete: false,
+                code: {
+                    contains: parsedSearchItem,
+                },
             },
         });
         const totalPage = Math.ceil(totalRecord / pageSize);
