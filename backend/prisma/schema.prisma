@@ -491,7 +491,7 @@ model CouponOwner {
 model Event {
   id          Int      @id @default(autoincrement())
   name        String  @db.VarChar(50)
-  description String  @unique @db.VarChar(150)
+  description String  @unique @db.VarChar(500)
   start_date  DateTime @default(now())
   end_date    DateTime @default(now())
   is_active   Boolean  @default(false)

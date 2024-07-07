@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { getHistoryInvoices, getInvoiceById } from "../../redux/slices/invoice.slice";
 import TransactionCard from "../../components/Card/HistoryTransactionCard";
@@ -101,14 +101,9 @@ const HistoryTransaction = () => {
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col items-center">
-            <div className="bg-white p-8 rounded shadow-md max-w-[800px] w-full">
-                <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-3xl text-lightblue font-bold">Xem lịch sử các giao dịch của bạn</h1>
-                    <Link to="/" className="flex items-center">
-                        <button className="text-white btn-info btn hover:bg-lightblue/60 focus:outline-none">
-                            Về trang chủ
-                        </button>
-                    </Link>
+            <div className="bg-white p-8 rounded shadow-md max-w-[800px] w-full ">
+                <div className="flex items-center justify-between mb-4 ">
+                    <h1 className="text-3xl text-lightblue font-bold ml-32">Xem lịch sử các giao dịch của bạn</h1>
                 </div>
                 <div className="mb-4">
                     <label htmlFor="invoiceId" className="text-lg font-semibold">
@@ -119,9 +114,12 @@ const HistoryTransaction = () => {
                         id="invoiceId"
                         value={searchInvoiceId}
                         onChange={(e) => setSearchInvoiceId(e.target.value)}
-                        className="border p-2 rounded mx-2"
+                        className="border p-2 rounded mx-2 w-[350px]"
                     />
-                    <button onClick={handleSearch} className="bg-blue-500 text-white p-2 rounded">
+                    <button
+                        onClick={handleSearch}
+                        className="text-white  btn-info btn hover:bg-lightblue/60 focus:outline-none"
+                    >
                         Tìm kiếm
                     </button>
                 </div>
@@ -134,7 +132,7 @@ const HistoryTransaction = () => {
                         id="fromDate"
                         value={fromDate}
                         onChange={(e) => setFromDate(e.target.value)}
-                        className="border p-2 rounded mx-2"
+                        className="border p-2 rounded mx-2 w-[215px]"
                     />
                     <label htmlFor="toDate" className="text-lg font-semibold">
                         Đến ngày:
@@ -144,7 +142,7 @@ const HistoryTransaction = () => {
                         id="toDate"
                         value={toDate}
                         onChange={(e) => setToDate(e.target.value)}
-                        className="border p-2 rounded mx-2"
+                        className="border p-2 rounded mx-2 w-[215px]"
                     />
                     <button
                         className="text-white  btn-info btn hover:bg-lightblue/60 focus:outline-none"
@@ -171,8 +169,9 @@ const HistoryTransaction = () => {
                     ) : (
                         // Ẩn danh sách lịch sử giao dịch khi ở chế độ tìm kiếm
                         <div>
-                            <p>Có {totalRecord} lần giao dịch được tìm thấy</p>
-                            <h2>Lịch sử giao dịch:</h2>
+                            <div className="mb-4 text-center">
+                                <p className="text-2xl font-bold">Có {totalRecord} lần giao dịch được tìm thấy</p>
+                            </div>{" "}
                             {historyTrans.map((historyTran, index) => (
                                 <TransactionCard key={`${historyTran.invoice_id}-${index}`} historyTran={historyTran} />
                             ))}

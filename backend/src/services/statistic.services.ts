@@ -288,38 +288,52 @@ const courseCountByOwnerCourse = async (req: IRequestWithId): Promise<ResponseBa
                 author_id: userId,
             },
         });
-        const approvals = await configs.db.approval.findMany({
+        const coursesApprove = await configs.db.course.count({
             where: {
-                is_handle: true,
-            },
-            include: {
-                course: true,
+                is_delete: false,
+                author_id: userId,
+                status: true,
             },
         });
-
-        const coursesApprove = approvals.filter(
-            (approval) => approval.course && !approval.course.is_delete && approval.course.author_id === userId,
-        );
-
-        const notApprovals = await configs.db.approval.findMany({
+        const coursesNotApprove = await configs.db.course.count({
             where: {
-                is_handle: false,
-            },
-            include: {
-                course: true,
+                is_delete: false,
+                author_id: userId,
+                status: false,
             },
         });
+        // const approvals = await configs.db.approval.findMany({
+        //     where: {
+        //         is_handle: true,
+        //     },
+        //     include: {
+        //         course: true,
+        //     },
+        // });
 
-        const coursesNotApprove = notApprovals.filter(
-            (notApproval) =>
-                notApproval.course && !notApproval.course.is_delete && notApproval.course.author_id === userId,
-        );
+        // const coursesApprove = approvals.filter(
+        //     (approval) => approval.course && !approval.course.is_delete && approval.course.author_id === userId,
+        // );
 
-        const countCoursesApprove = coursesApprove.length;
+        // const notApprovals = await configs.db.approval.findMany({
+        //     where: {
+        //         is_handle: false,
+        //     },
+        //     include: {
+        //         course: true,
+        //     },
+        // });
+
+        // const coursesNotApprove = notApprovals.filter(
+        //     (notApproval) =>
+        //         notApproval.course && !notApproval.course.is_delete && notApproval.course.author_id === userId,
+        // );
+
+        // const countCoursesApprove = coursesApprove.length;
         const data = {
             course_count: courseCountByOwnerCourse,
-            course_approve_count: countCoursesApprove,
-            course_not_approve_count: coursesNotApprove.length,
+            course_approve_count: coursesApprove,
+            course_not_approve_count: coursesNotApprove,
         };
         if (courseCountByOwnerCourse) return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
         else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);

@@ -136,7 +136,7 @@ const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
                                                 Mô tả cho sự kiện:
                                             </label>
                                             <Field
-                                                as="input"
+                                                as="textarea"
                                                 name="description"
                                                 id="description"
                                                 placeholder="Mô tả cho sự kiện..."
@@ -144,7 +144,7 @@ const PopUpAddEvent: React.FC<PopUpAddEventProps> = (props) => {
                                                     formik.errors.description && formik.touched.description
                                                         ? "border-error"
                                                         : ""
-                                                } flex-1 w-full min-h-[50px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
+                                                } flex-1 w-full min-h-[200px] resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
                                             />
                                             <ErrorMessage
                                                 name="description"
