@@ -27,6 +27,7 @@ const updateProgress = async (req: IRequestWithId): Promise<ResponseBase> => {
             user_id: userId,
             course_id: courseId,
             lecture_id: lectureId,
+            is_delete: false,
         },
     });
     const progressPercent = progressValue / Number(isLectureExist.lesson?.duration);
