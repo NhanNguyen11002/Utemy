@@ -104,6 +104,7 @@ const Login: FC = () => {
                                     </div>
 
                                     <button
+                                        id="login-button"
                                         className="text-white btn w-full text-lg btn-info"
                                         type="submit"
                                         disabled={isLoading}
@@ -114,11 +115,15 @@ const Login: FC = () => {
                                     <p className="block mt-3 mb-2 text-center text-lg">
                                         Bạn chưa có tài khoản?{" "}
                                         <span className="font-medium hover:opacity-80">
-                                            <Link to={"/signup"}>Đăng ký</Link>
+                                            <Link id="signup" to={"/signup"}>
+                                                Đăng ký
+                                            </Link>
                                         </span>
                                     </p>
                                     <span className="block mt-3 mb-2 text-center font-medium text-lg hover:opacity-80">
-                                        <Link to={"/forgot-password"}>Quên mật khẩu?</Link>
+                                        <Link id="forgot-password" to={"/forgot-password"}>
+                                            Quên mật khẩu?
+                                        </Link>
                                     </span>
                                 </Form>
                             )}
