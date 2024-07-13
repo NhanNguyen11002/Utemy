@@ -4,6 +4,6 @@ import { isLogin } from "../middlewares/isLogin";
 
 const boxchatRouter: Router = Router();
 
-boxchatRouter.post("/", isLogin, controllers.boxChatController.submitQuestion); //
+boxchatRouter.post("/", controllers.boxChatController.submitQuestion); //
 boxchatRouter.post("/check", isLogin, controllers.boxChatController.checkValidateComment); //
 export default boxchatRouter;
