@@ -172,7 +172,8 @@ const FloatButton = () => {
                                     >
                                         <Grid item>
                                             <UserMessageCard>
-                                                <Typography>{message.text}</Typography>
+                                                {/* Use Typography with whiteSpace set to pre-line */}
+                                                <Typography whiteSpace="pre-line">{message.text}</Typography>
                                             </UserMessageCard>
                                         </Grid>
                                         <Grid item>
@@ -194,7 +195,8 @@ const FloatButton = () => {
                                         </Grid>
                                         <Grid item>
                                             <ResponseMessageCard>
-                                                <Typography>{message.text}</Typography>
+                                                {/* Use Typography with whiteSpace set to pre-line */}
+                                                <Typography whiteSpace="pre-line">{message.text}</Typography>
                                             </ResponseMessageCard>
                                         </Grid>
                                     </Grid>

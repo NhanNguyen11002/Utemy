@@ -475,7 +475,12 @@ const getCommentsWithPaginationByCourseId = async (req: IRequestWithId): Promise
             }),
         );
         const flatCommentsByLecture = commentsByLecture.flat(2); // Flatten the nested arrays
-        const pagedComments = flatCommentsByLecture.slice(skip, skip + pageSize);
+        const sortedComments = flatCommentsByLecture.sort((a, b) => {
+            const dateA = a.updatedAt.toJSDate().getTime();
+            const dateB = b.updatedAt.toJSDate().getTime();
+            return dateB - dateA;
+        });
+        const pagedComments = sortedComments.slice(skip, skip + pageSize);
         const totalPage = Math.ceil(totalRecord / pageSize);
         const commentsResponseData = {
             total_record: totalRecord,
