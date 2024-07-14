@@ -4,29 +4,149 @@ import { IRequestWithId } from "../types/request";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import constants from "../constants";
 import configs from "../configs";
+import { DefaultAzureCredential } from "@azure/identity";
+import { SearchIndexClient } from "@azure/search-documents";
+
+import axios from "axios";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || ""; //Biến môi trg
 const OPENAI_ENDPOINT = process.env.OPENAI_ENDPOINT || ""; //Biến môi trường
 
 const openAIClient = new OpenAIClient(OPENAI_ENDPOINT, new AzureKeyCredential(OPENAI_API_KEY));
 
+const AZURE_SEARCH_ENDPOINT = process.env.AZURE_SEARCH_ENDPOINT || "";
+const AZURE_SEARCH_INDEX = process.env.AZURE_SEARCH_INDEX || "";
+const AZURE_SEARCH_API_KEY = process.env.AZURE_SEARCH_API_KEY || "";
+const AZURE_OPENAI_DEPLOYMENT_ID = process.env.AZURE_OPENAI_DEPLOYMENT_ID || "";
+
+const searchAzure = async (query: string): Promise<string[]> => {
+    try {
+        const response = await axios.post(
+            `${AZURE_SEARCH_ENDPOINT}/indexes/${AZURE_SEARCH_INDEX}/docs/search?api-version=2024-05-01-preview`,
+            {
+                search: query,
+                queryType: "semantic",
+                semanticConfiguration: "default",
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "api-key": AZURE_SEARCH_API_KEY,
+                },
+            },
+        );
+
+        const results = response.data.value.map((doc: any) => doc.content);
+        console.log(results);
+        return results;
+    } catch (error) {
+        console.error("Error searching Azure Search: ", error);
+        throw error;
+    }
+};
+
+const getResponseWithSearch = async (content: string): Promise<string> => {
+    try {
+        // Lấy danh sách kết quả từ Azure Search
+        const searchResults = await searchAzure(content);
+
+        // Giới hạn độ dài của mỗi kết quả
+        const limitedSearchResult = searchResults[0].substring(0, 15000);
+        // console.log(limitedSearchResult);
+        // Gọi OpenAI để lấy phản hồi cho nội dung từ người dùng
+        const response = await openAIClient.getChatCompletions(
+            AZURE_OPENAI_DEPLOYMENT_ID,
+            [
+                {
+                    role: "system",
+                    content: "Use the following information to assist with the user's query: " + limitedSearchResult,
+                },
+                { role: "user", content: content },
+            ],
+            {
+                maxTokens: 1000,
+                temperature: 0,
+                topP: 0,
+                frequencyPenalty: 0,
+                presencePenalty: 0,
+            },
+        );
+
+        // Xử lý và trả về nội dung phản hồi từ OpenAI
+        if (response.choices && response.choices[0] && response.choices[0].message) {
+            return response.choices[0].message.content || "";
+        } else {
+            console.error("Invalid response structure: ", response);
+            return "No valid response received from OpenAI.";
+        }
+    } catch (error) {
+        console.error("Error in getResponseWithSearch: ", error);
+        throw error;
+    }
+};
+
+const client = new SearchIndexClient(AZURE_SEARCH_ENDPOINT, new AzureKeyCredential(AZURE_SEARCH_API_KEY));
+
+// Hàm để kiểm tra tồn tại của chỉ mục
+const checkIndexExists = async (indexName: string): Promise<boolean> => {
+    try {
+        // Gọi phương thức để lấy thông tin về chỉ mục
+        const result = await client.getIndex(indexName);
+        // Nếu không có lỗi và có dữ liệu trả về, chỉ mục tồn tại
+        return !!result;
+    } catch (error) {
+        console.error("Error checking index existence:", error);
+        return false; // Nếu có lỗi, giả sử chỉ mục không tồn tại
+    }
+};
 const submitQuestion = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const { content } = req.body;
-        const response = await openAIClient.getChatCompletions("utemyvietnam", [{ role: "user", content: content }], {
-            maxTokens: 500,
-            temperature: 0.7,
-            topP: 0.95,
-            presencePenalty: 0,
-            frequencyPenalty: 0,
-        });
-        const result = response.choices[0].message?.content || "";
+        // Check if AZURE_SEARCH_INDEX exists and is not empty
+        const azureIndexExists = await checkIndexExists(AZURE_SEARCH_INDEX);
+        let result;
+
+        if (!azureIndexExists) {
+            // If AZURE_SEARCH_INDEX does not exist or is empty, fallback to OpenAI without Azure Search
+            const response = await openAIClient.getChatCompletions(
+                "utemyvietnam",
+                [{ role: "user", content: content }],
+                {
+                    maxTokens: 800,
+                    temperature: 0.7,
+                    topP: 0.95,
+                    presencePenalty: 0,
+                    frequencyPenalty: 0,
+                },
+            );
+            result = response.choices[0].message?.content || "";
+        } else {
+            try {
+                // If AZURE_SEARCH_INDEX exists, proceed with Azure Search and OpenAI integration
+                result = await getResponseWithSearch(content);
+            } catch (error) {
+                console.error("Error in getResponseWithSearch: ", error);
+                // Fallback to OpenAI without Azure Search if getResponseWithSearch fails
+                const fallbackResponse = await openAIClient.getChatCompletions(
+                    "utemyvietnam",
+                    [{ role: "user", content: content }],
+                    {
+                        maxTokens: 800,
+                        temperature: 0.7,
+                        topP: 0.95,
+                        presencePenalty: 0,
+                        frequencyPenalty: 0,
+                    },
+                );
+                result = fallbackResponse.choices[0].message?.content || "";
+            }
+        }
         const data = {
             answer: result,
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
     } catch (error) {
-        console.error(error); // In ra lỗi để debug
+        console.error(error); // Log the error for debugging
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, {
             answer: "Bạn thao tác quá nhanh, hãy thử lại sau vài giây!!",
         });

@@ -51,6 +51,9 @@ const WatchVideo: React.FC = () => {
     const [key, setKey] = useState(0);
 
     const [isNotFound, setIsNotFound] = useState<boolean>(false);
+    // lưu lecture trc đó
+    const [clickedLecture, setClickedLecture] = useState<Lecture>();
+
     const handleChangePageIndex = (pageIndex: number) => {
         if (pageIndex < 1) {
             setPageIndex(totalPage);
@@ -61,6 +64,7 @@ const WatchVideo: React.FC = () => {
         return;
     };
     const handleChangeLesson = (lecture: Lecture) => {
+        setClickedLecture(lecture); // Lưu bài giảng được click vào state
         setKey((prevKey) => prevKey + 1);
         dispatch(lectureActions.setLecture(lecture));
         dispatch(
@@ -130,6 +134,7 @@ const WatchVideo: React.FC = () => {
                                 dispatch(lectureActions.setLecture(section.lecture[0] as Lecture));
                                 setGetLecture(true);
                                 setIsNotFound(false);
+                                setClickedLecture(section.lecture[0] as Lecture) // them cai nay de render lan dau lay click lecture mac dinh
                                 break;
                             } else {
                                 setIsNotFound(true);
@@ -260,11 +265,13 @@ const WatchVideo: React.FC = () => {
                             dispatch(boxChatActions.checkValidateComment({ content: commentContent })).then(
                                 (response) => {
                                     if (response.payload && response.payload.data.isValid === true) {
+                                        // them cho nay de set lecture chua id cua lecture dc click cuoi cung
+                                        const lectureIdToUse = lecture.lecture_id !== 0 ? lecture.lecture_id : clickedLecture?.lecture_id || 0;
                                         // Dispatch action để lưu bình luận
                                         dispatch(
                                             commentActions.createComment({
                                                 content: commentContent,
-                                                lecture_id: lecture.lecture_id,
+                                                lecture_id: lectureIdToUse,
                                             }),
                                         ).then((response) => {
                                             if (response.payload && response.payload.status_code === 200) {
