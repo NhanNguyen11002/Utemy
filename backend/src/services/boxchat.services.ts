@@ -104,6 +104,8 @@ const submitQuestion = async (req: IRequestWithId): Promise<ResponseBase> => {
         const { content } = req.body;
         // Check if AZURE_SEARCH_INDEX exists and is not empty
         const azureIndexExists = await checkIndexExists(AZURE_SEARCH_INDEX);
+        let result;
+
         if (!azureIndexExists) {
             // If AZURE_SEARCH_INDEX does not exist or is empty, fallback to OpenAI without Azure Search
             const response = await openAIClient.getChatCompletions(
@@ -117,20 +119,32 @@ const submitQuestion = async (req: IRequestWithId): Promise<ResponseBase> => {
                     frequencyPenalty: 0,
                 },
             );
-            const result = response.choices[0].message?.content || "";
-            const data = {
-                answer: result,
-            };
-            return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
+            result = response.choices[0].message?.content || "";
         } else {
-            // If AZURE_SEARCH_INDEX exists, proceed with Azure Search and OpenAI integration
-            const result = await getResponseWithSearch(content);
-
-            const data = {
-                answer: result,
-            };
-            return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
+            try {
+                // If AZURE_SEARCH_INDEX exists, proceed with Azure Search and OpenAI integration
+                result = await getResponseWithSearch(content);
+            } catch (error) {
+                console.error("Error in getResponseWithSearch: ", error);
+                // Fallback to OpenAI without Azure Search if getResponseWithSearch fails
+                const fallbackResponse = await openAIClient.getChatCompletions(
+                    "utemyvietnam",
+                    [{ role: "user", content: content }],
+                    {
+                        maxTokens: 800,
+                        temperature: 0.7,
+                        topP: 0.95,
+                        presencePenalty: 0,
+                        frequencyPenalty: 0,
+                    },
+                );
+                result = fallbackResponse.choices[0].message?.content || "";
+            }
         }
+        const data = {
+            answer: result,
+        };
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, data);
     } catch (error) {
         console.error(error); // Log the error for debugging
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, {
