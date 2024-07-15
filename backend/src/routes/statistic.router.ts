@@ -13,6 +13,10 @@ statRouter.get("/money", isLogin, controllers.statisticController.moneyCalculati
 statRouter.get("/total-user", isLogin, controllers.statisticController.userCount);
 statRouter.get("/money-by-month/:year", isLogin, controllers.statisticController.moneyByMonth);
 statRouter.get("/rating-percent", isLogin, controllers.statisticController.ratingPercent);
+statRouter.get("/desc/enrolled-courses", isLogin, controllers.statisticController.statCourseForAdminByEnrolled);
+statRouter.get("/desc/avgrating-courses", isLogin, controllers.statisticController.statCourseForAdminByAvgRating);
+statRouter.get("/desc/income-courses", isLogin, controllers.statisticController.statCourseForAdminByIncome);
+statRouter.get("/desc/report-courses", isLogin, controllers.statisticController.statCourseForAdminByReport);
 
 statRouter.get("/course-owner", isLogin, controllers.statisticController.courseCountByOwnerCourse);
 statRouter.get("/course-top5-enrolled", isLogin, controllers.statisticController.getTop5EnrolledCourse);
