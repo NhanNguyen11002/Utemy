@@ -17,6 +17,14 @@ statRouter.get("/desc/enrolled-courses", isLogin, controllers.statisticControlle
 statRouter.get("/desc/avgrating-courses", isLogin, controllers.statisticController.statCourseForAdminByAvgRating);
 statRouter.get("/desc/income-courses", isLogin, controllers.statisticController.statCourseForAdminByIncome);
 statRouter.get("/desc/report-courses", isLogin, controllers.statisticController.statCourseForAdminByReport);
+statRouter.get("/desc/enrolled-lecturers", isLogin, controllers.statisticController.statLecturerForAdminByEnrolled);
+statRouter.get(
+    "/desc/avgrating-lecturers",
+    isLogin,
+    controllers.statisticController.statLecturerForAdminByAvgAvgRating,
+);
+statRouter.get("/desc/income-lecturers", isLogin, controllers.statisticController.statLecturerForAdminByIncome);
+statRouter.get("/desc/report-lecturers", isLogin, controllers.statisticController.statLecturerForAdminByReport);
 
 statRouter.get("/course-owner", isLogin, controllers.statisticController.courseCountByOwnerCourse);
 statRouter.get("/course-top5-enrolled", isLogin, controllers.statisticController.getTop5EnrolledCourse);

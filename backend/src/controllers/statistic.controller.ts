@@ -119,4 +119,20 @@ export default class StatisticController {
         const response: ResponseBase = await services.StatisticServices.statCourseForAdminByReport(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async statLecturerForAdminByEnrolled(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statLecturerForAdminByEnrolled(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async statLecturerForAdminByAvgAvgRating(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statLecturerForAdminByAvgAvgRating(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async statLecturerForAdminByIncome(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statLecturerForAdminByIncome(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async statLecturerForAdminByReport(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statLecturerForAdminByReport(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }
