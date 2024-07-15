@@ -103,4 +103,20 @@ export default class StatisticController {
         const response: ResponseBase = await services.StatisticServices.totalTurnRatingByOwner(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async statCourseForAdminByEnrolled(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statCourseForAdminByEnrolled(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async statCourseForAdminByAvgRating(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statCourseForAdminByAvgRating(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async statCourseForAdminByIncome(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statCourseForAdminByIncome(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async statCourseForAdminByReport(req: IRequestWithId, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.StatisticServices.statCourseForAdminByReport(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }
