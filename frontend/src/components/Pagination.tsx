@@ -1,4 +1,5 @@
 import React from "react";
+import { ChevronLeft, ChevronsLeft, ChevronRight, ChevronsRight } from "lucide-react";
 
 interface PaginationProps {
     totalPage: number;
@@ -39,16 +40,28 @@ const Pagination: React.FC<PaginationProps> = ({ handleChangePageIndex, totalPag
                 <ul className="inline-flex -space-x-px text-sm">
                     <li
                         className="flex items-center justify-center px-3 h-8 ml-0 transition-all duration-300 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 hover:cursor-pointer dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                        onClick={() => handleChangePageIndex(1)}
+                    >
+                        <ChevronsLeft className="w-4 h-4" />
+                    </li>
+                    <li
+                        className="flex items-center justify-center px-3 h-8 ml-0 transition-all duration-300 leading-tight text-gray-500 bg-white border border-gray-300  hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 hover:cursor-pointer dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         onClick={() => handleChangePageIndex(currentPage - 1)}
                     >
-                        Prev
+                        <ChevronLeft className="w-4 h-4" />
                     </li>
                     {listItem}
                     <li
-                        className="flex items-center justify-center px-3 h-8 transition-all duration-300 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 hover:cursor-pointer dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                        className="flex items-center justify-center px-3 h-8 transition-all duration-300 leading-tight text-gray-500 bg-white border border-gray-300  hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 hover:cursor-pointer dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         onClick={() => handleChangePageIndex(currentPage + 1)}
                     >
-                        Next
+                        <ChevronRight className="w-4 h-4" />
+                    </li>
+                    <li
+                        className="flex items-center justify-center px-3 h-8 transition-all duration-300 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 hover:cursor-pointer dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                        onClick={() => handleChangePageIndex(totalPage)}
+                    >
+                        <ChevronsRight className="w-4 h-4" />
                     </li>
                 </ul>
             </nav>

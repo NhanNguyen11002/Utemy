@@ -100,26 +100,67 @@ const getTotalIncomeOriginCourse = async () => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
-const getTotalPassUnpass= async () => {
+const getTotalPassUnpass = async () => {
     const path = `stat/total-pass-unpass`;
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
-const getAvgRateAllCourse= async () => {
+const getAvgRateAllCourse = async () => {
     const path = `stat/avg-rate-all-course`;
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
-const getRatingPercentByOwner= async () => {
+const getRatingPercentByOwner = async () => {
     const path = `stat/rating-percent-by-owner`;
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
-const getTotalTurnRating= async () => {
+const getTotalTurnRating = async () => {
     const path = `stat/total-turn-rating`;
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getRankCoursesByEnrolled = async (pageIndex: number) => {
+    const path = `stat/desc/enrolled-courses?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRankCoursesByRating = async (pageIndex: number) => {
+    const path = `stat/desc/avgrating-courses?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRankCoursesByIncome = async (pageIndex: number) => {
+    const path = `stat/desc/income-courses?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRankCoursesByReport = async (pageIndex: number) => {
+    const path = `stat/desc/report-courses?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRankLecturersByEnrolled = async (pageIndex: number) => {
+    const path = `stat/desc/enrolled-lecturers?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRankLecturersByRating = async (pageIndex: number) => {
+    const path = `stat/desc/avgrating-lecturers?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRankLecturersByIncome = async (pageIndex: number) => {
+    const path = `stat/desc/income-lecturers?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getRankLecturersByReport = async (pageIndex: number) => {
+    const path = `stat/desc/report-lecturers?page_index=${pageIndex}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+
 const statisticApis = {
     getCategoryCourse,
     getCategoryEnrolled,
@@ -130,7 +171,7 @@ const statisticApis = {
     getRatingPercent,
     getMoneyByMonth,
     getTotalInvoice,
-
+    //
     getCourseCountByOwner,
     getTop5EnrolledCourseByOwner,
     getTop5RateCourseByOwner,
@@ -146,6 +187,15 @@ const statisticApis = {
     getAvgRateAllCourse,
     getRatingPercentByOwner,
     getTotalTurnRating,
+    //
+    getRankCoursesByEnrolled,
+    getRankCoursesByRating,
+    getRankCoursesByIncome,
+    getRankCoursesByReport,
+    getRankLecturersByEnrolled,
+    getRankLecturersByRating,
+    getRankLecturersByIncome,
+    getRankLecturersByReport,
 };
 
 export default statisticApis;
