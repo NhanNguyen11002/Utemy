@@ -1499,7 +1499,7 @@ const statLecturerForAdminByEnrolled = async (req: IRequestWithId): Promise<Resp
                 u.id AS user_id,
                 u.first_name,
                 u.last_name,
-                u.email,
+                u.url_avatar,
                 COALESCE(SUM(c.number_of_enrolled), 0) AS total_enrolled
             FROM 
                 User u
@@ -1515,11 +1515,11 @@ const statLecturerForAdminByEnrolled = async (req: IRequestWithId): Promise<Resp
         `;
         const formattedData = (usersWithTotalEnrolled as any).map((user: any) => {
             return {
-                user_id: user.user_id,
+                lecturer_id: user.user_id,
                 first_name: user.first_name,
                 last_name: user.last_name,
-                // email: user.email,
-                total_enrolled_this_lecturer: Number(user.total_enrolled),
+                url_avt: user.url_avatar,
+                number_of_enrolled: Number(user.total_enrolled),
             };
         });
 
@@ -1528,7 +1528,7 @@ const statLecturerForAdminByEnrolled = async (req: IRequestWithId): Promise<Resp
         }
 
         const responseData: PagingResponse<
-            { user_id: number; first_name: string; last_name: string; total_enrolled_this_lecturer: number }[]
+            { lecturer_id: number; first_name: string; last_name: string; url_avt: string; number_of_enrolled: number }[]
         > = {
             total_page: totalPage,
             total_record: totalRecord,
@@ -1576,7 +1576,7 @@ const statLecturerForAdminByAvgAvgRating = async (req: IRequestWithId): Promise<
                 u.id AS user_id,
                 u.first_name,
                 u.last_name,
-                -- u.email,
+                u.url_avatar,
                 COALESCE(ROUND(AVG(c.average_rating), 1), 0) AS avg_avg_rating
             FROM 
                 User u
@@ -1593,10 +1593,11 @@ const statLecturerForAdminByAvgAvgRating = async (req: IRequestWithId): Promise<
 
         const formattedData = (lecturersWithAvgAvgRating as any).map((lecturer: any) => {
             return {
-                user_id: lecturer.user_id,
+                lecturer_id: lecturer.user_id,
                 first_name: lecturer.first_name,
                 last_name: lecturer.last_name,
-                avg_avg_rating_this_lecturer: Number(lecturer.avg_avg_rating),
+                url_avt: lecturer.url_avatar,
+                average_rating: Number(lecturer.avg_avg_rating),
             };
         });
 
@@ -1606,11 +1607,11 @@ const statLecturerForAdminByAvgAvgRating = async (req: IRequestWithId): Promise<
 
         const responseData: PagingResponse<
             {
-                user_id: number;
+                lecturer_id: number;
                 first_name: string;
                 last_name: string;
-                email: string;
-                avg_avg_rating_this_lecturer: number;
+                url_avt: string;
+                average_rating: number;
             }[]
         > = {
             total_page: totalPage,
@@ -1661,6 +1662,7 @@ const statLecturerForAdminByIncome = async (req: IRequestWithId): Promise<Respon
                 u.id AS lecturer_id,
                 u.first_name,
                 u.last_name,
+                u.url_avatar,
                 COALESCE(SUM(id.paid_price), 0) AS total_income
             FROM 
                 User u
@@ -1682,7 +1684,7 @@ const statLecturerForAdminByIncome = async (req: IRequestWithId): Promise<Respon
                 lecturer_id: lecturer.lecturer_id,
                 first_name: lecturer.first_name,
                 last_name: lecturer.last_name,
-                // email: lecturer.email,
+                url_avt: lecturer.url_avatar,
                 total_income_this_lecturer: Number(lecturer.total_income),
             };
         });
@@ -1696,7 +1698,7 @@ const statLecturerForAdminByIncome = async (req: IRequestWithId): Promise<Respon
                 lecturer_id: number;
                 first_name: string;
                 last_name: string;
-                // email: string;
+                url_avt: string;
                 total_income_this_lecturer: number;
             }[]
         > = {
@@ -1750,6 +1752,7 @@ const statLecturerForAdminByReport = async (req: IRequestWithId): Promise<Respon
                 u.id AS lecturer_id,
                 u.first_name,
                 u.last_name,
+                u.url_avatar,
                 COALESCE(COUNT(r.id), 0) AS total_report_count
             FROM 
                 User u
@@ -1771,6 +1774,7 @@ const statLecturerForAdminByReport = async (req: IRequestWithId): Promise<Respon
                 lecturer_id: lecturer.lecturer_id,
                 first_name: lecturer.first_name,
                 last_name: lecturer.last_name,
+                url_avt: lecturer.url_avatar,
                 total_report_this_lecturer: Number(lecturer.total_report_count),
             };
         });
@@ -1784,6 +1788,7 @@ const statLecturerForAdminByReport = async (req: IRequestWithId): Promise<Respon
                 lecturer_id: number;
                 first_name: string;
                 last_name: string;
+                url_avt: string;
                 total_report_this_lecturer: number;
             }[]
         > = {
