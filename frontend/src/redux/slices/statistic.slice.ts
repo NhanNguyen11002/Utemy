@@ -1,7 +1,19 @@
 import { Response } from "../../types/response";
 import apis from "../../api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CategoryCourse, CategoryEnrolled, CategoryMoney, MoneyByMonth, RatingPercent, EnrollByMonth, CourseCountStat, IncomeByCourse, EnrollStat } from "../../types/statistic";
+import {
+    CategoryCourse,
+    CategoryEnrolled,
+    CategoryMoney,
+    MoneyByMonth,
+    RatingPercent,
+    EnrollByMonth,
+    CourseCountStat,
+    IncomeByCourse,
+    EnrollStat,
+    RankCourse,
+    RankLecturer,
+} from "../../types/statistic";
 import { Course } from "../../types/course";
 
 export const getTotalUser = createAsyncThunk<Response<any>, void, { rejectValue: Response<null> }>(
@@ -105,8 +117,6 @@ export const getMoneyByMonth = createAsyncThunk<Response<MoneyByMonth[]>, number
     },
 );
 
-
-
 export const getCourseCountByOwner = createAsyncThunk<Response<CourseCountStat>, void, { rejectValue: Response<null> }>(
     "stat/total-course-owner",
     async (body, ThunkAPI) => {
@@ -151,28 +161,30 @@ export const getIncomeByOwner = createAsyncThunk<Response<any>, void, { rejectVa
         }
     },
 );
-export const getIncomeByCourseByOwner = createAsyncThunk<Response<IncomeByCourse[]>, void, { rejectValue: Response<null> }>(
-    "stat/income-by-course-by-owner",
-    async (body, ThunkAPI) => {
-        try {
-            const response = await apis.statisticApis.getIncomeByCourseByOwner();
-            return response.data as Response<IncomeByCourse[]>;
-        } catch (error: any) {
-            return ThunkAPI.rejectWithValue(error.data as Response<null>);
-        }
-    },
-);
-export const getIncomeByMonthByOwner = createAsyncThunk<Response<MoneyByMonth[]>, number, { rejectValue: Response<null> }>(
-    "stat/month-income",
-    async (body, ThunkAPI) => {
-        try {
-            const response = await apis.statisticApis.getIncomeByMonthByOwner(body);
-            return response.data as Response<MoneyByMonth[]>;
-        } catch (error: any) {
-            return ThunkAPI.rejectWithValue(error.data as Response<null>);
-        }
-    },
-);
+export const getIncomeByCourseByOwner = createAsyncThunk<
+    Response<IncomeByCourse[]>,
+    void,
+    { rejectValue: Response<null> }
+>("stat/income-by-course-by-owner", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.statisticApis.getIncomeByCourseByOwner();
+        return response.data as Response<IncomeByCourse[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
+export const getIncomeByMonthByOwner = createAsyncThunk<
+    Response<MoneyByMonth[]>,
+    number,
+    { rejectValue: Response<null> }
+>("stat/month-income", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.statisticApis.getIncomeByMonthByOwner(body);
+        return response.data as Response<MoneyByMonth[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 export const getTotalEnrolledByOwner = createAsyncThunk<Response<any>, void, { rejectValue: Response<null> }>(
     "stat/total-enrolled",
     async (body, ThunkAPI) => {
@@ -184,28 +196,30 @@ export const getTotalEnrolledByOwner = createAsyncThunk<Response<any>, void, { r
         }
     },
 );
-export const getEnrolledByTimeByOwner = createAsyncThunk<Response<any>, {period: string, startDate: string, endDate: string}, { rejectValue: Response<null> }>(
-    "stat/total-enrolled-by-time",
-    async ({period, startDate, endDate}, ThunkAPI) => {
-        try {
-            const response = await apis.statisticApis.getEnrolledByTimeByOwner(period, startDate, endDate);
-            return response.data as Response<any>;
-        } catch (error: any) {
-            return ThunkAPI.rejectWithValue(error.data as Response<null>);
-        }
-    },
-);
-export const getEnrolledByMonthByOwner = createAsyncThunk<Response<EnrollByMonth[]>, number, { rejectValue: Response<null> }>(
-    "stat/month-enrolled",
-    async (body, ThunkAPI) => {
-        try {
-            const response = await apis.statisticApis.getEnrolledByMonthByOwner(body);
-            return response.data as Response<EnrollByMonth[]>;
-        } catch (error: any) {
-            return ThunkAPI.rejectWithValue(error.data as Response<null>);
-        }
-    },
-);
+export const getEnrolledByTimeByOwner = createAsyncThunk<
+    Response<any>,
+    { period: string; startDate: string; endDate: string },
+    { rejectValue: Response<null> }
+>("stat/total-enrolled-by-time", async ({ period, startDate, endDate }, ThunkAPI) => {
+    try {
+        const response = await apis.statisticApis.getEnrolledByTimeByOwner(period, startDate, endDate);
+        return response.data as Response<any>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
+export const getEnrolledByMonthByOwner = createAsyncThunk<
+    Response<EnrollByMonth[]>,
+    number,
+    { rejectValue: Response<null> }
+>("stat/month-enrolled", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.statisticApis.getEnrolledByMonthByOwner(body);
+        return response.data as Response<EnrollByMonth[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 export const getTotalIncomeSaleCourse = createAsyncThunk<Response<any>, void, { rejectValue: Response<null> }>(
     "stat/income-sale-course",
     async (body, ThunkAPI) => {
@@ -261,12 +275,102 @@ export const getTotalTurnRating = createAsyncThunk<Response<any>, void, { reject
         }
     },
 );
-export const getRatingPercentByOwner = createAsyncThunk<Response<RatingPercent[]>, void, { rejectValue: Response<null> }>(
-    "stat/rating-percent-by-owner",
+export const getRatingPercentByOwner = createAsyncThunk<
+    Response<RatingPercent[]>,
+    void,
+    { rejectValue: Response<null> }
+>("stat/rating-percent-by-owner", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.statisticApis.getRatingPercentByOwner();
+        return response.data as Response<RatingPercent[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
+export const getRankCoursesByEnrolled = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/enrolled-courses",
     async (body, ThunkAPI) => {
         try {
-            const response = await apis.statisticApis.getRatingPercentByOwner();
-            return response.data as Response<RatingPercent[]>;
+            const response = await apis.statisticApis.getRankCoursesByEnrolled(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getRankCoursesByRating = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/avgrating-courses",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.statisticApis.getRankCoursesByRating(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getRankCoursesByIncome = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/income-courses",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.statisticApis.getRankCoursesByIncome(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getRankCoursesByReport = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/report-courses",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.statisticApis.getRankCoursesByReport(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+//
+export const getRankLecturersByEnrolled = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/enrolled-lecturers",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.statisticApis.getRankLecturersByEnrolled(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getRankLecturersByRating = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/avgrating-lecturers",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.statisticApis.getRankLecturersByRating(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getRankLecturersByIncome = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/income-lecturers",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.statisticApis.getRankLecturersByIncome(body);
+            return response.data as Response<any>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
+export const getRankLecturersByReport = createAsyncThunk<Response<any>, number, { rejectValue: Response<null> }>(
+    "stat/desc/report-lecturers",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.statisticApis.getRankLecturersByReport(body);
+            return response.data as Response<any>;
         } catch (error: any) {
             return ThunkAPI.rejectWithValue(error.data as Response<null>);
         }
@@ -297,7 +401,10 @@ type StatisticSliceType = {
     avgRateAllCourse: number;
     totalTurnRating: number;
     ratingPercentByOwner: RatingPercent[];
-
+    totalPage: number;
+    totalRecord: number;
+    rankCourses: RankCourse[];
+    rankLecturers: RankLecturer[];
 };
 
 const initialState: StatisticSliceType = {
@@ -318,7 +425,7 @@ const initialState: StatisticSliceType = {
     courseCountStat: {
         course_count: 0,
         course_approve_count: 0,
-        course_not_approve_count: 0
+        course_not_approve_count: 0,
     },
     top5Enrolled: [],
     top5Rate: [],
@@ -331,8 +438,12 @@ const initialState: StatisticSliceType = {
     totalPassUnpass: {
         total_enrolled: 0,
         total_pass: 0,
-        total_unpass: 0
-    }
+        total_unpass: 0,
+    },
+    totalPage: 0,
+    totalRecord: 0,
+    rankCourses: [],
+    rankLecturers: [],
 };
 
 export const statisticSlice = createSlice({
@@ -430,8 +541,6 @@ export const statisticSlice = createSlice({
         builder.addCase(getRatingPercent.rejected, (state) => {
             state.isGetLoading = false;
         });
-
-
 
         builder.addCase(getIncomeByMonthByOwner.pending, (state) => {
             state.isGetLoading = true;
@@ -573,7 +682,110 @@ export const statisticSlice = createSlice({
         builder.addCase(getRatingPercentByOwner.rejected, (state) => {
             state.isGetLoading = false;
         });
-
+        builder.addCase(getRankCoursesByEnrolled.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankCoursesByEnrolled.fulfilled, (state, action) => {
+            state.rankCourses = action.payload.data.data as RankCourse[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankCoursesByEnrolled.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankCoursesByRating.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankCoursesByRating.fulfilled, (state, action) => {
+            state.rankCourses = action.payload.data.data as RankCourse[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankCoursesByRating.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankCoursesByIncome.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankCoursesByIncome.fulfilled, (state, action) => {
+            state.rankCourses = action.payload.data.data as RankCourse[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankCoursesByIncome.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankCoursesByReport.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankCoursesByReport.fulfilled, (state, action) => {
+            state.rankCourses = action.payload.data.data as RankCourse[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankCoursesByReport.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByEnrolled.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankLecturersByEnrolled.fulfilled, (state, action) => {
+            state.rankLecturers = action.payload.data.data as RankLecturer[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByEnrolled.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByRating.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankLecturersByRating.fulfilled, (state, action) => {
+            state.rankLecturers = action.payload.data.data as RankLecturer[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByRating.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByIncome.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankLecturersByIncome.fulfilled, (state, action) => {
+            state.rankLecturers = action.payload.data.data as RankLecturer[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByIncome.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByReport.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getRankLecturersByReport.fulfilled, (state, action) => {
+            state.rankLecturers = action.payload.data.data as RankLecturer[];
+            state.totalPage = action.payload.data.total_page;
+            state.totalRecord = action.payload.data.total_record;
+            state.isGetLoading = false;
+        });
+        builder.addCase(getRankLecturersByReport.rejected, (state) => {
+            state.totalPage = 0;
+            state.isGetLoading = false;
+        });
     },
 });
 
