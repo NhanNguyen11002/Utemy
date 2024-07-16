@@ -279,7 +279,7 @@ export function DashboardLecturer() {
                                 <Tabs.Trigger
                                     value="revenue"
                                     className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${
-                                        tab === "form" ? "border-blue-400" : "border-transparent"
+                                        tab === "revenue" ? "border-blue-400" : "border-transparent"
                                     }`}
                                 >
                                     Thống kê doanh thu
@@ -287,7 +287,7 @@ export function DashboardLecturer() {
                                 <Tabs.Trigger
                                     value="course"
                                     className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${
-                                        tab === "target" ? "border-blue-400" : "border-transparent"
+                                        tab === "course" ? "border-blue-400" : "border-transparent"
                                     }`}
                                 >
                                     Thống kê khóa học
@@ -295,7 +295,7 @@ export function DashboardLecturer() {
                                 <Tabs.Trigger
                                     value="student"
                                     className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${
-                                        tab === "section" ? "border-blue-400" : "border-transparent"
+                                        tab === "student" ? "border-blue-400" : "border-transparent"
                                     }`}
                                 >
                                     Thống kê học viên
@@ -303,7 +303,7 @@ export function DashboardLecturer() {
                                 <Tabs.Trigger
                                     value="rating"
                                     className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${
-                                        tab === "promotion" ? "border-blue-400" : "border-transparent"
+                                        tab === "rating" ? "border-blue-400" : "border-transparent"
                                     }`}
                                 >
                                     Thống kê đánh giá và phản hồi

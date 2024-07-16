@@ -119,9 +119,13 @@ export function RankCourseTab() {
                                             </TableCell>
                                         </Link>
                                         <TableCell className="text-center border">
-                                            {" "}
                                             <p>
-                                                {stat?.toLocaleString() || ""} {option === "Doanh thu" && "VND"}
+                                                {stat !== undefined && stat !== null && stat !== 0
+                                                    ? stat.toLocaleString()
+                                                    : stat === 0
+                                                      ? "0"
+                                                      : ""}{" "}
+                                                {option === "Doanh thu" && "VND"}
                                             </p>
                                         </TableCell>
                                     </TableRow>
