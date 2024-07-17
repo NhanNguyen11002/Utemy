@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {  useEffect } from "react";
 import { useAppDispatch } from "../../../hooks/hooks";
 import * as Tabs from "@radix-ui/react-tabs";
 import DashboardTab from "./DashboardTab";
@@ -7,7 +7,7 @@ import LecturerTab from "./RankLecturerTab";
 import { componentActions } from "../../../redux/slices";
 
 export function Home() {
-    const [tab, setTab] = useState("dashboard");
+    // const [tab, setTab] = useState("dashboard");
     const dispatch = useAppDispatch();
     useEffect(() => {
         dispatch(componentActions.setAdminNavPlace("dashboard"));
@@ -18,22 +18,22 @@ export function Home() {
                 <Tabs.List className="flex flex-col h-fit gap-2 w-[15%]">
                     <Tabs.Trigger
                         value="dashboard"
-                        onClick={() => setTab("dashboard")}
-                        className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "dashboard" ? "border-blue-400" : "border-background_2"}`}
+                        // onClick={() => setTab("dashboard")}
+                        className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 data-[state=active]:border-blue-400 data-[state=inactive]:border-background_2`}
                     >
                         Thống kê chính
                     </Tabs.Trigger>
                     <Tabs.Trigger
                         value="lecturer"
-                        onClick={() => setTab("lecturer")}
-                        className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "lecturer" ? "border-blue-400" : "border-background_2"}`}
+                        // onClick={() => setTab("lecturer")}
+                        className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 data-[state=active]:border-blue-400 data-[state=inactive]:border-background_2`}
                     >
                         Xếp hạng giảng viên
                     </Tabs.Trigger>
                     <Tabs.Trigger
                         value="course"
-                        onClick={() => setTab("course")}
-                        className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "course" ? "border-blue-400" : "border-background_2"}`}
+                        // onClick={() => setTab("course")}
+                        className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 data-[state=active]:border-blue-400 data-[state=inactive]:border-background_2`}
                     >
                         Xếp hạng khoá học
                     </Tabs.Trigger>

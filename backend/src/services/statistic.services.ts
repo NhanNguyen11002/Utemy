@@ -1382,7 +1382,7 @@ const statCourseForAdminByReport = async (req: IRequestWithId): Promise<Response
     `;
         const totalReportCountByCourseFormatted = (totalReportCountByCourse as any).map((row: any) => ({
             ...row,
-            total_report_this_count: Number(row.total_report_this_count)
+            total_report_this_count: Number(row.total_report_this_count),
         }));
         console.log(totalReportCountByCourseFormatted);
         const courseIds = totalReportCountByCourseFormatted.map((row: any) => row.course_id);
@@ -1465,6 +1465,348 @@ const statCourseForAdminByReport = async (req: IRequestWithId): Promise<Response
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const statLecturerForAdminByEnrolled = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const userId = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: userId,
+                is_admin: true,
+                is_deleted: false,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+
+        const { page_index: pageIndex } = req.query;
+        const pageSize = configs.general.PAGE_SIZE;
+        const skip = ((Number(pageIndex) ?? 1) - 1) * pageSize;
+        const totalRecordResult = await configs.db.$queryRaw`
+            SELECT 
+                COUNT(DISTINCT u.id) AS total_record
+            FROM 
+                User u
+            LEFT JOIN 
+                Course c ON u.id = c.author_id
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0
+        `;
+
+        const totalRecord = Number((totalRecordResult as any)[0].total_record);
+        const totalPage = Math.ceil(totalRecord / pageSize);
+
+        const usersWithTotalEnrolled = await configs.db.$queryRaw`
+            SELECT 
+                u.id AS user_id,
+                u.first_name,
+                u.last_name,
+                u.url_avatar,
+                COALESCE(SUM(c.number_of_enrolled), 0) AS total_enrolled
+            FROM 
+                User u
+            LEFT JOIN 
+                Course c ON u.id = c.author_id
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0
+            GROUP BY 
+                u.id
+            ORDER BY 
+                total_enrolled DESC
+            LIMIT ${pageSize} OFFSET ${skip}
+        `;
+        const formattedData = (usersWithTotalEnrolled as any).map((user: any) => {
+            return {
+                lecturer_id: user.user_id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                url_avt: user.url_avatar,
+                number_of_enrolled: Number(user.total_enrolled),
+            };
+        });
+
+        if (formattedData.length === 0) {
+            return new ResponseError(404, constants.error.ERROR_USER_NOT_FOUND, false);
+        }
+
+        const responseData: PagingResponse<
+            { lecturer_id: number; first_name: string; last_name: string; url_avt: string; number_of_enrolled: number }[]
+        > = {
+            total_page: totalPage,
+            total_record: totalRecord,
+            data: formattedData,
+        };
+
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const statLecturerForAdminByAvgAvgRating = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const userId = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: userId,
+                is_admin: true,
+                is_deleted: false,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+
+        const { page_index: pageIndex } = req.query;
+        const pageSize = configs.general.PAGE_SIZE;
+        const skip = ((Number(pageIndex) ?? 1) - 1) * pageSize;
+
+        const totalRecordResult = await configs.db.$queryRaw`
+            SELECT 
+                COUNT(DISTINCT u.id) AS total_record
+            FROM 
+                User u
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0;
+        `;
+        const totalRecord = Number((totalRecordResult as any)[0].total_record);
+        const totalPage = Math.ceil(totalRecord / pageSize);
+
+        const lecturersWithAvgAvgRating = await configs.db.$queryRaw`
+            SELECT 
+                u.id AS user_id,
+                u.first_name,
+                u.last_name,
+                u.url_avatar,
+                COALESCE(ROUND(AVG(c.average_rating), 1), 0) AS avg_avg_rating
+            FROM 
+                User u
+            LEFT JOIN 
+                Course c ON u.id = c.author_id
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0
+            GROUP BY 
+                u.id
+            ORDER BY 
+                avg_avg_rating DESC
+            LIMIT ${pageSize} OFFSET ${skip};
+        `;
+
+        const formattedData = (lecturersWithAvgAvgRating as any).map((lecturer: any) => {
+            return {
+                lecturer_id: lecturer.user_id,
+                first_name: lecturer.first_name,
+                last_name: lecturer.last_name,
+                url_avt: lecturer.url_avatar,
+                average_rating: Number(lecturer.avg_avg_rating),
+            };
+        });
+
+        if (formattedData.length === 0) {
+            return new ResponseError(404, constants.error.ERROR_USER_NOT_FOUND, false);
+        }
+
+        const responseData: PagingResponse<
+            {
+                lecturer_id: number;
+                first_name: string;
+                last_name: string;
+                url_avt: string;
+                average_rating: number;
+            }[]
+        > = {
+            total_page: totalPage,
+            total_record: totalRecord,
+            data: formattedData,
+        };
+
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const statLecturerForAdminByIncome = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const userId = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: userId,
+                is_admin: true,
+                is_deleted: false,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+
+        const { page_index: pageIndex } = req.query;
+        const pageSize = configs.general.PAGE_SIZE;
+        const skip = ((Number(pageIndex) ?? 1) - 1) * pageSize;
+
+        const totalRecordResult = await configs.db.$queryRaw`
+            SELECT 
+                COUNT(DISTINCT u.id) AS total_record
+            FROM 
+                User u
+            LEFT JOIN 
+                Course c ON u.id = c.author_id
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0
+        `;
+        const totalRecord = Number((totalRecordResult as any)[0].total_record);
+        const totalPage = Math.ceil(totalRecord / pageSize);
+
+        const totalIncomeByLecturer = await configs.db.$queryRaw`
+            SELECT 
+                u.id AS lecturer_id,
+                u.first_name,
+                u.last_name,
+                u.url_avatar,
+                COALESCE(SUM(id.paid_price), 0) AS total_income
+            FROM 
+                User u
+            LEFT JOIN 
+                Course c ON u.id = c.author_id
+            LEFT JOIN 
+                invoice_detail id ON c.id = id.course_id
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0
+            GROUP BY 
+                u.id
+            ORDER BY 
+                total_income DESC
+            LIMIT ${pageSize} OFFSET ${skip};
+        `;
+
+        const formattedData = (totalIncomeByLecturer as any[]).map((lecturer: any) => {
+            return {
+                lecturer_id: lecturer.lecturer_id,
+                first_name: lecturer.first_name,
+                last_name: lecturer.last_name,
+                url_avt: lecturer.url_avatar,
+                total_income_this_lecturer: Number(lecturer.total_income),
+            };
+        });
+
+        if (formattedData.length === 0) {
+            return new ResponseError(404, constants.error.ERROR_USER_NOT_FOUND, false);
+        }
+
+        const responseData: PagingResponse<
+            {
+                lecturer_id: number;
+                first_name: string;
+                last_name: string;
+                url_avt: string;
+                total_income_this_lecturer: number;
+            }[]
+        > = {
+            total_page: totalPage,
+            total_record: totalRecord,
+            data: formattedData,
+        };
+
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const statLecturerForAdminByReport = async (req: IRequestWithId): Promise<ResponseBase> => {
+    try {
+        const userId = Number(req.user_id);
+        const isAdmin = await configs.db.user.findFirst({
+            where: {
+                id: userId,
+                is_admin: true,
+                is_deleted: false,
+            },
+        });
+        if (!isAdmin) return new ResponseError(400, constants.error.ERROR_UNAUTHORIZED, false);
+
+        const { page_index: pageIndex } = req.query;
+        const pageSize = configs.general.PAGE_SIZE;
+        const skip = ((Number(pageIndex) ?? 1) - 1) * pageSize;
+
+        // Query to get total record count of distinct lecturers with courses
+        const totalRecordResult = await configs.db.$queryRaw`
+            SELECT 
+                COUNT(DISTINCT u.id) AS total_record
+            FROM 
+                User u
+            LEFT JOIN 
+                Course c ON u.id = c.author_id
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0
+        `;
+        const totalRecord = Number((totalRecordResult as any)[0].total_record);
+        const totalPage = Math.ceil(totalRecord / pageSize);
+
+        // Query to get total report count by lecturer
+        const totalReportCountByLecturer = await configs.db.$queryRaw`
+            SELECT 
+                u.id AS lecturer_id,
+                u.first_name,
+                u.last_name,
+                u.url_avatar,
+                COALESCE(COUNT(r.id), 0) AS total_report_count
+            FROM 
+                User u
+            LEFT JOIN 
+                Course c ON u.id = c.author_id
+            LEFT JOIN 
+                Report r ON c.id = r.course_id
+            WHERE 
+                u.is_deleted = 0 && u.is_admin = 0
+            GROUP BY 
+                u.id
+            ORDER BY 
+                total_report_count DESC
+            LIMIT ${pageSize} OFFSET ${skip};
+        `;
+
+        const formattedData = (totalReportCountByLecturer as any[]).map((lecturer: any) => {
+            return {
+                lecturer_id: lecturer.lecturer_id,
+                first_name: lecturer.first_name,
+                last_name: lecturer.last_name,
+                url_avt: lecturer.url_avatar,
+                total_report_this_lecturer: Number(lecturer.total_report_count),
+            };
+        });
+
+        if (formattedData.length === 0) {
+            return new ResponseError(404, constants.error.ERROR_USER_NOT_FOUND, false);
+        }
+
+        const responseData: PagingResponse<
+            {
+                lecturer_id: number;
+                first_name: string;
+                last_name: string;
+                url_avt: string;
+                total_report_this_lecturer: number;
+            }[]
+        > = {
+            total_page: totalPage,
+            total_record: totalRecord,
+            data: formattedData,
+        };
+
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+
 const statisticServices = {
     categoryCourseCount,
     courseCount,
@@ -1494,5 +1836,9 @@ const statisticServices = {
     statCourseForAdminByAvgRating,
     statCourseForAdminByIncome,
     statCourseForAdminByReport,
+    statLecturerForAdminByEnrolled,
+    statLecturerForAdminByAvgAvgRating,
+    statLecturerForAdminByIncome,
+    statLecturerForAdminByReport,
 };
 export default statisticServices;

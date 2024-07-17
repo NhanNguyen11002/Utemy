@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Link } from "react-router-dom";
 import { statisticActions } from "../../../redux/slices";
 import { Pagination, Spin } from "../../../components";
+import defaultAvatar from "../../../assets/images/default-avatar.png";
 export function RankLecturerTab() {
     const dispatch = useAppDispatch();
     const [option, setOption] = useState("Số học viên");
@@ -104,7 +105,9 @@ export function RankLecturerTab() {
                                         : option === "Đánh giá"
                                           ? lecturer.average_rating
                                           : option === "Doanh thu"
-                                            ? lecturer.total_income_this_lecturer.toLocaleString()
+                                          ? lecturer.total_income_this_lecturer !== undefined && lecturer.total_income_this_lecturer !== 0
+                                          ? lecturer.total_income_this_lecturer.toLocaleString()
+                                          : lecturer.total_income_this_lecturer
                                             : lecturer.total_report_this_lecturer;
                                 return (
                                     <TableRow key={index}>
@@ -115,8 +118,8 @@ export function RankLecturerTab() {
                                             <TableCell className="font-medium">
                                                 <div className="flex items-center gap-4">
                                                     <Avatar className=" rounded-sm">
-                                                        <AvatarImage src={lecturer.url_avt} />
-                                                        <AvatarFallback>UtemyVip</AvatarFallback>
+                                                        <AvatarImage src={lecturer.url_avt || defaultAvatar} />
+                                                    <AvatarFallback>UtemyVip</AvatarFallback>
                                                     </Avatar>
                                                     <p className="title-card-content">
                                                         {`${lecturer.first_name} ${lecturer.last_name}`} {}
