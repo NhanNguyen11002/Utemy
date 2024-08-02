@@ -58,7 +58,6 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
         formData.append("title", values.title);
         formData.append("video", video as File);
         formData.append("lecture_id", values.id.toString());
-        formData.append("duration", values.duration);
         formData.append("description", values.description);
         formData.append("type", "Lesson");
         dispatch(lectureActions.updateLecture(formData))
@@ -108,6 +107,7 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
                                     <Field
                                         type="text"
                                         name="title"
+                                        id="title"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.title && formik.touched.title && "border-error"
                                         } `}
@@ -138,25 +138,7 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
                                         <span className=" m-auto text-[15px] text-error font-medium ">{error}</span>
                                     )}
                                 </div>
-                                <div className="px-5 py-3">
-                                    <label htmlFor="duration" className="text-sm mb-1 tablet:text-xl font-medium">
-                                        Thời lượng
-                                    </label>{" "}
-                                    <br />
-                                    <Field
-                                        type="text"
-                                        name="duration"
-                                        className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
-                                            formik.errors.duration && formik.touched.duration && "border-error"
-                                        } `}
-                                    />
-                                    <br />
-                                    <ErrorMessage
-                                        name="duration"
-                                        component="span"
-                                        className="text-[14px] text-error font-medium"
-                                    />
-                                </div>
+
                                 <div className="px-5 py-3">
                                     <label htmlFor="description" className="text-sm mb-1 tablet:text-xl font-medium">
                                         Mô tả
@@ -171,6 +153,7 @@ const PopupUpdateLesson: React.FC<UpdateLessonModalProps> = (props) => {
                                     <Field
                                         as="textarea"
                                         name="description"
+                                        id="description"
                                         component={TextEditor}
                                         description={lecture.content.description}
                                         handleChangeDescription={(description: string) =>

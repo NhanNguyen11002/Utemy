@@ -11,6 +11,7 @@ categoryRouter.delete("/:category_id", isLogin, controllers.categoryController.d
 categoryRouter.get("/all", controllers.categoryController.getCategoriesWithPagination); //
 categoryRouter.get("/full", controllers.categoryController.getCategories); //
 categoryRouter.get("/top5", controllers.categoryController.get5Categories); //
-categoryRouter.get("/:category_id", isLogin, controllers.categoryController.getCategory); //
+categoryRouter.get("/top8blog", controllers.categoryController.get8BlogCategories); //
+categoryRouter.get("/:category_id", controllers.categoryController.getCategory); //
 
 export default categoryRouter;

@@ -50,7 +50,7 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
         formData.append("title", values.title);
         formData.append("description", values.description);
         formData.append("category_image", image as File);
-        console.log(formData);
+
         dispatch(categoryActions.createCategory(formData)).then((response: any) => {
             if (response.payload && response.payload.status_code === 200) {
                 dispatch(categoryActions.getCategoriesWithPagination({ searchItem: "", pageIndex: 1 }));
@@ -105,6 +105,7 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                                     <Field
                                                         as="input"
                                                         name="title"
+                                                        id="title"
                                                         placeholder="Tiêu đề danh mục..."
                                                         className={`${
                                                             formik.errors.title && formik.touched.title
@@ -126,6 +127,7 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                                     <Field
                                                         name="categoryImage"
                                                         type="file"
+                                                        id="categoryImage"
                                                         value={undefined}
                                                         className="file-input file-input-bordered file-input-info w-full max-w-xs"
                                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,6 +158,7 @@ const PopupAddCategory: React.FC<PopupAddCategoryProps> = (props) => {
                                             <Field
                                                 as="textarea"
                                                 name="description"
+                                                id="description"
                                                 placeholder="Mô tả danh mục..."
                                                 className={`${
                                                     formik.errors.description && formik.touched.description

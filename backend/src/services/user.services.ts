@@ -110,30 +110,6 @@ const getAuthorProfile = async (req: Request): Promise<ResponseBase> => {
         });
         if (!user) return new ResponseError(404, constants.error.ERROR_USER_NOT_FOUND, false);
 
-        const courses: OutstandingCourse[] = [];
-
-        user?.courses.map((course) => {
-            const data: OutstandingCourse = {
-                course_id: course.id,
-                thumbnail: course.thumbnail,
-                title: course.title,
-                slug: course.slug,
-                number_of_enrolled: course.number_of_enrolled,
-                number_of_rating: course.number_of_rating,
-                categories: course.course_categories.map((cate) => (cate as any).Category),
-                author: {
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    user_id: user.id,
-                },
-                created_at: course.created_at,
-                updated_at: course.updated_at,
-                average_rating: course.average_rating,
-                status: course.status,
-            };
-            courses.push(data);
-        });
-
         const data = {
             user: {
                 first_name: user.first_name,
@@ -142,7 +118,6 @@ const getAuthorProfile = async (req: Request): Promise<ResponseBase> => {
                 description: user.description,
                 is_admin: user.is_admin,
             },
-            courses: courses,
         };
         return new ResponseSuccess(200, constants.success.SUCCESS_REQUEST, true, data);
     } catch (error) {
@@ -419,6 +394,98 @@ const activeUser = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const getTop10AuthorByAvgRating = async (req: Request): Promise<ResponseBase> => {
+    try {
+        const top10Author = await configs.db.user.findMany({
+            take: 10,
+            where: {
+                is_deleted: false,
+                courses: {
+                    some: {
+                        is_delete: false,
+                    },
+                },
+            },
+            select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+                description: true,
+                url_avatar: true,
+                courses: {
+                    select: {
+                        average_rating: true,
+                        number_of_enrolled: true,
+                    },
+                },
+            },
+        });
+
+        const responseData = top10Author.map((user) => ({
+            user_id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            description: user.description,
+            url_avatar: user.url_avatar,
+            average_rating_all_course:
+                user.courses.reduce((acc, course) => acc + course.average_rating, 0) / user.courses.length,
+            number_of_enrolled_all_course: user.courses.reduce((acc, course) => acc + course.number_of_enrolled, 0),
+        }));
+        responseData.sort((a, b) => b.average_rating_all_course - a.average_rating_all_course);
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
+const getTop10AuthorBySumEnrolled = async (req: Request): Promise<ResponseBase> => {
+    try {
+        const top10Author = await configs.db.user.findMany({
+            take: 10,
+            where: {
+                is_deleted: false,
+                courses: {
+                    some: {
+                        is_delete: false,
+                    },
+                },
+            },
+            select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+                description: true,
+                url_avatar: true,
+                courses: {
+                    select: {
+                        average_rating: true,
+                        number_of_enrolled: true,
+                    },
+                },
+            },
+        });
+
+        const responseData = top10Author.map((user) => ({
+            user_id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            description: user.description,
+            url_avatar: user.url_avatar,
+            average_rating_all_course:
+                user.courses.reduce((acc, course) => acc + course.average_rating, 0) / user.courses.length,
+            number_of_enrolled_all_course: user.courses.reduce((acc, course) => acc + course.number_of_enrolled, 0),
+        }));
+        responseData.sort((a, b) => b.number_of_enrolled_all_course - a.number_of_enrolled_all_course);
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, responseData);
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
+        }
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const UserServices = {
     changeAvatar,
     getProfile,
@@ -429,5 +496,7 @@ const UserServices = {
     deleteUser,
     editUser,
     activeUser,
+    getTop10AuthorByAvgRating,
+    getTop10AuthorBySumEnrolled,
 };
 export default UserServices;

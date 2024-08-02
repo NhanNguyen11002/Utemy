@@ -1,34 +1,40 @@
 const success = {
-    SUCCESS_CHECK_MAIL: "Check your email to verify account",
-    SUCCESS_SIGNUP: "Sign up successfully, check your email to verify account",
-    SUCCESS_LOGIN: "Login successfully",
-    SUCCESS_REFRESH_TOKEN: "Refreshed successfully",
-    SUCCESS_VERIFY_EMAIL: "Verify email successfully",
-    SUCCESS_FORGOT_PASSWORD: "Check your email for reset password link",
-    SUCCESS_CHANGE_PASSWORD: "Change password successfully",
-    SUCCESS_RESET_PASSWORD: "Reset password successfully",
-    SUCCESS_REQUEST: "Request successfully",
-    SUCCESS_CHANGE_AVATAR: "Change avatar successfully",
-    SUCCESS_CHANGE_THUMBNAIL: "Change thumbnail of course successfully",
-    SUCCESS_GET_DATA: "Get data successfully",
-    SUCCESS_CREATE_DATA: "Create data successfully",
-    SUCCESS_UPDATE_DATA: "Update data successfully",
+    SUCCESS_CHECK_MAIL: "Kiểm tra email của bạn để xác minh tài khoản",
+    SUCCESS_SIGNUP: "Đăng ký thành công, kiểm tra email của bạn để xác minh tài khoản",
+    SUCCESS_LOGIN: "Đăng nhập thành công",
+    SUCCESS_REFRESH_TOKEN: "Làm mới thành công",
+    SUCCESS_VERIFY_EMAIL: "Xác minh email thành công",
+    SUCCESS_FORGOT_PASSWORD: "Kiểm tra email của bạn để nhận liên kết đặt lại mật khẩu",
+    SUCCESS_CHANGE_PASSWORD: "Đổi mật khẩu thành công",
+    SUCCESS_RESET_PASSWORD: "Đặt lại mật khẩu thành công",
+    SUCCESS_REQUEST: "Yêu cầu thành công",
+    SUCCESS_CHANGE_AVATAR: "Đổi ảnh đại diện thành công",
+    SUCCESS_CHANGE_THUMBNAIL: "Đổi hình thu nhỏ của khóa học thành công",
+    SUCCESS_GET_DATA: "Lấy dữ liệu thành công",
+    SUCCESS_CREATE_DATA: "Tạo dữ liệu thành công",
+    SUCCESS_UPDATE_DATA: "Cập nhật dữ liệu thành công",
 
     //lesson
-    SUCCESS_CREATE_LESSON: "Create lesson successfully",
-    SUCCESS_UPDATE_LESSON: "Update lesson successfully",
-    SUCCESS_DELETE_LESSON: "Delete lesson successfully",
-    SUCCESS_GET_LESSON: "Get lesson successfully",
+    SUCCESS_CREATE_LESSON: "Tạo bài học thành công",
+    SUCCESS_UPDATE_LESSON: "Cập nhật bài học thành công",
+    SUCCESS_DELETE_LESSON: "Xóa bài học thành công",
+    SUCCESS_GET_LESSON: "Lấy bài học thành công",
 
     //rating
-    SUCCESS_CREATE_RATING: "Create rating successfully",
+    SUCCESS_CREATE_RATING: "Tạo đánh giá thành công",
 
     //category
-    SUCCESS_CREATE_CATEGORY: "Create category successfully",
-    SUCCESS_UPDATE_CATEGORY: "Update category successfully",
-    SUCCESS_DELETE_CATEGORY: "Delete category successfully",
+    SUCCESS_CREATE_CATEGORY: "Tạo danh mục thành công",
+    SUCCESS_UPDATE_CATEGORY: "Cập nhật danh mục thành công",
+    SUCCESS_DELETE_CATEGORY: "Xóa danh mục thành công",
 
     //feedback
-    SUCCESS_CREATE_FEEDBACK: "Create feedback successfully",
+    SUCCESS_CREATE_FEEDBACK: "Tạo phản hồi thành công",
+
+    //Quiz
+    SUCCESS_CREATE_SET_OF_QUIZ: "Tạo bộ câu hỏi thành công",
+    SUCCESS_UPDATE_SET_OF_QUIZ: "Cập nhật bộ câu hỏi thành công",
+    SUCCESS_DELETE_SET_OF_QUIZ: "Xóa bộ câu hỏi thành công",
 };
+
 export default success;

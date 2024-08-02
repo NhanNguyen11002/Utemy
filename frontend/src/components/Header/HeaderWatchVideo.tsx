@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { images } from "../../assets";
 import UserDropDown from "../Dropdown/UserDropDown";
 import { useAppSelector, useAppDispatch } from "../../hooks/hooks";
-import { categoryActions } from "../../redux/slices";
+import { courseActions, certifierActions } from "../../redux/slices";
 import { Course } from "../../types/course";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../../components/ui/hover-card";
+import constants from "../../constants";
+
 interface HeaderProps {
     course: Course;
     role: string;
@@ -13,14 +18,60 @@ interface HeaderProps {
 
 const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
     const avatar = useAppSelector((state) => state.authSlice.user.url_avatar);
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin);
+    const overallProgress = useAppSelector((state) => state.progressSlice.overallProgress) || 0;
+    const number_of_lecture = useAppSelector((state) => state.courseSlice.courseDetail.number_of_lecture) || 1;
     const [isDisplayUserDrawer, setIsDisplayUserDrawer] = useState<boolean>(false);
+    const courseId = useAppSelector((state) => state.courseSlice.courseDetail.course_id);
+    const myEnrolleDetail = useAppSelector((state) => state.courseSlice.myEnrolled[courseId]);
+    const isDone = myEnrolleDetail ? myEnrolleDetail.is_done : false;
+    const isPass = myEnrolleDetail ? myEnrolleDetail.is_pass : false;
+    const isFirstPass = useAppSelector((state) => state.courseSlice.isFirstPass);
+    const userId = useAppSelector((state) => state.authSlice.user.user_id) || 0;
 
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(categoryActions.getCategories());
-    }, [dispatch]);
-
+        if (role !== constants.util.ROLE_ENROLLED) return;
+        //hoc xong, luc isDone
+        if (overallProgress === number_of_lecture && !isDone) {
+            dispatch(courseActions.setDoneCourse(courseId)).then((res) => {
+                if (res.payload?.status_code === 200) {
+                    toast(
+                        "Bạn đã hoàn thành khoá học, bài kiểm tra toàn khoá học đã được mở, hoàn thành ngay để nhận chứng chỉ",
+                        {
+                            icon: "🤓",
+                            duration: 10000,
+                        },
+                    );
+                    dispatch(courseActions.getAllEnrolled());
+                }
+            });
+        }
+    }, [dispatch, overallProgress, courseId]);
+    useEffect(() => {
+        if (role !== constants.util.ROLE_ENROLLED) return;
+        if (isFirstPass && isPass) {
+            dispatch(certifierActions.sendCertifier(courseId)).then((res) => {
+                if (res.payload?.status_code === 200) {
+                    toast(
+                        "Chúc mừng bạn đã vượt qua bài kiểm tra cuối khoá, sẽ có một bản chứng chỉ được gửi đến email của bạn",
+                        {
+                            icon: "🥳",
+                            duration: 10000,
+                        },
+                    );
+                    dispatch(courseActions.getAllEnrolled());
+                    dispatch(courseActions.setCurrentCertificate(res.payload.data.public_id));
+                    dispatch(courseActions.setIsFirstPass(false));
+                }
+            });
+        }
+    }, [dispatch, isPass]);
+    useEffect(() => {
+        if (role !== constants.util.ROLE_ENROLLED) return;
+        dispatch(courseActions.getAllEnrolled());
+    }, [dispatch, userId]);
     return (
         <>
             <header className="w-full h-[70px] max-w-full bg-[#2D2F31] shadow-xl fixed top-0 left-0 z-[10]">
@@ -35,11 +86,33 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                         <div className="h-6 w-px bg-gray-700"></div>
                     </div>
                     <div className="w-full  p-[16px]  rounded-[8px]">
-                        <Link to={`/course-detail/${course.slug}`}>
+                        <Link to={`/${isAdmin ? "admin/" : ""}course-detail/${course.slug}`}>
                             <h2 className="text-white text-xl  hover:opacity-70 ">{course.title}</h2>
                         </Link>
                     </div>
-                    <>
+
+                    <div className="flex gap-4 items-center">
+                        {role === constants.util.ROLE_ENROLLED && (
+                            <HoverCard>
+                                <HoverCardTrigger className="flex items-center w-fit shrink-0 hover:opacity-85 transition-all duration-300 hover:cursor-pointer">
+                                    <CircularProgressbar
+                                        value={(overallProgress / number_of_lecture) * 100}
+                                        text={``}
+                                        styles={buildStyles({
+                                            pathColor: "#60a5fa",
+                                        })}
+                                        className="w-10 h-10 fill-blue-400"
+                                    />
+                                    <p className="text-white text-sm ">Tiến độ của bạn</p>
+                                </HoverCardTrigger>
+                                <HoverCardContent>
+                                    <div>
+                                        Đã hoàn thành {overallProgress}/{number_of_lecture} bài học
+                                    </div>
+                                </HoverCardContent>
+                            </HoverCard>
+                        )}
+
                         <div className="ml-auto flex shrink-0 items-center">
                             {/* DRAWER AVATAR */}
                             <div className="drawer drawer-end">
@@ -48,7 +121,9 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                                     type="checkbox"
                                     className="drawer-toggle"
                                     checked={isDisplayUserDrawer}
-                                    onChange={() => setIsDisplayUserDrawer(!isDisplayUserDrawer)}
+                                    onChange={() => {
+                                        if (!isAdmin) setIsDisplayUserDrawer(!isDisplayUserDrawer);
+                                    }}
                                 />
                                 <div className="drawer-content">
                                     <label
@@ -75,7 +150,7 @@ const WatchVideoHeader: React.FC<HeaderProps> = ({ course, role }) => {
                                 </div>
                             </div>
                         </div>
-                    </>
+                    </div>
                 </div>
             </header>
         </>

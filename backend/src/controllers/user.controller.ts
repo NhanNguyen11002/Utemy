@@ -52,4 +52,12 @@ export default class UserController {
         const response: ResponseBase = await services.UserService.getAllUsers(req);
         return res.status(response.getStatusCode()).json(response);
     }
+    async getTop10AuthorByAvgRating(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.UserService.getTop10AuthorByAvgRating(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
+    async getTop10AuthorBySumEnrolled(req: Request, res: Response): Promise<Response> {
+        const response: ResponseBase = await services.UserService.getTop10AuthorBySumEnrolled(req);
+        return res.status(response.getStatusCode()).json(response);
+    }
 }

@@ -7,8 +7,6 @@ type TransactionCardProps = {
 };
 
 const TransactionCard: React.FC<TransactionCardProps> = ({ historyTran }) => {
-    console.log("historyTran in TransactionCard:", historyTran);
-
     const [isTableVisible, setIsTableVisible] = useState(false);
 
     const toggleTableVisibility = () => {
@@ -33,13 +31,13 @@ const TransactionCard: React.FC<TransactionCardProps> = ({ historyTran }) => {
                 <div className="flex justify-between tablet:flex-1 px-2 pb-2 tablet:px-0">
                     <div className="w-[90%] tablet:w-full p-3">
                         <h2 className="tablet:w-[300px] xl:w-[600px] text-xl font-bold text-title truncate ...">
-                            Invoice ID: {historyTran.id}
+                            ID giao dịch: {historyTran.id}
                         </h2>
                         <p className="text-base font-bold">
-                            Create date: {new Date(historyTran.created_at).toLocaleString()}
+                            Ngày tạo: {new Date(historyTran.created_at).toLocaleString()}
                         </p>
                         <p className="text-base font-bold">
-                            Total Money: {historyTran.total_money.toLocaleString()} VND
+                            Tổng tiền: {historyTran.total_money.toLocaleString()} VND
                         </p>
 
                         {/* Display invoice_items information if available */}
@@ -50,13 +48,13 @@ const TransactionCard: React.FC<TransactionCardProps> = ({ historyTran }) => {
                                 </button>
                                 {isTableVisible && (
                                     <>
-                                        <p className="text-base font-bold">Invoice Detail:</p>
+                                        <p className="text-base font-bold">Chi tiết hóa đơn:</p>
                                         <table className="min-w-full divide-y divide-gray-200 text-center">
                                             <thead>
                                                 <tr>
-                                                    <th className="py-2 whitespace-nowrap">Thumbnail</th>
-                                                    <th className="py-2 whitespace-nowrap">Course Title</th>
-                                                    <th className="py-2 whitespace-nowrap">Paid Price</th>
+                                                    <th className="py-2 whitespace-nowrap">Ảnh </th>
+                                                    <th className="py-2 whitespace-nowrap">Tiêu đề khóa học</th>
+                                                    <th className="py-2 whitespace-nowrap">Giá đã trả</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

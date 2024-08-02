@@ -13,7 +13,19 @@ import quizRouter from "./quiz.router";
 import lectureRouter from "./lecture.router";
 import testRouter from "./test.router";
 import couponRouter from "./coupon.router";
-
+import approvalRouter from "./approval.router";
+import decisionRouter from "./decision.router";
+import reportRouter from "./report.router";
+import eventRouter from "./event.router";
+import progressRouter from "./progress.router";
+import commentRouter from "./comment.router";
+import replyCommentRouter from "./replycomment.router";
+import reactionRouter from "./reaction.router";
+import certifierRouter from "./certifier.router";
+import blogRouter from "./blog.router";
+import commentBlogRouter from "./commentblog.router";
+import reactionCommentBlogRouter from "./reactioncommentblog.router";
+import boxchatRouter from "./boxchat.router";
 export default {
     authRouter,
     userRouter,
@@ -30,4 +42,17 @@ export default {
     lectureRouter,
     testRouter,
     couponRouter,
+    decisionRouter,
+    approvalRouter,
+    reportRouter,
+    eventRouter,
+    progressRouter,
+    commentRouter,
+    replyCommentRouter,
+    reactionRouter,
+    certifierRouter,
+    blogRouter,
+    commentBlogRouter,
+    reactionCommentBlogRouter,
+    boxchatRouter,
 };

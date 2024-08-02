@@ -23,6 +23,7 @@ import CartSaveIcon from "./CartSaveIcon";
 import GiftIcon from "./GiftIcon";
 import MyEnrollCourseIcon from "./MyEnrollCourseIcon";
 import AllcoursesIcon from "./AllcourseIcon";
+import FacebookIcon from "./FacebookIcon";
 
 export {
     AddIcon,
@@ -50,4 +51,5 @@ export {
     CartRemoveIcon,
     CartSaveIcon,
     GiftIcon,
+    FacebookIcon,
 };

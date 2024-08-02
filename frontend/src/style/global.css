@@ -4,6 +4,97 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: smooth;
+}
+.ql-tooltip {
+    left: 0 !important;
+}
+.HoverCardContent {
+    transform-origin: var(--radix-hover-card-content-transform-origin);
+    animation: scaleIn 0.5s ease-out;
+    border-radius: 6px;
+    padding: 20px;
+    min-width: fit;
+    max-width: 350px;
+    height: fit;
+    background-color: white;
+    box-shadow:
+        hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+        hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+    animation-duration: 700ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+.HoverCardContent[data-side="top"] {
+    animation-name: slideDownAndFade;
+}
+.HoverCardContent[data-side="right"] {
+    animation-name: slideLeftAndFade;
+}
+.HoverCardContent[data-side="bottom"] {
+    animation-name: slideUpAndFade;
+}
+.HoverCardContent[data-side="left"] {
+    animation-name: slideRightAndFade;
+}
+@keyframes slideUpAndFade {
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideRightAndFade {
+    0% {
+        opacity: 0;
+        transform: translateX(-4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideDownAndFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideLeftAndFade {
+    0% {
+        opacity: 0;
+        transform: translateX(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.summary-card-content {
+    --max-lines: 3;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--max-lines);
+}
+.title-card-content {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
 /* styles.css */
 .description-course h2 {
     @apply text-3xl; /* You can adjust this size as needed */
@@ -14,10 +105,123 @@
 .description-course h3 {
     @apply text-2xl; /* You can adjust this size as needed */
 }
+.fill-in-quizz img {
+    max-width: 100%;
+    height: auto;
+    max-height: 150px;
+}
+.blog-content {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px; */
+}
 
-/* * {
-    @apply text-black;
+.category {
+    height: calc(2 * 2rem);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+}
+
+.blog-content img {
+    width: 100%;
+    height: auto;
+    justify-self: center;
+}
+/* .blog-content p {
+    display: grid;
 } */
-/* * {
-    @apply text-black;
-} */
+.blog-content h2 {
+    @apply text-3xl; /* You can adjust this size as needed */
+}
+.blog-content h1 {
+    @apply text-4xl; /* You can adjust this size as needed */
+}
+.blog-content h3 {
+    @apply text-2xl; /* You can adjust this size as needed */
+}
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 47.4% 11.2%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 47.4% 11.2%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 47.4% 11.2%;
+
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --destructive: 0 100% 50%;
+        --destructive-foreground: 210 40% 98%;
+
+        --ring: 215 20.2% 65.1%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: 224 71% 4%;
+        --foreground: 213 31% 91%;
+
+        --muted: 223 47% 11%;
+        --muted-foreground: 215.4 16.3% 56.9%;
+
+        --accent: 216 34% 17%;
+        --accent-foreground: 210 40% 98%;
+
+        --popover: 224 71% 4%;
+        --popover-foreground: 215 20.2% 65.1%;
+
+        --border: 216 34% 17%;
+        --input: 216 34% 17%;
+
+        --card: 224 71% 4%;
+        --card-foreground: 213 31% 91%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 1.2%;
+
+        --secondary: 222.2 47.4% 11.2%;
+        --secondary-foreground: 210 40% 98%;
+
+        --destructive: 0 63% 31%;
+        --destructive-foreground: 210 40% 98%;
+
+        --ring: 216 34% 17%;
+
+        --radius: 0.5rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings:
+            "rlig" 1,
+            "calt" 1;
+    }
+}

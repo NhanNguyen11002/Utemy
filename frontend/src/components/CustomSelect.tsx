@@ -13,6 +13,10 @@ type SelectProps = {
 
 const CustomeSelect: FC<SelectProps> = (props) => {
     const animatedComponents = makeAnimated();
+    // const [defaultValue, setDefaultValue] = useState<any>([]);
+    // useEffect(() => {
+    //     setDefaultValue(props.defautlValues ? props.defautlValues : []);
+    // }, [props.defautlValues]);
     return (
         <Select
             closeMenuOnSelect={props.isMulti ? false : true}

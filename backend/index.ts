@@ -31,7 +31,20 @@ app.use("/api/quiz", routes.quizRouter);
 app.use("/api/lecture", routes.lectureRouter);
 app.use("/api/test", routes.testRouter);
 app.use("/api/coupon", routes.couponRouter);
+app.use("/api/event", routes.eventRouter);
+app.use("/api/approval", routes.approvalRouter);
+app.use("/api/decision", routes.decisionRouter);
+app.use("/api/report", routes.reportRouter);
+app.use("/api/progress", routes.progressRouter);
 app.use("/IPN", routes.vnpayRouter);
+app.use("/api/comment", routes.commentRouter);
+app.use("/api/reply", routes.replyCommentRouter);
+app.use("/api/reaction", routes.reactionRouter);
+app.use("/api/certifier", routes.certifierRouter);
+app.use("/api/blog", routes.blogRouter);
+app.use("/api/commentblog", routes.commentBlogRouter);
+app.use("/api/reactioncommentblog", routes.reactionCommentBlogRouter);
+app.use("/api/boxchat", routes.boxchatRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

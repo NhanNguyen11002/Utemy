@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from "react";
 import SearchIcon from "../../assets/icons/SearchIcon";
 import CreateIcon from "../../assets/icons/CreateIcon";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { courseActions } from "../../redux/slices";
+import { componentActions, courseActions } from "../../redux/slices";
 import { Course } from "../../types/course";
-import { Spin, Navbar, Pagination, CourseCard, DeleteModal } from "../../components";
-import { User } from "../../types/user";
-import toast from "react-hot-toast";
+import { Spin, Pagination, MyCourseCard as CourseCard } from "../../components";
 
 const MyCourses: React.FC = () => {
     const [userInput, setUserInput] = useState<string>("");
     const [keyword, setKeyword] = useState<string>("");
     const [pageIndex, setPageIndex] = useState<number>(1);
-    const [isOpenDeleteModal, setIsOpenDeleteModal] = useState<boolean>(false);
-    const [idItem, setIdItem] = useState<number>(-1);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
 
     let courseList: Course[] = useAppSelector((state) => state.courseSlice.courses) ?? [];
     let totalPage: number = useAppSelector((state) => state.courseSlice.totalPage) ?? 1;
@@ -26,12 +21,16 @@ const MyCourses: React.FC = () => {
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
 
     useEffect(() => {
+        dispatch(componentActions.setLecturerNavPlace("courses"));
+        dispatch(courseActions.getMyCourses({ pageIndex: 1, keyword }));
+    }, [dispatch, keyword]);
+    useEffect(() => {
+        dispatch(componentActions.setLecturerNavPlace("courses"));
         dispatch(courseActions.getMyCourses({ pageIndex, keyword }));
-    }, [dispatch, keyword, pageIndex]);
+    }, [dispatch, pageIndex]);
 
     // handle pagination
     const handleChangePageIndex = (pageIndex: number) => {
-        console.log(pageIndex);
         if (pageIndex < 1) {
             setPageIndex(totalPage);
         } else if (pageIndex > totalPage) setPageIndex(1);
@@ -49,39 +48,10 @@ const MyCourses: React.FC = () => {
         setKeyword(userInput);
     };
 
-    const handleEditCourse = (id: number) => {
-        navigate(`/my-courses/edit/${id}`);
-    };
-
-    const handleDeleteCourse = () => {
-        dispatch(courseActions.deleteCourse(idItem)).then((response) => {
-            if (response.payload?.status_code === 200) {
-                dispatch(courseActions.getMyCourses({ pageIndex, keyword }));
-                toast.success(response.payload.message);
-            } else {
-                toast.error(response.payload?.message as string);
-            }
-        });
-        setIsOpenDeleteModal(false);
-    };
-
-    const handleCancelDeleteModal = () => {
-        setIsOpenDeleteModal(!isOpenDeleteModal);
-    };
-
-    const handleDisplayDeleteModal = (courseId: number) => {
-        setIdItem(courseId);
-        setIsOpenDeleteModal(true);
-    };
-
     return (
         <>
             {isGetLoading && <Spin />}
-            <Navbar />
 
-            {isOpenDeleteModal && (
-                <DeleteModal handleDelete={handleDeleteCourse} handleCancel={handleCancelDeleteModal} />
-            )}
             <div className="container mx-auto mt-[100px] laptop:mt-0">
                 <div className="px-4 tablet:px-[60px]">
                     <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">
@@ -93,6 +63,7 @@ const MyCourses: React.FC = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
+                                    id="search-my-course"
                                     placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full tablet:w-[70%] border-[1px] border-black"
                                     value={userInput}
@@ -106,10 +77,10 @@ const MyCourses: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        <Link to={"/create-course"}>
+                        <Link to={"/lecturer/create-course"}>
                             <div className="text-white flex-3 flex btn hover:opacity-80 btn-info text-lg">
                                 <CreateIcon />
-                                Tạo khóa học mới
+                                Khóa học mới
                             </div>
                         </Link>
                     </div>
@@ -117,24 +88,7 @@ const MyCourses: React.FC = () => {
                         {courseList.map((course, index) => {
                             return (
                                 <div className="w-full max-w-xs tablet:max-w-full place-self-center" key={index}>
-                                    <CourseCard
-                                        id={course.course_id}
-                                        thumbnail={course.thumbnail}
-                                        status={course.status}
-                                        slug={course.slug}
-                                        title={course.title}
-                                        summary={course.summary}
-                                        price={course.price}
-                                        rating={course.average_rating}
-                                        author={course.author as User}
-                                        attendees={course.number_of_enrolled}
-                                        numberOfSection={course.number_of_section}
-                                        isEditCourse={true}
-                                        handleDisplayDeleteModal={handleDisplayDeleteModal}
-                                        handleEditCourse={handleEditCourse}
-                                        enrolled={false}
-                                        // createdAt={course.created_at?.toString()}
-                                    />
+                                    <CourseCard course={course} key={index} />
                                 </div>
                             );
                         })}
@@ -153,10 +107,6 @@ const MyCourses: React.FC = () => {
                     )}
                 </div>
             </div>
-            {/* POPUP DELETE
-            {isOpenDeleteModal && (
-                 <DeleteModal handleDelete={handleDeleteCourse} handleCancel={handleCancelDeleteModal} />
-            )} */}
         </>
     );
 };

@@ -7,13 +7,13 @@ import {
     AuthorInformation,
     UpdateInformation,
     EditUser,
+    EnrolledAuthor,
 } from "../../types/user";
 import apis from "../../api";
-import { Course } from "../../types/course";
 
 type UserSliceType = {
     users: User[];
-    courses: Course[];
+    top10AuthorEnrolled: EnrolledAuthor[];
     user: User;
     isLoading: boolean;
     isGetLoading: boolean;
@@ -86,6 +86,18 @@ export const getProfile = createAsyncThunk<Response<User>, null, { rejectValue: 
         }
     },
 );
+export const getTop10AuthorByEnrolled = createAsyncThunk<
+    Response<EnrolledAuthor[]>,
+    void,
+    { rejectValue: Response<null> }
+>("user/top10enrolled", async (body, ThunkAPI) => {
+    try {
+        const response = await apis.userApis.getTop10AuthorByEnrolled();
+        return response.data as Response<EnrolledAuthor[]>;
+    } catch (error: any) {
+        return ThunkAPI.rejectWithValue(error.data as Response<null>);
+    }
+});
 export const changeAvatar = createAsyncThunk<Response<null>, FormData, { rejectValue: Response<null> }>(
     "user/avatar",
     async (formData, ThunkAPI) => {
@@ -135,34 +147,8 @@ export const updateProfile = createAsyncThunk<Response<User>, UpdateInformation,
 );
 
 const initialState: UserSliceType = {
-    courses: [
-        {
-            course_id: 0,
-            title: "",
-            summary: "",
-            number_of_rating: 0,
-            thumbnail: "",
-            description: "",
-            author: {
-                email: "",
-                first_name: "",
-                last_name: "",
-                description: "",
-                user_id: 0,
-            },
-            categories: [],
-            number_of_section: 0,
-            status: false,
-            number_of_enrolled: 0,
-            slug: "",
-            price: 0,
-            sale_price: 0,
-            sale_until: "",
-            average_rating: 0,
-            created_at: "",
-        },
-    ],
     users: [],
+    top10AuthorEnrolled: [],
     user: {
         user_id: 0,
         url_avatar: "",
@@ -231,9 +217,18 @@ export const userSlice = createSlice({
         builder.addCase(getAuthorProfile.fulfilled, (state, action) => {
             state.isGetLoading = false;
             state.user = action.payload.data?.user as User;
-            state.courses = action.payload.data?.courses as Course[];
         });
         builder.addCase(getAuthorProfile.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(getTop10AuthorByEnrolled.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(getTop10AuthorByEnrolled.fulfilled, (state, action) => {
+            state.isGetLoading = false;
+            state.top10AuthorEnrolled = action.payload.data as EnrolledAuthor[];
+        });
+        builder.addCase(getTop10AuthorByEnrolled.rejected, (state) => {
             state.isGetLoading = false;
         });
         builder.addCase(changeAvatar.pending, (state) => {

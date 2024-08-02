@@ -1,15 +1,79 @@
+import { progressActions } from "../redux/slices";
+import { useAppSelector, useAppDispatch } from "../hooks/hooks";
 import Hls from "hls.js";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import "plyr/dist/plyr.min.mjs";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import _ from "lodash";
+import toast from "react-hot-toast";
+import { TriangleAlert } from "lucide-react";
 
 type VideoJSType = {
-    sourse: string;
+    source: string;
+    lectureId: number;
 };
 
 export const VideoJS: React.FC<VideoJSType> = (props) => {
+    const dispatch = useAppDispatch();
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [player, setPlayer] = useState<Plyr | null>(null);
+    const slug = useAppSelector((state) => state.courseSlice.courseDetail.slug);
+    const progress = useAppSelector((state) => state.progressSlice.progress);
+    const lectureProgress = progress[props.lectureId];
+    const isAdmin = useAppSelector((state) => state.authSlice.user.is_admin);
+    const userId = useAppSelector((state) => state.authSlice.user.user_id) || 0;
+    const isAuthor = useAppSelector((state) => state.courseSlice.courseDetail.author?.user_id) === userId;
+
+    useEffect(() => {
+        if (player && !(isAuthor || isAdmin)) {
+            player.on(
+                "timeupdate",
+                _.throttle(() => {
+                    if (player.currentTime > (lectureProgress ? lectureProgress.progress_value : 0)) {
+                        dispatch(
+                            progressActions.updateProgress({
+                                progress_value: Math.floor(player.currentTime),
+                                lecture_id: props.lectureId,
+                            }),
+                        ).then((res: any) => {
+                            if (res && res.payload && res.payload.data && res.payload.status_code === 200) {
+                                dispatch(progressActions.getProgressByCourseSlug(slug));
+                            }
+                        });
+                    } else return;
+                }, 20000),
+            );
+            player.on("ended", () => {
+                if (player.currentTime > (lectureProgress ? lectureProgress.progress_value : 0)) {
+                    dispatch(
+                        progressActions.updateProgress({
+                            progress_value: Math.floor(player.currentTime),
+                            lecture_id: props.lectureId,
+                        }),
+                    ).then((res: any) => {
+                        if (res && res.payload && res.payload.data && res.payload.status_code === 200) {
+                            dispatch(progressActions.getProgressByCourseSlug(slug));
+                        }
+                    });
+                } else return;
+            });
+            player.on("seeked", () => {
+                if (player.currentTime - (lectureProgress ? lectureProgress.progress_value : 0) > 60) {
+                    toast("Don't skip video, we will have to force you back", {
+                        icon: <TriangleAlert className="fill-yellow-400 " />,
+                        duration: 4000,
+                    });
+                    player.currentTime = lectureProgress ? lectureProgress.progress_value : 0;
+                }
+            });
+        }
+        return () => {
+            player?.off("seeked", () => {});
+            player?.off("timeupdate", () => {});
+            player?.off("ended", () => {});
+        };
+    }, [player]);
 
     const updateQuality = (newQuality: any) => {
         if (Hls.isSupported()) {
@@ -23,11 +87,20 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
 
     useEffect(() => {
         const videoElement = videoRef.current;
-
         if (videoElement) {
+            videoElement.addEventListener("loadeddata", () => {
+                videoElement.currentTime =
+                    isAuthor || isAdmin
+                        ? 0
+                        : lectureProgress
+                          ? lectureProgress.progress_value >= lectureProgress.duration
+                              ? lectureProgress.progress_value * 0.85
+                              : lectureProgress.progress_value
+                          : 0;
+            });
             if (Hls.isSupported()) {
                 const hls = new Hls();
-                hls.loadSource(props.sourse);
+                hls.loadSource(props.source);
                 hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
                     window.hls = hls;
                     const availableQualities = hls.levels.map((l) => l.height);
@@ -48,6 +121,7 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                             "airplay", // Airplay (currently Safari only)
                             "fullscreen", // Toggle fullscreen
                         ],
+
                         quality: {
                             default: availableQualities[availableQualities.length - 1],
                             options: availableQualities,
@@ -55,16 +129,24 @@ export const VideoJS: React.FC<VideoJSType> = (props) => {
                             onChange: (event) => updateQuality(event),
                         },
                     };
-                    new Plyr(videoElement, defaultOptions);
+                    const player = new Plyr(videoElement, defaultOptions);
+                    setPlayer(player);
                 });
-
                 hls.attachMedia(videoElement);
             }
         }
-    }, [props.sourse]);
+        return () => {
+            videoElement?.removeEventListener("loadeddata", () => {
+                videoElement.currentTime =
+                    lectureProgress.progress_value >= lectureProgress.duration
+                        ? lectureProgress.progress_value * 0.85
+                        : lectureProgress.progress_value || 0;
+            });
+        };
+    }, [props.source]);
 
     return (
-        <div className="w-full flex-1 shrink-0">
+        <div className="w-full flex-1 shrink-0 text-white">
             <video className="w-full h-[480px]" ref={videoRef} controls={true}></video>
         </div>
     );

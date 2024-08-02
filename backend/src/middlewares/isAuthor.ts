@@ -26,6 +26,7 @@ export const isAuthor = async (req: IRequestWithId, res: Response, next: NextFun
         let groupId: GroupId = { course_id: "", section_id: "", lecture_id: "" };
         if (isObjectEmpty(req.body)) groupId = req.params;
         else if (isObjectEmpty(req.params)) groupId = req.body;
+        else groupId = { ...req.params, ...req.body };
         if (groupId.course_id) {
             const isCourseExist = await configs.db.course.findUnique({
                 where: {

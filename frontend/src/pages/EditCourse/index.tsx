@@ -3,23 +3,28 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { sectionActions, courseActions, lectureActions } from "../../redux/slices";
 import { useParams } from "react-router-dom";
 import {
-    Accordion,
     DeleteModal,
     PopupAddLesson,
     PopupUpdateLesson,
-    Navbar,
     Spin,
     PopupChoseLectureType,
     PopupAddTest,
+    PopupUpdateTest,
+    FinalTestCard,
+    PopupAddFinalTest,
+    PopupUpdateFinalTest,
 } from "../../components";
+import AccordionSection from "../../components/Accordion/AccordionSection";
 import { AddSection as AddSectionType, Section as SectionType } from "../../types/section";
-// import { deteleLessonType } from "../../types/lesson";
-
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
+import * as Tabs from "@radix-ui/react-tabs";
 import toast from "react-hot-toast";
 import EditForm from "./EditForm";
+import TargetTab from "./TargetTab";
+import PromotionTab from "./PromotionTab";
+import StatusTab from "./StatusTab";
 import NotFound from "../NotFound";
 import constants from "../../constants";
-import PopupUpdateTest from "../../components/Popup/PopupUpdateTest";
 
 const EditCourse: React.FC = () => {
     const [isDisplayDeleteModal, setIsDisplayDeleteModal] = useState<boolean>(false);
@@ -28,7 +33,7 @@ const EditCourse: React.FC = () => {
     const [isDisplayAddLessonModal, setIsDisplayAddLessonModal] = useState<boolean>(false);
     const [isDisplayAddTestModal, setIsDisplayAddTestModal] = useState<boolean>(false);
     const [isChangeType, setIsChangeType] = useState<boolean>(false);
-
+    const [tab, setTab] = useState("form");
     //
     const [isDisplayAddLectureModal, setIsDisplayAddLectureModal] = useState<boolean>(false);
     const [isDisplayEditLectureModal, setIsDisplayEditLectureModal] = useState<boolean>(false);
@@ -43,6 +48,13 @@ const EditCourse: React.FC = () => {
     const [itemTitle, setItemTitle] = useState<string>("");
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const isGetLoading = useAppSelector((state) => state.courseSlice.isGetLoading);
+    const [key, setKey] = useState(0);
+
+    //final test
+    const finalTest = useAppSelector((state) => state.courseSlice.courseDetail.test);
+    const [isDisplayAddFinalTest, setIsDisplayAddFinalTest] = useState(false);
+    const [isDisplayUpdateFinalTest, setIsDisplayUpdateFinalTest] = useState(false);
+    const [isDisplayDeleteFinalTest, setIsDisplayDeleteFinalTest] = useState(false);
 
     const role: string = useAppSelector((state) => state.courseSlice.role) ?? "";
 
@@ -64,6 +76,7 @@ const EditCourse: React.FC = () => {
     const handleRerender = () => {
         dispatch(sectionActions.getAllSectionByCourseId(course_id as string));
     };
+
     // add section
     const handleAddSection = () => {
         if (section !== "") {
@@ -97,6 +110,30 @@ const EditCourse: React.FC = () => {
         } else {
             setIsDeleteSection(false);
         }
+    };
+    //final test
+    const handleToggleDisplayAddFinalTest = (display: boolean) => {
+        setIsDisplayAddFinalTest(display);
+    };
+    const handleToggleDisplayUpdateFinalTest = (display: boolean) => {
+        setIsDisplayUpdateFinalTest(display);
+    };
+    const handleToggleDisplayDeleteFinalTest = (display: boolean) => {
+        setIsDisplayDeleteFinalTest(display);
+    };
+    const handlRerenderFinalTest = () => {
+        dispatch(courseActions.getFinalTestByCourseId(Number(course_id)));
+    };
+    const handleDeleteFinalTest = () => {
+        dispatch(courseActions.deleteFinalTest(Number(course_id))).then((response) => {
+            if (response.payload?.status_code === 200) {
+                toast.success(response.payload.message);
+                dispatch(courseActions.setClearFinalTest());
+                handleToggleDisplayDeleteFinalTest(false);
+            } else {
+                if (response.payload) toast.error(response.payload.message);
+            }
+        });
     };
 
     //lecture
@@ -177,6 +214,7 @@ const EditCourse: React.FC = () => {
     };
     //lecture
     const handleDisplayEditLecture = (lectureId: number, type: string) => {
+        setKey((prev) => prev + 1);
         setSectionId(lectureId);
         setType(type);
         setIsDisplayEditLectureModal(!isDisplayEditLectureModal);
@@ -197,56 +235,164 @@ const EditCourse: React.FC = () => {
         <>
             {isGetLoading !== true ? (
                 <>
-                    <Navbar />
-                    <div className="min-h-screen h-full px-4 tablet:px-[60px]">
-                        <EditForm course_id={Number(course_id)} />
-
-                        <div className="flex-1 p-4 flex flex-col border border-dashed border-black rounded-lg m-4">
-                            <div className="flex flex-col gap-4 tablet:flex-row tablet:justify-between">
-                                <input
-                                    type="text"
-                                    maxLength={100}
-                                    className="px-2 py-2 rounded-lg border-[1px] outline-none flex-1 max-w-2xl"
-                                    placeholder="Tên của chương học..."
-                                    value={section}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        setSection(e.target.value);
-                                    }}
-                                />
-                                <div className=" flex flex-col-reverse tablet:flex-row items-center justify-center gap-2">
-                                    <button
-                                        className="text-white btn btn-info text-lg flex-2 ml-2"
-                                        onClick={handleAddSection}
-                                    >
-                                        Thêm chương học
-                                    </button>
+                    <div className=" h-full px-4 tablet:px-[60px]">
+                        <a
+                            href={`/lecturer`}
+                            className="flex gap-1 items-center hover:text-blue-400 trasition-all duration-300"
+                        >
+                            <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+                            <p className="text-lg"> Quản lý khoá học của tôi</p>
+                        </a>
+                        <div className="w-[230px] h-px bg-gray-300"></div>
+                        <Tabs.Root defaultValue="form" className="h-fit flex w-full">
+                            <Tabs.List className="flex flex-col h-fit gap-2 w-[20%] mt-8">
+                                <Tabs.Trigger
+                                    value="form"
+                                    onClick={() => setTab("form")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "form" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Tổng quan khoá học
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="target"
+                                    onClick={() => setTab("target")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "target" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Mục tiêu khoá học
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="section"
+                                    onClick={() => setTab("section")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "section" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Chương trình giảng dạy
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="promotion"
+                                    onClick={() => setTab("promotion")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "promotion" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Khuyến mại
+                                </Tabs.Trigger>
+                                <Tabs.Trigger
+                                    value="status"
+                                    onClick={() => setTab("status")}
+                                    className={`text-start text-lg hover:text-blue-400 transition-all duration-400 border-l-4 p-2 ${tab === "status" ? "border-blue-400" : "border-white"}`}
+                                >
+                                    Tình trạng khoá học
+                                </Tabs.Trigger>
+                            </Tabs.List>
+                            <Tabs.Content value="form" className="w-[80%]">
+                                <EditForm course_id={Number(course_id)} />
+                            </Tabs.Content>
+                            <Tabs.Content value="target" className="w-[80%]">
+                                <TargetTab />
+                            </Tabs.Content>
+                            <Tabs.Content value="section" className="w-[80%]">
+                                <div className="flex-1 flex flex-col border border-gray shadow-md ">
+                                    <div className="border-b border-gray">
+                                        <p className="text-2xl font-normal p-6">Chương trình giảng dạy</p>
+                                    </div>
+                                    <div className="p-4">
+                                        <p className="py-4">
+                                            Hãy bắt đầu xây dựng khóa học của bạn bằng cách tạo các chương, bài giảng và
+                                            bài kiểm tra. Hãy chắc chắn các nội dung được chau chuốt và tên các chương,
+                                            bài giảng, bài kiểm tra phải cô đọng nội dung cho học viên
+                                        </p>
+                                        <div className="flex flex-col gap-4 tablet:flex-row tablet:justify-between">
+                                            <input
+                                                type="text"
+                                                maxLength={100}
+                                                className="px-2 py-2 rounded-lg border-[1px] outline-none flex-1 max-w-2xl"
+                                                placeholder="Tên của chương học..."
+                                                value={section}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                    setSection(e.target.value);
+                                                }}
+                                            />
+                                            <div className=" flex flex-col-reverse tablet:flex-row items-center justify-center gap-2">
+                                                <button
+                                                    className="text-white btn btn-info text-lg flex-2 ml-2"
+                                                    onClick={handleAddSection}
+                                                >
+                                                    Thêm chương học
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {errorSection && (
+                                            <p className={`text-error italic font-medium mt-1`}>
+                                                Tên chương là bắt buộc
+                                            </p>
+                                        )}
+                                        {/* handle list lesson */}
+                                        <div className="mt-2">
+                                            {sectionOfCourse.length <= 0 ? (
+                                                <h1 className="text-center text-2xl text-black">
+                                                    Khóa học chưa có chương học nào
+                                                </h1>
+                                            ) : (
+                                                sectionOfCourse.map((section, index) => (
+                                                    <AccordionSection
+                                                        key={section.id}
+                                                        section={section}
+                                                        handleDeleteSection={handleDeleteSection}
+                                                        handleDisplayEditModal={handleDisplayEditModal}
+                                                        handleDisplayDeleteModal={handleDisplayDeleteModal}
+                                                        handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
+                                                        handleDisplayEditLecture={handleDisplayEditLecture}
+                                                        isDisplayEdit={true}
+                                                        isDisplayProgress={false}
+                                                    />
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="border-y border-gray">
+                                        <p className="text-2xl font-normal p-6">Bài kiểm tra toàn khoá học</p>
+                                    </div>
+                                    <div className="p-4">
+                                        <p className="py-4">
+                                            Tại đây bạn sẽ tạo bài kiểm tra toàn khoá học. Khi học viên hoàn thành toàn
+                                            bộ chương trình giảng dạy ở trên thì bài kiểm tra sẽ được mở ra. Khi học
+                                            viên hoàn thành bài kiểm tra, họ sẽ nhận được 1 bản chứng chỉ online cho hồ
+                                            sơ của mình. Có thể coi đây là bài kiểm tra quan trọng nhất nên hãy đảm bảo
+                                            độ khó tương ứng và nội dung bao quát toàn bộ khoá học cho bài kiểm tra này
+                                        </p>
+                                        {finalTest ? (
+                                            <FinalTestCard
+                                                isDisplayEdit={true}
+                                                handleDisplayEditTest={() => handleToggleDisplayUpdateFinalTest(true)}
+                                                handleDisplayDeleteModal={() =>
+                                                    handleToggleDisplayDeleteFinalTest(true)
+                                                }
+                                                finalTest={finalTest}
+                                            />
+                                        ) : (
+                                            <button
+                                                onClick={() => handleToggleDisplayAddFinalTest(true)}
+                                                className="text-white btn btn-info text-lg flex-2 ml-2"
+                                            >
+                                                Tạo bài kiểm tra cuối khoá
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                            {errorSection && (
-                                <p className={`text-error italic font-medium mt-1`}>Tên chương là bắt buộc</p>
-                            )}
-                            {/* handle list lesson */}
-                            <div className="mt-2">
-                                {sectionOfCourse.length <= 0 ? (
-                                    <h1 className="text-center text-2xl text-error">Khóa học chưa có chương học nào</h1>
-                                ) : (
-                                    sectionOfCourse.map((section, index) => (
-                                        <Accordion
-                                            disable={true}
-                                            key={index}
-                                            section={section}
-                                            handleDeleteSection={handleDeleteSection}
-                                            handleDisplayEditModal={handleDisplayEditModal}
-                                            handleDisplayDeleteModal={handleDisplayDeleteModal}
-                                            handleDisplayAddLectureModal={handleDisplayAddLectureModal} // addlesson đây
-                                            handleDisplayEditLecture={handleDisplayEditLecture}
-                                            isDisplayBtn={true}
-                                        />
-                                    ))
-                                )}
-                            </div>
-                        </div>
+                            </Tabs.Content>
+                            <Tabs.Content value="promotion" className="w-[80%]">
+                                <PromotionTab />
+                            </Tabs.Content>
+                            <Tabs.Content value="status" className="w-[80%]">
+                                <StatusTab />
+                            </Tabs.Content>
+                        </Tabs.Root>
                     </div>
+                    {/* POPUP DELETE FINAL TEST*/}
+                    {isDisplayDeleteFinalTest && (
+                        <DeleteModal
+                            handleDelete={handleDeleteFinalTest}
+                            handleCancel={() => handleToggleDisplayDeleteFinalTest(false)}
+                        />
+                    )}
 
                     {/* POPUP DELETE LECTURE AND SECTION*/}
                     {isDisplayDeleteModal && (
@@ -296,6 +442,23 @@ const EditCourse: React.FC = () => {
                         </div>
                     )}
                     {/* POPUP ADD LESSON */}
+                    {isDisplayAddFinalTest && (
+                        <PopupAddFinalTest
+                            handleToggle={handleToggleDisplayAddFinalTest}
+                            handleRerender={handlRerenderFinalTest}
+                            courseId={Number(course_id)}
+                        />
+                    )}
+                    {isDisplayUpdateFinalTest && (
+                        <PopupUpdateFinalTest
+                            handleToggle={handleToggleDisplayUpdateFinalTest}
+                            handleRerender={handlRerenderFinalTest}
+                            finalTest={finalTest}
+                            courseId={Number(course_id)}
+                        />
+                    )}
+
+                    {/* POPUP ADD LESSON */}
                     {isDisplayAddLessonModal && (
                         <PopupAddLesson
                             handleCancel={handleToggleModalAddLesson}
@@ -335,6 +498,7 @@ const EditCourse: React.FC = () => {
                         ) : (
                             <>
                                 <PopupUpdateTest
+                                    key={key}
                                     handleRerender={handleRerender}
                                     handleCancel={handleCancelModalEditLecture}
                                     lectureId={sectionId}

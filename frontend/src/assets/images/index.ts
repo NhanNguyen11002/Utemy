@@ -9,6 +9,15 @@ import WatchVideoLogo from "./logo_watchvideo.png";
 import Slide1 from "./free1.jpg";
 import Slide2 from "./free2.jpg";
 import Slide3 from "./free3.jpg";
+import Event1 from "./event1.jpg";
+import Event2 from "./event2.jpeg";
+import Event3 from "./event3.jpg";
+import Learning from "./learning";
+import ImgLearn from "./img-e-learning-design-lab-2022.jpeg";
+import QuillLetter from "./QuillLetter.jpg";
+import QuillLetterReflect from "./QuillLetterReflect.jpg";
+import UtemyNoText from "./utemy_logo_notext.png";
+import ReadingBanner from "./reading-time-google-classroom-header.png";
 
 export {
     DefaultAvatar,
@@ -22,4 +31,13 @@ export {
     Slide1,
     Slide2,
     Slide3,
+    Event1,
+    Event2,
+    Event3,
+    Learning,
+    ImgLearn,
+    QuillLetter,
+    QuillLetterReflect,
+    UtemyNoText,
+    ReadingBanner,
 };

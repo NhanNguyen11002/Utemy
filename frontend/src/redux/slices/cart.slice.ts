@@ -48,8 +48,20 @@ export const changeSaveForLater = createAsyncThunk<Response<any>, number, { reje
         }
     },
 );
+export const getCouponByCode = createAsyncThunk<Response<Coupon>, string, { rejectValue: Response<null> }>(
+    "cart/getCouponByCode",
+    async (code, thunkAPI) => {
+        try {
+            const response = await apis.couponApis.getCouponByCode(code);
+            return response.data as Response<Coupon>;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 type CartSliceType = {
     userCart: Cart;
+    myCart: any;
     coupons: Coupon[];
     discount: number;
     isCourseInCart: boolean;
@@ -58,6 +70,7 @@ type CartSliceType = {
     subTotal: number;
     subTotalRetail: number;
     totalCourseInCart: number;
+    coupon: Coupon | null;
 };
 
 const initialState: CartSliceType = {
@@ -73,6 +86,15 @@ const initialState: CartSliceType = {
     subTotal: 0,
     subTotalRetail: 0,
     totalCourseInCart: 0,
+    coupon: {
+        id: 0,
+        code: "",
+        discount: 0,
+        valid_until: "",
+        max_discount_money: 0,
+        remain_quantity: 0,
+    },
+    myCart: {},
 };
 
 export const cartSlice = createSlice({
@@ -80,18 +102,22 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         setIsCourseInCart: (state, action) => {
-            for (const cart_item of state.userCart.cart_items) {
-                if (cart_item.course.course_id === Number(action.payload)) {
-                    state.isCourseInCart = true;
-                    break;
-                } else state.isCourseInCart = false;
-            }
+            // for (const cart_item of state.userCart.cart_items) {
+            //     if (cart_item.course.course_id === Number(action.payload)) {
+            //         state.isCourseInCart = true;
+            //         break;
+            //     } else state.isCourseInCart = false;
+            // }
+            state.isCourseInCart = state.myCart[action.payload] === 1;
         },
         getDiscount: (state, action) => {
             state.coupons.forEach((coupon) => {
-                if (coupon.coupon_code === action.payload && new Date(coupon.valid_until) < new Date())
+                if (coupon.code === action.payload && new Date(coupon.valid_until) < new Date())
                     state.discount = coupon.discount;
             });
+        },
+        setCouponNull: (state) => {
+            state.coupon = null;
         },
     },
     extraReducers: (builder) => {
@@ -99,8 +125,13 @@ export const cartSlice = createSlice({
             state.isGetLoading = true;
         });
         builder.addCase(getAllCart.fulfilled, (state, action) => {
+            const obj: any = {};
             state.totalCourseInCart = action.payload.data.cart_items.length;
             state.userCart = action.payload.data as Cart;
+            action.payload.data.cart_items.forEach((element: any) => {
+                obj[element.course.course_id] = 1;
+            });
+            state.myCart = obj;
             state.subTotal = getSubTotal(action.payload.data);
             state.subTotalRetail = getSubTotalRetail(action.payload.data);
             state.isGetLoading = false;
@@ -135,10 +166,24 @@ export const cartSlice = createSlice({
         builder.addCase(changeSaveForLater.rejected, (state) => {
             state.isLoading = false;
         });
+        // Thêm xử lý cho getCouponByCode.pending
+        builder.addCase(getCouponByCode.pending, (state) => {
+            state.isLoading = true; // Đánh dấu đang tải
+        });
+
+        // Thêm xử lý cho getCouponByCode.fulfilled
+        builder.addCase(getCouponByCode.fulfilled, (state, action) => {
+            state.isLoading = false; // Dừng đánh dấu đang tải
+            state.coupon = action.payload.data as Coupon;
+        });
+
+        builder.addCase(getCouponByCode.rejected, (state, action) => {
+            state.isLoading = false; // Dừng đánh dấu đang tải
+        });
     },
 });
 
-export const { setIsCourseInCart, getDiscount } = cartSlice.actions;
+export const { setIsCourseInCart, getDiscount, setCouponNull } = cartSlice.actions;
 
 export default cartSlice.reducer;
 

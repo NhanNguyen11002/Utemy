@@ -1,20 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-// import {
-//     Typography,
-//     Card,
-//     CardHeader,
-//     CardBody,
-//     IconButton,
-//     Menu,
-//     MenuHandler,
-//     MenuList,
-//     MenuItem,
-//     Avatar,
-//     Tooltip,
-//     Progress,
-// } from "@material-tailwind/react";
-
 import CategoryCard from "./CategoryCard";
 import PopupAddCategory from "./PopupAddCategory";
 import PopupEditCategory from "./PopupEditCategory";
@@ -88,8 +73,11 @@ const CategoryAdmin = () => {
         });
     };
     useEffect(() => {
+        dispatch(categoryActions.getCategoriesWithPagination({ searchItem, pageIndex: 1 }));
+    }, [dispatch, searchItem]);
+    useEffect(() => {
         dispatch(categoryActions.getCategoriesWithPagination({ searchItem, pageIndex }));
-    }, [dispatch, searchItem, pageIndex]);
+    }, [dispatch, pageIndex]);
 
     return (
         <>
@@ -103,7 +91,6 @@ const CategoryAdmin = () => {
             {isGetLoading && <Loading />}
             {/* minhscreen */}
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2">
-                {/* <Toaster /> */}
                 <div className="w-3/4 px-10 mb-5 flex flex-col gap-4 justify-between shrink-0 tablet:flex-row">
                     <div className="flex justify-between w-full">
                         <div className="w-3/4 mx-auto">
@@ -136,7 +123,14 @@ const CategoryAdmin = () => {
                     </button>{" "}
                 </div>
                 {categories.length === 0 ? (
-                    <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy danh mục</p>
+                    <p className="mt-4 text-2xl text-error text-center font-bold">
+                        Không tìm thấy danh mục{" "}
+                        {searchItem && (
+                            <span>
+                                với từ khoá <span className="italic">"{searchItem}"</span>
+                            </span>
+                        )}
+                    </p>
                 ) : (
                     <p className="mt-4 text-2xl text-center font-bold">Có {totalRecord} danh mục được tìm thấy </p>
                 )}

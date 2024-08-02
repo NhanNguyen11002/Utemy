@@ -24,6 +24,8 @@ export type TestResultType = {
 export type TestProgressType = {
     quiz_id: number;
     quiz_answer_id: number;
+    quiz_answer_string?: string;
+    type: number;
     is_correct: boolean;
 };
 export type AfterTest = {
@@ -38,4 +40,13 @@ export type TestHistoryResponse = {
     is_pass: boolean;
     created_at: string;
     total_question: number;
+};
+export type CreateTestType = {
+    course_id: number;
+    duration: number;
+    description: string;
+    title: string;
+    quiz_group_id: number;
+    pass_percent: number;
+    is_time_limit: boolean;
 };

@@ -33,8 +33,32 @@ model User {
   test_history   TestHistory[]
   quiz_group     QuizGroup[]
   coupon_history CouponHistory[]
-
+  report Report[]
+  decision Decision[]
+  coupon_owner   CouponOwner[]
+  userEvents    UserEvent[]
+  progress Progress[]
+  commentLectures  CommentLecture[]
+  replyCommentLectures ReplyCommentLecture[]
+  likes Like[]
+  dislikes  Dislike[]
+  reaction_comment_blogs ReactionCommentBlog[]
+  certificate Certificate[]
+  blog  Blog[]
+  comment_blogs CommentBlog[]
+  reaction_blogs ReactionBlog[]
   @@index([email], name: "idx_email")
+}
+
+model Certificate{
+  id String @id
+  public_id String 
+  group_id String
+  status String
+  recipient_id Int?
+  recipient User? @relation(fields: [recipient_id], references: [id], onDelete: SetNull)
+  course_id Int?
+  course Course? @relation(fields: [course_id], references: [id], onDelete: SetNull)
 }
 
 model Category {
@@ -43,12 +67,14 @@ model Category {
   url_image         String           @db.Text
   description       String           @db.Text
   course_categories CourseCategory[]
+  blog_categories   BlogCategory[]
 }
+
 
 model Course {
   id                 Int       @id @default(autoincrement())
-  title              String    @db.VarChar(100)
-  slug               String    @unique @db.VarChar(150)
+  title              String    @db.VarChar(200)
+  slug               String    @unique @db.VarChar(250)
   status             Boolean   @default(false)
   description        String    @db.Text
   thumbnail          String    @db.Text
@@ -65,6 +91,11 @@ model Course {
   sale_until         DateTime?
   study              Json?
   requirement        Json?
+  url_trailer        String   @db.Text
+
+  final_test_id Int? @unique
+  test Test? @relation(fields: [final_test_id], references: [id], onDelete: SetNull)
+  
 
   user User @relation(fields: [author_id], references: [id])
 
@@ -80,6 +111,15 @@ model Course {
 
   invoice_detail InvoiceDetail[]
 
+  report Report[]
+
+  approval Approval[]
+
+  decision Decision[]
+
+  progress Progress[]
+
+  certificate Certificate[]
   @@index([slug], name: "idx_slug")
   @@index([title], name: "idx_title")
 }
@@ -94,6 +134,17 @@ model CourseCategory {
 
   @@map(name: "courses_categories")
 }
+model BlogCategory {
+  id          Int      @id @default(autoincrement())
+  blog_id   Int
+  category_id Int
+  created_at  DateTime @default(now())
+  blog      Blog   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@map(name: "blogs_categories")
+}
+
 
 model Section {
   id         Int       @id @default(autoincrement())
@@ -132,6 +183,11 @@ model Lecture {
   lesson     Lesson?
   // test_id    Int?
   test       Test?
+
+  report Report[]
+  progress Progress[]
+  commentLectures     CommentLecture[] 
+
 }
 
 model Test {
@@ -148,9 +204,29 @@ model Test {
   updated_at         DateTime      @updatedAt
   lecture_id         Int?          @unique
   lecture            Lecture?      @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
-  quiz_group         QuizGroup     @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade)
+  quiz_group         QuizGroup     @relation(fields: [quiz_group_id], references: [id], onDelete: Cascade) 
+  course Course? 
   test_detail        TestDetail[]
   test_history       TestHistory[]
+}
+
+model Progress {
+  id Int @id @default(autoincrement())
+  course_id Int
+  course Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  lecture_id Int
+  lecture Lecture @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  user_id Int
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  progress_value Int @default(0)
+  progress_percent Float @default(0)
+  pass Boolean @default(false)
+  is_delete Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+
+  @@unique([course_id, lecture_id,user_id])
 }
 
 model TestDetail {
@@ -185,6 +261,7 @@ model TestHistoryDetail {
   test_history_id Int
   quiz_id         Int // id câu hỏi
   quiz_answer_id  Int? //đáp án đã chọn
+  quiz_answer_string String?  @db.Text 
   is_correct      Boolean //sai hay đúng
 
   test_history TestHistory @relation(fields: [test_history_id], references: [id], onDelete: Cascade)
@@ -212,8 +289,8 @@ model QuizGroup {
 
 model Quiz {
   id                  Int                 @id @default(autoincrement())
-  question            String              @db.VarChar(200)
-  type                Int // trắc nghiệm, điền khuyết... hiện tại dùng int, sau này sửa thành string
+  question            String              @db.Text
+  type                Int // trắc nghiệm, điền khuyết... hiện tại dùng int, trắc nghiệm - 1, t/f 2, điền khuyết - 3
   created_at          DateTime            @default(now())
   updated_at          DateTime            @updatedAt
   quiz_group_id       Int
@@ -255,6 +332,8 @@ model Enrolled {
   created_at DateTime @default(now())
   user_id    Int
   course_id  Int
+  is_done Boolean @default(false)
+  is_pass Boolean @default(false)
   course     Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
@@ -302,9 +381,12 @@ model Invoice {
   total_money    Float           @default(0) @db.Float
   is_success     Boolean         @default(false)
   created_at     DateTime        @default(now())
+  coupon_id      Int?             @db.Int
   user           User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
   invoice_detail InvoiceDetail[]
   Transaction    Transaction[]
+  coupon_history CouponHistory[]
+  coupon         Coupon? @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
 }
 
 model InvoiceDetail {
@@ -332,12 +414,21 @@ model Feedback {
 
 model Coupon {
   id             Int             @id @default(autoincrement())
-  code           String          @db.VarChar(30)
-  discount       Float
+  code           String          @default("") @db.VarChar(30)
+  discount       Float           @default(0) @db.Float
   is_delete      Boolean         @default(false)
   valid_start    DateTime        @default(now())
-  valid_until    DateTime
+  valid_until    DateTime        @default(now())
+  remain_quantity       Int             @default(0) @db.Int
+  is_event  Boolean @default(false)
+  max_discount_money  Float           @default(0) @db.Float
   coupon_history CouponHistory[]
+  coupon_owner CouponOwner[]
+  invoices Invoice[]
+  event_id      Int? @db.Int
+  event         Event? @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  ratio  Ratio?  
+
 }
 
 model CouponHistory {
@@ -346,6 +437,204 @@ model CouponHistory {
   coupon    Coupon @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
   user_id   Int
   user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
+  invoice_id Int
+  invoice   Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+  is_from_event Boolean @default(false)
   @@map(name: "coupon_history")
+}
+model Report {
+  id        Int    @id @default(autoincrement())
+  course_id Int
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  is_lecture Boolean @default(false)
+  lecture_id   Int?
+  lecture      Lecture?   @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  title String @db.VarChar(200)
+  content String @db.Text
+  is_handle Boolean @default(false)
+  user_id Int
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+}
+
+model Approval {
+  id        Int    @id @default(autoincrement())
+  course_id Int
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  is_handle Boolean @default(false)
+  created_at DateTime @default(now())
+} 
+model Decision {
+  id        Int    @id @default(autoincrement())
+  course_id Int
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  type String @db.VarChar(50)
+  content String @db.Text
+  is_handle Boolean @default(false)
+  user_id Int
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model CouponOwner {
+  id        Int    @id @default(autoincrement())
+  coupon_id Int
+  coupon    Coupon @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  user      User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  quantity  Int
+  event_id   Int?   // Thêm trường tham chiếu đến Event
+  event      Event? @relation(fields: [event_id], references: [id])
+  @@map(name: "coupon_owner")
+}
+model Event {
+  id          Int      @id @default(autoincrement())
+  name        String  @db.VarChar(50)
+  description String  @unique @db.VarChar(500)
+  start_date  DateTime @default(now())
+  end_date    DateTime @default(now())
+  is_active   Boolean  @default(false)
+  is_delete      Boolean         @default(false)
+  coupons     Coupon[] 
+  couponOwners CouponOwner[]
+  userEvents    UserEvent[]
+}
+
+model UserEvent {
+  id        Int    @id @default(autoincrement())
+  user_id   Int
+  user      User   @relation(fields: [user_id], references: [id])
+  event_id  Int
+  event     Event  @relation(fields: [event_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  @@map(name: "user_event")
+
+  // Thêm các mối quan hệ
+}
+model CommentLecture {
+  id            Int       @id @default(autoincrement())
+  content       String    @db.Text
+  created_at    DateTime  @default(now())
+  updatedAt DateTime @default(now())
+  user_id       Int
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  lecture_id    Int
+  lecture       Lecture   @relation(fields: [lecture_id], references: [id], onDelete: Cascade)
+  likes_count   Int       @default(0)
+  liked_by      Like[]   
+  dislikes_count Int      @default(0)
+  disliked_by    Dislike[]     
+  replyCommentLectures ReplyCommentLecture[] 
+  @@map(name: "comment_lecture")
+
+}
+model ReplyCommentLecture {
+  id            Int       @id @default(autoincrement())
+  content       String    @db.Text
+  created_at    DateTime  @default(now())
+  updatedAt DateTime @default(now())
+  user_id       Int
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id    Int
+  commentLecture       CommentLecture   @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  likes_count   Int       @default(0)
+  liked_by      Like[]    
+  dislikes_count Int      @default(0)
+  disliked_by    Dislike[]    
+  @@map(name: "reply_comment_lecture")
+}
+// Model để lưu thông tin về việc người dùng thích một bình luận
+model Like {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id Int @db.Int
+  reply_id Int? @db.Int
+  commentLecture   CommentLecture  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  replyCommentLecture   ReplyCommentLecture?  @relation(fields: [reply_id], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+// Model để lưu thông tin về việc người dùng không thích một bình luận
+model Dislike {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id Int @db.Int
+  commentLecture   CommentLecture  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  reply_id Int? @db.Int
+  replyCommentLecture   ReplyCommentLecture?  @relation(fields: [reply_id], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())  
+  updatedAt DateTime @default(now())
+}
+
+model Ratio {
+  id        Int     @id @default(autoincrement())
+  coupon_id Int     @unique
+  coupon    Coupon  @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
+  ratio     Float?  @db.Float
+}
+
+model Blog {
+  id  Int @id @default(autoincrement())
+  author_id Int
+  user      User     @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  title String    @db.VarChar(200)
+  slug String @db.VarChar(250) @unique
+  content String @db.Text
+  url_image         String           @db.Text
+  view Int @default(0)
+  created_at DateTime @default(now())  
+  updated_at DateTime @updatedAt
+  is_published     Boolean         @default(false)
+  is_deleted Boolean @default(false)
+  blog_categories BlogCategory[]
+  comment_blogs CommentBlog[]
+  reactions_blog ReactionBlog[]
+}
+model ReactionBlog {
+  id                 Int          @id @default(autoincrement())
+  user_id            Int
+  user               User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  blog_id         Int 
+  blog            Blog  @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  type               ReactionType
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @default(now())
+    @@map(name: "reaction_blog")
+
+}
+model CommentBlog {
+  id             Int           @id @default(autoincrement())
+  content        String        @db.Text
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now())
+  user_id        Int
+  user           User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  blog_id     Int
+  blog       Blog       @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  parent_id      Int?          // Id của bình luận cha, null nếu là bình luận gốc
+  parent_comment CommentBlog?  @relation("ReplyRelation", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies        CommentBlog[] @relation("ReplyRelation")
+  reactions      ReactionCommentBlog[]
+  @@map(name: "comment_blog")
+}
+model ReactionCommentBlog {
+  id                 Int          @id @default(autoincrement())
+  user_id            Int
+  user               User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id         Int
+  comment_blog            CommentBlog  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  type               ReactionType
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @default(now())
+    @@map(name: "reaction_comment_blog")
+
+}
+enum ReactionType {
+  LIKE
+  DISLIKE
 }

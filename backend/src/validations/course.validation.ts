@@ -19,7 +19,6 @@ type CreateCourse = {
     description: string;
     // thumbnail: Express.Multer.File;
     categories: Array<number>;
-    status: boolean;
     price: number;
 };
 
@@ -37,12 +36,6 @@ export const createCourseSchema: ObjectSchema<CreateCourse> = Joi.object({
             "string.base": constants.error.ERROR_COURSE_SLUG_STRING,
             "string.regex": constants.error.ERROR_COURSE_SLUG_MALFORMED,
         }),
-
-    status: Joi.required().messages({
-        "any.required": constants.error.ERROR_COURSE_STATUS_REQUIRED,
-
-        "bool.base": constants.error.ERROR_COURSE_STATUS_BOOLEAN,
-    }),
 
     description: Joi.string().trim().required().messages({
         "any.required": constants.error.ERROR_COURSE_DESCRIPTION_REQUIRED,
@@ -79,7 +72,6 @@ type UpdateCourse = {
     description: string;
     thumbnail: Express.Multer.File;
     categories: Array<number>;
-    status: boolean;
     price: number;
 };
 
@@ -93,10 +85,6 @@ const updateCourseSchema: ObjectSchema<UpdateCourse> = Joi.object({
         "any.required": constants.error.ERROR_COURSE_SLUG_REQUIRED,
         "string.base": constants.error.ERROR_COURSE_SLUG_STRING,
         "string.regex": constants.error.ERROR_COURSE_SLUG_MALFORMED,
-    }),
-
-    status: Joi.required().messages({
-        "any.required": constants.error.ERROR_COURSE_STATUS_REQUIRED,
     }),
 
     description: Joi.string().trim().required().messages({
@@ -116,6 +104,7 @@ const updateCourseSchema: ObjectSchema<UpdateCourse> = Joi.object({
     study: Joi.string(),
 
     thumbnail: Joi.string(),
+    url_trailer: Joi.string(),
     price: Joi.number().required().positive().messages({
         "any.required": constants.error.ERROR_COURSE_PRICE_REQUIRED,
         "number.base": constants.error.ERROR_COURSE_PRICE_NUMBER,

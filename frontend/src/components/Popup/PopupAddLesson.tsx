@@ -58,7 +58,6 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
             formData.append("title", values.title);
             formData.append(props.changeType ? "lecture_id" : "section_id", props.sectionId.toString());
             formData.append("video", video as File);
-            formData.append("duration", values.duration);
             formData.append("description", values.description);
             formData.append("type", "Lesson");
             dispatch(props.changeType ? lectureActions.updateLecture(formData) : lectureActions.createLecture(formData))
@@ -106,6 +105,7 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
                                     <Field
                                         type="text"
                                         name="title"
+                                        id="title"
                                         className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
                                             formik.errors.title && formik.touched.title && "border-error"
                                         } `}
@@ -137,25 +137,6 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
                                     )}
                                 </div>
                                 <div className="px-5 py-3">
-                                    <label htmlFor="duration" className="text-sm mb-1 tablet:text-xl font-medium">
-                                        Thời lượng
-                                    </label>{" "}
-                                    <br />
-                                    <Field
-                                        type="text"
-                                        name="duration"
-                                        className={`w-full px-2 py-2 rounded-lg border-[1px] outline-none ${
-                                            formik.errors.duration && formik.touched.duration && "border-error"
-                                        } `}
-                                    />
-                                    <br />
-                                    <ErrorMessage
-                                        name="duration"
-                                        component="span"
-                                        className="text-[14px] text-error font-medium"
-                                    />
-                                </div>
-                                <div className="px-5 py-3">
                                     <label htmlFor="description" className="text-sm mb-1 tablet:text-xl font-medium">
                                         Mô tả bài học
                                     </label>{" "}
@@ -166,6 +147,7 @@ const PopupAddLesson: React.FC<AddLessonModalProps> = (props) => {
                                         className="text-[14px] text-error font-medium"
                                     />
                                     <Field
+                                        id="description"
                                         as="textarea"
                                         name="description"
                                         component={TextEditor}

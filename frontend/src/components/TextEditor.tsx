@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 
 //{  QuillOptions}
@@ -12,31 +12,15 @@ type TextEditorProps = {
     handleChangeDescription(description: string): void;
 };
 const TextEditor: React.FC<TextEditorProps> = (props) => {
-    console.log("TĐN", props.description, props.description ? "true" : "false");
-    const [display, setDisplay] = useState<string>(props.description ? props.description : "");
-    console.log("display", display);
-    // Sử dụng TypeScript với react-quill
-    // const modules: QuillWithCustomOptions["modules"] = {
-    //     toolbar: {
-    //         container: [
-    //             [{ header: [1, 2, false] }],
-    //             ["bold", "italic", "underline", "strike", "blockquote"],
-    //             [{ list: "ordered" }, { list: "bullet" }],
-    //             ["link", "image", "video"],
-    //             ["clean"],
-    //         ],
-    //         handlers: {
-    //             customButton: function (value: string) {
-    //                 // Xử lý khi người dùng nhấn vào nút tùy chỉnh
-    //                 console.log("Custom button clicked. Value:", value);
-    //             },
-    //         },
-    //     },
-    // };
+    const [display, setDisplay] = useState<string>("");
+
     const handleOnChange = (description: string) => {
         props.handleChangeDescription(description);
         setDisplay(description);
     };
+    useEffect(() => {
+        setDisplay(props.description ? props.description : "");
+    }, [props.description]);
     return (
         <div>
             <ReactQuill theme="snow" value={display} onChange={handleOnChange} className="h-[200px]" />

@@ -1,5 +1,12 @@
+import { CreateTestType } from "../types/test";
 import apiCaller from "../api-config/apiCaller";
-import { AddPromotion, SearchMyCourseEnrolledCourse, SearchAllCourses } from "../types/course";
+import {
+    AddPromotion,
+    SearchMyCourseEnrolledCourse,
+    SearchAllCourses,
+    UpdateTargetCourse,
+    SearchAuthorCourse,
+} from "../types/course";
 
 const createCourse = async (values: FormData) => {
     const path = "course";
@@ -8,6 +15,11 @@ const createCourse = async (values: FormData) => {
 };
 const editCourse = async (values: FormData) => {
     const path = "course";
+    const reponse = await apiCaller("PATCH", path, values);
+    return reponse;
+};
+const updateTargetCourse = async (values: UpdateTargetCourse) => {
+    const path = `course/target`;
     const reponse = await apiCaller("PATCH", path, values);
     return reponse;
 };
@@ -31,6 +43,11 @@ const getEnrolledCourses = async (values: SearchMyCourseEnrolledCourse) => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getAllEnrolled = async () => {
+    const path = `course/enrolled-id`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
 const deleteCourse = async (values: number) => {
     const path = `course/${values}`;
     const reponse = await apiCaller("DELETE", path);
@@ -38,6 +55,11 @@ const deleteCourse = async (values: number) => {
 };
 const getCourseDetail = async (values: string) => {
     const path = `course/${values}`;
+    const reponse = await apiCaller("GET", path, values);
+    return reponse;
+};
+const getCourseDetailForTrialLesson = async (values: string) => {
+    const path = `course/trial/${values}`;
     const reponse = await apiCaller("GET", path, values);
     return reponse;
 };
@@ -70,6 +92,56 @@ const getTop10Enrolled = async () => {
     const reponse = await apiCaller("GET", path);
     return reponse;
 };
+const getTop10Sales = async () => {
+    const path = `course/top10-sales`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const approveCourse = async (values: number) => {
+    const path = `course/approve/${values}`;
+    const reponse = await apiCaller("PATCH", path);
+    return reponse;
+};
+const restrictCourse = async (values: number) => {
+    const path = `course/restrict/${values}`;
+    const reponse = await apiCaller("PATCH", path);
+    return reponse;
+};
+const getCertificate = async (values: number) => {
+    const path = `course/${values}/certificate`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const createFinalTest = async (values: CreateTestType) => {
+    const path = `course/final`;
+    const reponse = await apiCaller("POST", path, values);
+    return reponse;
+};
+const updateFinalTest = async (values: CreateTestType) => {
+    const path = `course/final/${values.course_id}`;
+    const reponse = await apiCaller("PATCH", path, values);
+    return reponse;
+};
+const deleteFinalTest = async (values: number) => {
+    const path = `course/final/${values}`;
+    const reponse = await apiCaller("DELETE", path);
+    return reponse;
+};
+const setDoneCourse = async (values: number) => {
+    const path = `course/done/${values}`;
+    const reponse = await apiCaller("PATCH", path);
+    return reponse;
+};
+const getFinalTestByCourseId = async (values: number) => {
+    const path = `course/final/${values}`;
+    const reponse = await apiCaller("GET", path);
+    return reponse;
+};
+const getCourseByAuthorId = async (values: SearchAuthorCourse) => {
+    const path = `course/author/${values.authorId}/?search_item=${values.searchItem}&page_index=${values.pageIndex}`;
+    const response = await apiCaller("GET", path);
+    return response;
+};
 const courseApis = {
     createCourse,
     getMyCourses,
@@ -79,11 +151,24 @@ const courseApis = {
     getRightOfCourse,
     getTop10Rate,
     getTop10Enrolled,
+    getTop10Sales,
     getCourseDetailById,
     editCourse,
     addPromotion,
     stopPromotion,
     getAllCourses,
+    updateTargetCourse,
+    approveCourse,
+    restrictCourse,
+    getCourseDetailForTrialLesson,
+    getAllEnrolled,
+    getCertificate,
+    createFinalTest,
+    updateFinalTest,
+    deleteFinalTest,
+    setDoneCourse,
+    getFinalTestByCourseId,
+    getCourseByAuthorId,
 };
 
 export default courseApis;

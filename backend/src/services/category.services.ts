@@ -83,6 +83,7 @@ const createCategory = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const file = req.file;
         const { title, description } = req.body;
+
         if (file) {
             const isAdmin = await configs.db.user.findFirst({
                 where: {
@@ -173,7 +174,13 @@ const getCategoriesWithPagination = async (req: IRequestWithId): Promise<Respons
             },
         });
         if (!getListCategories) return new ResponseError(404, constants.error.ERROR_CATEGORY_NOT_FOUND, false);
-        const totalRecord = await configs.db.category.count({});
+        const totalRecord = await configs.db.category.count({
+            where: {
+                title: {
+                    contains: searchItem?.toString(),
+                },
+            },
+        });
         const totalPage = Math.ceil(totalRecord / pageSize);
         const categories: CategoryResponse[] = [];
         getListCategories.map((item) => {
@@ -265,7 +272,30 @@ const getCategory = async (req: IRequestWithId): Promise<ResponseBase> => {
         return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     }
 };
+const get8BlogCategories = async (req: Request): Promise<ResponseBase> => {
+    try {
+        const getListCategories: any[] = await configs.db
+            .$queryRaw`select category.id, title, description, url_image, count(blog_id) as blog_count from category left join
+ blogs_categories on category.id = blogs_categories.category_id group by category.id order by blog_count desc limit 8;`;
+        if (!getListCategories) return new ResponseError(404, constants.error.ERROR_CATEGORY_NOT_FOUND, false);
 
+        const categories: CategoryResponse[] = [];
+        getListCategories.map((item) => {
+            const category: CategoryResponse = {
+                category_id: item.id,
+                description: item.description,
+                title: item.title,
+                url_image: item.url_image,
+            };
+            return categories.push(category);
+        });
+
+        return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, categories);
+    } catch (error) {
+        console.log(error);
+        return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+    }
+};
 const CategoryServices = {
     updateCategory,
     deleteCategory,
@@ -274,5 +304,6 @@ const CategoryServices = {
     getCategoriesWithPagination,
     get5Categories,
     getCategories,
+    get8BlogCategories,
 };
 export default CategoryServices;

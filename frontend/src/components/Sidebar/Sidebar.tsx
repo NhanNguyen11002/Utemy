@@ -1,164 +1,220 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
-    HomeIcon,
     ServerStackIcon,
     UserCircleIcon,
-    XMarkIcon,
     ClipboardDocumentListIcon,
-    HeartIcon,
+    // HeartIcon,
     PlusCircleIcon,
+    ChartBarIcon,
+    StarIcon,
+    LockOpenIcon,
+    LockClosedIcon,
+    ReceiptPercentIcon,
+    InformationCircleIcon,
+    CalendarDaysIcon,
+    PencilSquareIcon
 } from "@heroicons/react/24/outline";
 // import { LogoutIcon } from "../../assets/icons";
-import { Button, Typography } from "@material-tailwind/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { componentActions, authActions } from "../../redux/slices";
-
+import { componentActions } from "../../redux/slices";
+import { useState } from "react";
 //@ts-ignore
 export function Sidebar() {
-    const navigate = useNavigate();
-    const selected = useAppSelector((state) => state.componentSlice.adminNavPlace) || "dashboard";
+    // const navigate = useNavigate();
+    const selected = useAppSelector((state) => state.componentSlice.adminNavPlace).toLowerCase() || "dashboard";
     const dispatch = useAppDispatch();
-    const openSidenav = true;
     const handleClick = (route: string) => {
         dispatch(componentActions.setAdminNavPlace(route));
     };
-    const handleLogout = () => {
-        dispatch(authActions.logout());
-        navigate("/");
-    };
+    const [hovered, setHovered] = useState(false);
+
+    // const handleLogout = () => {
+    //     dispatch(authActions.logout());
+    //     navigate("/");
+    // };
     return (
-        <aside
-            className={` bg-gradient-to-r from-gray-600 to-gray-700 ${
-                openSidenav ? "translate-x-0" : "-translate-x-80"
-            } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-48 laptop:w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border  border-blue-gray-100`}
+        <div
+            className={` bg-[#2C2F31] w-[60px] hover:w-52 fixed inset-0 z-50 h-screen 
+             rounded-xl transition-width  duration-500 `}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
         >
-            <div className={`relative`}>
-                <Link to="/" className="py-6 px-8 text-3xl text-center">
-                    <Typography variant="h1" color="white">
-                        Utemy
-                    </Typography>
+            <div className={` `}>
+                <Link to="/" className="py-6 px-4 text-center flex flex-row  items-center justify-start gap-3">
+                    <StarIcon className="w-6 h-6 shrink-0 text-white" />
+                    <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate  `}>Admin</p>
                 </Link>
             </div>
-            <div className="m-4">
+            <div className="">
                 <ul key={"nav-list"} className="mb-4 flex flex-col gap-1">
                     <li key={"admin"}>
-                        <Link to="/admin">
-                            <Button
-                                className={`flex items-center  gap-4 px-4 capitalize ${
-                                    selected === "dashboard"
-                                        ? "btn-info hover:shadow-lightblue/80"
-                                        : "hover:bg-white/10"
+                        <Link to="/admin" className="">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "dashboard" ? " border-lightblue  " : "border-[#2C2F31]"
                                 } `}
-                                fullWidth
                                 onClick={() => handleClick("dashboard")}
                             >
-                                <HomeIcon className="w-6 h-6" />
-                                <Typography color="inherit" className="font-medium capitalize">
-                                    {"Thống kê"}
-                                </Typography>
-                            </Button>
+                                <ChartBarIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Thống kê
+                                </p>
+                            </button>
                         </Link>
                     </li>
                     <li key={"admin/category"}>
                         <Link to="/admin/category">
-                            <Button
-                                className={`flex items-center  gap-4 px-4 capitalize ${
-                                    selected === "Category" ? "btn-info hover:shadow-lightblue/80" : "hover:bg-white/10"
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "category" ? " border-lightblue  " : "border-[#2C2F31]"
                                 } `}
-                                fullWidth
-                                onClick={() => handleClick("Category")}
+                                onClick={() => handleClick("category")}
                             >
-                                <ServerStackIcon className="h-6 w-6" />
-                                <Typography color="inherit" className="font-medium capitalize">
-                                    {"Danh mục"}
-                                </Typography>
-                            </Button>
+                                <ServerStackIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Danh mục
+                                </p>
+                            </button>
                         </Link>
                     </li>
                     <li key={"admin/user"}>
                         <NavLink to="/admin/user">
-                            <Button
-                                className={`flex items-center  gap-4 px-4 capitalize ${
-                                    selected === "User" ? "btn-info hover:shadow-lightblue/80" : "hover:bg-white/10"
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "user" ? " border-lightblue  " : "border-[#2C2F31]"
                                 } `}
-                                fullWidth
-                                onClick={() => handleClick("User")}
+                                onClick={() => handleClick("user")}
                             >
-                                <UserCircleIcon className="h-6 w-6" />
-                                <Typography color="inherit" className="font-medium capitalize">
-                                    {"Người dùng"}
-                                </Typography>
-                            </Button>
+                                <UserCircleIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Người dùng
+                                </p>
+                            </button>
                         </NavLink>
                     </li>
                     <li key={"admin/user/create"}>
                         <NavLink to="/admin/user/create">
-                            <Button
-                                className={`flex items-center  gap-4 px-4 capitalize ${
-                                    selected === "UserCreate"
-                                        ? "btn-info hover:shadow-lightblue/80"
-                                        : "hover:bg-white/10"
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "usercreate" ? " border-lightblue  " : "border-[#2C2F31]"
                                 } `}
-                                fullWidth
-                                onClick={() => handleClick("UserCreate")}
+                                onClick={() => handleClick("usercreate")}
                             >
-                                <PlusCircleIcon className="h-6 w-6" />
-                                <Typography color="inherit" className="font-medium capitalize">
-                                    {"Thêm người dùng"}
-                                </Typography>
-                            </Button>
+                                <PlusCircleIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Thêm người dùng
+                                </p>
+                            </button>
                         </NavLink>
                     </li>
-
+                    <li key={"admin/approval"}>
+                        <NavLink to="/admin/approval">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "approval" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("approval")}
+                            >
+                                <LockOpenIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Phê duyệt khoá học
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
+                    <li key={"admin/report"}>
+                        <NavLink to="/admin/report">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "report" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("report")}
+                            >
+                                <LockClosedIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Báo cáo khoá học
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
                     <li key={"admin/feedback"}>
                         <NavLink to="/admin/feedback">
-                            <Button
-                                className={`flex items-center  gap-4 px-4 capitalize ${
-                                    selected === "Feedback" ? "btn-info hover:shadow-lightblue/80" : "hover:bg-white/10"
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "feedback" ? " border-lightblue  " : "border-[#2C2F31]"
                                 } `}
-                                fullWidth
-                                onClick={() => handleClick("Feedback")}
+                                onClick={() => handleClick("feedback")}
                             >
-                                <ClipboardDocumentListIcon className="h-6 w-6" />
-                                <Typography color="inherit" className="font-medium capitalize">
+                                <ClipboardDocumentListIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
                                     Phản hồi
-                                </Typography>
-                            </Button>
+                                </p>
+                            </button>
                         </NavLink>
                     </li>
                     <li key={"admin/profile"}>
                         <NavLink to="/admin/profile">
-                            <Button
-                                className={`flex items-center  gap-4 px-4 capitalize ${
-                                    selected === "Profile" ? "btn-info hover:shadow-lightblue/80" : "hover:bg-white/10"
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "profile" ? " border-lightblue  " : "border-[#2C2F31]"
                                 } `}
-                                fullWidth
-                                onClick={() => handleClick("Profile")}
+                                onClick={() => handleClick("profile")}
                             >
-                                <HeartIcon className="h-6 w-6" />
-                                <Typography color="inherit" className="font-medium capitalize">
+                                <InformationCircleIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
                                     Trang cá nhân
-                                </Typography>
-                            </Button>
+                                </p>
+                            </button>
                         </NavLink>
                     </li>
-                    <hr className="my-4 border-b-1 border-blueGray-200" />
-                    <div>
-                        <Button
-                            className={`flex items-center  gap-4 px-4 capitalize ${"btn-error hover:shadow-red-400/80"} `}
-                            fullWidth
-                            onClick={() => handleLogout()}
-                        >
-                            {/* <LogoutIcon /> */}
-                            <XMarkIcon className="h-6 w-6" />
-                            <Typography color="white" className="font-medium capitalize">
-                                Đăng xuất
-                            </Typography>
-                        </Button>
-                    </div>
+                    <li key={"admin/coupon"}>
+                        <NavLink to="/admin/coupon">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "coupon" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("coupon")}
+                            >
+                                <ReceiptPercentIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Phiếu giảm giá
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
+                    <li key={"admin/event"}>
+                        <NavLink to="/admin/event">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "event" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("event")}
+                            >
+                                <CalendarDaysIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Sự kiện
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
+                    <li key={"admin/blog"}>
+                        <NavLink to="/admin/blog">
+                            <button
+                                className={`flex w-full  items-center  gap-4 h-[50px] pl-3 border-l-4 hover:bg-white/10 ${
+                                    selected === "blog" ? " border-lightblue  " : "border-[#2C2F31]"
+                                } `}
+                                onClick={() => handleClick("blog")}
+                            >
+                                <PencilSquareIcon className="w-6 h-6 shrink-0 text-white" />
+                                <p className={`text-white text-md ${hovered ? "block" : "hidden"} truncate `}>
+                                    Blog
+                                </p>
+                            </button>
+                        </NavLink>
+                    </li>
                 </ul>
             </div>
-        </aside>
+        </div>
     );
 }
 

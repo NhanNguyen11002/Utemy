@@ -1,6 +1,7 @@
 import { User } from "./user";
 import { Category } from "./category";
 import { Section } from "./section";
+import { Approval } from "./approval";
 export type SearchMyCourseEnrolledCourse = {
     keyword: string | undefined;
     pageIndex: number;
@@ -14,6 +15,8 @@ export type Course = {
     thumbnail: string;
     summary: string;
     number_of_section: number;
+    number_of_lecture?: number;
+    overall_progress?: number;
     number_of_rating: number;
     number_of_enrolled: number;
     author?: User;
@@ -27,6 +30,10 @@ export type Course = {
     sections?: Section[];
     requirement?: any;
     study?: any;
+    test?: any;
+    approval?: Approval[];
+    final_test_id?: number | null;
+    url_trailer: string;
 };
 export type PagingCourse = {
     total_page: number;
@@ -42,6 +49,7 @@ export type NewCourse = {
     status: boolean;
     thumbnail: File | null;
     price: number;
+    trailer: File | null;
 };
 
 export type CourseDetail = {
@@ -67,6 +75,7 @@ export type EditCourse = {
     description: string;
     price: number;
     thumbnail: File | null;
+    trailer: File | null;
     status: boolean | StatusOption;
 };
 export type StatusOption = {
@@ -83,8 +92,13 @@ export type RightOfCourse = {
 // };
 export type AddPromotion = {
     sale_price: number;
-    sale_until: Date;
+    sale_until: string;
     course_id: number;
+};
+export type UpdateTargetCourse = {
+    course_id: number;
+    requirement: string[];
+    study: string[];
 };
 export type SearchAllCourses = {
     pageIndex: number;
@@ -98,4 +112,9 @@ export type SearchAllCoursesResponse = {
     total_page: number;
     total_record: number;
     data: Course[];
+};
+export type SearchAuthorCourse = {
+    pageIndex: number;
+    authorId: number;
+    searchItem: string;
 };

@@ -9,8 +9,9 @@ import slugify from "slugify";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Navbar, CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
-import { previewImage } from "../../utils/helper";
+import { CustomeSelect, TextEditor, StudyPopup, RequirementPopup } from "../../components";
+import { previewImage, previewTrailer } from "../../utils/helper";
+import logoUtemy from "../../assets/images/utemy_logo_notext.png";
 
 type CategoriesOptions = {
     value: number;
@@ -39,24 +40,17 @@ const customStyles = {
 const CreateCourse: FC = () => {
     const dispatch = useAppDispatch();
     const [thumbnail, setThumbnail] = useState<File | null>(null);
+    const [trailer, setTrailer] = useState<File | null>(null);
     const [study, setStudy] = useState([]);
     const [requirement, setRequirement] = useState([]);
     const isLoading = useAppSelector((state) => state.courseSlice.isLoading);
     const categories: Category[] = useAppSelector((state) => state.categorySlice.categories) ?? [];
     const formikRef = useRef(null);
     const imageRef = useRef<HTMLImageElement>(null);
+    const trailerRef = useRef<HTMLVideoElement>(null);
     const navigate = useNavigate();
     const categoriesOptions: CategoriesOptions[] = [];
-    const statusOptions = [
-        {
-            value: true,
-            label: "Hoàn thành",
-        },
-        {
-            value: false,
-            label: "Đang cập nhật",
-        },
-    ];
+
     useEffect(() => {
         categories.forEach((category: Category) => {
             const temp: CategoriesOptions = {
@@ -68,9 +62,8 @@ const CreateCourse: FC = () => {
     }, [categories, categoriesOptions]);
     useEffect(() => {
         dispatch(categoryActions.getCategories());
-        // dispatch(courseActions.reset());
-
         setThumbnail(null);
+        setTrailer(null);
     }, [dispatch]);
 
     const initialValues: CreateCourseType = {
@@ -80,6 +73,7 @@ const CreateCourse: FC = () => {
         summary: "",
         description: "",
         thumbnail: null,
+        trailer: null,
         slug: "",
         price: 0,
     };
@@ -87,27 +81,21 @@ const CreateCourse: FC = () => {
     const handleOnSubmit = async (values: CreateCourseType) => {
         const slug = slugify(values.title.toLowerCase());
         const categories = values.categories.map((item: any) => item.value);
-        // const data = {
-        //     ...values,
-        //     slug: slug,
-        //     categories: categories,
-        //     thumbnail: thumbnail,
-        // };
         const formData = new FormData();
         formData.append("title", values.title);
         formData.append("slug", slug);
         formData.append("summary", values.summary);
-        formData.append("status", values.status.toString());
         formData.append("price", values.price.toString());
         formData.append("categories", categories.toString());
         formData.append("thumbnail", thumbnail as File);
+        formData.append("trailer", trailer as File);
         formData.append("description", values.description);
         formData.append("study", JSON.stringify(study));
         formData.append("requirement", JSON.stringify(requirement));
         dispatch(courseActions.createCourses(formData)).then((createCourseResponse: any) => {
             if (createCourseResponse.payload && createCourseResponse.payload.status_code === 201) {
                 toast.success(createCourseResponse.payload.message);
-                navigate("/my-courses");
+                navigate("/lecturer");
             } else {
                 toast.error(createCourseResponse.payload?.message as string);
             }
@@ -116,21 +104,17 @@ const CreateCourse: FC = () => {
 
     const handleChangeCategories = (event: any, formik: any) => {
         formik.setFieldValue("categories", event);
-        console.log(formik.values);
     };
 
-    const handleChangeStatus = (event: any, formik: any) => {
-        if (event.value === 0) {
-            formik.setFieldValue("status", false);
-        } else {
-            formik.setFieldValue("status", true);
-        }
-    };
-
-    const onChangeInputFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeInputThumbnailFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         setThumbnail(event.currentTarget.files![0]);
         const thumbnail = event.currentTarget.files![0];
         previewImage(thumbnail, imageRef);
+    };
+    const onChangeInputTrailerFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTrailer(event.currentTarget.files![0]);
+        const trailer = event.currentTarget.files![0];
+        previewTrailer(trailer, trailerRef);
     };
     const handleDescriptionChange = (description: string, formik: any) => {
         formik.setFieldValue("description", description);
@@ -143,7 +127,6 @@ const CreateCourse: FC = () => {
     };
     return (
         <>
-            <Navbar />
             <div className="min-h-screen h-full px-4 tablet:px-[60px] mt-[100px] laptop:mt-0">
                 <h1 className="text-center text-[32px] py-4 font-bold text-lightblue text-title">Tạo khóa học mới</h1>
                 <div className="w-full flex justify-center items-center shrink-0">
@@ -158,11 +141,6 @@ const CreateCourse: FC = () => {
                                 <form onSubmit={formik.handleSubmit} className="p-4">
                                     <div className="flex">
                                         <div className="flex rounded-lg items-start">
-                                            <img
-                                                ref={imageRef}
-                                                alt="Thumbnail"
-                                                className="w-32 h-32 rounded-lg mr-3 outline-none border border-dashed border-black tablet:w-60 tablet:h-60"
-                                            />
                                             <div className="flex flex-col gap-3">
                                                 <div className="">
                                                     <p className="text-lg font-medium">Chọn ảnh bìa</p>
@@ -170,6 +148,7 @@ const CreateCourse: FC = () => {
                                                 </div>
                                                 <Field
                                                     name="thumbnail"
+                                                    id="thumbnail"
                                                     type="file"
                                                     value={undefined}
                                                     className="file-input file-input-bordered file-input-info w-full max-w-xs"
@@ -179,7 +158,7 @@ const CreateCourse: FC = () => {
                                                             event.currentTarget.files![0],
                                                         );
                                                         formik.setFieldError("thumbnail", undefined);
-                                                        onChangeInputFile(event);
+                                                        onChangeInputThumbnailFile(event);
                                                     }}
                                                 />
                                                 <ErrorMessage
@@ -187,34 +166,90 @@ const CreateCourse: FC = () => {
                                                     component="span"
                                                     className="text-[14px] text-error font-medium"
                                                 />
+                                                <img
+                                                    src={logoUtemy}
+                                                    ref={imageRef}
+                                                    alt="Thumbnail"
+                                                    className="w-32 h-32 rounded-lg mr-3 outline-none border border-dashed border-black tablet:w-60 tablet:h-60"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-3" style={{ marginLeft: "250px" }}>
+                                                <div className="">
+                                                    <p className="text-lg font-medium">Chọn video trailer</p>
+                                                    <p className="italic">Kích thước video nhỏ hơn hoặc bằng 100mb</p>
+                                                </div>
+                                                <Field
+                                                    name="trailer"
+                                                    id="trailer"
+                                                    type="file"
+                                                    value={undefined}
+                                                    className="file-input file-input-bordered file-input-info w-full max-w-xs"
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        formik.setFieldValue("trailer", event.currentTarget.files![0]);
+                                                        formik.setFieldError("trailer", undefined);
+                                                        onChangeInputTrailerFile(event);
+                                                    }}
+                                                />
+                                                <ErrorMessage
+                                                    name="trailer"
+                                                    component="span"
+                                                    className="text-[14px] text-error font-medium"
+                                                />
+
+                                                {/* Video player */}
+                                                {formik.values.trailer && (
+                                                    <div className="mt-4">
+                                                        <video
+                                                            ref={trailerRef}
+                                                            controls
+                                                            className="mt-2"
+                                                            width="400"
+                                                            height="300"
+                                                        >
+                                                            {["video/mp4", "video/x-matroska", "video/mov"].map(
+                                                                (type, index) => (
+                                                                    <source
+                                                                        key={index}
+                                                                        src={
+                                                                            formik.values.trailer
+                                                                                ? URL.createObjectURL(
+                                                                                      formik.values.trailer,
+                                                                                  )
+                                                                                : ""
+                                                                        }
+                                                                        type={type}
+                                                                    />
+                                                                ),
+                                                            )}
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div className="flex flex-col w-full">
+                                        <label htmlFor="title" className="text-sm mb-1 font-medium tablet:text-xl">
+                                            Tên khóa học
+                                        </label>
+                                        <Field
+                                            type="text"
+                                            name="title"
+                                            id="title"
+                                            className={`${
+                                                formik.errors.title && formik.touched.title ? "border-error" : ""
+                                            } px-2 py-4 rounded-lg border-[1px] outline-none w-full`}
+                                        />
+                                        <ErrorMessage
+                                            name="title"
+                                            component="span"
+                                            className="text-[14px] text-error font-medium"
+                                        />
+                                    </div>
                                     <div className="flex flex-row gap-4 my-3">
                                         <div className="flex-1 flex gap-3 items-center">
-                                            <div className="flex flex-col w-1/2">
-                                                <div className="flex flex-col">
-                                                    <label
-                                                        htmlFor="title"
-                                                        className="text-sm mb-1 font-medium tablet:text-xl"
-                                                    >
-                                                        Tên khóa học
-                                                    </label>
-                                                    <Field
-                                                        type="text"
-                                                        name="title"
-                                                        className={`${
-                                                            formik.errors.title && formik.touched.title
-                                                                ? "border-error"
-                                                                : ""
-                                                        } px-2 py-4 rounded-lg border-[1px] outline-none max-w-lg`}
-                                                    />
-                                                    <ErrorMessage
-                                                        name="title"
-                                                        component="span"
-                                                        className="text-[14px] text-error font-medium"
-                                                    />
-                                                </div>
+                                            <div className="flex flex-col w-1/2 gap-4">
                                                 <div className="flex flex-col">
                                                     <label
                                                         htmlFor="price"
@@ -225,6 +260,7 @@ const CreateCourse: FC = () => {
                                                     <Field
                                                         type="text"
                                                         name="price"
+                                                        id="price"
                                                         className={`${
                                                             formik.errors.price && formik.touched.price
                                                                 ? "border-error"
@@ -244,10 +280,10 @@ const CreateCourse: FC = () => {
                                                     <StudyPopup study={study} handleSubmit={handleSubmitStudy} />
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col w-1/2">
+                                            <div className="flex flex-col w-1/2 gap-4">
                                                 <div>
                                                     <label
-                                                        htmlFor="category"
+                                                        htmlFor=""
                                                         className="text-sm mb-1 font-medium tablet:text-xl"
                                                     >
                                                         Danh mục
@@ -260,6 +296,7 @@ const CreateCourse: FC = () => {
                                                         } border-[1px] rounded-md`}
                                                     >
                                                         <Field
+                                                            id="categories"
                                                             name="categories"
                                                             component={CustomeSelect}
                                                             handleOnchange={(e: any) =>
@@ -278,29 +315,7 @@ const CreateCourse: FC = () => {
                                                         className="text-[14px] text-error font-medium"
                                                     />
                                                 </div>
-                                                <div>
-                                                    <label
-                                                        htmlFor="title"
-                                                        className="text-sm mb-1 font-medium tablet:text-xl"
-                                                    >
-                                                        Trạng thái
-                                                    </label>
-                                                    <Field
-                                                        className="custom-select"
-                                                        name="status"
-                                                        component={CustomeSelect}
-                                                        handleOnchange={(e: any) => handleChangeStatus(e, formik)}
-                                                        options={statusOptions}
-                                                        isMulti={false}
-                                                        placeholder="Đang cập nhật"
-                                                        styles={customStyles}
-                                                    />
-                                                    <ErrorMessage
-                                                        name="status"
-                                                        component="span"
-                                                        className="text-[14px] text-error font-medium"
-                                                    />
-                                                </div>
+
                                                 <div className="w-full flex justify-between mt-3 items-center">
                                                     <label className="text-sm mb-1 font-medium tablet:text-xl">
                                                         Yêu cầu khóa học
@@ -320,6 +335,7 @@ const CreateCourse: FC = () => {
                                         <Field
                                             type="text"
                                             name="summary"
+                                            id="summary"
                                             className={`${
                                                 formik.errors.summary && formik.touched.summary ? "border-error" : ""
                                             } w-full h-[68px] rounded-[8px] px-[8px] border-[1px] outline-none`}
@@ -331,10 +347,7 @@ const CreateCourse: FC = () => {
                                         />
                                     </div>
                                     <div className="flex-1 flex flex-col w-full h-[300px]">
-                                        <label
-                                            htmlFor="description"
-                                            className="text-sm mb-1 font-medium tablet:text-xl"
-                                        >
+                                        <label htmlFor="" className="text-sm mb-1 font-medium tablet:text-xl">
                                             Mô tả
                                         </label>
                                         <ErrorMessage
@@ -345,6 +358,7 @@ const CreateCourse: FC = () => {
                                         <Field
                                             as="textarea"
                                             name="description"
+                                            id="description"
                                             component={TextEditor}
                                             handleChangeDescription={(description: string) =>
                                                 handleDescriptionChange(description, formik)
@@ -356,7 +370,6 @@ const CreateCourse: FC = () => {
                                             } flex-1 w-full  resize-none rounded-md border border-[#e0e0e0] py-3 px-4  outline-none focus:shadow-md1`}
                                         />
                                     </div>
-
                                     <div className="py-[12px] flex justify-end">
                                         <button
                                             disabled={isLoading}
@@ -374,7 +387,7 @@ const CreateCourse: FC = () => {
                                                 formik.resetForm(initialValues);
                                             }}
                                         >
-                                            <Link to={`/my-courses`}>Hủy</Link>
+                                            <Link to={`/lecturer`}>Hủy</Link>
                                         </button>
                                     </div>
                                 </form>

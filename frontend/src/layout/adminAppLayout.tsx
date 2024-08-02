@@ -9,7 +9,7 @@ const AdminLayout: React.FC = () => {
         <>
             <Sidebar />
             <div className="relative bg-background_2">
-                <div className="px-4  ml-80">
+                <div className="px-4 ml-[60px]">
                     <AdminNavbar />
                     <Outlet />
                     <FooterAdmin />

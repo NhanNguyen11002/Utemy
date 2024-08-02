@@ -29,17 +29,18 @@ export const getHistoryInvoices = createAsyncThunk<
     }
   },
 );
-export const createInvoice = createAsyncThunk<Response<null>, void, { rejectValue: Response<null> }>(
+export const createInvoice = createAsyncThunk<Response<null>, { totalWithCoupon: number; discount: number, coupon_id: number | null, max_discount_money: number; }, { rejectValue: Response<null> }>(
     "invoice/create",
-    async (body, ThunkAPI) => {
+    async ({ totalWithCoupon, discount, coupon_id, max_discount_money }, ThunkAPI) => {
         try {
-            const response = await apis.invoiceApis.createInvoice();
+            const response = await apis.invoiceApis.createInvoice(totalWithCoupon, discount, coupon_id, max_discount_money);
             return response.data as Response<null>;
         } catch (error: any) {
             return ThunkAPI.rejectWithValue(error.data as Response<null>);
         }
     },
 );
+
 export const getInvoiceById = createAsyncThunk<Response<Invoice>, number, { rejectValue: Response<null> }>(
     "invoice/getInvoiceById",
     async (body, ThunkAPI) => {

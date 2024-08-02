@@ -10,6 +10,7 @@ import helper from "../helper";
 import LessonServices from "./lesson.services";
 import { Section } from "../types/section";
 import { Lecture } from "../types/lecture";
+import TestServices from "./test.services";
 
 const addSection = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
@@ -130,10 +131,16 @@ const deleteSection = async (req: IRequestWithId): Promise<ResponseBase> => {
                     },
                 });
                 deletedLecture.forEach(async (lecture) => {
+                    const deleteProgress = await configs.db.progress.updateMany({
+                        where: {
+                            lecture_id: Number(lecture.id),
+                        },
+                        data: {
+                            is_delete: true,
+                        },
+                    });
                     if (lecture.type === "Lesson") LessonServices.deleteLesson(lecture.id);
-                    else console.log("delete test");
-                    // const fullPathDeConverted = await helper.ConvertHelper.deConvertFilePath(lesson.url_video);
-                    // await helper.FileHelper.destroyedVideoIfFailed(fullPathDeConverted);
+                    else TestServices.deleteTest(lecture.id);
                 });
                 return new ResponseSuccess(200, constants.success.SUCCESS_REQUEST, true);
             }

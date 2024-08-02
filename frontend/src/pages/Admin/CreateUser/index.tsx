@@ -59,7 +59,6 @@ const CreateUser = () => {
     }, [dispatch]);
 
     const handleOnSubmit = (values: CreateNewUser, actions: any) => {
-        console.log(values);
         const data = {
             first_name: values.first_name,
             last_name: values.last_name,
@@ -78,7 +77,7 @@ const CreateUser = () => {
 
     return (
         <>
-            <div className="mt-12 mb-8 flex flex-row items-start justify-between bg-background_2 min-h-screen">
+            <div className="mt-12 mb-8 flex items-start justify-center laptop:justify-start bg-background_2 min-h-screen laptop:w-[1024px] xl:w-[1400px] mx-auto">
                 <div className="w-1/3 flex ">
                     <Formik
                         initialValues={initialValue}
@@ -101,6 +100,7 @@ const CreateUser = () => {
                                                 Tên
                                             </label>
                                             <Field
+                                                id="first_name"
                                                 name="first_name"
                                                 type="text"
                                                 className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
@@ -120,6 +120,7 @@ const CreateUser = () => {
                                                 Họ
                                             </label>
                                             <Field
+                                                id="last_name"
                                                 name="last_name"
                                                 type="text"
                                                 className={`px-2 py-4 rounded-lg border-[1px] outline-none max-w-sm ${
@@ -140,6 +141,7 @@ const CreateUser = () => {
                                             Email
                                         </label>
                                         <Field
+                                            id="email"
                                             name="email"
                                             type="text"
                                             className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -157,6 +159,7 @@ const CreateUser = () => {
                                             Mật khẩu
                                         </label>
                                         <Field
+                                            id="password"
                                             name="password"
                                             type="password"
                                             className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -174,6 +177,7 @@ const CreateUser = () => {
                                             Nhập lại mật khẩu
                                         </label>
                                         <Field
+                                            id="confirm_password"
                                             name="confirm_password"
                                             type="password"
                                             className={`px-2 py-4 w-full rounded-lg border-[1px] outline-none${
@@ -196,6 +200,7 @@ const CreateUser = () => {
                                             Loại tài khoản
                                         </label>
                                         <Field
+                                            id="status"
                                             className="w-full"
                                             name="status"
                                             component={CustomeSelect}
@@ -231,7 +236,7 @@ const CreateUser = () => {
                     <img
                         src={images.CreateUser}
                         alt="panel"
-                        className=" rounded-3xl hidden laptop:block laptop:w-3/4"
+                        className=" rounded-3xl hidden laptop:block laptop:w-2/3 xl:w-full h-auto"
                     />
                 </div>
             </div>

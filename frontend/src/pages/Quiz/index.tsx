@@ -9,7 +9,7 @@ import DeleteQuizModal from "./DeleteQuizModal";
 import QuizGroupAddPopup from "./QuizGroupAddPopup";
 import QuizGroupEditPopup from "./QuizGroupEditPopup";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { quizActions } from "../../redux/slices";
+import { quizActions, componentActions } from "../../redux/slices";
 import { SearchIcon } from "../../assets/icons";
 
 const QuizHome: React.FC = () => {
@@ -24,12 +24,14 @@ const QuizHome: React.FC = () => {
     const [searchItem, setSearchItem] = useState<string>("");
     const inputRef = useRef<HTMLInputElement>(null);
     const [groupId, setGroupId] = useState(0);
+    const [groupName, setGroupName] = useState("");
     const quizGroupList = useAppSelector((state) => state.quizSlice.quizGroupList);
     const quizList = useAppSelector((state) => state.quizSlice.quizList);
     const [editQuiz, setEditQuiz] = useState<QuizType>(quizList[0]);
     const [editGroup, setEditGroup] = useState<QuizGroupType>(quizGroupList[0]);
 
     useEffect(() => {
+        dispatch(componentActions.setLecturerNavPlace("quiz"));
         dispatch(quizActions.getAllQuizGroup()).then((response) => {
             if (response.payload?.status_code === 200) {
                 if (quizGroupList.length > 0) setGroupId(quizGroupList[0].quiz_group_id);
@@ -107,8 +109,8 @@ const QuizHome: React.FC = () => {
             {openDeleteGroupModal && <DeleteGroupModal group={editGroup} handleCancel={handleToggleDeleteGroup} />}
             {openEditGroupPopup && <QuizGroupEditPopup group={editGroup} handleCancelEdit={handleCancelEditGroup} />}
             {openAddGroupPopup && <QuizGroupAddPopup handleCancelAdd={handleToggleAddGroup} />}
-            <div className=" w-full h-[100vh] mx-auto mt-[100px]  justify-center flex  ">
-                <div className="w-1/4 bg-white  shadow-lg pt-[20px]">
+            <div className=" w-full h-[100vh] mx-auto mt-[10px]  justify-center flex  ">
+                <div className=" w-[30%] bg-white  shadow-lg pt-[20px]">
                     <div className="h-[10%] flex items-center justify-between text-black border-b mx-3">
                         <div>
                             <h1 className="text-2xl text-black font-bold ">Bộ câu hỏi</h1>
@@ -117,7 +119,7 @@ const QuizHome: React.FC = () => {
                         <button
                             type="button"
                             onClick={handleToggleAddGroup}
-                            className="btn btn-info text-white hover:bg-lightblue/80"
+                            className="py-2 px-4 hover:cursor-pointer text-white bg-blue-500 hover:bg-white hover:text-blue-500 border hover:border-blue-400 transition-all rounded-md"
                         >
                             Thêm
                         </button>
@@ -127,7 +129,10 @@ const QuizHome: React.FC = () => {
                             quizGroupList.map((group, index) => {
                                 return (
                                     <QuizGroupCard
-                                        handleOpenGroup={() => setGroupId(group.quiz_group_id)}
+                                        handleOpenGroup={() => {
+                                            setGroupId(group.quiz_group_id);
+                                            setGroupName(group.title);
+                                        }}
                                         key={index}
                                         group={group}
                                         handleOpenDelete={handleOpenDeleteGroup}
@@ -144,6 +149,7 @@ const QuizHome: React.FC = () => {
                                 <input
                                     ref={inputRef}
                                     type="text"
+                                    id="search-quiz"
                                     placeholder="Điền từ khóa ở đây..."
                                     className="rounded-full py-4 px-10 w-full tablet:w-[70%] border-[1px] border-black"
                                     value={userInput}
@@ -168,24 +174,36 @@ const QuizHome: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleToggleAdd}
-                                className="btn btn-info text-white hover:bg-lightblue/80"
+                                className="py-2 px-4 hover:cursor-pointer text-white bg-blue-500 hover:bg-white hover:text-blue-500 border hover:border-blue-400 transition-all rounded-md"
                             >
                                 Thêm
                             </button>
                         </div>
                     </div>
                     <div className="h-[90%] flex flex-col  overflow-auto">
-                        {quizList.length > 0 &&
+                        {groupId === 0 && (
+                            <div className="text-center">
+                                <p>Vui lòng chọn bộ câu hỏi bên trái để hiển thị câu hỏi</p>
+                            </div>
+                        )}
+                        {groupId !== 0 && quizList.length > 0 ? (
                             quizList.map((data, index) => {
                                 return (
-                                    <QuizCard
-                                        key={index}
-                                        quiz={data}
-                                        handleOpenEdit={handleOpenEditQuiz}
-                                        handleOpenDelete={handleOpenDeleteQuiz}
-                                    />
+                                    <div key={data.quiz_id}>
+                                        <QuizCard
+                                            key={data.quiz_id}
+                                            quiz={data}
+                                            handleOpenEdit={handleOpenEditQuiz}
+                                            handleOpenDelete={handleOpenDeleteQuiz}
+                                        />
+                                    </div>
                                 );
-                            })}
+                            })
+                        ) : (
+                            <div className="text-center">
+                                <p>Có vẻ {groupName} chưa có câu hỏi nào, tạo mới ngay bây giờ</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -13,7 +13,19 @@ import QuizController from "./quiz.controller";
 import LectureController from "./lecture.controller";
 import TestController from "./test.controller";
 import CouponController from "./coupon.controller";
-
+import ApprovalController from "./approval.controller";
+import DecisionController from "./decision.controller";
+import ReportController from "./report.controller";
+import EventController from "./event.controller";
+import ProgressController from "./progress.controller";
+import CommentController from "./comment.controller";
+import ReplyCommentController from "./replycomment.controller";
+import ReactionController from "./reaction.controller";
+import CertifierController from "./certifier.controller";
+import BlogController from "./blog.controller";
+import CommentBlogController from "./commentblog.controller";
+import ReactionCommentBlogController from "./reactioncommentblog.controller";
+import BoxChatController from "./boxchat.controller";
 export default {
     authController: new AuthController(),
     sectionController: new SectionController(),
@@ -30,4 +42,17 @@ export default {
     lectureController: new LectureController(),
     testController: new TestController(),
     couponController: new CouponController(),
+    approvalController: new ApprovalController(),
+    decisionController: new DecisionController(),
+    reportController: new ReportController(),
+    eventController: new EventController(),
+    progressController: new ProgressController(),
+    commentController: new CommentController(),
+    replyCommentController: new ReplyCommentController(),
+    reactionController: new ReactionController(),
+    certifierController: new CertifierController(),
+    blogController: new BlogController(),
+    commentBlogController: new CommentBlogController(),
+    reactionCommentBlogController: new ReactionCommentBlogController(),
+    boxChatController: new BoxChatController(),
 };

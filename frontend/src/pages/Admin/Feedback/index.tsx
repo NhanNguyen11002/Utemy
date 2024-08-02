@@ -31,11 +31,18 @@ export function FeedbackAdmin() {
     };
     useEffect(() => {
         const data = {
+            pageIndex: 1,
+            evaluate: Number(evaluate),
+        };
+        dispatch(feedbackActions.getAllFeedbacks(data));
+    }, [dispatch, evaluate]);
+    useEffect(() => {
+        const data = {
             pageIndex,
             evaluate: Number(evaluate),
         };
         dispatch(feedbackActions.getAllFeedbacks(data));
-    }, [dispatch, pageIndex, evaluate]);
+    }, [dispatch, pageIndex]);
     return (
         <>
             <div className="pt-[15px] flex flex-col items-center min-h-screen bg-background_2 ">
@@ -88,7 +95,9 @@ export function FeedbackAdmin() {
                     </div>
                     <div className="flex my-1  flex-col justify-between w-3/4 px-10 gap border-l-[1px]">
                         {feedbacks.length === 0 ? (
-                            <p className="mt-4 text-2xl text-error text-center font-bold">Không tìm thấy phản hồi</p>
+                            <p className="mt-4 text-2xl text-error text-center font-bold">
+                                Không tìm thấy phản hồi {evaluate ? `${evaluate} sao` : ""}
+                            </p>
                         ) : (
                             <p className="mt-4 text-2xl text-center font-bold">Tìm thấy {totalRecord} phản hồi </p>
                         )}

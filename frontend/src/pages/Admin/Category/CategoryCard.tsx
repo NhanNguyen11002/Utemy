@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../../assets/images/utemy_logo_notext.png";
 import { Category } from "../../../types/category";
 
@@ -9,16 +9,19 @@ type CategoryCardProps = {
 };
 
 const CategoryCard: React.FC<CategoryCardProps> = (props) => {
+    const [hovered, setHovered] = useState(false);
     return (
         <>
             <div
                 className={`relative w-full overflow-hidden transition-all duration-500 bg-white border rounded-md shadow group hover:shadow-lg h-fit `}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
             >
-                <div className="p-1 flex flex-row justify-between">
-                    <div className="p-1 flex flex-row justify-between">
-                        <div className="w-[130px] h-[130px] flex items-center justify-center bg-white shadow  rounded-md">
+                <div className="p-1 flex flex-row justify-between items-center w-full">
+                    <div className="p-1 flex justify-start w-[90%]">
+                        <div className="w-[130px] h-[130px] flex items-center justify-center bg-white shadow shrink-0 rounded-md">
                             <img
-                                className="w-[130px] h-[130px] my-3 rounded-md border border-gray-400"
+                                className="w-[130px] h-[130px] my-3 rounded-md border border-gray-400 "
                                 alt="category_image"
                                 src={props.category.url_image ? props.category.url_image : logo}
                             />
@@ -27,17 +30,18 @@ const CategoryCard: React.FC<CategoryCardProps> = (props) => {
                             <div className="ml-4 items-center leading-7 tracking-wider">
                                 <h1 className="text-gray-900 text-2xl font-semibold ">{props.category.title}</h1>
                             </div>
-                            <div className="flex flex-row items-start mt-1 ml-4 overflow-hidden">
-                                <h1 className="text-black font-bold text-lg"> Mô tả:</h1>
-
-                                <p className="ml-2 text-gray-700 font-normal text-lg truncate ">
-                                    {props.category.description}
-                                </p>
+                            <div className=" items-start mt-1 ml-4 overflow-hidden w-full">
+                                <h1 className="text-black font-bold text-lg shrink-0">
+                                    Mô tả:
+                                    <span className="ml-2 text-gray-700 font-normal text-lg line-clamspan-3 w-full">
+                                        {props.category.description}
+                                    </span>
+                                </h1>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col mr-1">
+                    <div className={`${hovered ? "block" : "hidden"} flex flex-col mr-1 w-[10%]`}>
                         <button
                             className="w-full px-5 py-2 mt-2 text-white  btn btn-info hover:bg-info/70 hover:cursor-pointer rounded-2xl "
                             onClick={() => props.handleOpenPopupEdit(props.category.category_id)}

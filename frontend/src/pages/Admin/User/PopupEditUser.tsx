@@ -49,7 +49,6 @@ const PopupEditUser: React.FC<PopupEditUserProps> = (props) => {
             ...values,
             id: props.editUser.user_id,
         };
-        console.log("values formik", data);
         dispatch(userActions.editUser(data)).then((response: any) => {
             if (response.payload && response.payload.status_code === 200) {
                 toast.success(response.payload.message);
@@ -150,6 +149,7 @@ const PopupEditUser: React.FC<PopupEditUserProps> = (props) => {
                                             <Field
                                                 className="w-full"
                                                 name="status"
+                                                id="status"
                                                 component={CustomeSelect}
                                                 handleOnchange={(e: any) => handleChangeStatus(e, formik)}
                                                 options={roleOptions}

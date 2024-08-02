@@ -14,6 +14,17 @@ export const get5Categories = createAsyncThunk<Response<Category[]>, void, { rej
         }
     },
 );
+export const get8BlogCategories = createAsyncThunk<Response<Category[]>, void, { rejectValue: Response<null> }>(
+    "category/top8blog",
+    async (body, ThunkAPI) => {
+        try {
+            const response = await apis.categoryApis.get8BlogCategories();
+            return response.data as Response<Category[]>;
+        } catch (error: any) {
+            return ThunkAPI.rejectWithValue(error.data as Response<null>);
+        }
+    },
+);
 export const getCategories = createAsyncThunk<Response<Category[]>, void, { rejectValue: Response<null> }>(
     "category/full",
     async (body, ThunkAPI) => {
@@ -122,6 +133,16 @@ export const categorySlice = createSlice({
             state.isGetLoading = false;
         });
         builder.addCase(get5Categories.rejected, (state) => {
+            state.isGetLoading = false;
+        });
+        builder.addCase(get8BlogCategories.pending, (state) => {
+            state.isGetLoading = true;
+        });
+        builder.addCase(get8BlogCategories.fulfilled, (state, action) => {
+            state.top5categories = action.payload.data as Category[];
+            state.isGetLoading = false;
+        });
+        builder.addCase(get8BlogCategories.rejected, (state) => {
             state.isGetLoading = false;
         });
         builder.addCase(getCategories.pending, (state) => {

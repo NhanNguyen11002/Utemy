@@ -1,5 +1,6 @@
 import { Author } from "./user";
 import { Section } from "./section";
+import { Approval } from "./approval";
 import { Prisma } from "@prisma/client";
 export type CourseDetail = {
     course_id: number;
@@ -9,6 +10,7 @@ export type CourseDetail = {
     status: boolean;
     description: string;
     thumbnail: string;
+    url_trailer: string;
     summary: string;
     // is_delete: boolean;
     // created_at: Date;
@@ -16,6 +18,7 @@ export type CourseDetail = {
     sections: Section[];
     average_rating: number;
     number_of_section?: number;
+    number_of_lecture?: number;
     number_of_rating: number;
     number_of_enrolled: number;
     author: Author;
@@ -25,6 +28,9 @@ export type CourseDetail = {
     updated_at?: Date | string | null;
     requirement?: Prisma.JsonValue;
     study?: Prisma.JsonValue;
+    approval?: Approval[];
+    final_test_id?: number | null;
+    test?: any;
 };
 
 export type CourseInfo = {

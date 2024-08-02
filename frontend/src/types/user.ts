@@ -10,6 +10,15 @@ export type User = {
     is_delete?: boolean;
     created_at?: Date | string;
 };
+export type EnrolledAuthor = {
+    first_name: string;
+    last_name: string;
+    url_avatar?: string;
+    user_id: number | undefined;
+    description: string;
+    average_rating_all_course: number;
+    number_of_enrolled_all_course: number;
+};
 export type UserAvatar = {
     url_avatar?: string;
 };
@@ -41,3 +50,15 @@ export type EditUser = {
     is_admin: boolean;
     id?: number;
 };
+export type OwnerComment = {
+    id: number;
+    first_name: string;
+    last_name: string;
+    url_avatar: string | undefined;
+}
+export type OwnerReply = {
+    user_id: number;
+    first_name: string;
+    last_name: string;
+    url_avatar: string | undefined;
+}

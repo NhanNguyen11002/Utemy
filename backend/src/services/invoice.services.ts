@@ -5,8 +5,15 @@ import { ResponseBase, ResponseError, ResponseSuccess } from "../common/response
 import constants from "../constants";
 import { PagingArrayResponse, PagingResponse } from "../types/response";
 import { InvoiceInfo } from "../types/invoice";
+import { Console } from "console";
 
-const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
+const createInvoice = async (
+    req: IRequestWithId,
+    totalwithcoupon: number,
+    discount: number,
+    coupon_id: number | null,
+    max_discount_money: number,
+): Promise<ResponseBase> => {
     try {
         const userId = Number(req.user_id);
         const isInvoiceNotSucess = await configs.db.invoice.findFirst({
@@ -24,6 +31,8 @@ const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
         const createInvoice = await configs.db.invoice.create({
             data: {
                 user_id: userId,
+                total_money: totalwithcoupon,
+                coupon_id: coupon_id,
             },
         });
         let cartId = 0;
@@ -56,12 +65,33 @@ const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
             return new ResponseError(404, "You don't have any courses in cart", false);
         }
         let total_money = 0;
+        let totalorigin = 0;
+        const now = new Date();
+        boughtCourses.forEach((cartDetail) => {
+            if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
+                totalorigin += cartDetail.course.sale_price;
+            } else {
+                totalorigin += cartDetail.course.price;
+            }
+        });
+        const ratio = max_discount_money / totalorigin;
         const createInvoiceDetailData = boughtCourses.map((cartDetail) => {
             const now = new Date();
             let paidPrice;
-            if (cartDetail.course.sale_until && cartDetail.course.sale_until > now) {
-                paidPrice = cartDetail.course.sale_price;
-            } else paidPrice = cartDetail.course.price;
+            if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
+                if (Number(totalorigin) - totalwithcoupon < max_discount_money)
+                    paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * discount;
+                else paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * ratio;
+            } else {
+                if (Number(totalorigin) - totalwithcoupon < max_discount_money) {
+                    paidPrice = cartDetail.course.price - cartDetail.course.price * discount;
+                } else paidPrice = cartDetail.course.price - cartDetail.course.price * ratio;
+            }
+            // if (cartDetail.course.sale_until && cartDetail.course.sale_until > now && cartDetail.course.sale_price) {
+            //     paidPrice = cartDetail.course.sale_price - cartDetail.course.sale_price * discount;
+            // } else {
+            //     paidPrice = cartDetail.course.price - cartDetail.course.price * discount;
+            // }
             total_money += Number(paidPrice);
             const data = {
                 invoice_id: createInvoice.id,
@@ -77,14 +107,15 @@ const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
             },
             data: {
                 total_money,
+                coupon_id: coupon_id,
             },
         });
         const createInvoiceDetail = await configs.db.invoiceDetail.createMany({
             data: createInvoiceDetailData,
         });
-        if (createInvoiceDetail && updateInvoice)
+        if (createInvoiceDetail && updateInvoice) {
             return new ResponseSuccess(200, constants.success.SUCCESS_CREATE_DATA, true);
-        else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
+        } else return new ResponseError(500, constants.error.ERROR_INTERNAL_SERVER, false);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
             return new ResponseError(400, constants.error.ERROR_BAD_REQUEST, false);
@@ -95,7 +126,18 @@ const createInvoice = async (req: IRequestWithId): Promise<ResponseBase> => {
 const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
     try {
         const userId = Number(req.user_id);
-        const { page_index: pageIndex, page_size: pageSize } = req.query;
+        const { page_index: pageIndex, page_size: pageSize, from: fromQueryParam, to: toQueryParam } = req.query;
+        // Chuyển đổi giá trị 'from' và 'to' sang kiểu 'Date' nếu chúng tồn tại
+        let fromDate: Date | undefined;
+        let toDate: Date | undefined;
+
+        if (typeof fromQueryParam === "string") {
+            fromDate = new Date(fromQueryParam);
+        }
+
+        if (typeof toQueryParam === "string") {
+            toDate = new Date(toQueryParam);
+        }
 
         // Parse pageIndex and pageSize to numbers, set default values if not provided
         const parsePageIndex = Number(pageIndex) || 1;
@@ -103,13 +145,21 @@ const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
 
         // Calculate skip based on pageIndex and pageSize
         const skip = (parsePageIndex - 1) * parsePageSize;
-
+        // Create a where object to hold the conditions
+        const where: any = {
+            user_id: userId,
+            is_success: true,
+        };
+        // Add conditions for from and to if they exist
+        if (fromDate && toDate) {
+            where.created_at = {
+                gte: fromDate,
+                lte: toDate,
+            };
+        }
         // Retrieve paginated invoices with details and courses
         const getInvoices = await configs.db.invoice.findMany({
-            where: {
-                user_id: userId,
-                is_success: true,
-            },
+            where,
             include: {
                 invoice_detail: {
                     include: {
@@ -123,17 +173,14 @@ const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
 
         // Calculate total records for pagination info
         const totalRecord = await configs.db.invoice.count({
-            where: {
-                user_id: userId,
-                is_success: true,
-            },
+            where,
         });
 
         // Calculate total pages
         const totalPage = Math.ceil(totalRecord / parsePageSize);
 
         // Prepare paginated response
-        const paginatedResponse: PagingArrayResponse<InvoiceInfo> = {
+        const paginatedResponse = {
             total_page: totalPage,
             total_record: totalRecord,
             data: getInvoices.map((invoice) => ({
@@ -169,9 +216,8 @@ const getAllInvoices = async (req: IRequestWithId): Promise<ResponseBase> => {
                         // Other course information...
                     },
                 })),
-            })),
+            })) as InvoiceInfo[],
         };
-
         return new ResponseSuccess(200, constants.success.SUCCESS_GET_DATA, true, paginatedResponse);
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {

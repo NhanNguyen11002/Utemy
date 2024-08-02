@@ -1,7 +1,5 @@
-import { Card, CardHeader, CardBody, CardFooter, Typography } from "@material-tailwind/react";
 import Chart from "react-apexcharts";
 import chartsConfig from "../../config/chartsConfig";
-import { color } from "@material-tailwind/react/types/components/alert";
 type StatisticBarChartProps = {
     color: string;
     colors: string;
@@ -10,7 +8,7 @@ type StatisticBarChartProps = {
     name: string;
     data: number[];
     categories: any[];
-    footer: string;
+    footer: any;
 };
 const StatisticsBarChart: React.FC<StatisticBarChartProps> = ({
     color,
@@ -43,24 +41,23 @@ const StatisticsBarChart: React.FC<StatisticBarChartProps> = ({
             xaxis: {
                 ...chartsConfig.xaxis,
                 categories: categories,
+                labels: {
+                    maxHeight: 70,
+                },
             },
         },
     };
     return (
-        <Card className="border border-blue-gray-100 shadow-sm">
-            <CardHeader variant="gradient" color={color as color} floated={false} shadow={false}>
+        <div className="border border-blue-gray-100 shadow-sm">
+            <div>
                 <Chart {...chart} />
-            </CardHeader>
-            <CardBody className="px-6 pt-0">
-                <Typography variant="h6" color="blue-gray">
-                    {title}
-                </Typography>
-                <Typography variant="small" className="font-normal text-blue-gray-600">
-                    {description}
-                </Typography>
-            </CardBody>
-            {footer && <CardFooter className="border-t border-blue-gray-50 px-6 py-5">{footer}</CardFooter>}
-        </Card>
+            </div>
+            <div className="px-6 pt-0">
+                <p className="text-lg font-semibold ">{title}</p>
+                <p className="font-normal text-sm text-blue-gray-600">{description}</p>
+            </div>
+            {footer && <div className="border-t border-blue-gray-50 px-6 py-5">{footer}</div>}
+        </div>
     );
 };
 

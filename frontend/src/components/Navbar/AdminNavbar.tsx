@@ -1,12 +1,16 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Navbar, Typography, Button, Menu, MenuHandler, MenuList, MenuItem, Avatar } from "@material-tailwind/react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 import { UserCircleIcon, ChevronDownIcon, PowerIcon } from "@heroicons/react/24/solid";
 import { DefaultAvatar as Logo } from "../../assets/images";
-import Utemy from "../../assets/images/utemy_logo_notext.png";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { authActions } from "../../redux/slices";
-
+import { Toaster } from "react-hot-toast";
 // profile menu component
 const profileMenuItems = [
     {
@@ -33,21 +37,15 @@ function ProfileMenu() {
     };
 
     return (
-        <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
-            <MenuHandler>
-                <Button
-                    variant="text"
-                    color="blue-gray"
-                    className="flex items-center gap-2 px-2 rounded-full py-0.5 lg:ml-auto"
-                >
-                    <Typography color="black">
+        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <DropdownMenuTrigger>
+                <button color="blue-gray" className="flex items-center gap-2 px-2 rounded-full py-0.5 lg:ml-auto">
+                    <p className="text-sm">
                         {user.first_name} {user.last_name}
-                    </Typography>
-                    <Avatar
-                        size="md"
-                        alt="tania andrew"
-                        withBorder={true}
-                        className="border border-gray-400 p-0.5"
+                    </p>
+                    <img
+                        alt="avatar"
+                        className="border border-gray-400 p-0.5 rounded-full w-8 h-8"
                         src={user.url_avatar ? user.url_avatar : Logo}
                     />
                     <ChevronDownIcon
@@ -55,54 +53,45 @@ function ProfileMenu() {
                         color="black"
                         className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""}`}
                     />
-                </Button>
-            </MenuHandler>
-            <MenuList className="p-2 gap-2">
-                {profileMenuItems.map(({ label, icon, link }, key) => {
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-2 gap-2">
+                {profileMenuItems.map(({ label, icon, link }, key: number) => {
                     const isLastItem = key === profileMenuItems.length - 1;
                     return (
-                        <NavLink to={link as string}>
-                            <MenuItem
+                        <NavLink key={key} to={link as string}>
+                            <DropdownMenuItem
                                 key={label}
                                 onClick={isLastItem ? logout : closeMenu}
-                                className={`flex items-center gap-2 rounded ${
+                                className={`flex items-center gap-2 rounded cursor-pointer rounded-sm ${
                                     isLastItem
-                                        ? "hover:bg-red-500 hover:text-white text-red"
-                                        : "hover:bg-lightblue/80 hover:text-white "
+                                        ? " focus:bg-red-500 focus:text-white text-red-500"
+                                        : " focus:bg-lightblue/80 focus:text-white text-lightblue/80"
                                 }`}
                             >
                                 {React.createElement(icon, {
                                     className: `h-4 w-4 `,
                                     strokeWidth: 2,
                                 })}
-                                <Typography
-                                    as="span"
-                                    variant="lead"
-                                    className="font-normal"
-                                    color={isLastItem ? "inherit" : "inherit"}
-                                >
+                                <span className="font-normal" color={isLastItem ? "inherit" : "inherit"}>
                                     {label}
-                                </Typography>
-                            </MenuItem>
+                                </span>
+                            </DropdownMenuItem>
                         </NavLink>
                     );
                 })}
-            </MenuList>
-        </Menu>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }
 
 export function AdminNavbar() {
     return (
-        <Navbar className="mx-auto my-2 max-w-screen-xl bg-gray-300 p-2 lg:rounded-full lg:pl-6">
-            <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
-                <Avatar src={Utemy} className="rounded-full" />
-                {/* <Typography as="a" href="#" className="mr-4 ml-2 text-black cursor-pointer py-1.5 font-medium">
-                    Utemy
-                </Typography> */}
-
+        <div className="mx-auto my-2 max-w-screen-xl p-2 lg:rounded-full lg:pl-6">
+            <Toaster />
+            <div className="relative mx-auto flex items-center justify-end text-blue-gray-900">
                 <ProfileMenu />
             </div>
-        </Navbar>
+        </div>
     );
 }

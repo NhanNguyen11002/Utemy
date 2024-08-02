@@ -19,6 +19,28 @@ export const previewImage = (image: File | null, imageRef: React.RefObject<HTMLI
         }
     }
 };
+export const previewTrailer = (
+    video: File | null,
+    videoRef: React.RefObject<HTMLVideoElement>,
+    videoSource?: string,
+) => {
+    if (video && video.type.includes("video/")) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            if (videoRef.current) {
+                videoRef.current.src = e.target?.result as string;
+            }
+        };
+        reader.readAsDataURL(video);
+        return;
+    } else {
+        if (videoRef.current && videoSource) {
+            videoRef.current.src = videoSource;
+        } else if (videoRef.current) {
+            videoRef.current.src = "";
+        }
+    }
+};
 
 export const convertDateFormat = (inputDate: string) => {
     const date = new Date(inputDate); // Chuyển chuỗi thành đối tượng ngày tháng
@@ -38,23 +60,23 @@ export const convertStringDate = (date: string) => {
 
 export const eveluateList = [
     {
-        title: "5 stars",
+        title: "5 sao",
         value: 5,
     },
     {
-        title: "4 stars",
+        title: "4 sao",
         value: 4,
     },
     {
-        title: "3 stars",
+        title: "3 sao",
         value: 3,
     },
     {
-        title: "2 stars",
+        title: "2 sao",
         value: 2,
     },
     {
-        title: "1 star",
+        title: "1 sao",
         value: 1,
     },
 ];
@@ -62,22 +84,25 @@ export const eveluateList = [
 export const sortingBy = [
     {
         value: "newest",
-        title: "Newest",
+        title: "Mới nhất",
     },
     {
         value: "oldest",
-        title: "Oldest",
+        title: "Cũ nhất",
     },
-    { value: "attendees", title: "Most Attendees" },
-    { value: "ascprice", title: "Price: Lowest to Highest" },
-    { value: "descprice", title: "Price: Highest to Lowest" },
+    { value: "attendees", title: "Nhiều người tham gia nhất" },
+    { value: "ascprice", title: "Giá: Thấp đến cao" },
+    { value: "descprice", title: "Giá: Cao đến thấp" },
 ];
 export const calDayRemains = (date: string) => {
     const target = +new Date(date);
     const now = +new Date();
     const gap = target - now;
-    const dayRemains = Math.floor(gap / (1000 * 60 * 60 * 24));
-    return dayRemains;
+
+    const days = Math.floor(gap / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    return `${days} ngày ${hours} giờ`;
 };
 
 const convertSecondToHour = (duration: number) => {
@@ -116,10 +141,68 @@ export const secondsToMinutesAndSeconds = (seconds: number) => {
 
     return `${formattedMinutes}:${formattedSeconds}`;
 };
+export const convertSecondsToTimeString = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.ceil((seconds % 3600) / 60); // Làm tròn lên
+    let result = "";
+
+    if (hours > 0) {
+        result += hours + " giờ ";
+    }
+
+    if (minutes > 0 || hours === 0) {
+        result += minutes + " phút";
+    }
+
+    return result;
+};
 export const checkAnswerArray = (array: QuizAnswerType[]) => {
     let count = 0;
     array.forEach((answer) => {
         if (answer.is_correct) count += 1;
     });
-    return count === 1;
+    return count;
+};
+
+export const courseSetupProgress = (course: Course) => {
+    let numerator = 0;
+    let denominator = 0;
+    if (!course.study || course.study.length === 0) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+    if (!course.requirement || course.requirement.length === 0) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+    if (!course.description) {
+        denominator++;
+    } else {
+        const strippedText = course.description.replace(/<[^>]*>/g, "");
+        const characterCount = strippedText.length;
+        if (characterCount === 0) {
+            denominator++;
+        } else {
+            numerator++;
+            denominator++;
+        }
+    }
+    if (!course.final_test_id) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+    const ob = getCourseIncludes(course);
+    if (ob.lessonCount === 0) {
+        denominator++;
+    } else {
+        numerator++;
+        denominator++;
+    }
+    return (numerator / denominator) * 100;
 };

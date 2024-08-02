@@ -14,6 +14,7 @@ const UserAppLayout: React.FC<HeaderProps> = ({ isLogin }) => {
     ) : (
         <div className="flex flex-col min-h-screen">
             <Header isLogin={isLogin} />
+            <div className=" w-full h-[100px]"></div>
             <Outlet />
             <Footer />
         </div>
