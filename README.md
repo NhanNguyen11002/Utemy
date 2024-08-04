@@ -5,7 +5,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/NhanNguyen11002/utemy">
     <img src="./frontend/public/logo.png" alt="Logo" width="80" height="80">
   </a>
 
